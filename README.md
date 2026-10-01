@@ -9,6 +9,19 @@ Viss ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var atvēr
 - Nosūtīšana ir simulācija. E-pasti uz domēnu `nepiegadajams.example` simulācijā "neizdodas", lai var redzēt kļūdas statusu.
 - Krāsas ir definētas kā CSS mainīgie `index.html` faila sākumā (`:root`).
 
+## Veidņu grupēšana
+
+Lapā "Veidnes" veidnes ir sagrupētas divos līmeņos:
+
+1. **Adresāts.** Cilnes "Komunikācija ar fiziskām personām" un "Komunikācija ar juridiskām personām", katrai ar veidņu skaitu. Pēc noklusējuma atvērta cilne fiziskajām personām.
+2. **Kategorija.** Katrā cilnē ir četri bloki: "Uzaicinājumi", "Atgādinājumi", "Informatīvie ziņojumi" un "Citi". Katram blokam ir veidņu skaits, poga "+ Pievienot veidni" un iespēja to sakļaut. Sakļautie bloki pārlūkā saglabājas.
+
+Papildus:
+- **Lauki veidnē.** Katrai veidnei ir lauki "Adresāts" un "Kategorija". Ja veidni pievieno no konkrēta bloka, abi lauki jau ir aizpildīti.
+- **Meklēšana.** Meklēšanas lauks filtrē aktīvās cilnes veidnes pēc nosaukuma un temata.
+- **Informatīvās kartītes.** Kartītes par veidņu veidiem ir sakļautas virs cilnēm.
+- **Sagatavošana.** Veidņu izvēlne ir sagrupēta pēc adresāta un kategorijas. Ja atzīmētie respondenti neatbilst veidnes adresātam, sistēma par to brīdina, un ar vienu klikšķi var atlasīt tikai atbilstošos.
+
 ## Vēstuļu veidnes
 
 Veidnes var būt divu veidu:
