@@ -9,6 +9,54 @@ Viss ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var atvēr
 - Nosūtīšana ir simulācija. E-pasti uz domēnu `nepiegadajams.example` simulācijā "neizdodas", lai var redzēt kļūdas statusu.
 - Krāsas ir definētas kā CSS mainīgie `index.html` faila sākumā (`:root`).
 
+## Vēstuļu veidnes
+
+Veidnes var būt divu veidu:
+
+- **E-pasta saturs.** Vēstule ir pats ziņojuma teksts ar noformējumu: virsraksti, treknraksts, saraksti, saites un poga. E-adresē tiek nosūtīta tā vienkārša teksta versija.
+- **Vēstule pielikumā (PDF).** Katram adresātam tiek ģenerēts A4 dokuments. Ziņojumā ir tikai īss pavadteksts. Dokumentu var izdrukāt vai saglabāt kā PDF.
+
+PDF dokuments sastāv no divām daļām:
+- **pastāvīgās daļas:** veidlapas galva, apsekojuma baneris, konfidencialitātes sadaļa, plašāka informācija, paraksts un kājene. Tās rediģē sadaļā "Pastāvīgās daļas";
+- **mainīgā daļa:** pats vēstules teksts, ko raksta katrā veidnē.
+
+Abos veidos var lietot iepriekš definētus laukus. Tos ievieto ar izvēlni "+ Ievietot lauku":
+
+| Grupa | Lauki |
+|---|---|
+| Respondents | `{vārds}`, `{uzņēmums}` |
+| Apsekojums | `{apsekojums}`, `{sākums}`, `{termiņš}`, `{e-anketa}`, `{apsekojuma_epasts}`, `{apsekojuma_vietne}` |
+| Dokuments | `{datums}`, `{dok_nr}`, `{tālrunis}`, `{parakstītājs}`, `{amats}` |
+
+## Nosacījumi un vēstuļu varianti
+
+Nosacījumus var veidot pēc trim respondenta pazīmēm:
+- **respondenta veids:** uzņēmums vai privātpersona. Ja tas nav norādīts, to nosaka pēc e-adreses: `_DEFAULT@` nozīmē uzņēmumu, `_PRIVATE@` nozīmē privātpersonu. Ja e-adreses nav, skatās, vai norādīta kontaktpersona;
+- **dalības veids:** e-anketa, tikai telefonintervija vai klātienes intervija;
+- **iepriekšējā dalība:** piedalījās, nepiedalījās vai izlasē pirmo reizi.
+
+Redaktorā ar pogu **◇ Nosacījums** iezīmētās rindkopas kļūst par bloku, kas redzams tikai respondentiem ar izvēlēto pazīmes vērtību vai vērtībām. Tā vienā veidnē var būt vairāki varianti, piemēram, "Kā piedalīties aptaujā?" e-anketas un telefonintervijas respondentiem.
+
+- **Veidnes priekšskatījumā** variantu var pārslēgt.
+- **Sagatavošanā:**
+  - respondentus var atlasīt pēc pazīmēm;
+  - kopsavilkumā redzams, cik vēstuļu būs katrā variantā;
+  - katras vēstules priekšskatījumā redzams tās variants.
+- **CSV importā** pazīmes var norādīt kolonnās `respondenta veids`, `dalības veids`, `iepriekšējā dalība` un `valoda`. Tās nav obligātas. Atpazīst arī saīsinājumus CAWI/CATI/CAPI un vērtības jā/nē.
+
+## Valodas
+
+Katram respondentam ir norādīta **valoda**: latviešu, krievu vai angļu.
+
+- **Valodu versijas.** Veidnes redaktorā ar pogām **LV / RU / EN** pārslēdz valodas versiju. Katrai versijai ir savs temats, teksts un PDF dokuments. Jaunu versiju var izveidot no latviešu teksta vai tukšu.
+- **Kopīgie iestatījumi.** Vēstules veids, pastāvīgo daļu izvēle un papildu pielikumi ir kopīgi visām valodām.
+- **Pastāvīgās daļas.** Tām ir tulkojumi: iestādes nosaukums, vieta, amats, noslēguma frāze, konfidencialitātes un plašākas informācijas sadaļas, e-paraksta atzīme un e-pasta kājene. Ja tulkojuma lauks ir tukšs, tiek lietots latviešu teksts.
+- **Apsekojuma nosaukums.** Tam var norādīt arī angļu un krievu nosaukumu. Lauks `{apsekojums}` tiek aizpildīts respondenta valodā.
+- **Sagatavošana.**
+  - Katrs respondents saņem vēstuli savā valodā.
+  - Ja veidnei tās valodas versijas nav, tiek sūtīta latviešu versija, un sistēma par to brīdina.
+  - Kopsavilkumā redzams, cik vēstuļu būs katrā valodā.
+
 ## GitHub Pages
 
 1. Repozitorijā atveriet **Settings → Pages**.
