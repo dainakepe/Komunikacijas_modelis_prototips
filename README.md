@@ -1,0 +1,1 @@
+# Komunikacijas_modelis_prototips
