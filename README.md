@@ -19,7 +19,7 @@ Lapā "Veidnes" veidnes ir sagrupētas divos līmeņos:
 Papildus:
 - **Lauki veidnē.** Katrai veidnei ir lauki "Adresāts" un "Kategorija". Ja veidni pievieno no konkrēta bloka, abi lauki jau ir aizpildīti.
 - **Meklēšana.** Meklēšanas lauks filtrē aktīvās cilnes veidnes pēc nosaukuma un temata.
-- **Informatīvās kartītes.** Kartītes par veidņu veidiem ir sakļautas virs cilnēm.
+- **Informācija par veidnēm.** Paskaidrojums par laukiem, nosacījumiem un valodām atveras, uzklikšķinot uz ikonas "i" blakus virsrakstam.
 - **Sagatavošana.** Veidņu izvēlne ir sagrupēta pēc adresāta un kategorijas. Ja atzīmētie respondenti neatbilst veidnes adresātam, sistēma par to brīdina, un ar vienu klikšķi var atlasīt tikai atbilstošos.
 
 ## Vēstuļu veidnes
