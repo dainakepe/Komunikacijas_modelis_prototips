@@ -2,7 +2,7 @@
 
 CSP datu vākšanas sistēmas komunikācijas moduļa prototips: vēstuļu veidnes, respondenti, komunikācijas sagatavošana ar priekšskatījumu un simulēta nosūtīšana.
 
-Viss ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var atvērt tieši pārlūkā vai publicēt ar GitHub Pages.
+Prototips ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var atvērt tieši pārlūkā vai publicēt ar GitHub Pages. Pielikumu bibliotēkas PDF faili atrodas mapē `pielikumi/` un tiek ielādēti ar relatīvu ceļu.
 
 - Visi testa dati ir izdomāti. E-pasta adresēm ir rezervētais domēns `.example`, un e-adrešu numuri sākas ar `0000…`.
 - Dati glabājas tikai pārlūka `localStorage`. Kājenē ir poga, ar kuru var atjaunot sākotnējos testa datus.
@@ -63,6 +63,27 @@ Abos veidos var lietot iepriekš definētus laukus. Tos ievieto ar izvēlni "+ I
 | Respondents | `{vārds}`, `{uzņēmums}`, `{adresāts}` |
 | Apsekojums | `{apsekojums}`, `{sākums}`, `{termiņš}`, `{e-anketa}`, `{apsekojuma_epasts}`, `{apsekojuma_vietne}` |
 | Dokuments | `{datums}`, `{dok_nr}`, `{tālrunis}`, `{parakstītājs}`, `{amats}` |
+
+## Pielikumu bibliotēka
+
+Cilnē **Pielikumi** ir gatavi PDF pielikumi, ko var pievienot veidnēm kā papildu pielikumus.
+
+- **Sagataves.** Iepriekš ielādētie paraugi ir atzīmēti ar birku "Sagatave". Tie ir izdalīti no PDF faila ar vēstuļu paraugiem, un faili glabājas mapē `pielikumi/` (sīkbildes – `pielikumi/sikbildes/`). Sagataves nevar labot vai dzēst.
+- **Katram pielikumam** ir nosaukums, īss apraksts, kategorija (uzaicinājuma vēstule, instrukcija, informatīvs materiāls vai cits), adresāti (fiziskās personas, juridiskās personas vai visi) un valoda, ja tā ir zināma.
+- **Meklēšana un filtri.** Pielikumus var meklēt pēc nosaukuma, apraksta vai faila nosaukuma un atlasīt pēc adresātiem, kategorijas un valodas.
+- **Savi pielikumi.** Ar pogu "Pievienot pielikumu" var augšupielādēt savu PDF failu (ne lielāku par 1 MB). Tas tiek saglabāts pārlūkā, un to var labot vai dzēst.
+- **Pievienošana veidnei.** Pielikumu var pievienot veidnei ar pogu "Pievienot veidnei" vai veidnes redaktorā sadaļā "Papildu pielikumi" ar izvēlni "+ No bibliotēkas…". Vēstules priekšskatījumā un nosūtītajās vēstulēs bibliotēkas pielikumu var atvērt.
+
+| Fails mapē `pielikumi/` | Saturs |
+|---|---|
+| `uzaicinajums_darbaspeka_apsekojums_intervija_lv.pdf` | Uzaicinājums – Darbaspēka apsekojums (telefona vai klātienes intervija), 2 lapas |
+| `isa_vestule_celotaju_apsekojums_e-anketa_lv.pdf` | Īsā vēstule – Ceļotāju apsekojums (e-anketa vai telefonintervija), 1 lapa |
+| `isa_vestule_celotaju_apsekojums_telefonaptauja_lv.pdf` | Īsā vēstule – Ceļotāju apsekojums (telefonaptauja), 1 lapa |
+| `uzaicinajums_ikt_2026_ar_pogu_lv.pdf` | Uzaicinājums – IKT lietošana 2026 (ar pogu "Dodies uz anketu"), 2 lapas |
+| `uzaicinajums_celotaju_apsekojums_e-anketa_lv.pdf` | Uzaicinājums – Ceļotāju apsekojums (e-anketa), 2 lapas |
+| `uzaicinajums_ikt_2026_e-anketa_lv.pdf` | Uzaicinājums – IKT lietošana 2026 (e-anketa), 2 lapas |
+
+Sagatavēs paraksti ir noņemti, parakstītāju vārdi aizstāti ar izdomātiem ("A. Paraugs", "L. Paraudziņa"), un apsekojuma vadītāja tālrunis aizstāts ar `60000000`.
 
 ## Nosacījumi un vēstuļu varianti
 
