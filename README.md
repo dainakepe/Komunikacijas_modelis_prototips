@@ -30,7 +30,8 @@ Abos veidos var lietot iepriekš definētus laukus. Tos ievieto ar izvēlni "+ I
 
 ## Nosacījumi un vēstuļu varianti
 
-Katram respondentam ir divas pazīmes:
+Katram respondentam ir trīs pazīmes:
+- **respondenta veids:** uzņēmums vai privātpersona. Ja tas nav norādīts, to nosaka pēc e-adreses: `_DEFAULT@` nozīmē uzņēmumu, `_PRIVATE@` nozīmē privātpersonu. Ja e-adreses nav, skatās, vai norādīta kontaktpersona;
 - **dalības veids:** e-anketa, tikai telefonintervija vai klātienes intervija;
 - **iepriekšējā dalība:** piedalījās, nepiedalījās vai izlasē pirmo reizi.
 
@@ -41,7 +42,7 @@ Redaktorā ar pogu **◇ Nosacījums** iezīmētās rindkopas kļūst par bloku,
   - respondentus var atlasīt pēc pazīmēm;
   - kopsavilkumā redzams, cik vēstuļu būs katrā variantā;
   - katras vēstules priekšskatījumā redzams tās variants.
-- **CSV importā** pazīmes var norādīt kolonnās `dalības veids` un `iepriekšējā dalība`. Tās nav obligātas. Atpazīst arī saīsinājumus CAWI/CATI/CAPI un vērtības jā/nē.
+- **CSV importā** pazīmes var norādīt kolonnās `respondenta veids`, `dalības veids` un `iepriekšējā dalība`. Tās nav obligātas. Atpazīst arī saīsinājumus CAWI/CATI/CAPI un vērtības jā/nē.
 
 ## GitHub Pages
 

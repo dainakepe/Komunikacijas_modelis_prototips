@@ -339,8 +339,8 @@ mark.v-miss,mark.v-unk{background:var(--danger-bg);color:var(--danger);border-ra
 .r-item .skip{color:var(--warning);font-weight:600}
 .r-item .pills{margin-top:4px}
 .r-item .pill{font-size:11.5px;padding:0 7px}
-.r-filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-.r-filters select{padding:6px 8px;font-size:13.5px}
+.r-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.r-filters select{flex:1 1 180px;width:auto;padding:6px 8px;font-size:13.5px}
 .variant-pv{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin:-4px 0 10px;font-size:13px;font-weight:600;color:var(--cond)}
 .variant-pv select{width:auto;padding:3px 8px;font-size:13px;border-color:var(--cond-border);background:var(--cond-bg);color:var(--cond)}
 .r-count{font-size:13px;color:var(--text-muted);margin-top:8px}
@@ -416,7 +416,7 @@ dialog.modal::backdrop{background:rgba(0,30,30,.45)}
   .container{padding:0 16px}
   .user,.brand-sub{display:none}
   .brand-title{font-size:18px}
-  .form-grid,.kind-info,.r-filters{grid-template-columns:1fr}
+  .form-grid,.kind-info{grid-template-columns:1fr}
   .channel-opts{grid-template-columns:1fr}
   .tpl-grid{grid-template-columns:1fr}
   .page-head .toolbar,.page-head .toolbar .btn{width:100%}
@@ -476,7 +476,7 @@ dialog.modal::backdrop{background:rgba(0,30,30,.45)}
       <div class="card"><svg class="icon" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 13h6M9 17h6"/></svg>
         <div><b>Vēstule pielikumā (PDF)</b><p>Katram adresātam tiek ģenerēts oficiālas vēstules dokuments ar veidlapas galvu, baneri un parakstu. Ziņojumā ir tikai īss pavadteksts.</p></div></div>
       <div class="card k-cond"><svg class="icon" viewBox="0 0 24 24"><path d="M6 3v12M18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 9a9 9 0 0 1-9 9"/></svg>
-        <div><b>Nosacījumi un varianti</b><p>Teksta daļa, kas redzama tikai respondentiem ar noteiktu dalības veidu (e-anketa, telefonintervija, klātiene) vai iepriekšējo dalību. Tā vienā veidnē var būt vairāki vēstules varianti.</p></div></div>
+        <div><b>Nosacījumi un varianti</b><p>Teksta daļa, kas redzama tikai noteiktiem respondentiem – pēc respondenta veida (uzņēmums, privātpersona), dalības veida (e-anketa, telefonintervija, klātiene) vai iepriekšējās dalības. Tā vienā veidnē var būt vairāki vēstules varianti.</p></div></div>
     </div>
     <div id="tpl-list" class="tpl-grid"></div>
   </section>
@@ -502,7 +502,7 @@ dialog.modal::backdrop{background:rgba(0,30,30,.45)}
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Nosaukums / vārds</th><th>E-adrese</th><th>E-pasts</th><th>Dalība</th><th><span class="sr-only">Darbības</span></th></tr></thead>
+          <thead><tr><th>Nosaukums / vārds</th><th>E-adrese</th><th>E-pasts</th><th>Pazīmes</th><th><span class="sr-only">Darbības</span></th></tr></thead>
           <tbody id="resp-tbody"></tbody>
         </table>
       </div>
@@ -657,7 +657,7 @@ dialog.modal::backdrop{background:rgba(0,30,30,.45)}
 /* =====================================================================
    KONSTANTES
    ===================================================================== */
-const STORAGE_KEY = 'csp-komunikacija-prototips-v3';
+const STORAGE_KEY = 'csp-komunikacija-prototips-v4';
 
 // Iepriekš definētie lauki, ko var lietot veidnēs
 const FIELDS = [
@@ -678,6 +678,12 @@ const FIELDS = [
 const FIELD_KEYS = new Set(FIELDS.map(f => f.key));
 // Respondentu pazīmes, pēc kurām veido nosacījuma blokus (vēstules variantus)
 const ATTRS = [
+  {key:'veids', label:'Respondenta veids', def:'privatpersona',
+   // ja nav norādīts – nosaka pēc e-adreses (_DEFAULT@ – uzņēmums, _PRIVATE@ – privātpersona) vai kontaktpersonas
+   infer: r => /^_DEFAULT@/i.test(r.eaddress || '') ? 'uznemums' : /^_PRIVATE@/i.test(r.eaddress || '') ? 'privatpersona' : (r.contact ? 'uznemums' : 'privatpersona'),
+   values:{
+    uznemums:      {label:'Uzņēmums (juridiska persona)',     short:'Uzņēmums',      syn:['uznemums', 'juridiskapersona', 'jp', 'organizacija', 'company']},
+    privatpersona: {label:'Privātpersona (mājsaimniecība)',   short:'Privātpersona', syn:['privatpersona', 'fiziskapersona', 'fp', 'majsaimnieciba', 'person']}}},
   {key:'dalibas_veids', label:'Dalības veids', def:'eanketa', values:{
     eanketa:  {label:'E-anketa (ar iespēju intervēt)', short:'E-anketa',         syn:['cawi', 'eanketa', 'internets']},
     telefons: {label:'Tikai telefonintervija',         short:'Telefonintervija', syn:['cati', 'telefons', 'telefonaptauja']},
@@ -805,8 +811,10 @@ function htmlToText(html){
       else if (tag === 'P' || tag === 'H3') s += '\n' + walk(c).trim() + '\n\n';
       else if (tag === 'UL' || tag === 'OL') s += '\n' + [...c.children].map((li, i) => (tag === 'OL' ? (i + 1) + '. ' : '• ') + walk(li).trim()).join('\n') + '\n\n';
       else if (tag === 'A'){
-        const txt = walk(c), href = (c.getAttribute('href') || '').replace(/^mailto:/, '');
-        s += href && href !== txt.trim() ? `${txt} (${href})` : txt;
+        const txt = walk(c), href = c.getAttribute('href') || '';
+        // adresi pievieno tikai tad, ja tā atšķiras no saites teksta (neskaitot https:// un mailto:)
+        const bare = h => h.replace(/^(https?:\/\/|mailto:)/i, '').replace(/\/$/, '');
+        s += href && bare(href) !== bare(txt.trim()) ? `${txt} (${href.replace(/^mailto:/i, '')})` : txt;
       } else s += walk(c);
     });
     return s;
@@ -861,7 +869,7 @@ function sanitize(html){
 /* ----- Nosacījuma bloki ----- */
 function respAttrs(r){
   const o = {};
-  ATTRS.forEach(a => o[a.key] = (r && r.attrs && a.values[r.attrs[a.key]]) ? r.attrs[a.key] : a.def);
+  ATTRS.forEach(a => o[a.key] = (r && r.attrs && a.values[r.attrs[a.key]]) ? r.attrs[a.key] : (a.infer ? a.infer(r || {}) : a.def));
   return o;
 }
 function condLabel(attr, vals){
@@ -934,28 +942,28 @@ function seedData(){
        subject:'Uzaicinājums piedalīties aptaujā “{apsekojums}”',
        body:`<p>Labdien, ${F('vārds')}!</p><p>Centrālā statistikas pārvalde aicina Jūs piedalīties aptaujā “${F('apsekojums')}”. Uzaicinājuma vēstule ar visu informāciju par dalību ir pievienota pielikumā.</p>${C('dalibas_veids', 'eanketa', `<p>E-anketu var aizpildīt līdz <strong>${F('termiņš')}</strong> vietnē <a href="{e-anketa}">${F('e-anketa')}</a>.</p>`)}${C('dalibas_veids', 'telefons,klatiene', '<p>Tuvākajā laikā ar Jums sazināsies mūsu intervētājs, lai vienotos par intervijas laiku.</p>')}<p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`,
        doc:{title:'Uzaicinājums piedalīties aptaujā', fileName:'CSP_uzaicinajums_{dok_nr}.pdf', banner:true, conf:true, info:true,
-         body:`<p><strong>Labdien!</strong></p>${C('ieprieks', 'piedalijas', '<p>Pateicamies par Jūsu dalību iepriekšējā aptaujā un sniegtajām atbildēm!</p>')}<p>Centrālā statistikas pārvalde (turpmāk – CSP) ir valsts iestāde, kas Latvijā apkopo oficiālo statistiku un katru gadu veic vairākas iedzīvotāju aptaujas. Šogad aicinām piedalīties aptaujā “${F('apsekojums')}”. Šāda aptauja notiek visās Eiropas Savienības valstīs pēc vienotas metodes, kas ļauj sekot līdzi izmaiņām Latvijā un salīdzināt datus ar citām valstīm.</p><h3>Kāpēc tieši Jūsu dalība ir svarīga?</h3><p>Jūsu atsaucība ir ļoti svarīga, lai dati objektīvi atspoguļotu to, kā dzīvo mūsu valsts iedzīvotāji. Lūdzam piedalīties aptaujā arī tad, ja šķiet, ka jautājumi uz Jums neattiecas – arī šīs atbildes palīdz izveidot patiesu kopainu.</p>${C('dalibas_veids', 'eanketa', `<h3>Kā piedalīties aptaujā?</h3><ul><li>E-anketu jebkurā Jums ērtā laikā no <strong>${F('sākums')}</strong> līdz <strong>${F('termiņš')}</strong> varat atvērt vietnē <a href="{e-anketa}">${F('e-anketa')}</a>.</li><li>Autorizēties iespējams ar internetbanku, Smart-ID, e-parakstu vai e-identifikācijas karti.</li><li>E-anketu var aizpildīt <u>tikai tā persona</u>, kurai adresēta šī vēstule.</li></ul><p>Ja norādītajā laikā Jums nav iespējas aizpildīt e-anketu, ar Jums sazināsies mūsu intervētājs un vienosies par telefoninterviju.</p>`)}${C('dalibas_veids', 'telefons', `<h3>Kā piedalīties telefonaptaujā?</h3><p>Ar Jums sazināsies mūsu intervētājs un vienosies par telefoninterviju. Informējam, ka intervētājs ar Jums var sazināties darbdienu vakaros (pēc plkst. 17.00) vai arī brīvdienās (sestdienās, svētdienās). Intervētāja identitāti var pārbaudīt, zvanot uz bezmaksas tālruni ${F('tālrunis')}.</p>`)}${C('dalibas_veids', 'klatiene', `<h3>Aicinām piedalīties klātienes intervijā</h3><p>Lai veiktu interviju, ar Jums sazināsies mūsu intervētājs un vienosies par tikšanās laiku. Ierodoties klātienē, intervētājs uzrādīs CSP darbinieka apliecību ar fotogrāfiju. Intervētāja identitāti var pārbaudīt, zvanot uz bezmaksas tālruni ${F('tālrunis')}.</p>`)}${C('ieprieks', 'nepiedalijas', '<p>Ja iepriekš neesat atbildējis uz aptaujas jautājumiem, aicinām piedalīties šoreiz, lai nodrošinātu datus, kas ir svarīgi valsts līmeņa lēmumu pieņemšanā.</p>')}`}},
+         body:`<p><strong>Labdien!</strong></p>${C('ieprieks', 'piedalijas', '<p>Pateicamies par Jūsu dalību iepriekšējā aptaujā un sniegtajām atbildēm!</p>')}<p>Centrālā statistikas pārvalde (turpmāk – CSP) ir valsts iestāde, kas Latvijā apkopo oficiālo statistiku un katru gadu veic vairākas iedzīvotāju aptaujas. Šogad aicinām piedalīties aptaujā “${F('apsekojums')}”. Šāda aptauja notiek visās Eiropas Savienības valstīs pēc vienotas metodes, kas ļauj sekot līdzi izmaiņām Latvijā un salīdzināt datus ar citām valstīm.</p>${C('veids', 'privatpersona', '<p>Jūsu mājsaimniecība ir atlasīta no kopējā adrešu saraksta, izmantojot nejaušas gadījuma izlases metodi.</p>')}${C('veids', 'uznemums', `<p>Respondents ${F('uzņēmums')} ir iekļauts apsekojuma izlasē, izmantojot nejaušas gadījuma izlases metodi. Lūdzam nodot šo vēstuli personai, kura ir atbildīga par datu sniegšanu.</p>`)}<h3>Kāpēc tieši Jūsu dalība ir svarīga?</h3><p>Jūsu atsaucība ir ļoti svarīga, lai dati objektīvi atspoguļotu to, kā dzīvo mūsu valsts iedzīvotāji. Lūdzam piedalīties aptaujā arī tad, ja šķiet, ka jautājumi uz Jums neattiecas – arī šīs atbildes palīdz izveidot patiesu kopainu.</p>${C('dalibas_veids', 'eanketa', `<h3>Kā piedalīties aptaujā?</h3><ul><li>E-anketu jebkurā Jums ērtā laikā no <strong>${F('sākums')}</strong> līdz <strong>${F('termiņš')}</strong> varat atvērt vietnē <a href="{e-anketa}">${F('e-anketa')}</a>.</li><li>Autorizēties iespējams ar internetbanku, Smart-ID, e-parakstu vai e-identifikācijas karti.</li><li>E-anketu var aizpildīt <u>tikai tā persona</u>, kurai adresēta šī vēstule.</li></ul><p>Ja norādītajā laikā Jums nav iespējas aizpildīt e-anketu, ar Jums sazināsies mūsu intervētājs un vienosies par telefoninterviju.</p>`)}${C('dalibas_veids', 'telefons', `<h3>Kā piedalīties telefonaptaujā?</h3><p>Ar Jums sazināsies mūsu intervētājs un vienosies par telefoninterviju. Informējam, ka intervētājs ar Jums var sazināties darbdienu vakaros (pēc plkst. 17.00) vai arī brīvdienās (sestdienās, svētdienās). Intervētāja identitāti var pārbaudīt, zvanot uz bezmaksas tālruni ${F('tālrunis')}.</p>`)}${C('dalibas_veids', 'klatiene', `<h3>Aicinām piedalīties klātienes intervijā</h3><p>Lai veiktu interviju, ar Jums sazināsies mūsu intervētājs un vienosies par tikšanās laiku. Ierodoties klātienē, intervētājs uzrādīs CSP darbinieka apliecību ar fotogrāfiju. Intervētāja identitāti var pārbaudīt, zvanot uz bezmaksas tālruni ${F('tālrunis')}.</p>`)}${C('ieprieks', 'nepiedalijas', '<p>Ja iepriekš neesat atbildējis uz aptaujas jautājumiem, aicinām piedalīties šoreiz, lai nodrošinātu datus, kas ir svarīgi valsts līmeņa lēmumu pieņemšanā.</p>')}`}},
       {id:'t2', kind:'epasts', name:'Uzaicinājums piedalīties aptaujā (īsā vēstule)', updated:ago(10), files:[], doc:null,
        subject:'Uzaicinājums piedalīties aptaujā “{apsekojums}”',
-       body:`<h3>Uzaicinājums piedalīties aptaujā</h3><p>Labdien, ${F('vārds')}!</p>${C('ieprieks', 'piedalijas', '<p>Pateicamies par Jūsu dalību iepriekšējā aptaujā!</p>')}<p>Centrālā statistikas pārvalde veic aptauju “${F('apsekojums')}”. Jūsu atbildes palīdzēs iegūt precīzu un uzticamu informāciju, ko izmanto valsts un pašvaldību iestādes, pieņemot lēmumus.</p>${C('dalibas_veids', 'eanketa', `<p><a class="cta" href="{e-anketa}">Dodies uz anketu</a></p><h3>Kā piedalīties aptaujā?</h3><p>E-anketu jebkurā Jums ērtā laikā līdz <strong>${F('termiņš')}</strong> varat atvērt vietnē <a href="{e-anketa}">${F('e-anketa')}</a>. E-anketu var aizpildīt tikai tā persona, kurai ir adresēta vēstule.</p><p>Ja vēstulē norādītajā laikā Jums neizdosies aizpildīt anketu, ar Jums sazināsies mūsu intervētājs un vienosies par telefoninterviju.</p>`)}${C('dalibas_veids', 'telefons,klatiene', '<h3>Kā piedalīties aptaujā?</h3><p>Ar Jums sazināsies mūsu intervētājs un vienosies par interviju. Informējam, ka intervētājs ar Jums var sazināties darbdienu vakaros (pēc plkst. 17.00) vai arī brīvdienās (sestdienās, svētdienās).</p>')}<h3>Iegūtie dati ir konfidenciāli un drošībā</h3><p>Visus datus publicējam tikai apkopotā veidā, nodrošinot, ka nevienu personu nevar identificēt.</p><h3>Plašāka informācija</h3><ul><li>informatīvais bezmaksas tālrunis <strong>${F('tālrunis')}</strong> darbdienās no plkst. 10.00 līdz 18.00</li><li>e-pasts: <a href="mailto:{apsekojuma_epasts}">${F('apsekojuma_epasts')}</a></li></ul><p>Cerot uz veiksmīgu sadarbību,<br>${F('amats')}<br>${F('parakstītājs')}</p>`},
+       body:`<h3>Uzaicinājums piedalīties aptaujā</h3><p>Labdien, ${F('vārds')}!</p>${C('ieprieks', 'piedalijas', '<p>Pateicamies par Jūsu dalību iepriekšējā aptaujā!</p>')}<p>Centrālā statistikas pārvalde veic aptauju “${F('apsekojums')}”. Jūsu atbildes palīdzēs iegūt precīzu un uzticamu informāciju, ko izmanto valsts un pašvaldību iestādes, pieņemot lēmumus.</p>${C('veids', 'privatpersona', '<p>Jūsu mājsaimniecība ir atlasīta no kopējā adrešu saraksta, izmantojot nejaušas gadījuma izlases metodi.</p>')}${C('veids', 'uznemums', `<p>Respondents ${F('uzņēmums')} ir iekļauts apsekojuma izlasē. Ja vēstule nonākusi pie nepareizā adresāta, lūdzam to pārsūtīt personai, kura ir atbildīga par datu sniegšanu.</p>`)}${C('dalibas_veids', 'eanketa', `<p><a class="cta" href="{e-anketa}">Dodies uz anketu</a></p><h3>Kā piedalīties aptaujā?</h3><p>E-anketu jebkurā Jums ērtā laikā līdz <strong>${F('termiņš')}</strong> varat atvērt vietnē <a href="{e-anketa}">${F('e-anketa')}</a>. E-anketu var aizpildīt tikai tā persona, kurai ir adresēta vēstule.</p><p>Ja vēstulē norādītajā laikā Jums neizdosies aizpildīt anketu, ar Jums sazināsies mūsu intervētājs un vienosies par telefoninterviju.</p>`)}${C('dalibas_veids', 'telefons,klatiene', '<h3>Kā piedalīties aptaujā?</h3><p>Ar Jums sazināsies mūsu intervētājs un vienosies par interviju. Informējam, ka intervētājs ar Jums var sazināties darbdienu vakaros (pēc plkst. 17.00) vai arī brīvdienās (sestdienās, svētdienās).</p>')}<h3>Iegūtie dati ir konfidenciāli un drošībā</h3><p>Visus datus publicējam tikai apkopotā veidā, nodrošinot, ka nevienu personu nevar identificēt.</p><h3>Plašāka informācija</h3><ul><li>informatīvais bezmaksas tālrunis <strong>${F('tālrunis')}</strong> darbdienās no plkst. 10.00 līdz 18.00</li><li>e-pasts: <a href="mailto:{apsekojuma_epasts}">${F('apsekojuma_epasts')}</a></li></ul><p>Cerot uz veiksmīgu sadarbību,<br>${F('amats')}<br>${F('parakstītājs')}</p>`},
       {id:'t3', kind:'epasts', name:'Atgādinājums', updated:ago(6), files:[], doc:null,
        subject:'Atgādinājums: aptauja “{apsekojums}”',
        body:`<p>Labdien, ${F('vārds')}!</p><p>Atgādinām par aptauju “${F('apsekojums')}”.</p>${C('dalibas_veids', 'eanketa', `<p>E-anketa vēl nav aizpildīta. Datu iesniegšanas termiņš ir <strong>${F('termiņš')}</strong>.</p><p><a class="cta" href="{e-anketa}">Aizpildīt e-anketu</a></p><p>Ja dati jau ir iesniegti, lūdzu, neņemiet vērā šo atgādinājumu.</p>`)}${C('dalibas_veids', 'telefons,klatiene', `<p>Mūsu intervētājam līdz šim nav izdevies ar Jums sazināties. Lūdzam piezvanīt uz bezmaksas tālruni <strong>${F('tālrunis')}</strong>, lai vienotos par Jums ērtu intervijas laiku.</p>`)}<p>Paldies par sadarbību!</p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`},
       {id:'t4', kind:'epasts', name:'Pateicība', updated:ago(2), files:[], doc:null,
        subject:'Paldies par dalību aptaujā “{apsekojums}”',
-       body:`<p>Labdien, ${F('vārds')}!</p><p>Pateicamies par Jūsu dalību aptaujā “${F('apsekojums')}” un sniegtajām atbildēm!</p><p>Jūsu sniegtā informācija palīdz veidot precīzu un uzticamu oficiālo statistiku par Latvijas ekonomiku un sabiedrību. Apkopotie rezultāti būs pieejami vietnē <a href="https://{apsekojuma_vietne}">${F('apsekojuma_vietne')}</a>.</p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`},
+       body:`<p>Labdien, ${F('vārds')}!</p>${C('veids', 'privatpersona', `<p>Pateicamies par Jūsu dalību aptaujā “${F('apsekojums')}” un sniegtajām atbildēm!</p>`)}${C('veids', 'uznemums', `<p>Pateicamies, ka ${F('uzņēmums')} piedalījās apsekojumā “${F('apsekojums')}” un iesniedza datus!</p>`)}<p>Jūsu sniegtā informācija palīdz veidot precīzu un uzticamu oficiālo statistiku par Latvijas ekonomiku un sabiedrību. Apkopotie rezultāti būs pieejami vietnē <a href="https://{apsekojuma_vietne}">${F('apsekojuma_vietne')}</a>.</p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`},
     ],
     respondents: [
-      {id:'r1',  name:'Laura Kalēja',                      contact:'',                 eaddress:'_PRIVATE@00000000201', email:'laura.kaleja@pasts.example',       attrs:{dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
-      {id:'r2',  name:'Mārtiņš Ozoliņš',                   contact:'',                 eaddress:'_PRIVATE@00000000202', email:'martins.ozolins@inbox.example',    attrs:{dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
-      {id:'r3',  name:'Ilze Bērziņa',                      contact:'',                 eaddress:'',                     email:'ilze.berzina@pasts.example',       attrs:{dalibas_veids:'telefons', ieprieks:'jauns'}},
-      {id:'r4',  name:'Edgars Liepa',                      contact:'',                 eaddress:'_PRIVATE@00000000204', email:'edgars.liepa@' + BOUNCE_DOMAIN,    attrs:{dalibas_veids:'eanketa',  ieprieks:'jauns'}},
-      {id:'r5',  name:'Dace Vītola',                       contact:'',                 eaddress:'_PRIVATE@00000000205', email:'dace.vitola@pasts.example',        attrs:{dalibas_veids:'klatiene', ieprieks:'piedalijas'}},
-      {id:'r6',  name:'SIA “Ziemeļblāzmas Koks”',          contact:'Jānis Bērziņš',    eaddress:'_DEFAULT@00000000101', email:'j.berzins@ziemelblazma.example',   attrs:{dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
-      {id:'r7',  name:'AS “Daugavkrasta Piens”',           contact:'Kristīne Kalniņa', eaddress:'_DEFAULT@00000000102', email:'k.kalnina@daugavkrasts.example',   attrs:{dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
-      {id:'r8',  name:'SIA “Mākoņu Maiznīca”',             contact:'Pēteris Ozols',    eaddress:'_DEFAULT@00000000103', email:'info@makonumaiznica.example',      attrs:{dalibas_veids:'telefons', ieprieks:'piedalijas'}},
-      {id:'r9',  name:'Zemnieku saimniecība “Lejasbirzes”', contact:'Anna Liepiņa',     eaddress:'_DEFAULT@00000000104', email:'',                                 attrs:{dalibas_veids:'telefons', ieprieks:'jauns'}},
-      {id:'r10', name:'SIA “Latgales Keramika”',           contact:'Dace Pūce',        eaddress:'_DEFAULT@00000000110', email:'dace.puce@latgkeramika.example',   attrs:{dalibas_veids:'eanketa',  ieprieks:'jauns'}},
+      {id:'r1',  name:'Laura Kalēja',                      contact:'',                 eaddress:'_PRIVATE@00000000201', email:'laura.kaleja@pasts.example',       attrs:{veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
+      {id:'r2',  name:'Mārtiņš Ozoliņš',                   contact:'',                 eaddress:'_PRIVATE@00000000202', email:'martins.ozolins@inbox.example',    attrs:{veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
+      {id:'r3',  name:'Ilze Bērziņa',                      contact:'',                 eaddress:'',                     email:'ilze.berzina@pasts.example',       attrs:{veids:'privatpersona', dalibas_veids:'telefons', ieprieks:'jauns'}},
+      {id:'r4',  name:'Edgars Liepa',                      contact:'',                 eaddress:'_PRIVATE@00000000204', email:'edgars.liepa@' + BOUNCE_DOMAIN,    attrs:{veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
+      {id:'r5',  name:'Dace Vītola',                       contact:'',                 eaddress:'_PRIVATE@00000000205', email:'dace.vitola@pasts.example',        attrs:{veids:'privatpersona', dalibas_veids:'klatiene', ieprieks:'piedalijas'}},
+      {id:'r6',  name:'SIA “Ziemeļblāzmas Koks”',          contact:'Jānis Bērziņš',    eaddress:'_DEFAULT@00000000101', email:'j.berzins@ziemelblazma.example',   attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
+      {id:'r7',  name:'AS “Daugavkrasta Piens”',           contact:'Kristīne Kalniņa', eaddress:'_DEFAULT@00000000102', email:'k.kalnina@daugavkrasts.example',   attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
+      {id:'r8',  name:'SIA “Mākoņu Maiznīca”',             contact:'Pēteris Ozols',    eaddress:'_DEFAULT@00000000103', email:'info@makonumaiznica.example',      attrs:{veids:'uznemums', dalibas_veids:'telefons', ieprieks:'piedalijas'}},
+      {id:'r9',  name:'Zemnieku saimniecība “Lejasbirzes”', contact:'Anna Liepiņa',     eaddress:'_DEFAULT@00000000104', email:'',                                 attrs:{veids:'uznemums', dalibas_veids:'telefons', ieprieks:'jauns'}},
+      {id:'r10', name:'SIA “Latgales Keramika”',           contact:'Dace Pūce',        eaddress:'_DEFAULT@00000000110', email:'dace.puce@latgkeramika.example',   attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
     ],
     sent: [],
   };
@@ -1715,12 +1723,13 @@ const HEADER_ALIASES = {
   contact:['kontaktpersona', 'kontakts', 'kontaktpersonasvards', 'contact'],
   eaddress:['eadrese', 'eadreses', 'eaddress'],
   email:['epasts', 'epastaadrese', 'email', 'mail'],
-  dalibas_veids:['dalibasveids', 'veids', 'mode'],
+  veids:['respondentaveids', 'veids', 'tips', 'type'],
+  dalibas_veids:['dalibasveids', 'mode'],
   ieprieks:['ieprieksejadaliba', 'ieprieks', 'dalibaieprieks'],
 };
 // CSV vērtība -> pazīmes atslēga (pieņem atslēgu, nosaukumu, īso nosaukumu vai sinonīmu)
-function parseAttr(a, raw){
-  if (!raw) return {val:a.def};
+function parseAttr(a, raw, d){
+  if (!raw) return {val:a.infer ? a.infer(d) : a.def};
   const k = norm(raw).replace(/[^a-z]/g, '');
   for (const [key, v] of Object.entries(a.values)){
     if ([key, v.label, v.short, ...v.syn].some(x => norm(x).replace(/[^a-z]/g, '') === k)) return {val:key};
@@ -1744,7 +1753,8 @@ function analyseCSV(rows){
   const data = hasHeader ? rows.slice(1) : rows;
   if (!map){
     const n = rows[0].length;
-    if (n >= 6) map = {name:0, contact:1, eaddress:2, email:3, dalibas_veids:4, ieprieks:5};
+    if (n >= 7) map = {name:0, contact:1, eaddress:2, email:3, veids:4, dalibas_veids:5, ieprieks:6};
+    else if (n >= 6) map = {name:0, contact:1, eaddress:2, email:3, dalibas_veids:4, ieprieks:5};
     else if (n >= 4) map = {name:0, contact:1, eaddress:2, email:3};
     else if (n === 3) map = {name:0, eaddress:1, email:2};
     else return {error:'Neizdevās atpazīt kolonnas. Failā jābūt kolonnām: nosaukums; kontaktpersona; e-adrese; e-pasts.'};
@@ -1755,7 +1765,7 @@ function analyseCSV(rows){
     const d = {name:get(row, 'name'), contact:get(row, 'contact'), eaddress:get(row, 'eaddress'), email:get(row, 'email')};
     const msgs = Object.values(validateRespondent(d));
     d.attrs = {};
-    ATTRS.forEach(a => { const res = parseAttr(a, get(row, a.key)); if (res.err) msgs.push(res.err); else d.attrs[a.key] = res.val; });
+    ATTRS.forEach(a => { const res = parseAttr(a, get(row, a.key), d); if (res.err) msgs.push(res.err); else d.attrs[a.key] = res.val; });
     let status = 'ok', note = '';
     const dupFile = (d.email && seenE.has(d.email.toLowerCase())) || (d.eaddress && seenA.has(d.eaddress.toLowerCase()));
     if (msgs.some(m => m.includes('jau ir sarakstā'))){ status = 'dup'; note = 'Jau ir sarakstā'; }
@@ -1784,7 +1794,7 @@ function openCsvImport(){
         ${ICON.upload}<div><b>Izvēlieties CSV failu</b> vai ievelciet to šeit</div>
         <div class="hint">Atdalītājs: semikols vai komats. Kodējums: UTF-8 (atbalstīts arī Windows-1257).</div>
       </div>
-      <div class="alert alert-info">${ICON.info}<span>Gaidāmās kolonnas: <b>nosaukums; kontaktpersona; e-adrese; e-pasts; dalības veids; iepriekšējā dalība</b> (pēdējās divas – nav obligātas). Pirmā rinda – virsraksti (var arī bez tās).
+      <div class="alert alert-info">${ICON.info}<span>Gaidāmās kolonnas: <b>nosaukums; kontaktpersona; e-adrese; e-pasts; respondenta veids; dalības veids; iepriekšējā dalība</b> (pēdējās trīs – nav obligātas; respondenta veidu, ja tas nav norādīts, nosaka pēc e-adreses). Pirmā rinda – virsraksti (var arī bez tās).
         <button class="btn btn-ghost btn-sm" data-sample type="button">Lejupielādēt CSV paraugu</button></span></div>
       <div id="imp-result"></div>`,
     actions:[
@@ -1826,7 +1836,7 @@ function openCsvImport(){
       <div class="alert ${ok ? 'alert-ok' : 'alert-warn'}">${ok ? ICON.check : ICON.warn}<span><b>${esc(file.name)}</b>: ${res.items.length} ${plural(res.items.length, 'rinda', 'rindas')} –
         ${ok} ${plural(ok, 'derīga', 'derīgas')}, ${dup} ${plural(dup, 'dublikāts', 'dublikāti')}, ${err} ar kļūdām. Importēti tiks tikai derīgie ieraksti.</span></div>
       <div class="import-table"><table>
-        <thead><tr><th>Rinda</th><th>Nosaukums / vārds</th><th>Kontaktpersona</th><th>E-adrese</th><th>E-pasts</th><th>Dalība</th><th>Statuss</th></tr></thead>
+        <thead><tr><th>Rinda</th><th>Nosaukums / vārds</th><th>Kontaktpersona</th><th>E-adrese</th><th>E-pasts</th><th>Pazīmes</th><th>Statuss</th></tr></thead>
         <tbody>${res.items.map(x => `<tr>
           <td>${x.line}</td><td>${esc(x.d.name) || none}</td><td>${esc(x.d.contact) || none}</td>
           <td class="mono">${esc(x.d.eaddress) || none}</td><td class="mono">${esc(x.d.email) || none}</td>
@@ -1839,10 +1849,10 @@ function openCsvImport(){
   }
 }
 function downloadSample(){
-  const csv = '\uFEFFnosaukums;kontaktpersona;e-adrese;e-pasts;dalības veids;iepriekšējā dalība\n' +
-    'SIA “Parauga Uzņēmums”;Vārds Uzvārds;_DEFAULT@00000000301;info@paraugs.example;e-anketa;piedalījās\n' +
-    'Anna Testa;;_PRIVATE@00000000302;anna.testa@pasts.example;telefonintervija;pirmo reizi\n' +
-    'Biedrība “Izmēģinājums”;;;biedriba@izmeginajums.example;klātiene;nepiedalījās\n';
+  const csv = '\uFEFFnosaukums;kontaktpersona;e-adrese;e-pasts;respondenta veids;dalības veids;iepriekšējā dalība\n' +
+    'SIA “Parauga Uzņēmums”;Vārds Uzvārds;_DEFAULT@00000000301;info@paraugs.example;uzņēmums;e-anketa;piedalījās\n' +
+    'Anna Testa;;_PRIVATE@00000000302;anna.testa@pasts.example;privātpersona;telefonintervija;pirmo reizi\n' +
+    'Biedrība “Izmēģinājums”;Pēteris Tests;;biedriba@izmeginajums.example;uzņēmums;klātiene;nepiedalījās\n';
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
   a.download = 'respondenti_paraugs.csv';
