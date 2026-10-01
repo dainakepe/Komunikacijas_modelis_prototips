@@ -9,17 +9,23 @@ Viss ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var atvēr
 - Nosūtīšana ir simulācija. E-pasti uz domēnu `nepiegadajams.example` simulācijā "neizdodas", lai var redzēt kļūdas statusu.
 - Krāsas ir definētas kā CSS mainīgie `index.html` faila sākumā (`:root`).
 
+## Sākumlapa (DELTA)
+
+Atverot prototipu, vispirms redzama DELTA sistēmas sākumlapa ar moduļu kartītēm.
+- Aktīvs ir tikai **Komunikācijas modulis**. Poga "Atvērt" atver tā cilni "Veidnes".
+- Pārējie moduļi ir parādīti kā neaktīvi ar birku "Nav pieejams prototipā".
+- No komunikācijas moduļa sākumlapā var atgriezties, noklikšķinot uz CSP logo vai saites "← DELTA sākums".
+
 ## Veidņu grupēšana
 
 Lapā "Veidnes" veidnes ir sagrupētas divos līmeņos:
 
-1. **Adresāts.** Cilnes "Komunikācija ar fiziskām personām" un "Komunikācija ar juridiskām personām", katrai ar veidņu skaitu. Pēc noklusējuma atvērta cilne fiziskajām personām.
-2. **Kategorija.** Katrā cilnē ir četri bloki: "Uzaicinājumi", "Atgādinājumi", "Informatīvie ziņojumi" un "Citi". Katram blokam ir veidņu skaits, poga "+ Pievienot veidni" un iespēja to sakļaut. Sakļautie bloki pārlūkā saglabājas.
+1. **Adresāts.** Trīs kartītes ar veidņu skaitu: "Komunikācija ar fiziskām personām" (atvērta pēc noklusējuma), "Komunikācija ar juridiskām personām" un "Cita komunikācija" (jaukta komunikācija, piem., viena ziņa visiem). Jauktās komunikācijas veidnēm adresāts ir "Visi (jaukta komunikācija)", un tajās lieto lauku `{adresāts}`: uzņēmumam tas ir nosaukums, fiziskai personai – vārds. Šādu veidni var sūtīt reizē gan fiziskām, gan juridiskām personām.
+2. **Kategorija.** Katrā cilnē ir četri bloki: "Uzaicinājumi", "Atgādinājumi", "Informatīvie ziņojumi" un "Citi". Katram blokam ir veidņu skaits, poga "+ Pievienot veidni" un iespēja to sakļaut. Pēc noklusējuma bloki ir izvērsti.
 
 Papildus:
 - **Lauki veidnē.** Katrai veidnei ir lauki "Adresāts" un "Kategorija". Ja veidni pievieno no konkrēta bloka, abi lauki jau ir aizpildīti.
 - **Meklēšana.** Meklēšanas lauks filtrē aktīvās cilnes veidnes pēc nosaukuma un temata.
-- **Informācija par veidnēm.** Paskaidrojums par laukiem, nosacījumiem un valodām atveras, uzklikšķinot uz ikonas "i" blakus virsrakstam.
 - **Sagatavošana.** Veidņu izvēlne ir sagrupēta pēc adresāta un kategorijas. Ja atzīmētie respondenti neatbilst veidnes adresātam, sistēma par to brīdina, un ar vienu klikšķi var atlasīt tikai atbilstošos.
 
 ## Vēstuļu veidnes
@@ -43,7 +49,7 @@ Abos veidos var lietot iepriekš definētus laukus. Tos ievieto ar izvēlni "+ I
 
 | Grupa | Lauki |
 |---|---|
-| Respondents | `{vārds}`, `{uzņēmums}` |
+| Respondents | `{vārds}`, `{uzņēmums}`, `{adresāts}` |
 | Apsekojums | `{apsekojums}`, `{sākums}`, `{termiņš}`, `{e-anketa}`, `{apsekojuma_epasts}`, `{apsekojuma_vietne}` |
 | Dokuments | `{datums}`, `{dok_nr}`, `{tālrunis}`, `{parakstītājs}`, `{amats}` |
 
