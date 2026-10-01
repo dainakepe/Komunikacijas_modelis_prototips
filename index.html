@@ -98,6 +98,17 @@ button,input,select,textarea{font:inherit;color:inherit}
 main.container{padding-top:28px;padding-bottom:48px}
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
 .page-head p{color:var(--text-muted);margin-top:4px;max-width:760px}
+.page-head.top{align-items:flex-start}
+.title-row{display:flex;align-items:center;gap:10px}
+/* Informācijas ikona ar padomu */
+.info-btn{position:relative;appearance:none;border:0;width:22px;height:22px;border-radius:50%;background:var(--primary);color:var(--on-primary);font:italic 700 14px/22px Georgia,"Times New Roman",serif;text-align:center;padding:0;cursor:pointer;flex:none}
+.info-btn:hover{background:var(--primary-hover)}
+.info-btn[aria-expanded="true"]{background:var(--primary-active);box-shadow:0 0 0 3px var(--primary-100)}
+.info-btn[data-tip]:hover::after,.info-btn[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);background:var(--primary-darker);color:#fff;font:600 12px/1.3 var(--font);padding:5px 9px;border-radius:5px;white-space:nowrap;z-index:5;pointer-events:none}
+.info-btn[aria-expanded="true"]::after{display:none !important}
+.info-panel{position:relative;margin-top:10px;max-width:760px;background:var(--primary-50);border:1px solid var(--primary-200);border-left:4px solid var(--primary);border-radius:8px;padding:12px 44px 12px 14px;font-size:14px}
+.page-head .info-panel p{margin:0;color:var(--text)}
+.info-panel .info-close{position:absolute;top:6px;right:6px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
 .card-pad{padding:18px 20px}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -231,14 +242,8 @@ tr.is-new td{animation:flash 2.4s ease-out}
 .tpl-meta{font-size:12.5px;color:var(--text-muted);margin-top:auto}
 .tpl-actions{display:flex;gap:6px;padding:10px 14px;border-top:1px solid var(--border-light);flex-wrap:wrap}
 .tpl-actions .btn-primary{margin-left:auto}
-/* Informatīvās kartītes – sakļaujamas */
-details.info-cards{margin-bottom:14px}
-details.info-cards > summary{list-style:none;display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:var(--primary-dark);font-weight:600;font-size:14px;padding:6px 8px;margin-left:-8px;border-radius:6px}
-details.info-cards > summary::-webkit-details-marker{display:none}
-details.info-cards > summary:hover{background:var(--primary-50)}
-details.info-cards[open] > summary{margin-bottom:8px}
 .chev{transition:transform .15s}
-details[open] > summary .chev,[aria-expanded="true"] > .chev{transform:rotate(90deg)}
+[aria-expanded="true"] > .chev{transform:rotate(90deg)}
 /* Adresātu cilnes */
 .aud-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
 .aud-tab{appearance:none;border:0;background:none;padding:12px 18px;margin-bottom:-2px;border-bottom:3px solid transparent;font-weight:650;font-size:15.5px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;gap:9px;white-space:nowrap}
@@ -260,13 +265,6 @@ details[open] > summary .chev,[aria-expanded="true"] > .chev{transform:rotate(90
 .block-empty .icon{width:28px;height:28px;color:var(--primary-300)}
 .pill-cat{background:var(--bg);color:var(--text-muted);border-color:var(--border)}
 .pill-aud{background:#fff;color:var(--primary-darker);border-color:var(--primary-300)}
-.kind-info{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
-.kind-info .card{padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
-.kind-info .card .icon{width:22px;height:22px;color:var(--primary);margin-top:2px}
-.kind-info .card.k-cond .icon{color:var(--cond)}
-.kind-info .card.k-cond b{color:var(--cond)}
-.kind-info b{color:var(--primary-darker)}
-.kind-info p{font-size:13.5px;color:var(--text-muted)}
 
 /* ===== Ziņojuma (e-pasta / e-adreses) skats ===== */
 .mail{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
@@ -443,7 +441,6 @@ dialog.modal::backdrop{background:rgba(0,30,30,.45)}
 
 /* ===== Pielāgošana ekrāniem ===== */
 @media (max-width:1000px){
-  .kind-info{grid-template-columns:1fr}
   .compose-grid,.editor-grid{grid-template-columns:minmax(0,1fr)}
   .preview-card,.editor-preview{position:static}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -452,7 +449,7 @@ dialog.modal::backdrop{background:rgba(0,30,30,.45)}
   .container{padding:0 16px}
   .user,.brand-sub{display:none}
   .brand-title{font-size:18px}
-  .form-grid,.kind-info{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
   .aud-tab{white-space:normal;flex:1 1 0;justify-content:center;text-align:center;padding:10px 8px;font-size:14.5px}
   .tpl-block-head .btn .lbl{display:none}
   .channel-opts{grid-template-columns:1fr}
@@ -498,27 +495,22 @@ dialog.modal::backdrop{background:rgba(0,30,30,.45)}
 
   <!-- ============ VEIDNES ============ -->
   <section id="tab-veidnes" class="tab-panel" hidden>
-    <div class="page-head">
+    <div class="page-head top">
       <div>
-        <h1>Vēstuļu veidnes</h1>
+        <div class="title-row">
+          <h1>Vēstuļu veidnes</h1>
+          <button type="button" class="info-btn" id="tpl-info-btn" aria-expanded="false" aria-controls="tpl-info" aria-label="Par veidnēm" data-tip="Par veidnēm">i</button>
+        </div>
+        <div class="info-panel" id="tpl-info" role="region" aria-label="Par veidnēm" hidden>
+          <button type="button" class="icon-btn info-close" id="tpl-info-close" aria-label="Aizvērt"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
         <p>Veidnēs var lietot iepriekš definētus laukus, piem., <span class="var-chip">{vārds}</span><span class="var-chip">{apsekojums}</span><span class="var-chip">{termiņš}</span><span class="var-chip">{e-anketa}</span>. Sagatavojot komunikāciju, tie tiek aizpildīti katram adresātam. Ar <b>nosacījumiem</b> var veidot teksta daļas, kas redzamas tikai noteiktiem respondentiem, un veidnei var būt vairākas <b>valodu versijas</b>.</p>
+        </div>
       </div>
       <div class="toolbar">
         <button class="btn btn-secondary" data-action="layout-edit"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 17h8"/></svg>Pastāvīgās daļas</button>
         <button class="btn btn-primary" data-action="tpl-new"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Jauna veidne</button>
       </div>
     </div>
-    <details class="info-cards" id="tpl-info-cards">
-      <summary><svg class="icon chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>Par veidņu veidiem: e-pasta saturs, vēstule pielikumā, nosacījumi un varianti</summary>
-    <div class="kind-info">
-      <div class="card"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-        <div><b>E-pasta saturs</b><p>Vēstule ir pats ziņojuma teksts ar noformējumu: virsraksti, treknraksts, saraksti, saites un poga.</p></div></div>
-      <div class="card"><svg class="icon" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 13h6M9 17h6"/></svg>
-        <div><b>Vēstule pielikumā (PDF)</b><p>Katram adresātam tiek ģenerēts oficiālas vēstules dokuments ar veidlapas galvu, baneri un parakstu. Ziņojumā ir tikai īss pavadteksts.</p></div></div>
-      <div class="card k-cond"><svg class="icon" viewBox="0 0 24 24"><path d="M6 3v12M18 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM18 9a9 9 0 0 1-9 9"/></svg>
-        <div><b>Nosacījumi un varianti</b><p>Teksta daļa, kas redzama tikai noteiktiem respondentiem – pēc dalības veida (e-anketa, telefonintervija, klātiene) vai iepriekšējās dalības. Tā vienā veidnē var būt vairāki vēstules varianti.</p></div></div>
-    </div>
-    </details>
     <div class="aud-tabs" role="tablist" aria-label="Adresātu grupa" id="tpl-aud"></div>
     <div class="tpl-toolbar">
       <label class="search"><span class="sr-only">Meklēt veidnes</span>
@@ -1169,7 +1161,7 @@ const UI_KEY = 'csp-komunikacija-ui';
 const uiPrefs = (() => { try { return JSON.parse(localStorage.getItem(UI_KEY)) || {}; } catch (e) { return {}; } })();
 ui.tplCollapsed = new Set(uiPrefs.collapsed || []);
 function saveUiPrefs(){
-  try { localStorage.setItem(UI_KEY, JSON.stringify({collapsed:[...ui.tplCollapsed], infoOpen:$('#tpl-info-cards').open})); } catch (e) {}
+  try { localStorage.setItem(UI_KEY, JSON.stringify({collapsed:[...ui.tplCollapsed]})); } catch (e) {}
 }
 let previewDocs = [];
 
@@ -2471,8 +2463,14 @@ modal.addEventListener('click', e => { if (e.target === modal) modal.close(); })
 
 $('#resp-search').addEventListener('input', e => { ui.respSearch = e.target.value; renderRespondents(); });
 $('#tpl-search').addEventListener('input', e => { ui.tplSearch = e.target.value; renderTemplates(); });
-$('#tpl-info-cards').open = uiPrefs.infoOpen === true;
-$('#tpl-info-cards').addEventListener('toggle', saveUiPrefs);
+// "Par veidnēm" informācijas panelis (pēc noklusējuma aizvērts)
+function setTplInfo(open){
+  $('#tpl-info').hidden = !open;
+  $('#tpl-info-btn').setAttribute('aria-expanded', open);
+}
+$('#tpl-info-btn').addEventListener('click', () => setTplInfo($('#tpl-info').hidden));
+$('#tpl-info-close').addEventListener('click', () => { setTplInfo(false); $('#tpl-info-btn').focus(); });
+$('#tpl-info').addEventListener('keydown', e => { if (e.key === 'Escape'){ setTplInfo(false); $('#tpl-info-btn').focus(); } });
 // adresātu cilnes – pārslēgšana ar bultiņām
 $('#tpl-aud').addEventListener('keydown', e => {
   if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
