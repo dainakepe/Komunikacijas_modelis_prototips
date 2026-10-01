@@ -28,6 +28,21 @@ Abos veidos var lietot iepriekš definētus laukus. Tos ievieto ar izvēlni "+ I
 | Apsekojums | `{apsekojums}`, `{sākums}`, `{termiņš}`, `{e-anketa}`, `{apsekojuma_epasts}`, `{apsekojuma_vietne}` |
 | Dokuments | `{datums}`, `{dok_nr}`, `{tālrunis}`, `{parakstītājs}`, `{amats}` |
 
+## Nosacījumi un vēstuļu varianti
+
+Katram respondentam ir divas pazīmes:
+- **dalības veids:** e-anketa, tikai telefonintervija vai klātienes intervija;
+- **iepriekšējā dalība:** piedalījās, nepiedalījās vai izlasē pirmo reizi.
+
+Redaktorā ar pogu **◇ Nosacījums** iezīmētās rindkopas kļūst par bloku, kas redzams tikai respondentiem ar izvēlēto pazīmes vērtību vai vērtībām. Tā vienā veidnē var būt vairāki varianti, piemēram, "Kā piedalīties aptaujā?" e-anketas un telefonintervijas respondentiem.
+
+- **Veidnes priekšskatījumā** variantu var pārslēgt.
+- **Sagatavošanā:**
+  - respondentus var atlasīt pēc pazīmēm;
+  - kopsavilkumā redzams, cik vēstuļu būs katrā variantā;
+  - katras vēstules priekšskatījumā redzams tās variants.
+- **CSV importā** pazīmes var norādīt kolonnās `dalības veids` un `iepriekšējā dalība`. Tās nav obligātas. Atpazīst arī saīsinājumus CAWI/CATI/CAPI un vērtības jā/nē.
+
 ## GitHub Pages
 
 1. Repozitorijā atveriet **Settings → Pages**.
