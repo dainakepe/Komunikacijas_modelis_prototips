@@ -41,7 +41,26 @@ Papildus:
 Veidnes var būt divu veidu:
 
 - **E-pasta saturs.** Vēstule ir pats ziņojuma teksts ar noformējumu: virsraksti, treknraksts, krāsas, līdzināšana, saraksti, saites, attēli un pogas. E-adresē tiek nosūtīta tā vienkārša teksta versija.
-- **Vēstule pielikumā (PDF).** Katram adresātam tiek ģenerēts A4 dokuments. Ziņojumā ir tikai īss pavadteksts. Dokumentu var izdrukāt vai saglabāt kā PDF.
+- **Vēstule pielikumā.** Galvenā vēstule ir pielikumā, bet ziņojumā ir tikai īss pavadteksts. Pielikums var būt dokuments no pielikumu bibliotēkas (PDF vai DOCX) vai dokuments ar laukiem, kas katram adresātam tiek ģenerēts kā A4 PDF (to var izdrukāt vai saglabāt kā PDF).
+
+### Jaunas veidnes izveide
+
+Pēc "+ Jauna veidne" vispirms izvēlas **vēstules veidu**. Zem tā parādās izvēle, kā sākt:
+
+- **E-pasta saturs:**
+  - **"Sākt no sagataves"** atver logu ar e-pasta satura sagatavēm, sagrupētām pēc kategorijas un atlasītām pēc izvēlētā adresāta. Katrai sagatavei redzams nosaukums, temats un īss teksta priekšskatījums. Sagataves ir esošās e-pasta satura veidnes un trīs papildu sagataves, lai katrai adresātu grupai katrā kategorijā ir vismaz viena. Izvēlētās sagataves teksts un formatējums ielādējas redaktorā, un to var brīvi labot. Ja temats vēl nav aizpildīts, tiek ielādēts arī temats.
+  - **"Veidot jaunu (tukšs)"** atver redaktoru tikai ar uzrunu un parakstu.
+- **Vēstule pielikumā:**
+  - **"Izvēlēties no sagatavēm"** atver logu ar bibliotēkas dokumentiem, kas atzīmēti kā "Sagatave". Logā ir meklēšana, filtri un PDF priekšskatījums. Izvēlētais dokuments kļūst par veidnes galveno vēstuli.
+  - **"Augšupielādēt savu failu"** – PDF vai DOCX, līdz 1 MB. Fails tiek pievienots arī pielikumu bibliotēkai.
+  - Saite **"Vai veidot dokumentu redaktorā ar laukiem"** saglabā iespēju veidot ģenerētu PDF dokumentu ar laukiem un nosacījumiem.
+  - Izvēlētais dokuments redzams kartītē ar nosaukumu, izmēru un pogām "Priekšskatīt", "Nomainīt" un "Noņemt". Zem tās ir pavadteksta redaktors ar pavadteksta sagatavēm (uzaicinājums, atgādinājums, informācija).
+
+Ja pēc satura ievadīšanas nomaina vēstules veidu, sistēma brīdina: "Mainot vēstules veidu, ievadītais saturs var tikt zaudēts. Turpināt?".
+
+**Papildu pielikumi (neobligāti)** ir sakļaujama sadaļa formas apakšā (pēc noklusējuma sakļauta). Ar pogu "+ Pievienot pielikumu" var izvēlēties failu no bibliotēkas vai no datora. Faili no datora arī tiek pievienoti bibliotēkai.
+
+**Priekšskatījumā** zem ziņojuma teksta ar saspraudes ikonu redzami pielikumi: galvenās vēstules kartīte, ko var atvērt, un papildu pielikumi. Tāpat pielikumi redzami sadaļā "Sagatavot komunikāciju" un nosūtītajās vēstulēs.
 
 Veidnēm ar veidu "E-pasta saturs" redaktorā var pievienot:
 - **attēlus** (poga **Attēls**). Attēlu var augšupielādēt no datora (PNG, JPG vai GIF, ne lielāku par 1 MB) vai norādīt `https://` saiti. Obligāti jānorāda alternatīvais teksts, un var izvēlēties platumu (mazs, vidējs, pilns) un novietojumu (pa kreisi, centrā vai pa labi). Augšupielādētie attēli glabājas pārlūkā kā data URL;
@@ -79,8 +98,8 @@ Cilnē **Pielikumi** ir gatavi PDF pielikumi, ko var pievienot veidnēm kā papi
 - **Sagataves.** Iepriekš ielādētie paraugi ir atzīmēti ar birku "Sagatave". Tie ir izdalīti no PDF faila ar vēstuļu paraugiem, un faili glabājas mapē `pielikumi/` (sīkbildes – `pielikumi/sikbildes/`). Sagataves nevar labot vai dzēst.
 - **Katram pielikumam** ir nosaukums, īss apraksts, kategorija (uzaicinājuma vēstule, instrukcija, informatīvs materiāls vai cits), adresāti (fiziskās personas, juridiskās personas vai visi) un valoda, ja tā ir zināma.
 - **Meklēšana un filtri.** Pielikumus var meklēt pēc nosaukuma, apraksta vai faila nosaukuma un atlasīt pēc adresātiem, kategorijas un valodas.
-- **Savi pielikumi.** Ar pogu "Pievienot pielikumu" var augšupielādēt savu PDF failu (ne lielāku par 1 MB). Tas tiek saglabāts pārlūkā, un to var labot vai dzēst.
-- **Pievienošana veidnei.** Pielikumu var pievienot veidnei ar pogu "Pievienot veidnei" vai veidnes redaktorā sadaļā "Papildu pielikumi" ar izvēlni "+ No bibliotēkas…". Vēstules priekšskatījumā un nosūtītajās vēstulēs bibliotēkas pielikumu var atvērt.
+- **Savi pielikumi.** Ar pogu "Pievienot pielikumu" var augšupielādēt savu PDF vai DOCX failu (ne lielāku par 1 MB). Tas tiek saglabāts pārlūkā, un to var labot vai dzēst.
+- **Pievienošana veidnei.** Pielikumu var pievienot veidnei ar pogu "Pievienot veidnei" vai veidnes redaktorā: kā galveno vēstuli vai sadaļā "Papildu pielikumi". Pielikumu, kas kādai veidnei ir galvenā vēstule, nevar dzēst, kamēr tas nav nomainīts veidnē. Vēstules priekšskatījumā un nosūtītajās vēstulēs bibliotēkas pielikumu var atvērt.
 
 | Fails mapē `pielikumi/` | Saturs |
 |---|---|
