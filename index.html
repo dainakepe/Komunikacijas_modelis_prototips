@@ -593,19 +593,15 @@ a.logo{text-decoration:none}
 a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 .home-link{color:var(--on-primary);font-weight:600;font-size:14px;text-decoration:none;white-space:nowrap}
 .home-link:hover{text-decoration:underline}
-/* Respondentu pārvaldība – aktīvā kartīte ar apakšmoduļiem (divas kolonnas) */
-.mod-card.is-wide{grid-column:span 2;cursor:default}
-.mod-card.is-wide:hover{background:var(--primary)}
-.mod-head{display:flex;align-items:center;gap:14px}
-.sub-list{list-style:none;margin:2px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.sub{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:46px;padding:9px 12px;border-radius:8px;font-size:14px;font-weight:600}
-.sub.is-off{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.72);cursor:default}
-.sub.is-off .mod-badge{margin:0;flex:none;align-self:center;font-size:11px;padding:1px 8px;background:transparent;color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.4)}
-a.sub.is-on{background:#fff;color:var(--primary-darker);text-decoration:none;border:1px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
-a.sub.is-on:hover{background:var(--primary-50)}
-a.sub.is-on:focus-visible{outline:3px solid #fff;outline-offset:2px}
-.sub.is-on small{display:block;font-weight:500;font-size:12.5px;color:var(--text-muted);margin-top:1px}
-.sub.is-on .icon{width:20px;height:20px;flex:none}
+/* Respondentu pārvaldība: neaktīva kartīte ar vienu aktīvu apakšmoduli "Komunikācija" */
+.mod-grid{grid-auto-rows:1fr}
+.mod-sub-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--primary);color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(0,153,153,.25);transition:background .12s}
+.mod-sub-link:hover{background:var(--primary-hover)}
+.mod-sub-link:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
+.mod-sub-link .icon{width:20px;height:20px;flex:none}
+.mod-sub-link span{flex:1;min-width:0;display:flex;flex-direction:column}
+.mod-sub-link b{font-size:14.5px}
+.mod-sub-link small{font-size:12.5px;opacity:.92}
 /* Navigācijas ceļš moduļa galvenē */
 #module-view .header-inner{padding-top:10px;padding-bottom:10px}
 .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:12.5px;font-weight:600;opacity:.95;margin-bottom:1px}
@@ -629,10 +625,9 @@ a.sub.is-on:focus-visible{outline:3px solid #fff;outline-offset:2px}
   .user,.brand-sub{display:none}
   .brand-title{font-size:18px}
   .form-grid,.mod-grid{grid-template-columns:1fr}
-  .mod-card.is-wide{grid-column:auto}
+  .mod-grid{grid-auto-rows:auto}
   .crumbs{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
   .crumbs .sep{margin:0 3px}
-  .sub-list{grid-template-columns:1fr}
   .home-link{display:none}
   .tpl-block-head .btn .lbl{display:none}
   .channel-opts{grid-template-columns:1fr}
@@ -679,23 +674,15 @@ a.sub.is-on:focus-visible{outline:3px solid #fff;outline-offset:2px}
   <h1 class="home-hello">Labdien, Testa Darbiniek!</h1>
   <p class="home-lead">Izvēlieties moduli, ar kuru strādāt.</p>
   <div class="mod-grid">
-    <article class="mod-card is-active is-wide" aria-labelledby="mod-resp">
-      <div class="mod-head">
-        <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.7"/></svg></div>
-        <div><h2 id="mod-resp">Respondentu pārvaldība</h2><p>Respondentu saraksti, rekvizīti un saziņa ar respondentiem</p></div>
-      </div>
-      <ul class="sub-list" aria-label="Respondentu pārvaldības apakšmoduļi">
-        <li class="sub is-off" aria-disabled="true"><span>Respondentu saraksti</span><span class="mod-badge">Nav pieejams prototipā</span></li>
-        <li class="sub is-off" aria-disabled="true"><span>Matrica</span><span class="mod-badge">Nav pieejams prototipā</span></li>
-        <li class="sub is-off" aria-disabled="true"><span>Rekvizītu aktualizācija</span><span class="mod-badge">Nav pieejams prototipā</span></li>
-        <li class="sub is-off" aria-disabled="true"><span>Priekšiedruka</span><span class="mod-badge">Nav pieejams prototipā</span></li>
-        <li><a class="sub is-on" href="#veidnes"><span>Komunikācija<small>Vēstuļu veidnes, sagatavošana un sūtīšana</small></span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li>
-        <li class="sub is-off" aria-disabled="true"><span>Atskaites</span><span class="mod-badge">Nav pieejams prototipā</span></li>
-      </ul>
-    </article>
     <article class="mod-card is-off" aria-disabled="true">
       <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg></div>
       <h2>Metadatu pārvaldība</h2><p>Rādītāju kopas, ievadformas, validācijas, klasifikatori</p>
+      <span class="mod-badge">Nav pieejams prototipā</span>
+    </article>
+    <article class="mod-card is-off" aria-labelledby="mod-resp">
+      <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.7"/></svg></div>
+      <h2 id="mod-resp">Respondentu pārvaldība</h2><p>Respondentu saraksti, matrica, rekvizītu aktualizācija</p>
+      <a class="mod-sub-link" href="#veidnes"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span><b>Komunikācija</b><small>Vēstuļu veidnes un sūtīšana</small></span><svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <span class="mod-badge">Nav pieejams prototipā</span>
     </article>
     <article class="mod-card is-off" aria-disabled="true">
