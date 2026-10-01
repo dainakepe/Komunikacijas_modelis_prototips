@@ -55,6 +55,15 @@
   --disabled-icon:#8A979C;    /* neaktīvas kartītes ikona */
 
   /* Citi */
+  /* Teksta un pogu krāsu palete redaktorā */
+  --pal-csp:#009999;          /* CSP tirkīzzaļā */
+  --pal-dark:#006B6B;         /* tumši tirkīzzaļa */
+  --pal-black:#1F2933;        /* melna */
+  --pal-gray:#4B5563;         /* tumši pelēka */
+  --pal-red:#B42318;          /* sarkana (brīdinājumiem) */
+  --cta-ink-light:#FFFFFF;    /* pogas teksts uz tumša fona */
+  --cta-ink-dark:#000000;     /* pogas teksts uz gaiša fona */
+
   --focus-ring:rgba(0,153,153,.45);
   --shadow:0 1px 2px rgba(0,60,60,.06),0 2px 10px rgba(0,60,60,.05);
   --shadow-lg:0 10px 40px rgba(0,40,40,.22);
@@ -139,7 +148,7 @@ textarea{resize:vertical;min-height:90px;font-family:var(--font)}
 input:hover,select:hover,textarea:hover{border-color:var(--primary-300)}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--focus-ring)}
 input[aria-invalid="true"]{border-color:var(--danger);box-shadow:0 0 0 2px rgba(180,35,24,.15)}
-select.mini{width:auto;padding:4px 8px;font-size:13px;color:var(--primary-dark);border-color:var(--primary-300);background:var(--primary-50)}
+select.mini{width:auto;max-width:170px;padding:4px 8px;font-size:13px;color:var(--primary-dark);border-color:var(--primary-300);background:var(--primary-50)}
 .hint{font-size:13px;color:var(--text-muted)}
 .err{font-size:13px;color:var(--danger);font-weight:600}
 .search{position:relative;display:block}
@@ -166,7 +175,19 @@ details.more summary{cursor:pointer;font-weight:600;color:var(--primary-dark);fo
 .rte-bar button{appearance:none;border:1px solid transparent;background:transparent;border-radius:4px;padding:4px 8px;font-size:13px;cursor:pointer;color:var(--text);min-width:30px;line-height:1.3}
 .rte-bar button:hover{background:#fff;border-color:var(--border)}
 .rte-bar .sep{width:1px;height:20px;background:var(--border);margin:0 4px}
-.rte-bar select{width:auto;margin-left:auto;padding:4px 8px;font-size:13px;color:var(--primary-dark);border-color:var(--primary-300);background:var(--primary-50)}
+.rte-bar select{width:auto;padding:4px 8px;font-size:13px;color:var(--primary-dark);border-color:var(--primary-300);background:var(--primary-50)}
+.rte-bar select.rte-field{margin-left:auto;max-width:200px}
+.rte-bar select.rte-style{color:var(--text);background:#fff;border-color:var(--border);min-width:132px}
+.rte-bar button[aria-pressed="true"]{background:var(--primary-100);border-color:var(--primary-300);color:var(--primary-darker)}
+.rte-bar .icon{width:15px;height:15px;vertical-align:-3px}
+.rte-color-btn{position:relative;font-weight:700}
+.rte-color-btn .bar{position:absolute;left:7px;right:7px;bottom:3px;height:3px;border-radius:2px;background:var(--pal-csp)}
+.rte-color{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px;border-bottom:1px solid var(--border-light);background:var(--primary-50);font-size:13px}
+.rte-color .err{flex-basis:100%}
+.swatches{display:flex;gap:6px;flex-wrap:wrap}
+.swatch{appearance:none;width:26px;height:26px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--border);cursor:pointer;padding:0}
+.swatch:hover,.swatch[aria-pressed="true"]{box-shadow:0 0 0 2px var(--primary-darker)}
+.hex-input{width:96px !important;padding:5px 8px !important;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px}
 .rte-link{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px;border-bottom:1px solid var(--border-light);background:var(--primary-50)}
 .rte-link input[type=text]{flex:1 1 140px;width:auto;padding:5px 8px;font-size:13.5px}
 .rte-link label{font-size:13px;display:flex;align-items:center;gap:5px}
@@ -185,7 +206,11 @@ details.more summary{cursor:pointer;font-weight:600;color:var(--primary-dark);fo
 .fld{background:var(--primary-100);color:var(--primary-darker);border-radius:3px;padding:0 3px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.88em;white-space:nowrap;box-shadow:inset 0 -1px 0 var(--primary-300)}
 
 /* Formatēta satura stils (redaktors, e-pasts, dokuments) */
+.rich h1{color:var(--primary-dark);font-size:1.5em;font-weight:700;margin:0 0 .5em;line-height:1.25}
+.rich h2{color:var(--primary-dark);font-size:1.25em;font-weight:700;margin:1.1em 0 .4em;line-height:1.3}
 .rich h3{color:var(--primary-dark);font-size:1.08em;font-weight:700;margin:1.1em 0 .4em}
+.rich h1:first-child,.rich h2:first-child{margin-top:0}
+.rich .al-c{text-align:center} .rich .al-r{text-align:right}
 .rich h3:first-child{margin-top:0}
 .rich p{margin:0 0 .75em}
 .rich ul,.rich ol{margin:0 0 .75em;padding-left:1.4em}
@@ -196,7 +221,7 @@ details.more summary{cursor:pointer;font-weight:600;color:var(--primary-dark);fo
 /* Attēli e-pasta saturā */
 .rich img{max-width:100%;height:auto;border:0;border-radius:4px}
 .rich img.img-w-s{width:33%} .rich img.img-w-m{width:60%} .rich img.img-w-l{width:100%}
-.rich img.img-a-c{display:block;margin:8px auto} .rich img.img-a-l{display:block;margin:8px 0}
+.rich img.img-a-c{display:block;margin:8px auto} .rich img.img-a-l{display:block;margin:8px 0} .rich img.img-a-r{display:block;margin:8px 0 8px auto}
 .rte-area img,.rte-area a.cta{cursor:pointer}
 .rte-area img:hover,.rte-area a.cta:hover{outline:2px solid var(--primary-300);outline-offset:2px}
 .no-media .rte-bar [data-cmd="img"]{display:none}
@@ -324,6 +349,8 @@ mark.v-miss,mark.v-unk{background:var(--danger-bg);color:var(--danger);border-ra
 .hl .doc-banner mark.v-ok{background:rgba(255,255,255,.22);color:#fff;box-shadow:none}
 .doc-slogan{width:calc(72% - 56px);text-align:right;color:var(--doc-accent);font-size:12px;margin-top:6px;padding-right:26px}
 .doc-title{color:var(--primary);font-size:17px;font-weight:700;margin:18px 0 14px;line-height:1.3}
+.doc .rich h1{color:var(--primary);font-size:17px;margin:18px 0 14px;line-height:1.3}
+.doc .rich h2{color:var(--primary);font-size:15px}
 .doc .rich h3{color:var(--primary);font-size:13.5px}
 .doc .rich p{margin-bottom:.6em}
 .doc-sign{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-top:26px}
@@ -978,16 +1005,39 @@ function fillRich(html, ctx, mark){
 }
 // E-pasta HTML ar iekļautajiem (inline) stiliem – tā, kā to redzēs saņēmējs; poga atveras jaunā cilnē
 const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+// Krāsu palete (vērtības – CSS mainīgajos)
+const PALETTE = [['--pal-csp', 'CSP tirkīzzaļā'], ['--pal-dark', 'Tumši tirkīzzaļa'], ['--pal-black', 'Melna'], ['--pal-gray', 'Tumši pelēka'], ['--pal-red', 'Sarkana (brīdinājumiem)']];
+const paletteColors = () => PALETTE.map(([v, name]) => ({hex: cssVar(v).toUpperCase(), name}));
+// "#09c", "09C099", "rgb(0, 153, 153)" -> "#0099CC" (vai '' ja nederīga)
+function normHex(c){
+  c = String(c || '').trim();
+  const m = c.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+  if (m) return '#' + [m[1], m[2], m[3]].map(x => Math.min(255, +x).toString(16).padStart(2, '0')).join('').toUpperCase();
+  c = c.replace(/^#/, '');
+  if (/^[0-9a-f]{3}$/i.test(c)) c = c.split('').map(x => x + x).join('');
+  return /^[0-9a-f]{6}$/i.test(c) ? '#' + c.toUpperCase() : '';
+}
+// Pogas teksta krāsa: balta uz tumša fona, melna uz gaiša (YIQ spilgtums)
+function ctaInk(hex){
+  const h = normHex(hex) || normHex(cssVar('--primary'));
+  const [r, g, b] = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  return (r * 299 + g * 587 + b * 114) / 1000 >= 150 ? cssVar('--cta-ink-dark') : cssVar('--cta-ink-light');
+}
 function emailInline(html){
   const t = parseHtml(html), P = cssVar('--primary') || '#009999', W = {s:'33%', m:'60%', l:'100%'};
   t.content.querySelectorAll('a.cta').forEach(a => {
-    a.setAttribute('style', `display:inline-block;background:${P};color:#ffffff;padding:10px 26px;border-radius:24px;font-weight:600;text-decoration:none`);
+    const bg = normHex(a.dataset.bg) || P;
+    a.setAttribute('style', `display:inline-block;background:${bg};color:${ctaInk(bg)};padding:10px 26px;border-radius:24px;font-weight:600;text-decoration:none`);
     a.setAttribute('target', '_blank'); a.setAttribute('rel', 'noopener noreferrer');
   });
   t.content.querySelectorAll('img').forEach(i => {
-    const w = (i.className.match(/img-w-(s|m|l)/) || [])[1] || 'l', c = /img-a-c/.test(i.className);
-    i.setAttribute('style', `display:block;width:${W[w]};max-width:100%;height:auto;border:0;margin:${c ? '8px auto' : '8px 0'}`);
+    const w = (i.className.match(/img-w-(s|m|l)/) || [])[1] || 'l', a = (i.className.match(/img-a-(l|c|r)/) || [])[1] || 'l';
+    i.setAttribute('style', `display:block;width:${W[w]};max-width:100%;height:auto;border:0;margin:${{l:'8px 0', c:'8px auto', r:'8px 0 8px auto'}[a]}`);
   });
+  // virsraksti un līdzināšana – iekļautie stili, jo e-pasta programmas klases neņem vērā
+  const PD = cssVar('--primary-dark'), HS = {H1:'24px', H2:'20px', H3:'16px'};
+  t.content.querySelectorAll('h1,h2,h3').forEach(h => h.setAttribute('style', `margin:${h.tagName === 'H1' ? '0 0 12px' : '18px 0 6px'};font-size:${HS[h.tagName]};line-height:1.3;font-weight:700;color:${PD}`));
+  t.content.querySelectorAll('.al-c,.al-r').forEach(el => el.setAttribute('style', [el.getAttribute('style'), `text-align:${el.classList.contains('al-c') ? 'center' : 'right'}`].filter(Boolean).join(';')));
   return t.innerHTML;
 }
 // Nosūtītajās vēstulēs vienādus attēlus glabā vienreiz (state.images), HTML – atsauce csp-img:ID
@@ -1008,7 +1058,7 @@ function htmlToText(html){
       const tag = c.tagName;
       if (tag === 'BR') s += '\n';
       else if (tag === 'IMG') s += `[Attēls: ${c.getAttribute('alt') || ''}]`;
-      else if (tag === 'P' || tag === 'H3') s += '\n' + walk(c).trim() + '\n\n';
+      else if (/^(P|H1|H2|H3)$/.test(tag)) s += '\n' + walk(c).trim() + '\n\n';
       else if (tag === 'UL' || tag === 'OL') s += '\n' + [...c.children].map((li, i) => (tag === 'OL' ? (i + 1) + '. ' : '• ') + walk(li).trim()).join('\n') + '\n\n';
       else if (tag === 'A'){
         const txt = walk(c), href = c.getAttribute('href') || '';
@@ -1025,8 +1075,8 @@ function htmlToText(html){
 // Atļauj tikai drošus formatēšanas elementus (arī ielīmējot no Word)
 function sanitize(html){
   const t = parseHtml(html);
-  const ALLOWED = ['P', 'BR', 'H3', 'STRONG', 'EM', 'U', 'UL', 'OL', 'LI', 'A', 'SPAN', 'IMG'];
-  const RENAME = {B:'STRONG', I:'EM', H1:'H3', H2:'H3', H4:'H3', H5:'H3', H6:'H3'};
+  const ALLOWED = ['P', 'BR', 'H1', 'H2', 'H3', 'STRONG', 'EM', 'U', 'UL', 'OL', 'LI', 'A', 'SPAN', 'IMG'];
+  const RENAME = {B:'STRONG', I:'EM', H4:'H3', H5:'H3', H6:'H3'};
   const clean = parent => {
     [...parent.childNodes].forEach(n => {
       if (n.nodeType === 3) return;
@@ -1035,13 +1085,23 @@ function sanitize(html){
       if (/^(SCRIPT|STYLE|META|LINK|TITLE|IFRAME|OBJECT|SVG|XML|HEAD)$/.test(tag) || tag.includes(':')){ n.remove(); return; }
       if (tag === 'IMG'){
         const src = (n.getAttribute('src') || '').trim(), alt = n.getAttribute('alt') || '';
-        const w = (n.className.match(/\bimg-w-(s|m|l)\b/) || [])[1] || 'l', a = (n.className.match(/\bimg-a-(l|c)\b/) || [])[1] || 'c';
+        const w = (n.className.match(/\bimg-w-(s|m|l)\b/) || [])[1] || 'l', a = (n.className.match(/\bimg-a-(l|c|r)\b/) || [])[1] || 'c';
         if (!isSafeImgSrc(src)){ n.remove(); return; }
         [...n.attributes].forEach(at => n.removeAttribute(at.name));
         n.setAttribute('src', src); n.setAttribute('alt', alt); n.className = `img-w-${w} img-a-${a}`;
         return;
       }
       clean(n);
+      // <font color> (no execCommand) un krāsaini <span> -> <span style="color:#HEX">
+      if (tag === 'FONT' || (tag === 'SPAN' && !n.classList.contains('fld'))){
+        const col = normHex(tag === 'FONT' ? n.getAttribute('color') : n.style.color);
+        if (!col){ n.replaceWith(...n.childNodes); return; }
+        const sp = document.createElement('span');
+        sp.setAttribute('style', `color:${col}`);
+        while (n.firstChild) sp.append(n.firstChild);
+        n.replaceWith(sp);
+        return;
+      }
       if (tag === 'DIV'){
         const A = ATTR_BY_KEY[n.dataset.attr];
         if (n.classList.contains('cond') && A && !(n.parentElement && n.parentElement.closest('.cond'))){
@@ -1052,7 +1112,7 @@ function sanitize(html){
             return;
           }
         }
-        tag = n.querySelector('p,h3,ul,ol,div') ? 'X-UNWRAP' : 'P';
+        tag = n.querySelector('p,h1,h2,h3,ul,ol,div') ? 'X-UNWRAP' : 'P';
       }
       tag = RENAME[tag] || tag;
       if (tag !== n.tagName && ALLOWED.includes(tag)){
@@ -1062,12 +1122,16 @@ function sanitize(html){
         n.replaceWith(r); n = r;
       }
       if (!ALLOWED.includes(tag) || (tag === 'SPAN' && !n.classList.contains('fld'))){ n.replaceWith(...n.childNodes); return; }
-      const href = (n.getAttribute('href') || '').trim(), cta = n.classList.contains('cta');
+      const href = (n.getAttribute('href') || '').trim(), cta = n.classList.contains('cta'), bg = normHex(n.dataset.bg);
+      // līdzināšana: klases al-c / al-r (arī no ielīmēta text-align)
+      const ta = n.style.textAlign || n.getAttribute('align') || '';
+      const al = n.classList.contains('al-c') || ta === 'center' ? 'al-c' : n.classList.contains('al-r') || ta === 'right' ? 'al-r' : '';
       [...n.attributes].forEach(a => n.removeAttribute(a.name));
       if (tag === 'SPAN') n.className = 'fld';
+      if (/^(P|H1|H2|H3|LI)$/.test(tag) && al) n.className = al;
       if (tag === 'A'){
         if (/^(https?:|mailto:|tel:|\{)/i.test(href)) n.setAttribute('href', href);
-        if (cta) n.className = 'cta';
+        if (cta){ n.className = 'cta'; if (bg) n.dataset.bg = bg; }
       }
     });
   };
@@ -1287,18 +1351,52 @@ function seedData(){
     t2.body = img + t2.body;
     Object.values(t2.tr).forEach(v => { v.body = img + v.body; });
   }
+  data.templates.forEach(migrateTemplate);
+  data.schema = SCHEMA;
   return data;
 }
 
 /* =====================================================================
    STĀVOKLIS
    ===================================================================== */
+// Shēmas versija 9: atsevišķais dokumenta virsraksts -> teksta sākumā "Virsraksts 1";
+// e-pasta teksta sākuma virsraksts -> "Virsraksts 1"
+const SCHEMA = 9;
+function promoteLeadHeading(html){
+  if (!html) return html;
+  const t = parseHtml(html);
+  for (const el of [...t.content.children]){
+    if (el.tagName === 'H3'){ const h = document.createElement('h1'); while (el.firstChild) h.append(el.firstChild); el.replaceWith(h); break; }
+    const onlyImg = el.tagName === 'P' && !el.textContent.trim();
+    if (!onlyImg) break;
+  }
+  return t.innerHTML;
+}
+function migrateTemplate(t){
+  const titleH1 = title => title ? `<h1>${esc(title)}</h1>` : '';
+  t.body = promoteLeadHeading(t.body);
+  if (t.doc){
+    t.doc.body = titleH1(t.doc.title) + (t.doc.body || '');
+    t.doc.title = '';
+  }
+  Object.values(t.tr || {}).forEach(v => {
+    v.body = promoteLeadHeading(v.body);
+    if (v.docTitle){
+      // ja tulkojumam nav sava teksta, ņem latviešu tekstu bez tā virsraksta
+      const base = v.docBody || (t.doc ? t.doc.body.replace(/^<h1>[\s\S]*?<\/h1>/, '') : '');
+      v.docBody = titleH1(v.docTitle) + base;
+    }
+    v.docTitle = '';
+  });
+  return t;
+}
 function loadState(){
   try {
     const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (s && Array.isArray(s.templates) && Array.isArray(s.respondents) && Array.isArray(s.sent)){
       s.layout = {...clone(DEFAULT_LAYOUT), ...(s.layout || {})};
       s.images = s.images || {};
+      if (!(s.schema >= SCHEMA)){ s.templates.forEach(migrateTemplate); s.schema = SCHEMA; }
       s.templates.forEach(t => { if (!AUDS[t.aud]) t.aud = 'fiz'; if (!CAT_BY_KEY[t.cat]) t.cat = 'cits'; });
       return s;
     }
@@ -1385,7 +1483,7 @@ function docHtml(t, ctx, mark, attrs, f = compose.f, L = state.layout){
       <div class="doc-addr">${esc(L.address)}</div><div class="doc-city">${esc(L.city)}</div></div>
     <div class="doc-meta">${R('{datums} Nr. {dok_nr}')}</div>
     ${d.banner ? `<div class="doc-banner"><b>${R('{apsekojums}')}</b>${f.tags ? `<small>${esc(f.tags)}</small>` : ''}</div>${f.slogan && (L.lang || 'lv') === 'lv' ? `<div class="doc-slogan">${esc(f.slogan)}</div>` : ''}` : ''}
-    <div class="doc-title">${R(esc(d.title))}</div>
+    ${d.title ? `<div class="doc-title">${R(esc(d.title))}</div>` : ''}
     <div class="rich">${R(d.body)}</div>
     ${d.conf ? `<div class="rich"><h3>${esc(L.confTitle)}</h3>${R(L.confHtml)}</div>` : ''}
     ${d.info ? `<div class="rich"><h3>${esc(L.infoTitle)}</h3>${R(L.infoHtml)}</div>` : ''}
@@ -1475,22 +1573,37 @@ function printDoc(html, name){
 function createEditor(host, html, {onChange, compact = false, cta = true, cond = true, media = false} = {}){
   host.innerHTML = `<div class="rte">
     <div class="rte-bar" role="toolbar" aria-label="Formatēšana">
-      <button type="button" data-cmd="h3" title="Virsraksts">Virsraksts</button>
-      <button type="button" data-cmd="p" title="Parasts teksts">Teksts</button>
+      <select class="rte-style" aria-label="Teksta stils" title="Teksta stils">
+        <option value="p">Parasts teksts</option><option value="h1">Virsraksts 1</option><option value="h2">Virsraksts 2</option><option value="h3">Virsraksts 3</option></select>
       <span class="sep"></span>
       <button type="button" data-cmd="bold" title="Treknraksts (Ctrl+B)"><b>B</b></button>
       <button type="button" data-cmd="italic" title="Slīpraksts (Ctrl+I)"><i>I</i></button>
       <button type="button" data-cmd="underline" title="Pasvītrots (Ctrl+U)"><u>U</u></button>
+      <button type="button" data-cmd="color" class="rte-color-btn" title="Teksta krāsa" aria-label="Teksta krāsa">A<span class="bar"></span></button>
+      <button type="button" data-cmd="removeFormat" title="Notīrīt formatējumu">Notīrīt</button>
       <span class="sep"></span>
-      <button type="button" data-cmd="insertUnorderedList" title="Aizzīmju saraksts">• Saraksts</button>
-      <button type="button" data-cmd="insertOrderedList" title="Numurēts saraksts">1. Saraksts</button>
+      <button type="button" data-cmd="al-l" title="Līdzināt pa kreisi" aria-label="Līdzināt pa kreisi" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M4 10h10M4 14h16M4 18h10"/></svg></button>
+      <button type="button" data-cmd="al-c" title="Centrēt" aria-label="Centrēt" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M7 10h10M4 14h16M7 18h10"/></svg></button>
+      <button type="button" data-cmd="al-r" title="Līdzināt pa labi" aria-label="Līdzināt pa labi" aria-pressed="false"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M10 10h10M4 14h16M10 18h10"/></svg></button>
+      <span class="sep"></span>
+      <button type="button" data-cmd="insertUnorderedList" title="Aizzīmju saraksts" aria-label="Aizzīmju saraksts"><svg class="icon" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2"/><circle cx="4.5" cy="12" r="1.2"/><circle cx="4.5" cy="18" r="1.2"/></svg></button>
+      <button type="button" data-cmd="insertOrderedList" title="Numurēts saraksts" aria-label="Numurēts saraksts"><svg class="icon" viewBox="0 0 24 24"><path d="M10 6h10M10 12h10M10 18h10M4 4.5h1.5V9M4 9h3M4 14.5c.4-.6 1-1 1.7-1 .8 0 1.3.5 1.3 1.2 0 1.2-3 2.1-3 3.8h3"/></svg></button>
       <span class="sep"></span>
       <button type="button" data-cmd="link" title="Saite">Saite</button>
       ${media ? '<button type="button" data-cmd="img" title="Ievietot attēlu (PNG, JPG, GIF)">Attēls</button>' : ''}
       ${cta ? '<button type="button" data-cmd="cta" title="Poga ar saiti, piem., “EDV”">Poga</button>' : ''}
+      <span class="sep"></span>
       ${cond ? '<button type="button" data-cmd="cond" title="Teksta daļa, kas redzama tikai noteiktiem respondentiem">◇ Nosacījums</button>' : ''}
-      <button type="button" data-cmd="removeFormat" title="Notīrīt formatējumu">Notīrīt</button>
-      <select aria-label="Ievietot lauku"><option value="">+ Ievietot lauku…</option>${fieldOptions()}</select>
+      <select class="rte-field" aria-label="Ievietot lauku"><option value="">+ Ievietot lauku…</option>${fieldOptions()}</select>
+    </div>
+    <div class="rte-color" hidden>
+      <span class="label">Teksta krāsa:</span>
+      <div class="swatches">${paletteColors().map(c => `<button type="button" class="swatch" data-hex="${c.hex}" style="background:${c.hex}" title="${esc(c.name)} ${c.hex}" aria-label="${esc(c.name)}"></button>`).join('')}</div>
+      <input type="text" class="hex-input rc-hex" placeholder="#009999" aria-label="Savs HEX kods" maxlength="7">
+      <button type="button" class="btn btn-primary btn-sm rcl-ok">Lietot</button>
+      <button type="button" class="btn btn-secondary btn-sm rcl-remove">Noņemt krāsu</button>
+      <button type="button" class="btn btn-ghost btn-sm rcl-cancel">Atcelt</button>
+      <span class="err rcl-err" hidden></span>
     </div>
     <div class="rte-link" hidden>
       <input type="text" class="rl-text" placeholder="Saites teksts">
@@ -1508,7 +1621,8 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
     </div>
     <div class="rte-area rich ${compact ? 'compact' : ''}" contenteditable="true" role="textbox" aria-multiline="true"></div>
   </div>`;
-  const area = $('.rte-area', host), bar = $('.rte-bar', host), linkBox = $('.rte-link', host), sel = $('select', bar);
+  const area = $('.rte-area', host), bar = $('.rte-bar', host), linkBox = $('.rte-link', host), sel = $('.rte-field', bar);
+  const styleSel = $('.rte-style', bar), colorBox = $('.rte-color', host);
   const lock = () => $$('.fld', area).forEach(s => s.contentEditable = 'false');
   const condBox = $('.rte-cond', host);
   // Nosacījuma blokiem parāda iezīmi; aiz pēdējā bloka atstāj tukšu rindkopu, lai var turpināt rakstīt
@@ -1516,14 +1630,20 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
     // tukšām rindkopām vajag <br>, citādi tām nav augstuma un tajās nevar ieklikšķināt
     $$('p', area).forEach(el => { if (!el.firstChild) el.innerHTML = '<br>'; });
     $$('.cond', area).forEach(d => d.dataset.label = condLabel(d.dataset.attr, (d.dataset.val || '').split(',')));
+    $$('a.cta', area).forEach(paintCta);
     const last = area.lastElementChild;
     if (last && last.classList.contains('cond')){ const p = document.createElement('p'); p.innerHTML = '<br>'; area.append(p); }
   };
+  // pogas krāsa redaktorā (saglabājas atribūtā data-bg)
+  function paintCta(a){ const bg = normHex(a.dataset.bg) || cssVar('--primary'); a.style.background = bg; a.style.color = ctaInk(bg); }
   area.innerHTML = sanitize(html || '<p><br></p>');
   lock(); decorate();
   let saved = null;
   const saveSel = () => { const s = getSelection(); if (s.rangeCount && area.contains(s.anchorNode)) saved = s.getRangeAt(0).cloneRange(); };
   const restore = () => {
+    const cur = getSelection();
+    // ja kursors jau ir redaktorā, to atstāj (piem., pārvietots ar tastatūru)
+    if (document.activeElement === area && cur.rangeCount && area.contains(cur.anchorNode)){ saved = cur.getRangeAt(0).cloneRange(); return; }
     area.focus();
     const s = getSelection(); s.removeAllRanges();
     if (saved) s.addRange(saved);
@@ -1544,6 +1664,90 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
     changed();
   };
   ['keyup', 'mouseup', 'blur'].forEach(ev => area.addEventListener(ev, saveSel));
+  // Rindkopas, kurām pieskaras atlase (bez ligzdotām)
+  const blocksIn = (r, selector) => $$(selector, area).filter(el => r.intersectsNode(el) && !$$(selector, el).some(c => r.intersectsNode(c)));
+  const curRange = () => { const s = getSelection(); return s.rangeCount && area.contains(s.anchorNode) ? s.getRangeAt(0) : null; };
+  // Rīkjoslas stāvoklis: teksta stils un līdzināšana atbilstoši kursora vietai
+  function syncBar(){
+    const r = curRange();
+    if (!r) return;
+    const node = r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement;
+    const block = node && node.closest('p,h1,h2,h3,li');
+    styleSel.value = block && /^H[123]$/.test(block.tagName) ? block.tagName.toLowerCase() : 'p';
+    const al = block ? (block.classList.contains('al-c') ? 'c' : block.classList.contains('al-r') ? 'r' : 'l') : 'l';
+    ['l', 'c', 'r'].forEach(k => $(`[data-cmd="al-${k}"]`, bar).setAttribute('aria-pressed', k === al));
+  }
+  ['keyup', 'mouseup', 'focus'].forEach(ev => area.addEventListener(ev, syncBar));
+  // Teksta stils: Parasts teksts / Virsraksts 1–3 (saglabā līdzināšanu)
+  styleSel.addEventListener('change', () => {
+    const tag = styleSel.value;
+    restore();
+    const r = curRange();
+    const blocks = r ? blocksIn(r, 'p,h1,h2,h3') : [];
+    if (!blocks.length){ document.execCommand('formatBlock', false, `<${tag}>`); changed(); syncBar(); return; }
+    let last;
+    blocks.forEach(b => {
+      if (b.tagName.toLowerCase() === tag){ last = b; return; }
+      const n = document.createElement(tag);
+      if (b.className) n.className = b.className;
+      while (b.firstChild) n.append(b.firstChild);
+      b.replaceWith(n); last = n;
+    });
+    const s = getSelection(), rr = document.createRange();
+    rr.selectNodeContents(last); rr.collapse(false); s.removeAllRanges(); s.addRange(rr);
+    changed(); syncBar();
+  });
+  // Līdzināšana – visai rindkopai (arī virsrakstiem un attēliem tajā)
+  function applyAlign(al){
+    const r = curRange();
+    if (!r) return;
+    let blocks = blocksIn(r, 'p,h1,h2,h3,li');
+    if (!blocks.length){ document.execCommand('formatBlock', false, '<p>'); const r2 = curRange(); blocks = r2 ? blocksIn(r2, 'p,h1,h2,h3,li') : []; }
+    blocks.forEach(b => {
+      b.classList.remove('al-c', 'al-r');
+      if (al !== 'l') b.classList.add('al-' + al);
+      if (!b.className) b.removeAttribute('class');
+      $$('img', b).forEach(img => { img.className = img.className.replace(/\bimg-a-(l|c|r)\b/, 'img-a-' + al); });
+    });
+    changed(); syncBar();
+  }
+  // Teksta krāsa
+  const MARK = '#010203';
+  function applyColor(hex){
+    restore();
+    document.execCommand('styleWithCSS', false, false);
+    document.execCommand('foreColor', false, hex);
+    $$('font[color]', area).forEach(f => {
+      const sp = document.createElement('span'); sp.setAttribute('style', `color:${normHex(f.getAttribute('color'))}`);
+      while (f.firstChild) sp.append(f.firstChild); f.replaceWith(sp);
+    });
+    changed();
+  }
+  function removeColor(){
+    restore();
+    document.execCommand('styleWithCSS', false, false);
+    // pārlūks sadala esošos krāsainos elementus; marķētos atritina
+    document.execCommand('foreColor', false, MARK);
+    $$('font[color]', area).forEach(f => {
+      if (normHex(f.getAttribute('color')) !== MARK) return;
+      $$('span[style], font[color]', f).forEach(x => x.replaceWith(...x.childNodes));
+      f.replaceWith(...f.childNodes);
+    });
+    $$('span[style]', area).forEach(x => { if (normHex(x.style.color) === MARK) x.replaceWith(...x.childNodes); });
+    area.normalize();
+    changed();
+  }
+  const colorErr = msg => { const e = $('.rcl-err', colorBox); e.hidden = !msg; e.textContent = msg; };
+  $$('.swatch', colorBox).forEach(b => b.addEventListener('click', () => { colorBox.hidden = true; applyColor(b.dataset.hex); }));
+  $('.rcl-ok', colorBox).onclick = () => {
+    const hex = normHex($('.rc-hex', colorBox).value);
+    if (!hex){ colorErr('Nederīgs HEX kods. Piemērs: #009999'); $('.rc-hex', colorBox).focus(); return; }
+    colorBox.hidden = true; applyColor(hex);
+  };
+  $('.rc-hex', colorBox).addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('.rcl-ok', colorBox).click(); } });
+  $('.rc-hex', colorBox).addEventListener('input', () => colorErr(''));
+  $('.rcl-remove', colorBox).onclick = () => { colorBox.hidden = true; removeColor(); };
+  $('.rcl-cancel', colorBox).onclick = () => { colorBox.hidden = true; restore(); };
   area.addEventListener('input', changed);
   area.addEventListener('paste', e => {
     e.preventDefault();
@@ -1558,7 +1762,12 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
     const cmd = b.dataset.cmd;
     restore();
     try { document.execCommand('styleWithCSS', false, false); } catch (err) {}
-    if (cmd === 'h3' || cmd === 'p') document.execCommand('formatBlock', false, `<${cmd}>`);
+    if (cmd.startsWith('al-')){ applyAlign(cmd.slice(3)); return; }
+    else if (cmd === 'color'){
+      saveSel(); linkBox.hidden = true; condBox.hidden = true;
+      colorBox.hidden = !colorBox.hidden; colorErr(''); $('.rc-hex', colorBox).value = '';
+      return;
+    }
     else if (cmd === 'cond'){ saveSel(); openCond(); return; }
     else if (cmd === 'cta'){
       saveSel();
@@ -1588,19 +1797,19 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
     insertNodes(a, document.createTextNode('\u00A0'));
   };
   // Attēli un pogas: izveide un rediģēšana (uzklikšķinot uz elementa redaktorā)
-  function makeCta(d){ const a = document.createElement('a'); a.className = 'cta'; a.setAttribute('href', d.url); a.textContent = d.text; return a; }
+  function makeCta(d){ const a = document.createElement('a'); a.className = 'cta'; a.setAttribute('href', d.url); a.textContent = d.text; a.dataset.bg = d.bg; paintCta(a); return a; }
   function applyImg(img, d){ img.setAttribute('src', d.src); img.setAttribute('alt', d.alt); img.className = `img-w-${d.w} img-a-${d.a}`; return img; }
   area.addEventListener('click', e => {
     const img = e.target.closest('img'), cta = e.target.closest('a.cta');
     if (img && area.contains(img)){
       e.preventDefault();
       openImageDialog({src:img.getAttribute('src'), alt:img.getAttribute('alt') || '',
-        w:(img.className.match(/img-w-(s|m|l)/) || [])[1] || 'l', a:(img.className.match(/img-a-(l|c)/) || [])[1] || 'c'},
+        w:(img.className.match(/img-w-(s|m|l)/) || [])[1] || 'l', a:(img.className.match(/img-a-(l|c|r)/) || [])[1] || 'c'},
         d => { if (d) applyImg(img, d); else img.remove(); changed(); });
     } else if (cta && area.contains(cta)){
       e.preventDefault();
-      openButtonDialog({text:cta.textContent, url:cta.getAttribute('href') || ''},
-        d => { if (d){ cta.textContent = d.text; cta.setAttribute('href', d.url); } else cta.remove(); changed(); });
+      openButtonDialog({text:cta.textContent, url:cta.getAttribute('href') || '', bg:normHex(cta.dataset.bg) || cssVar('--primary')},
+        d => { if (d){ cta.textContent = d.text; cta.setAttribute('href', d.url); cta.dataset.bg = d.bg; paintCta(cta); } else cta.remove(); changed(); });
     }
   });
   $('.rl-cancel', linkBox).onclick = () => { linkBox.hidden = true; restore(); };
@@ -1707,7 +1916,7 @@ function openSubModal({title, content, actions = []}){
 const IMG_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
 const IMG_MAX = 1024 * 1024; // 1 MB
 const IMG_WIDTHS = {s:'Mazs', m:'Vidējs', l:'Pilns platums'};
-const IMG_ALIGN = {l:'Pa kreisi', c:'Centrā'};
+const IMG_ALIGN = {l:'Pa kreisi', c:'Centrā', r:'Pa labi'};
 const isSafeImgSrc = src => /^data:image\/(png|jpeg|gif);base64,[a-z0-9+\/=]+$/i.test(src) || /^https:\/\/\S+$/i.test(src);
 // Pogas saitei jāsākas ar https:// vai jābūt laukam, piem., {e-anketa}
 function ctaUrlError(url){
@@ -1797,7 +2006,8 @@ function openImageDialog(data, onDone){
 }
 // Pogas logs. data = {text, url} rediģēšanai; onDone(null) – dzēst
 function openButtonDialog(data, onDone){
-  const d = data || {text:'', url:''};
+  const d = data || {text:'', url:'', bg:normHex(cssVar('--primary'))};
+  let bg = normHex(d.bg) || normHex(cssVar('--primary'));
   const actions = [];
   if (data) actions.push({label:`${ICON.trash}Dzēst pogu`, cls:'btn-danger-ghost left', onClick: close => { close(); onDone(null); }});
   actions.push({label:'Atcelt', cls:'btn-secondary'});
@@ -1807,7 +2017,9 @@ function openButtonDialog(data, onDone){
     showErr('#bt-text-err', tErr); showErr('#bt-url-err', uErr);
     if (tErr){ $('#bt-text', submodal).focus(); return; }
     if (uErr){ $('#bt-url', submodal).focus(); return; }
-    close(); onDone({text, url});
+    const hexTyped = $('#bt-hex', submodal).value.trim();
+    if (hexTyped && !normHex(hexTyped)){ showErr('#bt-hex-err', 'Nederīgs HEX kods. Piemērs: #009999'); $('#bt-hex', submodal).focus(); return; }
+    close(); onDone({text, url, bg});
   }});
   openSubModal({title: data ? 'Rediģēt pogu' : 'Ievietot pogu', actions, content:`
     <div class="field"><label for="bt-text">Pogas teksts <span class="req">*</span></label>
@@ -1817,12 +2029,24 @@ function openButtonDialog(data, onDone){
       <input type="text" id="bt-url" value="${esc(d.url)}" placeholder="https://edv.csp.example vai {e-anketa}">
       <span class="hint">Saitei jāsākas ar https:// vai tā var būt lauks, piem., {e-anketa}.</span>
       <span class="err" id="bt-url-err" hidden></span></div>
+    <div class="field"><span class="label">Pogas krāsa</span>
+      <div class="toolbar">
+        <div class="swatches" id="bt-swatches">${paletteColors().map(c => `<button type="button" class="swatch" data-hex="${c.hex}" style="background:${c.hex}" title="${esc(c.name)} ${c.hex}" aria-label="${esc(c.name)}" aria-pressed="false"></button>`).join('')}</div>
+        <input type="text" class="hex-input" id="bt-hex" maxlength="7" placeholder="#009999" aria-label="Pogas krāsa – HEX kods">
+      </div>
+      <span class="hint">Teksta krāsa (balta vai melna) tiek izvēlēta automātiski, lai tas būtu labi salasāms.</span>
+      <span class="err" id="bt-hex-err" hidden></span></div>
     <div class="field"><span class="label">Priekšskatījums</span><div class="media-preview" id="bt-preview"></div></div>`});
   function showErr(sel, msg){ const e = $(sel, submodal); e.hidden = !msg; e.textContent = msg; }
   function preview(){
     const text = $('#bt-text', submodal).value.trim() || 'Pogas teksts';
-    $('#bt-preview', submodal).innerHTML = `<div class="rich" style="text-align:center">${emailInline(`<a class="cta" href="#">${esc(text)}</a>`)}</div>`;
+    $('#bt-preview', submodal).innerHTML = `<div class="rich" style="text-align:center">${emailInline(`<a class="cta" href="#" data-bg="${bg}">${esc(text)}</a>`)}</div>`;
+    $$('#bt-swatches .swatch', submodal).forEach(s => s.setAttribute('aria-pressed', s.dataset.hex === bg));
   }
+  function setBg(hex){ bg = hex; $('#bt-hex', submodal).value = hex; showErr('#bt-hex-err', ''); preview(); }
+  $$('#bt-swatches .swatch', submodal).forEach(s => s.addEventListener('click', () => setBg(s.dataset.hex)));
+  $('#bt-hex', submodal).value = bg;
+  $('#bt-hex', submodal).addEventListener('input', e => { const h = normHex(e.target.value); showErr('#bt-hex-err', ''); if (h){ bg = h; preview(); } });
   $('#bt-text', submodal).addEventListener('input', () => { showErr('#bt-text-err', ''); preview(); });
   $('#bt-url', submodal).addEventListener('input', () => showErr('#bt-url-err', ''));
   $('#bt-field', submodal).addEventListener('change', e => {
@@ -1947,8 +2171,8 @@ function renderTemplates(){
   }).join('');
 }
 
-const defaultDoc = () => ({title:'Uzaicinājums piedalīties aptaujā', fileName:'CSP_vestule_{dok_nr}.pdf', banner:true, conf:true, info:true,
-  body:'<p><strong>Labdien!</strong></p><p><br></p>'});
+const defaultDoc = () => ({title:'', fileName:'CSP_vestule_{dok_nr}.pdf', banner:true, conf:true, info:true,
+  body:'<h1>Uzaicinājums piedalīties aptaujā</h1><p><strong>Labdien!</strong></p><p><br></p>'});
 
 function openTemplateEditor(id, preset = {}){
   const existing = state.templates.find(t => t.id === id);
@@ -2012,10 +2236,7 @@ function openTemplateEditor(id, preset = {}){
           <span class="hint" id="te-body-hint"></span><span class="err" id="te-body-err" hidden></span></div>
         <fieldset class="box" id="te-doc">
           <legend>Pielikuma dokuments (PDF)</legend>
-          <div class="form-grid te-lf">
-            <div class="field"><label for="te-doc-title">Dokumenta virsraksts</label><input type="text" id="te-doc-title"></div>
-            <div class="field"><label for="te-doc-file">Faila nosaukums</label><input type="text" id="te-doc-file"><span class="hint">Var lietot laukus, piem., {dok_nr}</span></div>
-          </div>
+          <div class="field te-lf"><label for="te-doc-file">Faila nosaukums</label><input type="text" id="te-doc-file"><span class="hint">Var lietot laukus, piem., {dok_nr}. Dokumenta virsrakstu rakstiet tekstā ar stilu “Virsraksts 1”.</span></div>
           <div class="field te-lf"><span class="label">Mainīgā daļa (vēstules teksts)</span><div id="te-doc-body"></div></div>
           <div class="field"><span class="label">Pastāvīgās daļas</span>
             <div class="checks">
@@ -2078,7 +2299,7 @@ function openTemplateEditor(id, preset = {}){
   // Ieraksta redaktora saturu aktīvajā valodas versijā
   function collect(){
     if (!versions[lang] || !bodyEd) return;
-    versions[lang] = {subject: subj.value.trim(), body: bodyEd.getHTML(), docTitle: $('#te-doc-title').value.trim(),
+    versions[lang] = {subject: subj.value.trim(), body: bodyEd.getHTML(), docTitle: '',
       docBody: docEd.getHTML(), fileName: $('#te-doc-file').value.trim()};
   }
   function current(){
@@ -2098,7 +2319,7 @@ function openTemplateEditor(id, preset = {}){
     $('#te-lang-del').hidden = !v || lang === 'lv';
     $$('#te-lang button').forEach(b => { b.setAttribute('aria-pressed', b.dataset.lang === lang); b.classList.toggle('has', !!versions[b.dataset.lang]); });
     if (v){
-      subj.value = v.subject; $('#te-doc-title').value = v.docTitle || ''; $('#te-doc-file').value = v.fileName || '';
+      subj.value = v.subject; $('#te-doc-file').value = v.fileName || '';
       bodyEd = createEditor($('#te-body'), v.body, {onChange:update, media:true});
       docEd = createEditor($('#te-doc-body'), v.docBody || '<p><br></p>', {onChange:update, cta:false});
     } else {
@@ -2160,7 +2381,7 @@ function openTemplateEditor(id, preset = {}){
     subj.setRangeText(`{${e.target.value}}`, subj.selectionStart ?? subj.value.length, subj.selectionEnd ?? subj.value.length, 'end');
     e.target.value = ''; subj.focus(); update();
   });
-  ['te-subject', 'te-doc-title', 'te-doc-file'].forEach(fid => $('#' + fid).addEventListener('input', update));
+  ['te-subject', 'te-doc-file'].forEach(fid => $('#' + fid).addEventListener('input', update));
   ['te-doc-banner', 'te-doc-conf', 'te-doc-info'].forEach(fid => $('#' + fid).addEventListener('change', update));
   $('#te-name').addEventListener('input', () => { $('#te-name-err').hidden = true; });
   $('#te-file-input').addEventListener('change', e => {
