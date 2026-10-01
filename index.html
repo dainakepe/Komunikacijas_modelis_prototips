@@ -92,6 +92,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .app-header{background:var(--primary);color:var(--on-primary)}
 .header-inner{display:flex;align-items:center;gap:16px;min-height:68px}
 .brand{display:flex;align-items:center;gap:14px;min-width:0}
+.brand > div{min-width:0}
 .logo{width:44px;height:44px;border-radius:6px;background:#fff;color:var(--primary-darker);display:grid;place-items:center;font-weight:800;font-size:14px;letter-spacing:.5px;flex:none}
 .brand-title{font-size:20px;font-weight:700;letter-spacing:.1px}
 .brand-sub{font-size:13.5px;font-weight:600;opacity:.95}
@@ -322,6 +323,8 @@ a.att:hover,button.att:hover{border-color:var(--primary)}
 .block-toggle{appearance:none;border:0;background:none;flex:1;display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:6px;cursor:pointer;font-weight:700;font-size:16px;color:var(--primary-darker);text-align:left}
 .block-toggle:hover{background:var(--primary-50)}
 .block-toggle:disabled{cursor:default;background:none}
+.link-btn{appearance:none;border:0;background:none;padding:6px 4px;font-weight:600;font-size:14px;color:var(--primary-darker);text-decoration:underline;text-underline-offset:3px;cursor:pointer;white-space:nowrap}
+.link-btn:hover{color:var(--primary)}
 .tpl-block-body{padding-top:12px}
 .block-empty{border:1.5px dashed var(--border);border-radius:8px;padding:18px;text-align:center;color:var(--text-muted);display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14px;background:var(--surface)}
 .block-empty .icon{width:28px;height:28px;color:var(--primary-300)}
@@ -525,6 +528,25 @@ a.logo{text-decoration:none}
 a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 .home-link{color:var(--on-primary);font-weight:600;font-size:14px;text-decoration:none;white-space:nowrap}
 .home-link:hover{text-decoration:underline}
+/* Respondentu pārvaldība – aktīvā kartīte ar apakšmoduļiem (divas kolonnas) */
+.mod-card.is-wide{grid-column:span 2;cursor:default}
+.mod-card.is-wide:hover{background:var(--primary)}
+.mod-head{display:flex;align-items:center;gap:14px}
+.sub-list{list-style:none;margin:2px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sub{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:46px;padding:9px 12px;border-radius:8px;font-size:14px;font-weight:600}
+.sub.is-off{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:rgba(255,255,255,.72);cursor:default}
+.sub.is-off .mod-badge{margin:0;flex:none;align-self:center;font-size:11px;padding:1px 8px;background:transparent;color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.4)}
+a.sub.is-on{background:#fff;color:var(--primary-darker);text-decoration:none;border:1px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+a.sub.is-on:hover{background:var(--primary-50)}
+a.sub.is-on:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.sub.is-on small{display:block;font-weight:500;font-size:12.5px;color:var(--text-muted);margin-top:1px}
+.sub.is-on .icon{width:20px;height:20px;flex:none}
+/* Navigācijas ceļš moduļa galvenē */
+#module-view .header-inner{padding-top:10px;padding-bottom:10px}
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:12.5px;font-weight:600;opacity:.95;margin-bottom:1px}
+.crumbs a{color:var(--on-primary);text-decoration:none}
+.crumbs a:hover{text-decoration:underline}
+.crumbs .sep{opacity:.75}
 
 /* ===== Kājene ===== */
 .app-footer{border-top:1px solid var(--border);background:var(--surface);padding:16px 0;font-size:13px;color:var(--text-muted)}
@@ -542,6 +564,10 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   .user,.brand-sub{display:none}
   .brand-title{font-size:18px}
   .form-grid,.mod-grid{grid-template-columns:1fr}
+  .mod-card.is-wide{grid-column:auto}
+  .crumbs{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+  .crumbs .sep{margin:0 3px}
+  .sub-list{grid-template-columns:1fr}
   .home-link{display:none}
   .tpl-block-head .btn .lbl{display:none}
   .channel-opts{grid-template-columns:1fr}
@@ -583,20 +609,23 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   <h1 class="home-hello">Labdien, Testa Darbiniek!</h1>
   <p class="home-lead">Izvēlieties moduli, ar kuru strādāt.</p>
   <div class="mod-grid">
-    <article class="mod-card is-active" data-action="open-module" aria-labelledby="mod-kom">
-      <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></div>
-      <div><h2 id="mod-kom">Komunikācijas modulis</h2><div class="mod-part">Daļa no Respondentu pārvaldības</div></div>
-      <p>Vēstuļu veidnes, sagatavošana un sūtīšana respondentiem</p>
-      <button type="button" class="btn mod-open" data-action="open-module">Atvērt <svg class="icon" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    <article class="mod-card is-active is-wide" aria-labelledby="mod-resp">
+      <div class="mod-head">
+        <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.7"/></svg></div>
+        <div><h2 id="mod-resp">Respondentu pārvaldība</h2><p>Respondentu saraksti, rekvizīti un saziņa ar respondentiem</p></div>
+      </div>
+      <ul class="sub-list" aria-label="Respondentu pārvaldības apakšmoduļi">
+        <li class="sub is-off" aria-disabled="true"><span>Respondentu saraksti</span><span class="mod-badge">Nav pieejams prototipā</span></li>
+        <li class="sub is-off" aria-disabled="true"><span>Matrica</span><span class="mod-badge">Nav pieejams prototipā</span></li>
+        <li class="sub is-off" aria-disabled="true"><span>Rekvizītu aktualizācija</span><span class="mod-badge">Nav pieejams prototipā</span></li>
+        <li class="sub is-off" aria-disabled="true"><span>Priekšiedruka</span><span class="mod-badge">Nav pieejams prototipā</span></li>
+        <li><a class="sub is-on" href="#veidnes"><span>Komunikācija<small>Vēstuļu veidnes, sagatavošana un sūtīšana</small></span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></li>
+        <li class="sub is-off" aria-disabled="true"><span>Atskaites</span><span class="mod-badge">Nav pieejams prototipā</span></li>
+      </ul>
     </article>
     <article class="mod-card is-off" aria-disabled="true">
       <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg></div>
       <h2>Metadatu pārvaldība</h2><p>Rādītāju kopas, ievadformas, validācijas, klasifikatori</p>
-      <span class="mod-badge">Nav pieejams prototipā</span>
-    </article>
-    <article class="mod-card is-off" aria-disabled="true">
-      <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.7"/></svg></div>
-      <h2>Respondentu pārvaldība</h2><p>Respondentu saraksti, matrica, rekvizītu aktualizācija</p>
       <span class="mod-badge">Nav pieejams prototipā</span>
     </article>
     <article class="mod-card is-off" aria-disabled="true">
@@ -630,8 +659,9 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     <div class="brand">
       <a href="#sakums" class="logo" aria-label="Uz DELTA sākumlapu" title="DELTA sākums">CSP</a>
       <div>
-        <div class="brand-title">Komunikācijas modulis</div>
-        <div class="brand-sub">Centrālā statistikas pārvalde · Datu vākšanas sistēma</div>
+        <nav class="crumbs" aria-label="Navigācijas ceļš"><a href="#sakums">DELTA</a><span class="sep" aria-hidden="true">›</span><a href="#sakums">Respondentu pārvaldība</a><span class="sep" aria-hidden="true">›</span><span aria-current="page">Komunikācija</span></nav>
+        <div class="brand-title">Komunikācija</div>
+        <div class="brand-sub">Respondentu pārvaldība</div>
       </div>
     </div>
     <div class="header-right">
@@ -671,6 +701,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="search" id="tpl-search" placeholder="Meklēt veidnes pēc nosaukuma vai temata…">
       </label>
+      <button type="button" class="link-btn" id="tpl-toggle-all" data-action="blk-all" aria-controls="tpl-blocks" aria-expanded="false">Izvērst visus</button>
     </div>
     <div id="tpl-blocks" role="tabpanel"></div>
   </section>
@@ -1498,7 +1529,15 @@ const compose = {
 };
 const ui = {respSearch:'', sentSearch:'', sentChannel:'', sentStatus:'', newIds:new Set(), tplAud:'fiz', tplSearch:'', attSearch:'', attAud:'', attCat:'', attLang:''};
 // Sakļautie kategoriju bloki (tikai šajā sesijā – pēc noklusējuma visi izvērsti)
-ui.tplCollapsed = new Set();
+// Izvērstie kategoriju bloki (pēc noklusējuma visi sakļauti)
+ui.tplOpen = new Set();
+ui.tab = '';
+const blockKey = (aud, cat) => aud + ':' + cat;
+// Sakļauj visus blokus; ja ir meklēšana – izvērš blokus ar rezultātiem
+function resetBlocks(){
+  const q = ui.tplSearch.trim();
+  ui.tplOpen = new Set(q ? CATS.filter(c => state.templates.some(t => t.aud === ui.tplAud && t.cat === c.key && tplMatches(t, q))).map(c => blockKey(ui.tplAud, c.key)) : []);
+}
 let previewDocs = [];
 
 function ctxFor(r, f = compose.f, lang = 'lv'){
@@ -2157,13 +2196,14 @@ function route(){
 function showTab(name){
   if (!TABS.includes(name)) name = 'veidnes';
   $('#home-view').hidden = true; $('#module-view').hidden = false;
-  document.title = 'CSP komunikācijas modulis – prototips';
+  document.title = 'Komunikācija – Respondentu pārvaldība – prototips';
   TABS.forEach(t => { $('#tab-' + t).hidden = t !== name; });
   $$('.tab').forEach(b => {
     if (b.dataset.tab === name){ b.setAttribute('aria-current', 'page'); b.scrollIntoView({block:'nearest', inline:'nearest'}); }
     else b.removeAttribute('aria-current');
   });
-  if (name === 'veidnes') renderTemplates();
+  if (name === 'veidnes'){ if (ui.tab !== 'veidnes') resetBlocks(); renderTemplates(); }
+  ui.tab = name;
   if (name === 'pielikumi') renderAttachments();
   if (name === 'sagatavot') renderCompose();
   if (name === 'nosutitas') renderSent();
@@ -2227,16 +2267,19 @@ function renderTemplates(){
   // 2. līmenis – kategoriju bloki
   const q = ui.tplSearch.trim();
   const inAud = state.templates.filter(t => t.aud === ui.tplAud);
+  const allOpen = CATS.every(c => ui.tplOpen.has(blockKey(ui.tplAud, c.key)));
+  $('#tpl-toggle-all').textContent = allOpen ? 'Sakļaut visus' : 'Izvērst visus';
+  $('#tpl-toggle-all').setAttribute('aria-expanded', allOpen);
   $('#tpl-blocks').innerHTML = CATS.map(c => {
     const all = inAud.filter(t => t.cat === c.key), shown = all.filter(t => tplMatches(t, q));
-    const key = ui.tplAud + ':' + c.key, open = q ? true : !ui.tplCollapsed.has(key);
+    const key = blockKey(ui.tplAud, c.key), open = ui.tplOpen.has(key);
     const addBtn = (cls, label) => `<button type="button" class="btn ${cls} btn-sm" data-action="tpl-new" data-aud="${ui.tplAud}" data-cat="${c.key}" title="Pievienot veidni: ${esc(c.label)}">${ICON.plus}<span class="lbl">${label}</span></button>`;
     const body = shown.length ? `<div class="tpl-grid">${shown.map(tplCard).join('')}</div>`
       : (q && all.length) ? `<div class="block-empty">Nav veidņu, kas atbilst meklēšanai “${esc(q)}”.</div>`
       : `<div class="block-empty">${ICON.file}<span>Šajā kategorijā vēl nav veidņu</span>${addBtn('btn-secondary', 'Pievienot veidni')}</div>`;
     return `<section class="tpl-block" aria-labelledby="blk-${c.key}">
       <div class="tpl-block-head">
-        <button type="button" class="block-toggle" id="blk-${c.key}" aria-expanded="${open}" aria-controls="blkb-${c.key}" data-action="blk-toggle" data-key="${key}" ${q ? 'disabled' : ''}>
+        <button type="button" class="block-toggle" id="blk-${c.key}" aria-expanded="${open}" aria-controls="blkb-${c.key}" data-action="blk-toggle" data-key="${key}">
           ${ICON.chev}<span>${esc(c.label)}</span><span class="count" aria-label="Veidņu skaits">${q ? `${shown.length} no ${all.length}` : all.length}</span></button>
         ${addBtn('btn-secondary', 'Pievienot veidni')}
       </div>
@@ -2362,7 +2405,8 @@ function openTemplateEditor(id, preset = {}){
         if (existing) Object.assign(existing, rec);
         else state.templates.push({id:'t' + uid(), ...rec});
         // parāda veidni tās cilnē un izvērstā blokā
-        ui.tplAud = rec.aud; ui.tplCollapsed.delete(rec.aud + ':' + rec.cat);
+        if (ui.tplAud !== rec.aud){ ui.tplAud = rec.aud; resetBlocks(); }
+        ui.tplOpen.add(blockKey(rec.aud, rec.cat));
         save(); renderTemplates(); renderCounts(); close();
         toast(existing ? 'Veidne saglabāta.' : 'Veidne izveidota.');
       }},
@@ -3266,13 +3310,18 @@ function openDocSrc(src){
    NOTIKUMI
    ===================================================================== */
 const actions = {
-  'open-module': () => { location.hash = 'veidnes'; },
   'tpl-new': (id, el) => openTemplateEditor(null, {aud:el.dataset.aud, cat:el.dataset.cat}),
-  'aud': (id, el) => { ui.tplAud = el.dataset.aud; renderTemplates(); $('#aud-' + ui.tplAud).focus(); },
+  'aud': (id, el) => { ui.tplAud = el.dataset.aud; resetBlocks(); renderTemplates(); $('#aud-' + ui.tplAud).focus(); },
   'blk-toggle': (id, el) => {
     const k = el.dataset.key;
-    ui.tplCollapsed.has(k) ? ui.tplCollapsed.delete(k) : ui.tplCollapsed.add(k);
+    ui.tplOpen.has(k) ? ui.tplOpen.delete(k) : ui.tplOpen.add(k);
     renderTemplates(); $('#' + el.id).focus();
+  },
+  'blk-all': () => {
+    const keys = CATS.map(c => blockKey(ui.tplAud, c.key));
+    const allOpen = keys.every(k => ui.tplOpen.has(k));
+    keys.forEach(k => allOpen ? ui.tplOpen.delete(k) : ui.tplOpen.add(k));
+    renderTemplates(); $('#tpl-toggle-all').focus();
   },
   'aud-filter': () => {
     const t = currentTemplate();
@@ -3339,7 +3388,7 @@ document.addEventListener('click', e => {
 modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
 
 $('#resp-search').addEventListener('input', e => { ui.respSearch = e.target.value; renderRespondents(); });
-$('#tpl-search').addEventListener('input', e => { ui.tplSearch = e.target.value; renderTemplates(); });
+$('#tpl-search').addEventListener('input', e => { ui.tplSearch = e.target.value; resetBlocks(); renderTemplates(); });
 // adresātu grupu kartītes – pārslēgšana ar bultiņām
 $('#tpl-aud').addEventListener('keydown', e => {
   if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;

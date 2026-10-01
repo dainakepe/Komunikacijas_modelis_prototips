@@ -12,16 +12,24 @@ Prototips ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var a
 ## Sākumlapa (DELTA)
 
 Atverot prototipu, vispirms redzama DELTA sistēmas sākumlapa ar moduļu kartītēm.
-- Aktīvs ir tikai **Komunikācijas modulis**. Poga "Atvērt" atver tā cilni "Veidnes".
-- Pārējie moduļi ir parādīti kā neaktīvi ar birku "Nav pieejams prototipā".
-- No komunikācijas moduļa sākumlapā var atgriezties, noklikšķinot uz CSP logo vai saites "← DELTA sākums".
+- **Respondentu pārvaldība** ir pirmā, aktīvā kartīte. Tā ir izcelta CSP krāsā un aizņem divas kolonnas. Kartītē ir apakšmoduļu saraksts: "Respondentu saraksti", "Matrica", "Rekvizītu aktualizācija", "Priekšiedruka", "Komunikācija" un "Atskaites".
+- **Komunikācija** ir vienīgais aktīvais apakšmodulis (balts fons un bultiņa →). Tas atver komunikācijas moduli ar cilni "Veidnes". Pārējie apakšmoduļi ir blāvāki, ar birku "Nav pieejams prototipā", un tie nav klikšķināmi.
+- Pārējie DELTA moduļi ir parādīti kā neaktīvi ar birku "Nav pieejams prototipā".
+- **Navigācija.** Komunikācijas moduļa galvenē ir nosaukums "Komunikācija" ar apakšvirsrakstu "Respondentu pārvaldība" un navigācijas ceļš "DELTA › Respondentu pārvaldība › Komunikācija". Sākumlapā var atgriezties ar saitēm "DELTA" vai "Respondentu pārvaldība" ceļā, ar CSP logo vai ar saiti "← DELTA sākums".
 
 ## Veidņu grupēšana
 
 Lapā "Veidnes" veidnes ir sagrupētas divos līmeņos:
 
 1. **Adresāts.** Trīs kartītes ar veidņu skaitu: "Komunikācija ar fiziskām personām" (atvērta pēc noklusējuma), "Komunikācija ar juridiskām personām" un "Cita komunikācija" (jaukta komunikācija, piem., viena ziņa visiem). Jauktās komunikācijas veidnēm adresāts ir "Visi (jaukta komunikācija)", un tajās lieto lauku `{adresāts}`: uzņēmumam tas ir nosaukums, fiziskai personai – vārds. Šādu veidni var sūtīt reizē gan fiziskām, gan juridiskām personām.
-2. **Kategorija.** Katrā cilnē ir četri bloki: "Uzaicinājumi", "Atgādinājumi", "Informatīvie ziņojumi" un "Citi". Katram blokam ir veidņu skaits, poga "+ Pievienot veidni" un iespēja to sakļaut. Pēc noklusējuma bloki ir izvērsti.
+2. **Kategorija.** Katrā cilnē ir četri bloki: "Uzaicinājumi", "Atgādinājumi", "Informatīvie ziņojumi" un "Citi". Katram blokam ir veidņu skaits un poga "+ Pievienot veidni".
+
+Bloku sakļaušana:
+- **Pēc noklusējuma visi bloki ir sakļauti**, atverot lapu "Veidnes" vai pārslēdzot adresātu grupu. Redzams tikai virsraksts, veidņu skaits un poga "+ Pievienot veidni".
+- Uzklikšķinot uz bloka virsraksta, tas izvēršas, vēlreiz uzklikšķinot – sakļaujas. Bultiņa rāda stāvokli.
+- Saite **"Izvērst visus / Sakļaut visus"** blakus meklēšanas laukam izvērš vai sakļauj visus aktīvās grupas blokus.
+- Meklējot automātiski izvēršas bloki ar rezultātiem. Notīrot meklēšanu, visi bloki atkal ir sakļauti.
+- Pēc veidnes pievienošanas vai rediģēšanas izvēršas bloks, kurā tā atrodas.
 
 Papildus:
 - **Lauki veidnē.** Katrai veidnei ir lauki "Adresāts" un "Kategorija". Ja veidni pievieno no konkrēta bloka, abi lauki jau ir aizpildīti.
