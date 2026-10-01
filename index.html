@@ -198,7 +198,21 @@ details.more summary{cursor:pointer;font-weight:600;color:var(--primary-dark);fo
 .rich li{margin-bottom:.25em}
 .rich ul li::marker{color:var(--primary);font-size:1.15em}
 .rich a{color:var(--primary-dark);font-weight:600}
-.rich a.cta{display:inline-block;background:var(--primary);color:#fff;padding:10px 26px;border-radius:24px;margin:4px 0}
+.rich a.cta{display:inline-block;background:var(--primary);color:#fff;padding:10px 26px;border-radius:24px;margin:4px 0;font-weight:600;text-decoration:none}
+/* Attēli e-pasta saturā */
+.rich img{max-width:100%;height:auto;border:0;border-radius:4px}
+.rich img.img-w-s{width:33%} .rich img.img-w-m{width:60%} .rich img.img-w-l{width:100%}
+.rich img.img-a-c{display:block;margin:8px auto} .rich img.img-a-l{display:block;margin:8px 0}
+.rte-area img,.rte-area a.cta{cursor:pointer}
+.rte-area img:hover,.rte-area a.cta:hover{outline:2px solid var(--primary-300);outline-offset:2px}
+.no-media .rte-bar [data-cmd="img"]{display:none}
+/* Attēla un pogas logs */
+.media-preview{background:var(--bg);border:1px dashed var(--border);border-radius:8px;padding:14px;min-height:70px;display:flex;align-items:center;justify-content:center}
+.media-preview .rich{width:100%}
+.media-preview .none{text-align:center}
+.radio-row{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px}
+.radio-row label{display:flex;align-items:center;gap:6px;font-weight:500;cursor:pointer}
+.radio-row input{accent-color:var(--primary);width:16px;height:16px}
 .rich strong{font-weight:700}
 
 /* ===== Tabulas ===== */
@@ -692,6 +706,7 @@ dialog.modal::backdrop{background:rgba(0,30,30,.45)}
 
 <input type="file" id="csv-file" accept=".csv,text/csv,text/plain" hidden>
 <dialog class="modal" id="modal"></dialog>
+<dialog class="modal" id="submodal"></dialog>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <noscript><p style="padding:20px">Prototipam nepieciešams JavaScript.</p></noscript>
 
@@ -701,7 +716,7 @@ dialog.modal::backdrop{background:rgba(0,30,30,.45)}
 /* =====================================================================
    KONSTANTES
    ===================================================================== */
-const STORAGE_KEY = 'csp-komunikacija-prototips-v6';
+const STORAGE_KEY = 'csp-komunikacija-prototips-v7';
 
 // Iepriekš definētie lauki, ko var lietot veidnēs
 const FIELDS = [
@@ -867,6 +882,28 @@ function fillRich(html, ctx, mark){
   }
   return t.innerHTML;
 }
+// E-pasta HTML ar iekļautajiem (inline) stiliem – tā, kā to redzēs saņēmējs; poga atveras jaunā cilnē
+const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+function emailInline(html){
+  const t = parseHtml(html), P = cssVar('--primary') || '#009999', W = {s:'33%', m:'60%', l:'100%'};
+  t.content.querySelectorAll('a.cta').forEach(a => {
+    a.setAttribute('style', `display:inline-block;background:${P};color:#ffffff;padding:10px 26px;border-radius:24px;font-weight:600;text-decoration:none`);
+    a.setAttribute('target', '_blank'); a.setAttribute('rel', 'noopener noreferrer');
+  });
+  t.content.querySelectorAll('img').forEach(i => {
+    const w = (i.className.match(/img-w-(s|m|l)/) || [])[1] || 'l', c = /img-a-c/.test(i.className);
+    i.setAttribute('style', `display:block;width:${W[w]};max-width:100%;height:auto;border:0;margin:${c ? '8px auto' : '8px 0'}`);
+  });
+  return t.innerHTML;
+}
+// Nosūtītajās vēstulēs vienādus attēlus glabā vienreiz (state.images), HTML – atsauce csp-img:ID
+function hashStr(str){ let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return (h >>> 0).toString(36) + str.length.toString(36); }
+function internImages(html){
+  return html.replace(/src="(data:image\/[^"]+)"/g, (m, data) => { const k = hashStr(data); state.images[k] = data; return `src="csp-img:${k}"`; });
+}
+function resolveImages(html){
+  return String(html).replace(/src="csp-img:([a-z0-9]+)"/g, (m, k) => state.images && state.images[k] ? `src="${state.images[k]}"` : 'src="" data-missing="1"');
+}
 // Formatēts HTML -> vienkāršs teksts (e-adresei)
 function htmlToText(html){
   const walk = node => {
@@ -876,6 +913,7 @@ function htmlToText(html){
       if (c.nodeType !== 1) return;
       const tag = c.tagName;
       if (tag === 'BR') s += '\n';
+      else if (tag === 'IMG') s += `[Attēls: ${c.getAttribute('alt') || ''}]`;
       else if (tag === 'P' || tag === 'H3') s += '\n' + walk(c).trim() + '\n\n';
       else if (tag === 'UL' || tag === 'OL') s += '\n' + [...c.children].map((li, i) => (tag === 'OL' ? (i + 1) + '. ' : '• ') + walk(li).trim()).join('\n') + '\n\n';
       else if (tag === 'A'){
@@ -893,14 +931,22 @@ function htmlToText(html){
 // Atļauj tikai drošus formatēšanas elementus (arī ielīmējot no Word)
 function sanitize(html){
   const t = parseHtml(html);
-  const ALLOWED = ['P', 'BR', 'H3', 'STRONG', 'EM', 'U', 'UL', 'OL', 'LI', 'A', 'SPAN'];
+  const ALLOWED = ['P', 'BR', 'H3', 'STRONG', 'EM', 'U', 'UL', 'OL', 'LI', 'A', 'SPAN', 'IMG'];
   const RENAME = {B:'STRONG', I:'EM', H1:'H3', H2:'H3', H4:'H3', H5:'H3', H6:'H3'};
   const clean = parent => {
     [...parent.childNodes].forEach(n => {
       if (n.nodeType === 3) return;
       if (n.nodeType !== 1){ n.remove(); return; }
       let tag = n.tagName;
-      if (/^(SCRIPT|STYLE|META|LINK|TITLE|IFRAME|OBJECT|IMG|SVG|XML|HEAD)$/.test(tag) || tag.includes(':')){ n.remove(); return; }
+      if (/^(SCRIPT|STYLE|META|LINK|TITLE|IFRAME|OBJECT|SVG|XML|HEAD)$/.test(tag) || tag.includes(':')){ n.remove(); return; }
+      if (tag === 'IMG'){
+        const src = (n.getAttribute('src') || '').trim(), alt = n.getAttribute('alt') || '';
+        const w = (n.className.match(/\bimg-w-(s|m|l)\b/) || [])[1] || 'l', a = (n.className.match(/\bimg-a-(l|c)\b/) || [])[1] || 'c';
+        if (!isSafeImgSrc(src)){ n.remove(); return; }
+        [...n.attributes].forEach(at => n.removeAttribute(at.name));
+        n.setAttribute('src', src); n.setAttribute('alt', alt); n.className = `img-w-${w} img-a-${a}`;
+        return;
+      }
       clean(n);
       if (tag === 'DIV'){
         const A = ATTR_BY_KEY[n.dataset.attr];
@@ -1057,9 +1103,24 @@ const withTr = list => list.map(t => {
   Object.values(tr).forEach(v => { v.body = fix(v.body); v.docBody = fix(v.docBody); });
   return {...t, body:fix(t.body), doc: t.doc ? {...t.doc, body:fix(t.doc.body)} : null, tr};
 });
+// Izdomāts testa baneris (PNG), ko uzzīmē pārlūkā
+function seedBanner(){
+  try {
+    const c = document.createElement('canvas'); c.width = 600; c.height = 150;
+    const g = c.getContext('2d'), grd = g.createLinearGradient(0, 0, 600, 0);
+    grd.addColorStop(0, cssVar('--primary')); grd.addColorStop(1, cssVar('--primary-darker'));
+    g.fillStyle = grd; g.fillRect(0, 0, 600, 150);
+    const bars = ['--doc-bar-1', '--doc-bar-2', '--doc-bar-3', '--doc-bar-4'].map(cssVar);
+    for (let i = 0; i < 25; i++){ g.fillStyle = bars[i % 4]; g.fillRect(i * 24, 138, 24, 12); }
+    g.fillStyle = '#ffffff';
+    g.font = 'bold 32px "Segoe UI", Arial, sans-serif'; g.fillText('Iedzīvotāju aptauja 2026', 32, 68);
+    g.font = '18px "Segoe UI", Arial, sans-serif'; g.fillText('Testa attēls · #aptauja · Pastāsti par sevi!', 32, 104);
+    return c.toDataURL('image/png');
+  } catch (e) { return ''; }
+}
 function seedData(){
   const ago = n => addDays(-n).toISOString();
-  return {
+  const data = {
     seq: 0,
     layout: clone(DEFAULT_LAYOUT),
     templates: withTr([
@@ -1093,7 +1154,7 @@ function seedData(){
          body:`<p><strong>Labdien!</strong></p><p>Centrālā statistikas pārvalde (turpmāk – CSP) informē, ka respondents ${F('uzņēmums')} izlases kārtā ir iekļauts apsekojumā “${F('apsekojums')}”. Sniegtā informācija tiks izmantota tikai statistikas vajadzībām.</p>${C('ieprieks', 'piedalijas', '<p>Pateicamies, ka iepriekšējā apsekojumā dati tika iesniegti savlaicīgi!</p>')}<h3>Kā iesniegt datus?</h3><ul><li>Veidlapu aizpildiet CSP e-vidē <a href="{e-anketa}">${F('e-anketa')}</a> no <strong>${F('sākums')}</strong> līdz <strong>${F('termiņš')}</strong>.</li><li>Autorizēties var ar internetbanku, Smart-ID, e-parakstu vai e-identifikācijas karti.</li><li>Ja datus sniedz cita persona (piemēram, grāmatvedis), lūdzam nodot šo vēstuli tai.</li></ul><p>Ja Jums rodas jautājumi par veidlapas aizpildīšanu, sazinieties ar mums, izmantojot zemāk norādīto kontaktinformāciju.</p>`}},
       {id:'t9', aud:'jur', cat:'atgadinajums', kind:'epasts', name:'Atgādinājums par datu iesniegšanas termiņu', updated:ago(4), files:[], doc:null,
        subject:'Atgādinājums: {uzņēmums} – apsekojums “{apsekojums}”, termiņš {termiņš}',
-       body:`<p>Labdien!</p><p>Atgādinām, ka apsekojuma “${F('apsekojums')}” dati no respondenta ${F('uzņēmums')} vēl nav saņemti. Datu iesniegšanas termiņš ir <strong>${F('termiņš')}</strong>.</p><p><a class="cta" href="{e-anketa}">Iesniegt datus</a></p><p>Ja dati jau ir iesniegti, lūdzam neņemt vērā šo atgādinājumu. Ja nepieciešams termiņa pagarinājums, lūdzam sazināties ar mums pa e-pastu <a href="mailto:{apsekojuma_epasts}">${F('apsekojuma_epasts')}</a>.</p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`},
+       body:`<p>Labdien!</p><p>Atgādinām, ka apsekojuma “${F('apsekojums')}” dati no respondenta ${F('uzņēmums')} vēl nav saņemti. Datu iesniegšanas termiņš ir <strong>${F('termiņš')}</strong>.</p><p>Datus var iesniegt CSP elektroniskās datu vākšanas sistēmā:</p><p><a class="cta" href="https://edv.csp.example">EDV</a></p><p>Ja dati jau ir iesniegti, lūdzam neņemt vērā šo atgādinājumu. Ja nepieciešams termiņa pagarinājums, lūdzam sazināties ar mums pa e-pastu <a href="mailto:{apsekojuma_epasts}">${F('apsekojuma_epasts')}</a>.</p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`},
       {id:'t10', aud:'jur', cat:'info', kind:'epasts', name:'Paziņojums par apsekojuma rezultātu publicēšanu', updated:ago(3), files:[], doc:null,
        subject:'Publicēti apsekojuma “{apsekojums}” rezultāti',
        body:`<p>Labdien!</p><p>Pateicamies, ka ${F('uzņēmums')} sniedza datus apsekojumā “${F('apsekojums')}”. Informējam, ka apsekojuma rezultāti ir apkopoti un publicēti.</p><p><a class="cta" href="https://{apsekojuma_vietne}">Skatīt rezultātus</a></p><p>Rezultāti var noderēt, salīdzinot uzņēmuma darbību ar nozares vidējiem rādītājiem. Visi dati ir publicēti tikai apkopotā veidā, neatklājot atsevišķu uzņēmumu datus.</p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`},
@@ -1117,7 +1178,16 @@ function seedData(){
       {id:'r10', name:'SIA “Latgales Keramika”',           contact:'Dace Pūce',        eaddress:'_DEFAULT@00000000110', email:'dace.puce@latgkeramika.example',   attrs:{valoda:'en', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
     ],
     sent: [],
+    images: {},
   };
+  // e-pasta veidnei "Uzaicinājums (īsā vēstule)" – baneris visās valodu versijās
+  const banner = seedBanner(), t2 = data.templates.find(t => t.id === 't2');
+  if (banner && t2){
+    const img = `<p><img src="${banner}" alt="Baneris: Iedzīvotāju aptauja 2026" class="img-w-l img-a-c"></p>`;
+    t2.body = img + t2.body;
+    Object.values(t2.tr).forEach(v => { v.body = img + v.body; });
+  }
+  return data;
 }
 
 /* =====================================================================
@@ -1128,6 +1198,7 @@ function loadState(){
     const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (s && Array.isArray(s.templates) && Array.isArray(s.respondents) && Array.isArray(s.sent)){
       s.layout = {...clone(DEFAULT_LAYOUT), ...(s.layout || {})};
+      s.images = s.images || {};
       s.templates.forEach(t => { if (!AUDS[t.aud]) t.aud = 'fiz'; if (!CAT_BY_KEY[t.cat]) t.cat = 'cits'; });
       return s;
     }
@@ -1234,7 +1305,7 @@ function buildMessage(t0, r, mark, attrs = respAttrs(r)){
   const plain = htmlToText(applyConds(t.body, attrs, false));
   const msg = {
     subject: mark ? fillHtml(t.subject, ctx) : fillText(t.subject, ctx),
-    bodyHtml: fillRich(applyConds(t.body, attrs, mark), ctx, mark),
+    bodyHtml: emailInline(fillRich(applyConds(t.body, attrs, mark), ctx, mark)),
     bodyText: mark ? fillHtml(plain, ctx) : fillText(plain, ctx),
     variant: variantOf(t0, attrs),
     lang: ver.lang, wantLang: attrs.valoda, fallback: ver.fallback, org: L.org,
@@ -1304,7 +1375,7 @@ function printDoc(html, name){
 /* =====================================================================
    FORMATĒŠANAS REDAKTORS
    ===================================================================== */
-function createEditor(host, html, {onChange, compact = false, cta = true, cond = true} = {}){
+function createEditor(host, html, {onChange, compact = false, cta = true, cond = true, media = false} = {}){
   host.innerHTML = `<div class="rte">
     <div class="rte-bar" role="toolbar" aria-label="Formatēšana">
       <button type="button" data-cmd="h3" title="Virsraksts">Virsraksts</button>
@@ -1318,7 +1389,8 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
       <button type="button" data-cmd="insertOrderedList" title="Numurēts saraksts">1. Saraksts</button>
       <span class="sep"></span>
       <button type="button" data-cmd="link" title="Saite">Saite</button>
-      ${cta ? '<button type="button" data-cmd="cta" title="Poga ar saiti, piem., “Dodies uz anketu”">Poga</button>' : ''}
+      ${media ? '<button type="button" data-cmd="img" title="Ievietot attēlu (PNG, JPG, GIF)">Attēls</button>' : ''}
+      ${cta ? '<button type="button" data-cmd="cta" title="Poga ar saiti, piem., “EDV”">Poga</button>' : ''}
       ${cond ? '<button type="button" data-cmd="cond" title="Teksta daļa, kas redzama tikai noteiktiem respondentiem">◇ Nosacījums</button>' : ''}
       <button type="button" data-cmd="removeFormat" title="Notīrīt formatējumu">Notīrīt</button>
       <select aria-label="Ievietot lauku"><option value="">+ Ievietot lauku…</option>${fieldOptions()}</select>
@@ -1326,7 +1398,6 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
     <div class="rte-link" hidden>
       <input type="text" class="rl-text" placeholder="Saites teksts">
       <input type="text" class="rl-url" placeholder="https://… vai {e-anketa}">
-      <label><input type="checkbox" class="rl-cta"> kā poga</label>
       <button type="button" class="btn btn-primary btn-sm rl-ok">Ievietot</button>
       <button type="button" class="btn btn-ghost btn-sm rl-cancel">Atcelt</button>
     </div>
@@ -1345,11 +1416,13 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
   const condBox = $('.rte-cond', host);
   // Nosacījuma blokiem parāda iezīmi; aiz pēdējā bloka atstāj tukšu rindkopu, lai var turpināt rakstīt
   const decorate = () => {
+    // tukšām rindkopām vajag <br>, citādi tām nav augstuma un tajās nevar ieklikšķināt
+    $$('p', area).forEach(el => { if (!el.firstChild) el.innerHTML = '<br>'; });
     $$('.cond', area).forEach(d => d.dataset.label = condLabel(d.dataset.attr, (d.dataset.val || '').split(',')));
     const last = area.lastElementChild;
     if (last && last.classList.contains('cond')){ const p = document.createElement('p'); p.innerHTML = '<br>'; area.append(p); }
   };
-  area.innerHTML = sanitize(html || '<p></p>');
+  area.innerHTML = sanitize(html || '<p><br></p>');
   lock(); decorate();
   let saved = null;
   const saveSel = () => { const s = getSelection(); if (s.rangeCount && area.contains(s.anchorNode)) saved = s.getRangeAt(0).cloneRange(); };
@@ -1390,14 +1463,20 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
     try { document.execCommand('styleWithCSS', false, false); } catch (err) {}
     if (cmd === 'h3' || cmd === 'p') document.execCommand('formatBlock', false, `<${cmd}>`);
     else if (cmd === 'cond'){ saveSel(); openCond(); return; }
-    else if (cmd === 'link' || cmd === 'cta'){
+    else if (cmd === 'cta'){
+      saveSel();
+      openButtonDialog(null, d => insertNodes(makeCta(d), document.createTextNode('\u00A0')));
+      return;
+    } else if (cmd === 'img'){
+      saveSel();
+      openImageDialog(null, d => insertNodes(applyImg(document.createElement('img'), d)));
+      return;
+    } else if (cmd === 'link'){
       saveSel();
       condBox.hidden = true;
       linkBox.hidden = false;
       $('.rl-text', linkBox).value = saved ? saved.toString() : '';
-      $('.rl-url', linkBox).value = cmd === 'cta' ? '{e-anketa}' : '';
-      $('.rl-cta', linkBox).checked = cmd === 'cta';
-      if (cmd === 'cta' && !$('.rl-text', linkBox).value) $('.rl-text', linkBox).value = 'Dodies uz anketu';
+      $('.rl-url', linkBox).value = '';
       $('.rl-url', linkBox).focus();
       return;
     } else document.execCommand(cmd, false, null);
@@ -1408,10 +1487,25 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
     if (!url){ $('.rl-url', linkBox).focus(); return; }
     linkBox.hidden = true;
     const a = document.createElement('a');
-    a.href = url; a.textContent = text;
-    if ($('.rl-cta', linkBox).checked) a.className = 'cta';
+    a.setAttribute('href', url); a.textContent = text;
     insertNodes(a, document.createTextNode('\u00A0'));
   };
+  // Attēli un pogas: izveide un rediģēšana (uzklikšķinot uz elementa redaktorā)
+  function makeCta(d){ const a = document.createElement('a'); a.className = 'cta'; a.setAttribute('href', d.url); a.textContent = d.text; return a; }
+  function applyImg(img, d){ img.setAttribute('src', d.src); img.setAttribute('alt', d.alt); img.className = `img-w-${d.w} img-a-${d.a}`; return img; }
+  area.addEventListener('click', e => {
+    const img = e.target.closest('img'), cta = e.target.closest('a.cta');
+    if (img && area.contains(img)){
+      e.preventDefault();
+      openImageDialog({src:img.getAttribute('src'), alt:img.getAttribute('alt') || '',
+        w:(img.className.match(/img-w-(s|m|l)/) || [])[1] || 'l', a:(img.className.match(/img-a-(l|c)/) || [])[1] || 'c'},
+        d => { if (d) applyImg(img, d); else img.remove(); changed(); });
+    } else if (cta && area.contains(cta)){
+      e.preventDefault();
+      openButtonDialog({text:cta.textContent, url:cta.getAttribute('href') || ''},
+        d => { if (d){ cta.textContent = d.text; cta.setAttribute('href', d.url); } else cta.remove(); changed(); });
+    }
+  });
   $('.rl-cancel', linkBox).onclick = () => { linkBox.hidden = true; restore(); };
   linkBox.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('.rl-ok', linkBox).click(); } });
   sel.addEventListener('change', () => {
@@ -1492,6 +1586,154 @@ function openModal({title, content, actions = [], wide = false}){
   const first = $('.modal-body input[type=text], .modal-body input[type=email], .modal-body textarea', modal);
   if (first) first.focus();
   return {el: modal, close};
+}
+// Otrā līmeņa logs (piem., attēla vai pogas iestatījumi virs veidnes redaktora)
+const submodal = $('#submodal');
+function openSubModal({title, content, actions = []}){
+  if (submodal.open) submodal.close();
+  submodal.className = 'modal';
+  submodal.innerHTML = `
+    <div class="modal-wrap">
+      <div class="modal-head"><h2>${esc(title)}</h2>
+        <button class="icon-btn" data-close aria-label="Aizvērt">${ICON.x}</button></div>
+      <div class="modal-body">${content}</div>
+      <div class="modal-foot">${actions.map((a, i) => `<button type="button" class="btn ${a.cls || 'btn-secondary'}" data-act="${i}">${a.label}</button>`).join('')}</div>
+    </div>`;
+  const close = () => submodal.close();
+  $$('[data-close]', submodal).forEach(b => b.onclick = close);
+  actions.forEach((a, i) => $(`[data-act="${i}"]`, submodal).onclick = () => a.onClick ? a.onClick(close) : close());
+  submodal.showModal();
+  const first = $('.modal-body input[type=text]', submodal);
+  if (first) first.focus();
+  return {el: submodal, close};
+}
+const IMG_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
+const IMG_MAX = 1024 * 1024; // 1 MB
+const IMG_WIDTHS = {s:'Mazs', m:'Vidējs', l:'Pilns platums'};
+const IMG_ALIGN = {l:'Pa kreisi', c:'Centrā'};
+const isSafeImgSrc = src => /^data:image\/(png|jpeg|gif);base64,[a-z0-9+\/=]+$/i.test(src) || /^https:\/\/\S+$/i.test(src);
+// Pogas saitei jāsākas ar https:// vai jābūt laukam, piem., {e-anketa}
+function ctaUrlError(url){
+  if (!url) return 'Norādiet saiti.';
+  const m = url.match(/^\{([^{}\s]+)\}$/);
+  if (m) return FIELD_KEYS.has(m[1]) ? '' : `Nezināms lauks {${m[1]}}.`;
+  return /^https:\/\/[^\s]+$/i.test(url) ? '' : 'Saitei jāsākas ar https:// vai jābūt laukam, piem., {e-anketa}.';
+}
+// Attēla logs. data = {src, alt, w, a} rediģēšanai; onDone(null) – dzēst
+function openImageDialog(data, onDone){
+  const d = data || {src:'', alt:'', w:'l', a:'c'};
+  let src = d.src, mode = d.src && !d.src.startsWith('data:') ? 'url' : 'file';
+  const radios = (name, opts, cur) => `<div class="radio-row" role="radiogroup">${Object.entries(opts).map(([k, l]) =>
+    `<label><input type="radio" name="${name}" value="${k}" ${cur === k ? 'checked' : ''}> ${esc(l)}</label>`).join('')}</div>`;
+  const actions = [];
+  if (data) actions.push({label:`${ICON.trash}Dzēst attēlu`, cls:'btn-danger-ghost left', onClick: close => { close(); onDone(null); }});
+  actions.push({label:'Atcelt', cls:'btn-secondary'});
+  actions.push({label: data ? 'Saglabāt' : 'Ievietot attēlu', cls:'btn-primary', onClick: close => {
+    let ok = true;
+    const srcErr = mode === 'file' ? (src.startsWith('data:') ? '' : 'Izvēlieties attēla failu.')
+      : (!src ? 'Norādiet attēla saiti.' : (/^https:\/\/\S+$/i.test(src) ? '' : 'Attēla saitei jāsākas ar https://'));
+    showErr('#im-src-err', srcErr); if (srcErr) ok = false;
+    const alt = $('#im-alt', submodal).value.trim();
+    showErr('#im-alt-err', alt ? '' : 'Norādiet alternatīvo tekstu – tas nepieciešams piekļūstamībai.');
+    if (!alt){ if (ok) $('#im-alt', submodal).focus(); ok = false; }
+    if (!ok) return;
+    close();
+    onDone({src, alt, w:$('input[name="im-w"]:checked', submodal).value, a:$('input[name="im-a"]:checked', submodal).value});
+  }});
+  openSubModal({title: data ? 'Rediģēt attēlu' : 'Ievietot attēlu', actions, content:`
+    <div class="field"><span class="label">Attēla avots</span>
+      <div class="seg" id="im-mode" role="group" aria-label="Attēla avots">
+        <button type="button" data-mode="file">Augšupielādēt no datora</button><button type="button" data-mode="url">Saite (URL)</button></div></div>
+    <div class="field" id="im-file-box"><label for="im-file">Attēla fails</label>
+      <input type="file" id="im-file" accept=".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/gif">
+      <span class="hint">PNG, JPG vai GIF, ne lielāks par 1 MB. Prototipā attēls tiek saglabāts pārlūkā (kā data URL).</span></div>
+    <div class="field" id="im-url-box"><label for="im-url">Attēla saite</label>
+      <input type="text" id="im-url" placeholder="https://…" value="${mode === 'url' ? esc(src) : ''}"></div>
+    <span class="err" id="im-src-err" hidden></span>
+    <div class="field" style="margin-top:10px"><label for="im-alt">Alternatīvais teksts <span class="req">*</span></label>
+      <input type="text" id="im-alt" maxlength="200" value="${esc(d.alt)}" placeholder="piem., Aptaujas baneris">
+      <span class="hint">Īss attēla apraksts cilvēkiem, kuri attēlu neredz (ekrāna lasītājs, bloķēti attēli).</span>
+      <span class="err" id="im-alt-err" hidden></span></div>
+    <div class="form-grid">
+      <div class="field"><span class="label">Platums</span>${radios('im-w', IMG_WIDTHS, d.w)}</div>
+      <div class="field"><span class="label">Novietojums</span>${radios('im-a', IMG_ALIGN, d.a)}</div>
+    </div>
+    <div class="field"><span class="label">Priekšskatījums</span><div class="media-preview" id="im-preview"></div></div>`});
+  function showErr(sel, msg){ const e = $(sel, submodal); e.hidden = !msg; e.textContent = msg; }
+  function preview(){
+    const w = $('input[name="im-w"]:checked', submodal).value, a = $('input[name="im-a"]:checked', submodal).value;
+    const ok = src && (src.startsWith('data:') || /^https:\/\/\S+$/i.test(src));
+    $('#im-preview', submodal).innerHTML = ok ? `<div class="rich"><img src="${esc(src)}" alt="${esc($('#im-alt', submodal).value)}" class="img-w-${w} img-a-${a}"></div>` : '<span class="none">Attēls vēl nav izvēlēts</span>';
+    const img = $('#im-preview img', submodal);
+    if (img) img.onerror = () => { $('#im-preview', submodal).innerHTML = '<span class="none">Attēlu neizdevās ielādēt – pārbaudiet saiti.</span>'; };
+  }
+  function setMode(m){
+    mode = m;
+    $('#im-file-box', submodal).hidden = m !== 'file';
+    $('#im-url-box', submodal).hidden = m !== 'url';
+    $$('#im-mode button', submodal).forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === m));
+    if (m === 'url'){ src = $('#im-url', submodal).value.trim(); }
+    else if (!(src || '').startsWith('data:')) src = d.src.startsWith('data:') ? d.src : '';
+    showErr('#im-src-err', ''); preview();
+  }
+  $$('#im-mode button', submodal).forEach(b => b.onclick = () => setMode(b.dataset.mode));
+  $('#im-url', submodal).addEventListener('input', e => { src = e.target.value.trim(); showErr('#im-src-err', ''); preview(); });
+  $('#im-alt', submodal).addEventListener('input', () => showErr('#im-alt-err', ''));
+  $$('input[type=radio]', submodal).forEach(r => r.addEventListener('change', preview));
+  $('#im-file', submodal).addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (!IMG_TYPES.includes(f.type)){
+      e.target.value = '';
+      showErr('#im-src-err', `Neatbalstīts faila formāts (${f.name.split('.').pop().toUpperCase()}). Atļauti tikai PNG, JPG un GIF attēli.`); return;
+    }
+    if (f.size > IMG_MAX){
+      e.target.value = '';
+      showErr('#im-src-err', `Fails ir par lielu (${(f.size / 1048576).toFixed(1).replace('.', ',')} MB). Maksimālais atļautais izmērs ir 1 MB.`); return;
+    }
+    const rd = new FileReader();
+    rd.onload = () => { src = rd.result; showErr('#im-src-err', ''); preview(); };
+    rd.onerror = () => showErr('#im-src-err', 'Failu neizdevās nolasīt.');
+    rd.readAsDataURL(f);
+  });
+  setMode(mode);
+}
+// Pogas logs. data = {text, url} rediģēšanai; onDone(null) – dzēst
+function openButtonDialog(data, onDone){
+  const d = data || {text:'', url:''};
+  const actions = [];
+  if (data) actions.push({label:`${ICON.trash}Dzēst pogu`, cls:'btn-danger-ghost left', onClick: close => { close(); onDone(null); }});
+  actions.push({label:'Atcelt', cls:'btn-secondary'});
+  actions.push({label: data ? 'Saglabāt' : 'Ievietot pogu', cls:'btn-primary', onClick: close => {
+    const text = $('#bt-text', submodal).value.trim(), url = $('#bt-url', submodal).value.trim();
+    const tErr = text ? '' : 'Norādiet pogas tekstu.', uErr = ctaUrlError(url);
+    showErr('#bt-text-err', tErr); showErr('#bt-url-err', uErr);
+    if (tErr){ $('#bt-text', submodal).focus(); return; }
+    if (uErr){ $('#bt-url', submodal).focus(); return; }
+    close(); onDone({text, url});
+  }});
+  openSubModal({title: data ? 'Rediģēt pogu' : 'Ievietot pogu', actions, content:`
+    <div class="field"><label for="bt-text">Pogas teksts <span class="req">*</span></label>
+      <input type="text" id="bt-text" maxlength="60" value="${esc(d.text)}" placeholder="piem., EDV"><span class="err" id="bt-text-err" hidden></span></div>
+    <div class="field"><div class="label-row"><label for="bt-url">Saite <span class="req">*</span></label>
+        <select class="mini" id="bt-field" aria-label="Ievietot lauku saitē"><option value="">+ lauks</option>${fieldOptions()}</select></div>
+      <input type="text" id="bt-url" value="${esc(d.url)}" placeholder="https://edv.csp.example vai {e-anketa}">
+      <span class="hint">Saitei jāsākas ar https:// vai tā var būt lauks, piem., {e-anketa}.</span>
+      <span class="err" id="bt-url-err" hidden></span></div>
+    <div class="field"><span class="label">Priekšskatījums</span><div class="media-preview" id="bt-preview"></div></div>`});
+  function showErr(sel, msg){ const e = $(sel, submodal); e.hidden = !msg; e.textContent = msg; }
+  function preview(){
+    const text = $('#bt-text', submodal).value.trim() || 'Pogas teksts';
+    $('#bt-preview', submodal).innerHTML = `<div class="rich" style="text-align:center">${emailInline(`<a class="cta" href="#">${esc(text)}</a>`)}</div>`;
+  }
+  $('#bt-text', submodal).addEventListener('input', () => { showErr('#bt-text-err', ''); preview(); });
+  $('#bt-url', submodal).addEventListener('input', () => showErr('#bt-url-err', ''));
+  $('#bt-field', submodal).addEventListener('change', e => {
+    if (!e.target.value) return;
+    $('#bt-url', submodal).value = `{${e.target.value}}`; e.target.value = ''; showErr('#bt-url-err', '');
+  });
+  $$('input[type=text]', submodal).forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('.modal-foot .btn-primary', submodal).click(); } }));
+  preview();
 }
 function confirmDialog({title, message, okLabel = 'Apstiprināt', danger = false}){
   return new Promise(resolve => {
@@ -1592,7 +1834,7 @@ function renderTemplates(){
 }
 
 const defaultDoc = () => ({title:'Uzaicinājums piedalīties aptaujā', fileName:'CSP_vestule_{dok_nr}.pdf', banner:true, conf:true, info:true,
-  body:'<p><strong>Labdien!</strong></p><p></p>'});
+  body:'<p><strong>Labdien!</strong></p><p><br></p>'});
 
 function openTemplateEditor(id, preset = {}){
   const existing = state.templates.find(t => t.id === id);
@@ -1600,7 +1842,7 @@ function openTemplateEditor(id, preset = {}){
   const t = existing ? clone(existing) : {aud:newAud, cat:CAT_BY_KEY[preset.cat] ? preset.cat : 'uzaicinajums', kind:'epasts', name:'', subject:'',
     body: newAud === 'jur'
       ? `<p>Labdien!</p><p>${F('uzņēmums')} </p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`
-      : `<p>Labdien, ${F('vārds')}!</p><p></p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`, doc:null, files:[], tr:{}};
+      : `<p>Labdien, ${F('vārds')}!</p><p><br></p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`, doc:null, files:[], tr:{}};
   if (!AUDS[t.aud]) t.aud = 'fiz';
   if (!CAT_BY_KEY[t.cat]) t.cat = 'cits';
   t.doc = t.doc || defaultDoc();
@@ -1738,8 +1980,8 @@ function openTemplateEditor(id, preset = {}){
     $$('#te-lang button').forEach(b => { b.setAttribute('aria-pressed', b.dataset.lang === lang); b.classList.toggle('has', !!versions[b.dataset.lang]); });
     if (v){
       subj.value = v.subject; $('#te-doc-title').value = v.docTitle || ''; $('#te-doc-file').value = v.fileName || '';
-      bodyEd = createEditor($('#te-body'), v.body, {onChange:update});
-      docEd = createEditor($('#te-doc-body'), v.docBody || '<p></p>', {onChange:update, cta:false});
+      bodyEd = createEditor($('#te-body'), v.body, {onChange:update, media:true});
+      docEd = createEditor($('#te-doc-body'), v.docBody || '<p><br></p>', {onChange:update, cta:false});
     } else {
       $('#te-missing-text').textContent = `Šai veidnei nav ${LANGS[lang].label.toLowerCase()} valodas versijas. Respondenti ar šo valodu saņems latviešu versiju.`;
     }
@@ -1748,6 +1990,7 @@ function openTemplateEditor(id, preset = {}){
   function syncKind(){
     const isDoc = kind() === 'pielikums';
     $('#te-doc').hidden = !isDoc;
+    $('#te-body').classList.toggle('no-media', isDoc);
     $('#te-body-label').textContent = isDoc ? 'Pavadteksts (ziņojuma teksts)' : 'E-pasta saturs';
     $('#te-body-hint').textContent = isDoc ? 'Īss teksts, kas redzams pašā e-pastā vai e-adreses ziņojumā. Vēstule pati ir pielikumā.' : 'Noformējums (virsraksti, treknraksts, saraksti, saites, poga) redzams e-pastā. E-adresē tiek nosūtīta vienkārša teksta versija.';
     $('[data-pv="doc"]', modal).hidden = !isDoc;
@@ -1782,7 +2025,7 @@ function openTemplateEditor(id, preset = {}){
   $('#te-aud').addEventListener('change', e => { sample = sampleFor(e.target.value); $('#te-sample').textContent = sample.name; update(); });
   $$('#te-lang button').forEach(b => b.addEventListener('click', () => { collect(); lang = b.dataset.lang; loadLang(); }));
   $('#te-lang-copy').addEventListener('click', () => { versions[lang] = {...versions.lv}; loadLang(); });
-  $('#te-lang-empty').addEventListener('click', () => { versions[lang] = {subject:'', body:'<p></p>', docTitle:'', docBody:'<p></p>', fileName:versions.lv.fileName}; loadLang(); subj.focus(); });
+  $('#te-lang-empty').addEventListener('click', () => { versions[lang] = {subject:'', body:'<p><br></p>', docTitle:'', docBody:'<p><br></p>', fileName:versions.lv.fileName}; loadLang(); subj.focus(); });
   $('#te-lang-del').addEventListener('click', () => { if (lang !== 'lv'){ delete versions[lang]; loadLang(); } });
   $('#te-subj-field').addEventListener('change', e => {
     if (!e.target.value) return;
@@ -1879,8 +2122,8 @@ function openLayoutEditor(){
   function render(){
     $('#ly-form').innerHTML = form();
     ['confTitle', 'infoTitle'].forEach(k => { const el = $('#ly-' + k); el.value = val(k); el.placeholder = lang === 'lv' ? '' : (work[k] || ''); });
-    confEd = createEditor($('#ly-conf'), val('confHtml') || '<p></p>', {compact:true, cta:false});
-    infoEd = createEditor($('#ly-info'), val('infoHtml') || '<p></p>', {compact:true, cta:false});
+    confEd = createEditor($('#ly-conf'), val('confHtml') || '<p><br></p>', {compact:true, cta:false});
+    infoEd = createEditor($('#ly-info'), val('infoHtml') || '<p><br></p>', {compact:true, cta:false});
     $$('#ly-lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
   }
   $$('#ly-lang button').forEach(b => b.addEventListener('click', () => { collect(); lang = b.dataset.lang; render(); }));
@@ -2311,7 +2554,7 @@ async function send(){
     const msg = buildMessage(t, r, false);
     const rec = {id:'s' + uid(), batch, sentAt:now, templateId:t.id, templateName:t.name, kind:t.kind, respondentId:r.id,
       recipient:r.name, address:addrFor(r, compose.channel), channel:compose.channel, docNr:compose.f.docNr,
-      subject:msg.subject, bodyHtml:msg.bodyHtml, bodyText:msg.bodyText, footer:msg.footer, variant:msg.variant,
+      subject:msg.subject, bodyHtml:internImages(msg.bodyHtml), bodyText:msg.bodyText, footer:msg.footer, variant:msg.variant,
       lang:msg.lang, wantLang:msg.wantLang, fallback:msg.fallback, org:msg.org,
       attachments:msg.attachments.map(a => ({name:a.name, html:a.html})), files:msg.files, status:'rinda', note:''};
     ui.newIds.add(rec.id);
@@ -2384,7 +2627,7 @@ function viewSent(id){
   const st = STATUSES[x.status];
   openModal({title:'Nosūtītā vēstule', wide:true, content: mailView({
     toName:x.recipient, toAddr:x.address, channel:x.channel,
-    subjectHtml:esc(x.subject), bodyHtml:x.bodyHtml, bodyTextHtml:esc(x.bodyText), footerHtml:esc(x.footer || ''),
+    subjectHtml:esc(x.subject), bodyHtml:resolveImages(x.bodyHtml), bodyTextHtml:esc(x.bodyText), footerHtml:esc(x.footer || ''),
     atts:(x.attachments || []).map((a, j) => ({name:a.name, src:`sent:${x.id}:${j}`})), files:x.files || [], variant:x.variant || '',
     org:x.org || state.layout.org, lang:x.lang || '', wantLang:x.wantLang || '', fallback:!!x.fallback,
     extraMeta:`<dt>Nosūtīts</dt><dd>${fmtDateTime(x.sentAt)} · Sūtījums Nr. ${x.batch}${x.docNr ? ` · Dok. Nr. ${esc(x.docNr)}` : ''}</dd>
@@ -2438,7 +2681,7 @@ const actions = {
     const ok = await confirmDialog({title:'Notīrīt vēsturi?', okLabel:'Notīrīt', danger:true,
       message:'Visi nosūtīto vēstuļu ieraksti tiks dzēsti.'});
     if (!ok) return;
-    state.sent = []; save(); renderSent(); renderCounts(); toast('Vēsture notīrīta.');
+    state.sent = []; state.images = {}; save(); renderSent(); renderCounts(); toast('Vēsture notīrīta.');
   },
   'go': (id, el) => showTab(el.dataset.tab),
   'reset': async () => {
@@ -2453,7 +2696,16 @@ const actions = {
 };
 document.addEventListener('click', e => {
   // Saites vēstuļu priekšskatījumos netiek atvērtas
-  if (e.target.closest('.mail a, .doc a, .rte-area a')) e.preventDefault();
+  const link = e.target.closest('a');
+  if (link && link.closest('.mail, .doc, .rte-area')){
+    // priekšskatījumā poga (ar aizpildītu https saiti) atveras jaunā cilnē; pārējās saites netiek atvērtas
+    const href = link.getAttribute('href') || '';
+    const open = link.classList.contains('cta') && link.closest('.mail') && /^https:\/\/[^\s{}]+$/i.test(href);
+    if (!open){
+      e.preventDefault();
+      if (link.classList.contains('cta') && link.closest('.mail')) toast('Pogas saitē nav aizpildīts lauks – saiti nevar atvērt.', true);
+    }
+  }
   const tab = e.target.closest('.tab');
   if (tab){ showTab(tab.dataset.tab); return; }
   const b = e.target.closest('[data-action]');

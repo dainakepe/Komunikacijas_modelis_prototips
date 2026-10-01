@@ -29,6 +29,12 @@ Veidnes var būt divu veidu:
 - **E-pasta saturs.** Vēstule ir pats ziņojuma teksts ar noformējumu: virsraksti, treknraksts, saraksti, saites un poga. E-adresē tiek nosūtīta tā vienkārša teksta versija.
 - **Vēstule pielikumā (PDF).** Katram adresātam tiek ģenerēts A4 dokuments. Ziņojumā ir tikai īss pavadteksts. Dokumentu var izdrukāt vai saglabāt kā PDF.
 
+Veidnēm ar veidu "E-pasta saturs" redaktorā var pievienot:
+- **attēlus** (poga **Attēls**). Attēlu var augšupielādēt no datora (PNG, JPG vai GIF, ne lielāku par 1 MB) vai norādīt `https://` saiti. Obligāti jānorāda alternatīvais teksts, un var izvēlēties platumu (mazs, vidējs, pilns) un novietojumu (pa kreisi vai centrā). Augšupielādētie attēli glabājas pārlūkā kā data URL;
+- **pogas ar saiti** (poga **Poga**). Pogai norāda tekstu un saiti, kurai jāsākas ar `https://` vai jābūt laukam, piem., `{e-anketa}`.
+
+Uzklikšķinot uz attēla vai pogas redaktorā, to var rediģēt vai dzēst. Priekšskatījumā attēli un pogas izskatās tā, kā tos redzēs saņēmējs, un poga atver saiti jaunā cilnē.
+
 PDF dokuments sastāv no divām daļām:
 - **pastāvīgās daļas:** veidlapas galva, apsekojuma baneris, konfidencialitātes sadaļa, plašāka informācija, paraksts un kājene. Tās rediģē sadaļā "Pastāvīgās daļas";
 - **mainīgā daļa:** pats vēstules teksts, ko raksta katrā veidnē.
