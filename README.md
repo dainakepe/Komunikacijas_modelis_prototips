@@ -12,9 +12,8 @@ Prototips ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var a
 ## Sākumlapa (DELTA)
 
 Atverot prototipu, vispirms redzama DELTA sistēmas sākumlapa ar moduļu kartītēm.
-- **Respondentu pārvaldība** ir pirmā, aktīvā kartīte. Tā ir izcelta CSP krāsā un aizņem divas kolonnas. Kartītē ir apakšmoduļu saraksts: "Respondentu saraksti", "Matrica", "Rekvizītu aktualizācija", "Priekšiedruka", "Komunikācija" un "Atskaites".
-- **Komunikācija** ir vienīgais aktīvais apakšmodulis (balts fons un bultiņa →). Tas atver komunikācijas moduli ar cilni "Veidnes". Pārējie apakšmoduļi ir blāvāki, ar birku "Nav pieejams prototipā", un tie nav klikšķināmi.
-- Pārējie DELTA moduļi ir parādīti kā neaktīvi ar birku "Nav pieejams prototipā".
+- Visas moduļu kartītes ir vienāda izmēra un neaktīvas, ar birku "Nav pieejams prototipā". Pirmajā rindā ir "Metadatu pārvaldība", "Respondentu pārvaldība" un "Datu vākšana", otrajā – "Datu vākšanas pārraudzība", "Mikrodatu pārvaldība" un "Administrēšana".
+- Kartītē **Respondentu pārvaldība** zem apraksta ir aktīva poga **Komunikācija** ("Vēstuļu veidnes un sūtīšana") CSP krāsā ar aploksnes ikonu un bultiņu →. Tā atver komunikācijas moduli ar cilni "Veidnes". Pārējā kartītes daļa nav klikšķināma – prototipā pieejama tikai komunikācija.
 - **Navigācija.** Komunikācijas moduļa galvenē ir nosaukums "Komunikācija" ar apakšvirsrakstu "Respondentu pārvaldība" un navigācijas ceļš "DELTA › Respondentu pārvaldība › Komunikācija". Sākumlapā var atgriezties ar saitēm "DELTA" vai "Respondentu pārvaldība" ceļā, ar CSP logo vai ar saiti "← DELTA sākums".
 
 ## Veidņu grupēšana
