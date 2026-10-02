@@ -111,6 +111,35 @@ Cilnē **Pielikumi** ir gatavi PDF pielikumi, ko var pievienot veidnēm kā papi
 
 Sagatavēs paraksti ir noņemti, parakstītāju vārdi aizstāti ar izdomātiem ("A. Paraugs", "L. Paraudziņa"), un apsekojuma vadītāja tālrunis aizstāts ar `60000000`.
 
+## Respondenti (dati no Respondentu pārvaldības)
+
+Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (prototipā – izdomāti testa dati). Respondenti ir sagrupēti pēc pārskatiem un periodiem, kas viņiem jāiesniedz.
+
+- **Datu modelis:**
+  - **respondents:** tips (juridiska / fiziska persona), nosaukums vai vārds, reģistrācijas Nr. (juridiskām personām), e-adrese, e-pasts 1, e-pasts 2;
+  - **pārskats:** nosaukums, kods un periodiskums (mēneša, ceturkšņa, pusgada, gada);
+  - **pienākums (matrica):** respondents, pārskats, periods (piem., "2026. gada septembris", "2026. g. 3. ceturksnis"), iesniegšanas termiņš, iesniegšanas datums un statuss. Statuss ir "Iesniegts", "Nav iesniegts" vai "Kavēts" (termiņš pagājis, bet pārskats nav iesniegts). Vienam respondentam var būt vairāki pienākumi.
+  - Fiziskās personas ir piesaistītas apsekojumam (Darbaspēka apsekojums, Mājsaimniecību budžeta apsekojums) ar vienu periodu un termiņu.
+- **Testa dati:**
+  - 15 uzņēmumi ar 1–5 pienākumiem katram, 6 pārskati ar dažādu periodiskumu un 10 fiziskās personas divos apsekojumos;
+  - periodi un termiņi tiek aprēķināti attiecībā pret šodienu, tāpēc statusi vienmēr ir jaukti.
+- **Pārslēgs** "Juridiskās personas / Fiziskās personas".
+- **Filtri:** pārskats (vai apsekojums), periodiskums, periods, statuss, termiņš no–līdz un meklēšana pēc nosaukuma vai reģ. Nr.
+- **Juridiskās personas:** tabula ar respondentu, kontaktiem, pienākumu skaitu un neiesniegto skaitu. Uzklikšķinot uz rindas, tā izvēršas un parāda pienākumu tabulu: Pārskats | Periods | Termiņš | Statuss.
+- **Fiziskās personas:** sagrupētas pa apsekojumiem sakļaujamos blokos. Katrā blokā ir saraksts ar vārdu, e-pastiem, e-adresi un statusu.
+- **Respondenta forma un CSV imports** papildināti ar laukiem "Reģistrācijas Nr." un "E-pasts 2".
+
+### Pārskatu tabula vēstulē – `{pārskatu_tabula}`
+
+- **Ievietošana.** Veidnes redaktora izvēlnē "+ Ievietot lauku" ir bloks **"Pārskatu tabula"**. To ievietojot, var izvēlēties:
+  - kolonnas: Pārskats, Periods, Termiņš, Statuss;
+  - rindas: "Visi atlasītie pienākumi" (uzaicinājumiem) vai "Tikai neiesniegtie" (atgādinājumiem).
+
+  Uzklikšķinot uz bloka redaktorā, iestatījumus var mainīt vai bloku dzēst.
+- **Atlase sagatavošanā.** Sadaļas "Sagatavot komunikāciju" 4. solī var atlasīt pienākumus pēc pārskata vai apsekojuma, perioda un statusa. Tiek rādīti tikai respondenti ar atbilstošiem pienākumiem.
+- **Ģenerēšana.** Tabula tiek izveidota katram respondentam no viņa pienākumiem, kas atbilst šai atlasei. Kavētie termiņi ir izcelti sarkanā krāsā. E-adreses ziņojumā tabula tiek pārvērsta tekstā.
+- **Esošās veidnes.** Tabula pievienota uzaicinājuma ("Uzaicinājums sniegt datus apsekojumā (vēstule pielikumā)" – PDF dokumentā) un atgādinājuma ("Atgādinājums par datu iesniegšanas termiņu") veidnēm juridiskām personām.
+
 ## Nosacījumi un vēstuļu varianti
 
 Nosacījumus var veidot pēc trim respondenta pazīmēm:
