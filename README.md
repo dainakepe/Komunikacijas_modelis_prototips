@@ -36,9 +36,13 @@ Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
 
 Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA moduļiem. Tie ir redzami kampaņas solī "Respondenti" un respondenta kartītē. Vecās saites turpina darboties: `#sagatavot` atver kampaņas redaktoru, `#nosutitas` atver cilni "Sūtīšanas vēsture", bet `#respondenti` atver cilni "Kampaņas".
 
-**Kampaņu saraksts.** Kampaņas ir sadalītas sadaļās pēc statusa: melnraksti, ieplānotās, izpildē (vēstules vēl tiek sūtītas) un pabeigtās.
-- Kolonnas: nosaukums un saturs, veids, statuss (Melnraksts / Ieplānota / Izpildē / Pabeigta), datums, respondentu skaits un rezultāts (piegādes statusi).
-- Melnrakstu var turpināt vai dzēst. Plānoto kampaņu var izpildīt uzreiz ("Izpildīt tagad") vai dzēst. Nosūtītai kampaņai ir poga "Skatīt vēsturē".
+**Kampaņu saraksts** (specifikācija F1). Kampaņas ir sadalītas sadaļās pēc statusa: Melnraksti, Ieplānotās, Izpildē (vēstules gaida parakstu vai vēl tiek sūtītas) un Pabeigtās. Statusu ceļš: Melnraksts → Ieplānota → Izpildē → Pabeigta.
+- Kolonnas: nosaukums, veids, satura avots, respondentu skaits, nosūtīšanas datums, statuss un rezultātu kopsavilkums (piegādes statusi).
+- Darbības:
+  - melnrakstu var turpināt (atveras saglabātajā solī) vai dzēst;
+  - ieplānoto kampaņu var izpildīt uzreiz ("Izpildīt tagad") vai dzēst;
+  - kampaņai, kas gaida parakstu, ir poga "Parakstīt";
+  - nosūtītai kampaņai ir poga "Skatīt vēsturē".
 - Sarakstā var meklēt un filtrēt pēc kampaņas veida.
 - Var būt vairāki melnraksti vienlaikus. Katrs tiek saglabāts automātiski.
 - Testa datos ir divas agrāk nosūtītas kampaņas, lai vēsturē un respondenta kartītē būtu ko redzēt.
@@ -219,21 +223,29 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
 
 ## Komunikācijas kampaņa
 
-Kampaņai ir seši soļi:
+Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
+- Augšā ir **progresa josla**: pabeigtie soļi ir atzīmēti ar ķeksīti, soļi ar trūkstošu informāciju – ar "!".
+- Starp soļiem var pārvietoties brīvi: ar progresa joslu vai pogām "← Atpakaļ" / "Tālāk →".
+- Pogu **"Saglabāt melnrakstu"** var izmantot jebkurā solī. Kampaņa tiek saglabāta arī automātiski.
 
-1. **Kampaņa.** Šeit norāda kampaņas nosaukumu (pēc noklusējuma "Kampaņa Nr. N"), adresātu un apsekojuma un vēstules datus. Adresāts nosaka, kuras veidnes tiek piedāvātas. Mainot adresātu, tiek pielāgots arī filtrs "Respondenta veids".
-2. **Respondenti.** Atlase ir atkarīga no kampaņas veida.
-   - **Kampaņas veids** ir pirmais lauks, ko izvēlas ar lielām pogām: "Uzaicinājums", "Atgādinājums" vai "Cits (informatīvs u.c.)". Pēc šī veida tiek filtrēta veidņu izvēle 3. solī: uzaicinājumi, atgādinājumi vai informatīvie un citi ziņojumi.
+1. **Pamatdati** (F1):
+   - kampaņas nosaukums (pēc noklusējuma "Kampaņa Nr. N") un adresāts;
+   - komunikācijas veids ar lielām pogām: Uzaicinājums / Atgādinājums / Informatīvs ziņojums / Cits. Pēc veida tiek filtrēta veidņu izvēle 3. solī;
+   - nosūtīšanas datums un laiks: "Nosūtīt tūlīt" vai "Ieplānot" (datums šodien vai vēlāk un laiks);
+   - apsekojuma un vēstules dati.
+
+   Adresāts nosaka, kuras veidnes tiek piedāvātas. Mainot adresātu, tiek pielāgots arī filtrs "Respondenta veids".
+2. **Respondenti** (F2, F11). Atlase ir atkarīga no komunikācijas veida.
    - **Filtri:**
      - pārskats vai apsekojums (vairākizvēle, atbilstoši kampaņas adresātam);
      - periodiskums;
      - konkrēts periods (vairākizvēle).
 
      Ja nekas nav atzīmēts, tiek ņemti visi pārskati vai periodi.
-   - **"Uzaicinājums" un "Cits"** atlasa visus respondentus, kuriem ir pienākums atlasītajos pārskatos un periodos. Termiņš un statuss netiek ņemti vērā.
+   - **Uzaicinājums, informatīvs ziņojums un cits** atlasa visus respondentus, kuriem ir pienākums atlasītajos pārskatos un periodos. Termiņš un statuss netiek ņemti vērā.
    - **"Atgādinājums"** atlasa tikai neiesniegtos pienākumus. Papildus jāizvēlas viens no veidiem:
-     - **Pirms termiņa.** Jānorāda "Sūtīšanas datums" (noklusējumā šodiena) un "Dienas līdz termiņam" N. Termiņa datums tiek aprēķināts kā sūtīšanas datums + N dienas, un tiek atlasīti tikai tie neiesniegtie pienākumi, kuru termiņš ir tieši šajā datumā. Tiek parādīts aprēķinātais termiņš un pārskati un periodi, kas tam atbilst (piem., "Termiņš 07.10.2026.: Mēneša rūpniecības produkcijas pārskats, 2026. g. septembris"). Ja tādu nav, tiek parādīts paziņojums "Šajā datumā nav pārskatu ar termiņu pēc N dienām".
-     - **Plānota kampaņa.** Ja sūtīšanas datums ir nākotnē, kampaņa saņem statusu "Plānota", un poga "Nosūtīt" kļūst par "Plānot sūtīšanu". Plānotajā datumā atlase tiek pārrēķināta pēc aktuālajiem statusiem. Prototipā to simulē poga "Izpildīt tagad" kampaņu sarakstā.
+     - **Pirms termiņa.** Jānorāda "Dienas līdz termiņam" N. Nosūtīšanas datums ir šodiena vai 1. solī ieplānotais datums. Termiņa datums tiek aprēķināts kā nosūtīšanas datums + N dienas, un tiek atlasīti tikai tie neiesniegtie pienākumi, kuru termiņš ir tieši šajā datumā. Tiek parādīts aprēķinātais termiņš un pārskati un periodi, kas tam atbilst (piem., "Termiņš 07.10.2026.: Mēneša rūpniecības produkcijas pārskats, 2026. g. septembris"). Ja tādu nav, tiek parādīts paziņojums "Šajā datumā nav pārskatu ar termiņu pēc N dienām".
+     - **Ieplānota atgādinājuma kampaņa.** Izpildes brīdī atlase tiek pārrēķināta pēc aktuālajiem statusiem. Prototipā to simulē poga "Izpildīt tagad" kampaņu sarakstā.
      - **Pēc termiņa (nokavēts).** Tiek atlasīti neiesniegtie pienākumi, kuru termiņš ir pagājis. Var norādīt neobligātu lauku "Kavēts vismaz N dienas".
    - **Papildu atlase pēc pazīmēm** (respondenta veids, dalības veids, iepriekšējā dalība, valoda) ir sakļaujamā sadaļā.
    - **Atlases rezultāts:**
@@ -250,9 +262,18 @@ Kampaņai ir seši soļi:
      - apakšā ir pogas "Atcelt", "Saglabāt arī kā veidni" un "Izmantot kampaņā".
    - **Saglabāt arī kā veidni.** Prasa norādīt veidnes nosaukumu un kategoriju. Saturs tiek saglabāts kā jauna veidne, un kampaņa to izmanto.
    - **Kopsavilkums.** Kad saturs ir apstiprināts, solī redzams satura avots ("Veidne: [nosaukums]", "Veidne, pielāgota kampaņai" vai "Individuāls saturs"), temats un vēstules veids. Ir pogas "Labot saturu" un "Izvēlēties citu saturu".
-4. **Paraksts.** Parakstītājs un amats tiek izmantoti laukos `{parakstītājs}` un `{amats}`, kā arī PDF vēstules parakstā. Pēc noklusējuma tie tiek ņemti no sadaļas "Pastāvīgās daļas". Šeit veiktās izmaiņas attiecas tikai uz šo kampaņu.
-5. **Adreses.** Šeit izvēlas adrešu prioritāti.
-6. **Pārbaude un nosūtīšana.** Šeit redzams katras vēstules priekšskatījums, kopsavilkums un poga "Nosūtīt".
+4. **Paraksts** (F8):
+   - "Nav jāparaksta" vai "Jāparaksta" (DVS NAMEJS integrācija; prototipā – simulācija);
+   - ja jāparaksta – parakstīšanas veids (Secīga / Paralēla / Paka) un parakstītāji. Secīgai parakstīšanai secība ir atzīmēšanas kārtībā;
+   - "Paraksts vēstulē": lauki `{parakstītājs}` un `{amats}` (arī PDF vēstules parakstā). Pēc noklusējuma tos ņem no pirmā parakstītāja vai no "Pastāvīgajām daļām", un tos var mainīt tikai šai kampaņai.
+5. **Adreses** (F7). Trīs izvēlnes "1./2./3. prioritāte", kopsavilkums, cik respondentiem kura adrese tiks izmantota, un saraksts "Respondenti bez derīgas adreses" (var ievadīt E-pastu 3 vai izņemt respondentu).
+6. **Pārbaude** (F3, F5, F6):
+   - **kampaņas kopsavilkums** ar saitēm "Labot" uz attiecīgo soli;
+   - **priekšskatījums:** viena vēstule katram respondentam ar `{pārskatu_tabula}` (atgādinājumā tikai neiesniegtie pienākumi), pārslēgšanās starp respondentiem un pārslēgs "E-pasts / eAdrese";
+   - **"Pielāgot šo vēstuli"** (F5): konkrētā respondenta vēstulei var labot tematu un tekstu, pievienot vai noņemt papildu pielikumus. Pielāgotā vēstule ir atzīmēta ar birku "Pielāgota vēstule" (arī atlases tabulā un vēsturē), un to var atjaunot uz sākotnējo;
+   - **galvenā poga** atkarībā no iestatījumiem: "Ieplānot" (ieplānota kampaņa), "Nodot parakstīšanai" (jāparaksta) vai "Nosūtīt".
+
+**Parakstīšana (simulācija).** Pēc "Nodot parakstīšanai" kampaņa ir sadaļā "Izpildē", un tās vēstulēm ir statuss "Gaida parakstu" (redzams arī sūtīšanas vēsturē). Poga "Parakstīt" (kampaņu sarakstā vai vēstures blokā) paraksta vēstules, un tās tiek nosūtītas. Ieplānotai kampaņai ar parakstu vēstules tiek nodotas parakstīšanai izpildes brīdī.
 
 **Melnraksts.** Kampaņa, arī tās saturs, tiek automātiski saglabāta kā melnraksts, tāpēc darbu var turpināt vēlāk, arī pēc lapas pārlādes. Melnraksti redzami kampaņu sarakstā. Poga "Dzēst melnrakstu" redaktorā to dzēš. Pēc nosūtīšanas atveras cilne "Sūtīšanas vēsture" ar šīs kampaņas bloku, bet pēc plānošanas – kampaņu saraksta sadaļa "Ieplānotās".
 
