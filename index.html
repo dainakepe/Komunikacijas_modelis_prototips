@@ -2042,7 +2042,8 @@ function deliveryAttempts(r, prio = compose.prio){
   return out;
 }
 // Adrese, uz kuru vēstule faktiski tiek nosūtīta (veiksmīgā vai pēdējā mēģinātā)
-const finalAttempt = atts => atts.find(a => a.ok) || [...atts].reverse().find(a => a.ok === false) || atts[0];
+// (funkcijas deklarācija – izmanto jau ielādē, pabeidzot "rindā" esošās vēstules)
+function finalAttempt(atts){ return atts.find(a => a.ok) || [...atts].reverse().find(a => a.ok === false) || atts[0]; }
 function attemptsHtml(atts, prio, mode){
   // mode: 'plan' – priekšskatījums (paredzamais rezultāts), 'queue' – rindā, 'done' – nosūtīts
   const res = a => a.ok === null ? '<span class="muted">netika izmantota</span>'
