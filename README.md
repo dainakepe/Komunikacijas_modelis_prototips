@@ -24,7 +24,7 @@ Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
 1. **Kampaņas** (pirmā un noklusējuma cilne). Tajā ir saraksts "Komunikācijas kampaņas" un poga "+ Jauna kampaņa".
 2. **Veidnes.** Vēstuļu veidnes un sagataves.
 3. **Sūtīšanas vēsture.** Nosūtītās vēstules, sagrupētas pa kampaņām.
-4. **Atskaites.** Šajā solī ir tikai tukši skati ar uzrakstu "Tiks papildināts".
+4. **Atskaites.** Rādītāji, grafiki un tabulas par sūtīšanas rezultātiem ar CSV eksportu un MI kopsavilkumu.
 
 - **Noformējums.** Cilnēm nav skaita ciparu. Teksts ir lielāks (16,5 px), pustrekns, ar ikonu pirms nosaukuma. Aktīvajai cilnei ir tirkīzzaļš (#009999) teksts, bieza apakšlīnija un ļoti gaišs tirkīzzaļš fons. Neaktīvās ir tumši pelēkas un, uzbraucot ar peli, kļūst tirkīzzaļas.
 - **Navigācijas ceļš:** "DELTA › Respondentu pārvaldība › Komunikācija › [cilne]".
@@ -45,7 +45,7 @@ Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA 
   - nosūtītai kampaņai ir poga "Skatīt vēsturē".
 - Sarakstā var meklēt un filtrēt pēc kampaņas veida.
 - Var būt vairāki melnraksti vienlaikus. Katrs tiek saglabāts automātiski.
-- Testa datos ir divas agrāk nosūtītas kampaņas, lai vēsturē un respondenta kartītē būtu ko redzēt.
+- Testa datos ir piecas agrāk nosūtītas kampaņas (pēdējo 75 dienu laikā, viena ar parakstu), lai sūtīšanas vēsturē, atskaitēs un respondenta kartītē būtu ko redzēt.
 
 ## Veidņu grupēšana
 
@@ -204,11 +204,17 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
 - Kopsavilkumā redzams, cik respondentiem vēstule tiks sūtīta uz katras prioritātes adresi un cik respondentiem nav nevienas atbilstošas adreses.
 - **Respondenti bez derīgas adreses.** Ja kādam respondentam nav nevienas adreses atbilstoši izvēlētajai prioritātei, solī redzams šo respondentu saraksts. Katram var turpat ievadīt E-pastu 3 vai izņemt viņu no kampaņas ("Izņemt no kampaņas").
 
-**Sūtīšana:**
-- Katram respondentam izmanto pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, mēģina nākamo.
-- Simulācijā e-adreses `_DEFAULT@00000000112` un `_PRIVATE@00000000222` nav aktivizētas, un e-pasti uz domēnu `nepiegadajams.example` nav sasniedzami.
-- Priekšskatījumā un nosūtītajā vēstulē redzama prioritāšu secība un katrs mēģinājums: adreses veids, adrese un rezultāts.
-- Cilnē "Sūtīšanas vēsture" katras kampaņas blokā redzama izmantotā prioritāte, piem., "eAdrese → E-pasts 1 → E-pasts 2", un katrai vēstulei – izmantotā adrese un mēģinājumi.
+**Sūtīšanas simulācija** (specifikācija F9, F10). Vēstules apstrādā pēc adrešu prioritātes:
+- **Piegādāta uzreiz:** lielākā daļa vēstuļu.
+- **Pagaidu kļūda:** piem., pārpildīta pastkaste vai īslaicīgi nepieejams eAdreses serviss. Sistēma atkārtoti mēģina sūtīt uz to pašu adresi. Pēc trim pagaidu kļūdām pēc kārtas tā pāriet uz nākamo adresi.
+- **Pastāvīga kļūda:** sistēma pāriet uz nākamo adresi. Simulācijā pastāvīgas kļūdas rada:
+  - e-adreses `_DEFAULT@00000000112` un `_PRIVATE@00000000222` (nav aktivizētas);
+  - e-pasti uz domēnu `nepiegadajams.example` (pastkaste neeksistē);
+  - e-pasti uz domēnu `surogatfiltrs.example` (noraidīti kā surogātpasts).
+- **Neveiksmīga:** ja visas adreses ir izsmeltas, vēstule tiek atzīmēta kā neveiksmīga un nodota manuālai pārbaudei (testa datos, piem., Mārtiņam Kalniņam).
+- **Prombūtne:** daļa e-pastu saņem automātisku atbildi par prombūtni. Šādas vēstules ir piegādātas.
+
+Pagaidu kļūdas, surogātpasts un prombūtne tiek simulēti deterministiski, pēc adreses un sūtījuma. Priekšskatījumā redzama prioritāšu secība un paredzamais rezultāts (zināmās pastāvīgās kļūdas), bet nosūtītajā vēstulē – katrs faktiskais mēģinājums.
 
 ### Pārskatu tabula vēstulē – `{pārskatu_tabula}`
 
@@ -279,12 +285,38 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
 
 ## Sūtīšanas vēsture
 
-Cilnē **Sūtīšanas vēsture** nosūtītās vēstules ir sagrupētas pa kampaņām.
-- **Kampaņas bloks** ir izvēršams. Galvenē redzams kampaņas nosaukums, veids (Uzaicinājums / Pirmstermiņa atgādinājums / Nokavēta termiņa atgādinājums / Cits), datums, saturs, adrešu prioritāte un rezultātu kopsavilkums (vēstuļu skaits un statusi). Plānotajām kampaņām redzams arī plānotais datums.
-- **Bloka iekšpusē** katrai vēstulei redzams adresāts (uzklikšķinot atveras respondenta kartīte), izmantotā adrese, mēģinājumi un statuss, kā arī poga "Skatīt".
+Cilnē **Sūtīšanas vēsture** (specifikācija F16, F17) ir visas nosūtītās un nosūtīšanas procesā esošās vēstules.
 - **Apakšsadaļas** pēc statusa: Visas · Gaida parakstu · Nosūtītas · Piegādātas · Neveiksmīgas.
-- **Filtri:** kampaņas veids, periods (šodien, pēdējās 7, 30 vai 90 dienas) un meklēšana pēc respondenta vai adreses.
+- **Filtri:** kampaņa, kampaņas veids, kanāls (eAdrese / e-pasts), periods (šodien, pēdējās 7, 30 vai 90 dienas) un meklēšana pēc respondenta vai adreses.
+- **Tabula:** katrai vēstulei redzams adresāts (uzklikšķinot atveras respondenta kartīte), kampaņa, statuss, kanāls, adrese un nosūtīšanas laiks. Statusa šūnā redzamas arī NDR klases, "Atkārtoti nosūtīta" un "Manuāla pārbaude" / "Izskatīta".
+- **Izvērstā rinda:**
+  - **statusu ceļš (laika līnija):** Melnraksts → (Gaida parakstu → Parakstīta) → Nosūtīta → Piegādāta, kā arī "Pagaidu kļūda → Atkārtots mēģinājums", "Pastāvīga kļūda → Nākamā adrese" un "Visas adreses izsmeltas → Neveiksmīga → Manuāla pārbaude";
+  - **visi mēģinājumi:** laiks, adrese, rezultāts un NDR.
+- **NDR (atgriezeniskie paziņojumi):** katram paziņojumam ir:
+  - klasifikācija: pagaidu kļūda, pastāvīga kļūda, surogātpasts vai prombūtne;
+  - birka "MI klasificēts" ar ticamību;
+  - novirzījums: pagaidu kļūda → sistēma, pastāvīga kļūda → sistēma un darbinieks, surogātpasts un prombūtne → darbinieks;
+  - sākotnējais paziņojuma teksts.
+- **Manuāla pārbaude** (neveiksmīgajām vēstulēm): var ievadīt jaunu e-pastu un nospiest "Sūtīt atkārtoti". Adrese tiek pārbaudīta un saglabāta kā respondenta E-pasts 3, bet mēģinājums tiek pievienots vēsturei. Var arī nospiest "Atzīmēt kā izskatītu".
+- Kampaņām, kas gaida parakstu, virs tabulas ir poga "Parakstīt".
 - Augšā ir kopējā statistika un poga "Notīrīt vēsturi".
+
+## Atskaites
+
+Cilnē **Atskaites** (specifikācija F18) katrai apakšsadaļai ir savs skats. Visos skatos ir:
+- filtri: periods, kampaņa, kampaņas veids, kanāls;
+- poga **"Eksportēt CSV"** (atdalītājs – semikols, UTF-8 ar BOM, lai fails pareizi atveras Excel);
+- bloks **"MI kopsavilkums"** ar simulētām galvenajām atziņām par atlasītajiem datiem: piegādes īpatsvars, neveiksmīgo ziņu īpatsvara izmaiņas e-pastā salīdzinājumā ar iepriekšējo tāda paša garuma periodu, biežākais NDR iemesls, atkārtotā nosūtīšana, manuāla pārbaude un paraksti.
+
+Skati:
+- **Nosūtīšanas kopsavilkums:**
+  - rādītāju kartītes: nosūtītas, piegādātas, neveiksmīgas, atkārtoti nosūtītas, gaida parakstu;
+  - grafiki pa kanāliem un kampaņu veidiem (sakrauti stabiņi pēc statusa) un pa periodiem (pa dienām vai nedēļām);
+  - grafikiem ir rīka padoms (pelei un tastatūrai) un datu tabula. Krāsas pārbaudītas krāsu redzes traucējumu gadījumam.
+- **Piegādes rezultāti:** tabula pa kampaņām (vēstules, piegādātas, nosūtītas, neveiksmīgas, gaida parakstu, piegādes %) un kopsavilkums pa kanāliem.
+- **Neveiksmīgās ziņas:** NDR sadalījums pa klasifikācijai un novirzījumam, kā arī visu NDR tabula (respondents, kampaņa, adrese, klasifikācija, ticamība, novirzījums, statuss).
+- **Atkārtotā nosūtīšana:** rādītāji un tabula ar mēģinājumu skaitu un iemeslu: pagaidu kļūda, pāreja uz nākamo adresi vai manuāla atkārtota nosūtīšana.
+- **Citi pārskati:** parakstīšanas rezultāti pa kampaņām (veids, parakstītāji, parakstītās vēstules, gaida parakstu, laiki).
 
 ## Nosacījumi un vēstuļu varianti
 
