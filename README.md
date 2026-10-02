@@ -146,6 +146,32 @@ Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (pro
 - **Fiziskās personas:** sagrupētas pa apsekojumiem sakļaujamos blokos. Katrā blokā ir saraksts ar vārdu, e-pastiem, e-adresi un statusu.
 - **Respondenta forma un CSV imports** papildināti ar laukiem "Reģistrācijas Nr." un "E-pasts 2".
 
+### Respondentu adreses un adrešu prioritāte
+
+**Adreses.** Katram respondentam ir četras adreses:
+- **eAdrese** (juridiskām personām – uzņēmuma eAdrese), **E-pasts 1** un **E-pasts 2**. Tās ir sinhronizētas no Respondentu pārvaldības.
+- **E-pasts 3 (manuāli)**, ko darbinieks var ievadīt vai labot komunikācijas modulī.
+
+**Izvērstā respondenta rinda** (gan juridiskām, gan fiziskām personām) parāda:
+- sinhronizētās adreses kā tikai lasāmas, ar birku "No Respondentu pārvaldības", datumu "Sinhronizēts: …" un pogu "Sinhronizēt" (simulācija);
+- lauku "E-pasts 3 (manuāli)" ar e-pasta formāta pārbaudi un pogu "Saglabāt", kā arī informāciju, kas un kad to ievadīja.
+
+**Testa dati** satur dažādus gadījumus:
+- dažiem respondentiem nav eAdreses;
+- daudziem ir tikai viens e-pasts, dažiem aizpildītas visas adreses;
+- vienam respondentam nav nevienas adreses.
+
+**Prioritāte sesijā.** Sadaļas "Sagatavot komunikāciju" 3. solī "Adreses" izvēlas "1. prioritāte", "2. prioritāte" un "3. prioritāte".
+- Vienu adreses veidu nevar izvēlēties divreiz. 1. prioritāte ir obligāta.
+- Noklusējums: eAdrese → E-pasts 1 → E-pasts 2.
+- Kopsavilkumā redzams, cik respondentiem vēstule tiks sūtīta uz katras prioritātes adresi un cik respondentiem nav nevienas atbilstošas adreses. Šos respondentus var apskatīt un tiem ievadīt manuālo e-pastu.
+
+**Sūtīšana:**
+- Katram respondentam izmanto pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, mēģina nākamo.
+- Simulācijā e-adreses `_DEFAULT@00000000112` un `_PRIVATE@00000000222` nav aktivizētas, un e-pasti uz domēnu `nepiegadajams.example` nav sasniedzami.
+- Priekšskatījumā un nosūtītajā vēstulē redzama prioritāšu secība un katrs mēģinājums: adreses veids, adrese un rezultāts.
+- Cilnē "Nosūtītās" ir **sūtīšanas sesiju** saraksts ar izmantoto prioritāti, piem., "eAdrese → E-pasts 1 → E-pasts 2". Uzklikšķinot uz sesijas, tabulā redzamas tikai tās vēstules.
+
 ### Pārskatu tabula vēstulē – `{pārskatu_tabula}`
 
 - **Ievietošana.** Veidnes redaktora izvēlnē "+ Ievietot lauku" ir bloks **"Pārskatu tabula"**. To ievietojot, var izvēlēties:
