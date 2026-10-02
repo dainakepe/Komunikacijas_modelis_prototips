@@ -103,11 +103,20 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* ===== Navigācija ===== */
 .tabs{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
 .tabs-inner{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
-.tab{appearance:none;background:none;border:0;border-bottom:3px solid transparent;padding:14px 14px 11px;font-weight:600;color:var(--text-muted);cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:8px}
-.tab:hover{color:var(--primary-dark)}
-.tab[aria-current="page"]{color:var(--primary-darker);border-bottom-color:var(--primary)}
-.tab .count{background:var(--primary-50);color:var(--primary-dark);border:1px solid var(--primary-200);font-size:12px;padding:0 7px;border-radius:10px;line-height:18px}
-.tab[aria-current="page"] .count{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.tab{appearance:none;background:none;border:0;border-bottom:4px solid transparent;padding:15px 18px 12px;font:inherit;font-size:16.5px;font-weight:600;color:#3D4A4F;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:9px;transition:color .12s,background .12s}
+.tab .icon{width:20px;height:20px;flex:none}
+.tab:hover{color:#009999}
+.tab[aria-current="page"]{color:#009999;border-bottom-color:#009999;background:#EAF7F7}
+.tab:focus-visible{outline:3px solid var(--focus-ring);outline-offset:-3px}
+/* Apakšsadaļas – filtru pogas zem virsraksta */
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:-6px 0 16px}
+.subnav button{appearance:none;border:1.5px solid var(--border);background:#fff;border-radius:999px;padding:7px 16px;font:inherit;font-size:14.5px;font-weight:600;color:#3D4A4F;cursor:pointer}
+.subnav button:hover{border-color:var(--primary-300);color:#009999}
+.subnav button[aria-pressed="true"]{background:#009999;border-color:#009999;color:#fff}
+.subnav button:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
+.todo-card{text-align:center;padding:48px 20px;color:var(--text-muted)}
+.todo-card h2{font-size:19px;color:var(--primary-darker);margin:10px 0 6px}
+.todo-card .icon{width:34px;height:34px;color:var(--primary-300)}
 
 /* ===== Saturs ===== */
 main.container{padding-top:28px;padding-bottom:48px}
@@ -791,6 +800,22 @@ dialog.modal.wide{width:min(1180px,calc(100vw - 32px))}
 dialog.modal.mid{width:min(900px,calc(100vw - 32px))}
 /* Veidnes redaktors – gandrīz pilnekrāna logs */
 dialog.modal.full{width:calc(100vw - 24px);max-width:none;height:calc(100vh - 24px);max-height:calc(100vh - 24px)}
+/* Veidnes redaktors: centrēts logs ~puse ekrāna (900–1100 px), līdz 90% augstuma, iekšēja ritināšana, fiksētas pogas */
+dialog.modal.editor{width:min(calc(100vw - 24px), clamp(900px, 50vw, 1100px));max-width:none;max-height:90vh}
+dialog.modal.editor .modal-wrap{max-height:90vh}
+dialog.modal.editor .modal-body{flex:1;min-height:0;overflow:auto;padding:14px 20px}
+.modal.editor .editor-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
+.modal.editor .editor-preview{position:sticky;top:0;max-height:calc(90vh - 170px);overflow:auto}
+.modal.editor #te-form .field{margin-bottom:10px;gap:4px}
+.modal.editor .te-row3{grid-template-columns:1fr 1fr}
+.modal.editor .te-row3 > .field:last-child{grid-column:1/-1}
+.modal.editor .te-row3.sess{grid-template-columns:1fr}
+@media (max-width:900px){
+  dialog.modal.editor{width:100vw;max-height:100vh;height:100vh;border-radius:0}
+  dialog.modal.editor .modal-wrap{max-height:100vh;height:100%}
+  .modal.editor .editor-grid{grid-template-columns:minmax(0,1fr)}
+  .modal.editor .editor-preview{position:static;max-height:none}
+}
 dialog.modal.full .modal-wrap{height:100%;max-height:none}
 dialog.modal.full .modal-body{flex:1;padding:14px 20px}
 .modal-title{display:flex;align-items:center;gap:10px;min-width:0}
@@ -872,7 +897,7 @@ main.home{padding-top:32px;padding-bottom:48px}
 .home-hello{font-size:26px}
 .home-lead{color:var(--text-muted);font-size:16px;margin:4px 0 22px}
 .mod-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.mod-card{position:relative;display:flex;flex-direction:column;gap:12px;padding:20px;min-height:180px;border-radius:10px;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow)}
+.mod-card{position:relative;display:flex;flex-direction:column;gap:12px;padding:20px;min-height:150px;border-radius:10px;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow)}
 .mod-icon{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;background:var(--primary-50);color:var(--primary-dark)}
 .mod-icon .icon{width:24px;height:24px}
 .mod-card h2{font-size:17px}
@@ -993,34 +1018,28 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   <div class="mod-grid">
     <article class="mod-card is-off" aria-disabled="true">
       <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg></div>
-      <h2>Metadatu pārvaldība</h2><p>Rādītāju kopas, ievadformas, validācijas, klasifikatori</p>
-      <span class="mod-badge">Nav pieejams prototipā</span>
+      <h2>Metadatu pārvaldība</h2>
     </article>
     <article class="mod-card is-off" aria-labelledby="mod-resp">
       <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.7"/></svg></div>
-      <h2 id="mod-resp">Respondentu pārvaldība</h2><p>Respondentu saraksti, matrica, rekvizītu aktualizācija</p>
-      <a class="mod-sub-link" href="#kampanas"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span><b>Komunikācija</b><small>Kampaņas, vēstuļu veidnes un vēsture</small></span><svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-      <span class="mod-badge">Nav pieejams prototipā</span>
+      <h2 id="mod-resp">Respondentu pārvaldība</h2>
+      <a class="mod-sub-link" href="#kampanas"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><span><b>Komunikācija</b></span><svg class="icon arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </article>
     <article class="mod-card is-off" aria-disabled="true">
       <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/></svg></div>
-      <h2>Datu vākšana</h2><p>Ievadformas, CAWI, CATI, CAPI, API</p>
-      <span class="mod-badge">Nav pieejams prototipā</span>
+      <h2>Datu vākšana</h2>
     </article>
     <article class="mod-card is-off" aria-disabled="true">
       <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></div>
-      <h2>Datu vākšanas pārraudzība</h2><p>Atskaites, saziņa, datu apmaiņas uzraudzība</p>
-      <span class="mod-badge">Nav pieejams prototipā</span>
+      <h2>Datu vākšanas pārraudzība</h2>
     </article>
     <article class="mod-card is-off" aria-disabled="true">
       <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div>
-      <h2>Mikrodatu pārvaldība</h2><p>Datu apstrāde, atlase, integrācija ar PILS, arhivēšana</p>
-      <span class="mod-badge">Nav pieejams prototipā</span>
+      <h2>Mikrodatu pārvaldība</h2>
     </article>
     <article class="mod-card is-off" aria-disabled="true">
       <div class="mod-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><circle cx="12" cy="10" r="2.5"/><path d="M8 16c.8-1.6 2.3-2.5 4-2.5s3.2.9 4 2.5"/></svg></div>
-      <h2>Administrēšana</h2><p>Lietotāji, lomas, auditācijas pieraksti</p>
-      <span class="mod-badge">Nav pieejams prototipā</span>
+      <h2>Administrēšana</h2>
     </article>
   </div>
 </main>
@@ -1048,9 +1067,10 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <nav class="tabs" aria-label="Moduļa sadaļas">
   <div class="container tabs-inner">
-    <button class="tab" data-tab="kampanas">Kampaņas <span class="count" id="cnt-kampanas">0</span></button>
-    <button class="tab" data-tab="veidnes">Veidnes <span class="count" id="cnt-veidnes">0</span></button>
-    <button class="tab" data-tab="vesture">Vēsture <span class="count" id="cnt-vesture">0</span></button>
+    <button class="tab" data-tab="kampanas"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>Kampaņas</button>
+    <button class="tab" data-tab="veidnes"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 13h6M9 17h6"/></svg>Veidnes</button>
+    <button class="tab" data-tab="vesture"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Sūtīšanas vēsture</button>
+    <button class="tab" data-tab="atskaites"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M8 17v-5M13 17V8M18 17v-9"/></svg>Atskaites</button>
   </div>
 </nav>
 
@@ -1058,17 +1078,17 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
   <!-- ============ VEIDNES ============ -->
   <section id="tab-veidnes" class="tab-panel" hidden>
+    <div id="tpl-view-veidnes">
     <div class="page-head">
       <div>
         <h1>Vēstuļu veidnes</h1>
       </div>
       <div class="toolbar">
+        <button class="btn btn-secondary" data-action="sag-open"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v5"/></svg>Sagataves</button>
         <button class="btn btn-secondary" data-action="layout-edit"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 17h8"/></svg>Pastāvīgās daļas</button>
         <button class="btn btn-primary" data-action="tpl-new"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Jauna veidne</button>
       </div>
     </div>
-    <div class="subtabs" id="tpl-subtabs" role="tablist" aria-label="Veidnes un sagataves"></div>
-    <div id="tpl-view-veidnes">
     <div class="aud-cards" role="tablist" aria-label="Adresātu grupa" id="tpl-aud"></div>
     <div class="tpl-toolbar">
       <label class="search"><span class="sr-only">Meklēt veidnes</span>
@@ -1080,6 +1100,13 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     <div id="tpl-blocks" role="tabpanel"></div>
     </div>
     <div id="tpl-view-sag" hidden>
+      <div class="page-head">
+        <div>
+          <button type="button" class="btn btn-ghost btn-sm back-link" data-action="sag-back">← Atpakaļ uz veidnēm</button>
+          <h1>Sagataves</h1>
+          <p>Atkārtoti izmantojami materiāli, no kuriem veido vai papildina veidnes: e-pasta satura šabloni un pielikumu sagataves.</p>
+        </div>
+      </div>
       <div class="seg sag-group" id="sag-group" role="group" aria-label="Sagatavju grupa"></div>
       <div class="tpl-toolbar sag-toolbar">
         <label class="search"><span class="sr-only">Meklēt sagataves</span>
@@ -1106,6 +1133,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       </div>
       <div class="toolbar"><button class="btn btn-primary" data-action="camp-new"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Jauna kampaņa</button></div>
     </div>
+    <div class="subnav" id="camp-sub" role="group" aria-label="Kampaņu statuss"></div>
     <div class="card">
       <div class="filters">
         <label class="search"><span class="sr-only">Meklēt kampaņas</span>
@@ -1113,7 +1141,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <input type="search" id="camp-search" placeholder="Meklēt pēc nosaukuma vai satura…">
         </label>
         <label><span class="sr-only">Kampaņas veids</span><select id="camp-kind"></select></label>
-        <label><span class="sr-only">Statuss</span><select id="camp-status"><option value="">Visi statusi</option><option value="draft">Melnraksts</option><option value="planned">Plānota</option><option value="sent">Nosūtīta</option></select></label>
       </div>
       <div class="table-wrap"><table class="camp-table">
         <thead><tr><th>Kampaņa</th><th>Veids</th><th>Statuss</th><th>Datums</th><th class="num">Respondenti</th><th>Rezultāts</th><th><span class="sr-only">Darbības</span></th></tr></thead>
@@ -1270,11 +1297,12 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   <section id="tab-vesture" class="tab-panel" hidden>
     <div class="page-head">
       <div>
-        <h1>Komunikācijas vēsture</h1>
+        <h1>Sūtīšanas vēsture</h1>
         <p>Nosūtītās vēstules sagrupētas pa kampaņām. Nosūtīšana prototipā ir simulēta – vēstules reāli netiek sūtītas; statuss tiek atjaunināts dažu sekunžu laikā.</p>
       </div>
       <button class="btn btn-danger-ghost" data-action="sent-clear" id="sent-clear-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>Notīrīt vēsturi</button>
     </div>
+    <div class="subnav" id="hist-sub" role="group" aria-label="Vēstuļu statuss"></div>
     <div class="stats" id="sent-stats"></div>
     <div class="card" style="margin-bottom:14px">
       <div class="filters" style="border-bottom:0">
@@ -1283,14 +1311,24 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <input type="search" id="hist-search" placeholder="Meklēt pēc respondenta vai adreses…">
         </label>
         <label><span class="sr-only">Kampaņas veids</span><select id="hist-kind"></select></label>
-        <label><span class="sr-only">Statuss</span>
-          <select id="hist-status"><option value="">Visi statusi</option><option value="rinda">Rindā</option><option value="piegadats">Piegādāts</option><option value="nosutits">Nosūtīts</option><option value="kluda">Neizdevās</option></select></label>
         <label><span class="sr-only">Periods</span>
           <select id="hist-period"><option value="">Jebkurā laikā</option><option value="0">Šodien</option><option value="7">Pēdējās 7 dienas</option><option value="30">Pēdējās 30 dienas</option><option value="90">Pēdējās 90 dienas</option></select></label>
       </div>
     </div>
     <div id="hist-body"></div>
     <div class="table-foot" id="hist-foot" style="border:0;padding-left:2px"></div>
+  </section>
+
+  <!-- ============ ATSKAITES ============ -->
+  <section id="tab-atskaites" class="tab-panel" hidden>
+    <div class="page-head">
+      <div>
+        <h1>Atskaites</h1>
+        <p>Apkopota informācija par komunikācijas procesu un tā rezultātiem, ar eksportu (piem., CSV).</p>
+      </div>
+    </div>
+    <div class="subnav" id="rep-sub" role="group" aria-label="Atskaites"></div>
+    <div id="rep-body"></div>
   </section>
 </main>
 </div>
@@ -2843,9 +2881,9 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
    DIALOGI
    ===================================================================== */
 const modal = $('#modal');
-function openModal({title, content, actions = [], wide = false, full = false, back = ''}){
+function openModal({title, content, actions = [], wide = false, full = false, editor = false, back = ''}){
   if (modal.open) modal.close();
-  modal.className = 'modal' + (full ? ' full' : wide ? ' wide' : '');
+  modal.className = 'modal' + (editor ? ' editor' : full ? ' full' : wide ? ' wide' : '');
   modal.innerHTML = `
     <div class="modal-wrap">
       <div class="modal-head"><div class="modal-title">${back ? `<button type="button" class="btn btn-ghost btn-sm modal-back" data-close>${esc(back)}</button>` : ''}<h2>${esc(title)}</h2></div>
@@ -3063,8 +3101,8 @@ function confirmDialog({title, message, okLabel = 'Apstiprināt', danger = false
 /* =====================================================================
    NAVIGĀCIJA
    ===================================================================== */
-const TABS = ['kampanas', 'veidnes', 'vesture'];
-const TAB_LABELS = {kampanas:'Kampaņas', veidnes:'Veidnes', vesture:'Vēsture'};
+const TABS = ['kampanas', 'veidnes', 'vesture', 'atskaites'];
+const TAB_LABELS = {kampanas:'Kampaņas', veidnes:'Veidnes', vesture:'Sūtīšanas vēsture', atskaites:'Atskaites'};
 // Sākumlapa (DELTA) vai komunikācijas modulis
 function showHome(){
   $('#home-view').hidden = false; $('#module-view').hidden = true;
@@ -3083,10 +3121,10 @@ function route(){
   else { if (h === 'veidnes') ui.tplView = 'veidnes'; showTab(h); }
 }
 // Navigācijas ceļš: DELTA › Respondentu pārvaldība › Komunikācija › [cilne] (› kampaņa)
+// Navigācijas ceļš: DELTA › Respondentu pārvaldība › Komunikācija › [cilne]
 function setCrumb(){
   const sep = '<span class="sep" aria-hidden="true">›</span>', edit = ui.tab === 'kampanas' && ui.campView === 'edit';
-  $('#crumb-tail').innerHTML = edit ? `${sep}<a href="#kampanas">Kampaņas</a>${sep}<span aria-current="page">${esc(compose.name)}</span>`
-    : `${sep}<span aria-current="page">${esc(TAB_LABELS[ui.tab] || '')}</span>`;
+  $('#crumb-tail').innerHTML = edit ? `${sep}<a href="#kampanas">Kampaņas</a>` : `${sep}<span aria-current="page">${esc(TAB_LABELS[ui.tab] || '')}</span>`;
 }
 function showTab(name, opts = {}){
   if (!TABS.includes(name)) name = 'kampanas';
@@ -3106,6 +3144,7 @@ function showTab(name, opts = {}){
   ui.tab = name;
   if (name === 'kampanas') ui.campView === 'edit' ? renderCompose() : renderCampaigns();
   if (name === 'vesture') renderSent();
+  if (name === 'atskaites') renderReports();
   setCrumb();
   const hash = name === 'kampanas' && ui.campView === 'edit' ? 'kampana' : name;
   if (location.hash !== '#' + hash) history.replaceState(null, '', '#' + hash);
@@ -3120,11 +3159,10 @@ function openEditor(draftId){
   state.activeDraft = compose.draftId;
   showTab('kampanas', {edit:true});
 }
-function renderCounts(){
-  $('#cnt-kampanas').textContent = (state.drafts || []).length + (state.planned || []).length + new Set(state.sent.map(x => x.batch)).size;
-  $('#cnt-veidnes').textContent = state.templates.length;
-  $('#cnt-vesture').textContent = state.sent.length;
-}
+// Cilnēm skaitītāju nav (funkcija saglabāta izsaukumu saderībai)
+function renderCounts(){}
+// Apakšsadaļu pogas (bez skaitītājiem)
+const subnavHtml = (items, cur, attr) => items.map(([k, l]) => `<button type="button" data-${attr}="${k}" aria-pressed="${k === cur}">${esc(l)}</button>`).join('');
 const kindPill = k => k === 'pielikums'
   ? `<span class="pill pill-doc">${ICON.doc}${KINDS.pielikums}</span>`
   : `<span class="pill pill-mail">${ICON.mail}${KINDS.epasts}</span>`;
@@ -3162,11 +3200,8 @@ function tplCard(t){
     </div>
   </article>`;
 }
-// Apakšcilnes "Veidnes" / "Sagataves"
+// Skats "Veidnes" vai atsevišķs skats "Sagataves" (poga augšējā labajā stūrī; "← Atpakaļ uz veidnēm")
 function renderTplViews(){
-  const nSag = (state.mailSamples || []).length + allAtts().length;
-  $('#tpl-subtabs').innerHTML = [['veidnes', 'Veidnes', state.templates.length], ['sagataves', 'Sagataves', nSag]].map(([k, l, n]) =>
-    `<button type="button" role="tab" class="subtab" data-tview="${k}" aria-selected="${ui.tplView === k}">${l} <span class="count">${n}</span></button>`).join('');
   $('#tpl-view-veidnes').hidden = ui.tplView !== 'veidnes';
   $('#tpl-view-sag').hidden = ui.tplView !== 'sagataves';
 }
@@ -3315,7 +3350,7 @@ function openTemplateEditor(id, preset = {}){
   let bodyEd, docEd, extraOpen = false, prevKind = t.kind || '';
 
   openModal({
-    title: sess ? `Vēstules saturs: ${compose.name}` : existing ? 'Rediģēt veidni' : 'Jauna veidne', full:true, back: sess ? '← Atpakaļ uz kampaņu' : '← Atpakaļ uz veidnēm',
+    title: sess ? `Vēstules saturs: ${compose.name}` : existing ? 'Rediģēt veidni' : 'Jauna veidne', editor:true, back: sess ? '← Atpakaļ uz kampaņu' : '← Atpakaļ uz veidnēm',
     content:`<div class="editor-grid">
       <div id="te-form">
         ${sess ? `<div class="sess-info">Adresāts: <b>${esc(AUDS[t.aud].group)}</b> (no kampaņas)${baseTpl ? ` · Veidne: <b>${esc(baseTpl.name)}</b> – izmaiņas attiecas tikai uz šo kampaņu, veidne netiek mainīta.` : ''}</div>` : ''}
@@ -3415,7 +3450,7 @@ function openTemplateEditor(id, preset = {}){
       }},
     ] : [
       {label:'Atcelt', cls:'btn-secondary'},
-      {label:'Saglabāt veidni', cls:'btn-primary', onClick: close => {
+      {label:'Saglabāt', cls:'btn-primary', onClick: close => {
         const cur = current();
         $$('.err', modal).forEach(e => e.hidden = true);
         const err = (fid, msg) => { const e = $('#' + fid); e.hidden = false; e.textContent = msg; };
@@ -4723,6 +4758,7 @@ async function send(){
     newSession(false); save();
     renderCounts();
     toast(`Kampaņa plānota: sūtīšana ${fmtDate(state.planned[0].sendDate)}`);
+    ui.campSub = 'planned';
     showTab('kampanas');
     return;
   }
@@ -4833,30 +4869,36 @@ function withSnap(snap, fn){
 }
 const kindOpts = cur => optList(Object.entries(SESS_LABELS), cur, 'Visi kampaņu veidi');
 const statusPills = xs => Object.entries(STATUSES).map(([k, v]) => { const n = xs.filter(x => x.status === k).length; return n ? `<span class="pill ${v.cls}">${v.label}: ${n}</span>` : ''; }).join(' ');
-// Kampaņu saraksts: melnraksti, plānotās un nosūtītās kampaņas
+// Kampaņu saraksts: melnraksti, ieplānotās, izpildē esošās un pabeigtās kampaņas
+const CAMP_SUBS = [['draft', 'Melnraksti'], ['planned', 'Ieplānotās'], ['active', 'Izpildē'], ['done', 'Pabeigtās']];
 function renderCampaigns(){
   if (ui.campView === 'edit') flushDraft();
   $('#camp-kind').innerHTML = kindOpts(ui.camp.kind);
-  $('#camp-status').value = ui.camp.status;
   const rows = [
     ...(state.drafts || []).map(d => ({type:'draft', id:d.id, name:d.name, kind:sessKindKey(d), date:d.savedAt, content:d.content ? contentLabel(d.content) : 'Saturs nav izvēlēts',
       n:withSnap(d, () => selectedResp().length), d})),
     ...(state.planned || []).map(pl => ({type:'planned', id:pl.id, name:pl.name, kind:pl.kindKey, date:pl.sendDate, content:pl.contentName, n:pl.count ?? '—', pl})),
     ...[...new Set(state.sent.map(x => x.batch))].map(b => { const xs = state.sent.filter(x => x.batch === b), x0 = xs[0];
-      return {type:'sent', id:b, name:x0.sessionName || `Kampaņa Nr. ${b}`, kind:x0.sessionKind || '', date:x0.sentAt, content:x0.templateName, n:xs.length, xs}; }),
+      return {type:'sent', id:b, name:x0.sessionName || `Kampaņa Nr. ${b}`, kind:x0.sessionKind || '', date:x0.sentAt, content:x0.templateName, n:xs.length, xs,
+        sub: xs.some(x => x.status === 'rinda') ? 'active' : 'done'}; }),
   ];
+  rows.forEach(x => { if (!x.sub) x.sub = x.type; });
+  // apakšsadaļa: Melnraksti · Ieplānotās · Izpildē · Pabeigtās (pirmajā reizē – pirmā, kurā ir kampaņas)
+  if (!ui.campSub) ui.campSub = (CAMP_SUBS.find(([k]) => rows.some(x => x.sub === k)) || CAMP_SUBS[0])[0];
+  $('#camp-sub').innerHTML = subnavHtml(CAMP_SUBS, ui.campSub, 'csub');
   const q = norm(ui.camp.q);
-  const list = rows.filter(x => (!ui.camp.status || x.type === ui.camp.status) && (!ui.camp.kind || x.kind === ui.camp.kind) && (!q || norm(x.name + ' ' + x.content).includes(q)));
-  const ST = {draft:'<span class="pill st-draft">Melnraksts</span>', planned:'<span class="pill st-plan">Plānota</span>', sent:'<span class="pill st-sent">Nosūtīta</span>'};
+  const list = rows.filter(x => x.sub === ui.campSub && (!ui.camp.kind || x.kind === ui.camp.kind) && (!q || norm(x.name + ' ' + x.content).includes(q)));
+  const ST = {draft:'<span class="pill st-draft">Melnraksts</span>', planned:'<span class="pill st-plan">Ieplānota</span>', active:'<span class="pill st-queue">Izpildē</span>', done:'<span class="pill st-sent">Pabeigta</span>'};
   $('#camp-tbody').innerHTML = !rows.length ? `<tr><td colspan="7"><div class="empty">${ICON.send}<h3>Vēl nav nevienas kampaņas</h3>
       <p>Izveidojiet kampaņu: atlasiet respondentus, izvēlieties saturu un nosūtiet vēstules.</p>
       <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></td></tr>`
-    : !list.length ? `<tr><td colspan="7"><div class="empty"><h3>Nekas netika atrasts</h3><p>Mainiet meklēšanas vai filtra nosacījumus.</p></div></td></tr>`
+    : !list.length ? `<tr><td colspan="7"><div class="empty"><h3>${ui.camp.q || ui.camp.kind ? 'Nekas netika atrasts' : `Nav kampaņu sadaļā “${esc((CAMP_SUBS.find(([k]) => k === ui.campSub) || [])[1])}”`}</h3>
+      <p>${ui.camp.q || ui.camp.kind ? 'Mainiet meklēšanas vai filtra nosacījumus.' : 'Izvēlieties citu sadaļu vai izveidojiet jaunu kampaņu.'}</p></div></td></tr>`
     : list.map(x => `<tr>
       <td>${x.type === 'draft' ? `<button type="button" class="link-btn" data-action="camp-open" data-id="${x.id}">${esc(x.name)}</button>` : `<b>${esc(x.name)}</b>`}
         <span class="cell-sub">${esc(x.content)}${x.type === 'sent' ? ` · Nr. ${x.id}` : ''}</span></td>
       <td>${esc(SESS_LABELS[x.kind] || '—')}${x.type === 'planned' ? `<span class="cell-sub">Termiņš: ${esc(fmtDate(x.pl.target))}</span>` : ''}</td>
-      <td>${ST[x.type]}</td>
+      <td>${ST[x.sub]}</td>
       <td style="white-space:nowrap">${x.type === 'planned' ? `Sūtīšana: ${esc(fmtDate(x.date))}` : esc(fmtDateTime(x.date))}<span class="cell-sub">${x.type === 'draft' ? 'saglabāts' : x.type === 'sent' ? 'nosūtīta' : 'plānotais datums'}</span></td>
       <td class="num"><b>${x.n}</b></td>
       <td>${x.type === 'sent' ? statusPills(x.xs) : x.type === 'planned' ? '<span class="muted">Atlase tiks pārrēķināta plānotajā datumā</span>' : '<span class="muted">—</span>'}</td>
@@ -4865,7 +4907,16 @@ function renderCampaigns(){
         : x.type === 'planned' ? `<button class="btn btn-secondary btn-sm" data-action="pl-run" data-id="${x.id}">Izpildīt tagad</button>
           <button class="icon-btn" data-action="pl-delete" data-id="${x.id}" aria-label="Dzēst plānoto kampaņu: ${esc(x.name)}" title="Dzēst">${ICON.trash}</button>`
         : `<button class="btn btn-ghost btn-sm" data-action="camp-history" data-id="${x.id}">${ICON.eye}Skatīt vēsturē</button>`}</td></tr>`).join('');
-  $('#camp-foot').textContent = rows.length ? (list.length === rows.length ? `Kopā ${rows.length} ${plural(rows.length, 'kampaņa', 'kampaņas')}` : `Atrastas ${list.length} no ${rows.length}`) : '';
+  $('#camp-foot').textContent = list.length ? `${list.length} ${plural(list.length, 'kampaņa', 'kampaņas')}` : '';
+}
+// Atskaites (šajā solī – tukši skati)
+const REP_SUBS = [['kopsavilkums', 'Nosūtīšanas kopsavilkums'], ['piegade', 'Piegādes rezultāti'], ['neveiksmigas', 'Neveiksmīgās ziņas'], ['atkartota', 'Atkārtotā nosūtīšana'], ['citi', 'Citi pārskati']];
+function renderReports(){
+  if (!ui.repSub) ui.repSub = REP_SUBS[0][0];
+  $('#rep-sub').innerHTML = subnavHtml(REP_SUBS, ui.repSub, 'rsub');
+  const title = (REP_SUBS.find(([k]) => k === ui.repSub) || REP_SUBS[0])[1];
+  $('#rep-body').innerHTML = `<div class="card todo-card"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M8 17v-5M13 17V8M18 17v-9"/></svg>
+    <h2>${esc(title)}</h2><p>Tiks papildināts.</p></div>`;
 }
 // Vēsture ar atvērtu kampaņas bloku
 function showHistoryOf(batch){
@@ -4878,7 +4929,9 @@ const triesShort = x => {
   if (!used.length) return '<span class="muted">—</span>';
   return used.map(a => `${esc(addrShort(a.type))} <span class="${a.ok ? 'ok' : 'fail'}">${a.ok ? '✓' : '✗'}</span>`).join(' → ') + (used.length > 1 ? ` <span class="muted">(${used.length} mēģ.)</span>` : '');
 };
-// Vēsture: vēstules sagrupētas pa kampaņām
+// Sūtīšanas vēsture: vēstules sagrupētas pa kampaņām
+// apakšsadaļas: Visas · Gaida parakstu · Nosūtītas · Piegādātas · Neveiksmīgas
+const HIST_SUBS = [['', 'Visas'], ['paraksts', 'Gaida parakstu'], ['nosutits', 'Nosūtītas'], ['piegadats', 'Piegādātas'], ['kluda', 'Neveiksmīgas']];
 function renderSent(){
   const all = state.sent;
   const c = s => all.filter(x => x.status === s).length;
@@ -4889,6 +4942,7 @@ function renderSent(){
     <div class="card stat s-err"><div class="n">${c('kluda')}</div><div class="l">Neizdevās</div></div>`;
   $('#sent-clear-btn').hidden = !all.length;
   const h = ui.hist;
+  $('#hist-sub').innerHTML = subnavHtml(HIST_SUBS, h.status, 'hsub');
   $('#hist-kind').innerHTML = kindOpts(h.kind);
   const q = norm(h.q), from = h.period === '' ? '' : (() => { const d = addDays(-(+h.period)); d.setHours(0, 0, 0, 0); return d.toISOString(); })();
   const list = all.filter(x => (!h.kind || x.sessionKind === h.kind) && (!h.status || x.status === h.status) && (!from || x.sentAt >= from) &&
@@ -4899,7 +4953,9 @@ function renderSent(){
   $('#hist-body').innerHTML = !all.length ? `<div class="card"><div class="empty">${ICON.inbox}<h3>Vēl nav nosūtītu vēstuļu</h3>
       <p>Izveidojiet un nosūtiet kampaņu – vēstules parādīsies šeit.</p>
       <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></div>`
-    : !batches.length ? `<div class="card"><div class="empty"><h3>Nekas netika atrasts</h3><p>Mainiet meklēšanas vai filtra nosacījumus.</p></div></div>`
+    : !batches.length ? `<div class="card"><div class="empty">${h.status === 'paraksts' && !q && !h.kind && !h.period
+        ? '<h3>Nav vēstuļu, kas gaida parakstu</h3><p>Parakstīšana (DVS NAMEJS) prototipā vēl nav ieviesta – tiks papildināta.</p>'
+        : '<h3>Nekas netika atrasts</h3><p>Mainiet meklēšanas vai filtra nosacījumus.</p>'}</div></div>`
     : batches.map(b => {
       const xs = list.filter(x => x.batch === b), allB = all.filter(x => x.batch === b), x0 = allB[0], open = filtered || ui.histOpen.has(String(b));
       return `<section class="card hist-block" id="hist-${b}">
@@ -5003,13 +5059,15 @@ const actions = {
       message:`Kampaņas <b>${esc(compose.name)}</b> melnraksts (respondentu atlase, saturs, paraksts un adreses) tiks dzēsts.`});
     if (!ok) return;
     removeDraft(compose.draftId); newSession(true); save(); renderCounts();
-    showTab('kampanas'); toast('Melnraksts dzēsts.');
+    ui.campSub = 'draft'; showTab('kampanas'); toast('Melnraksts dzēsts.');
   },
   'layout-edit': () => openLayoutEditor(),
   'resp-card': id => openRespCard(id),
   'camp-new': () => { if (ui.campView === 'edit') flushDraft(); newSession(true); openEditor(); },
   'camp-open': id => openEditor(id),
-  'camp-back': () => showTab('kampanas'),
+  'camp-back': () => { ui.campSub = 'draft'; showTab('kampanas'); },
+  'sag-open': () => setTplView('sagataves'),
+  'sag-back': () => setTplView('veidnes'),
   'camp-history': id => showHistoryOf(id),
   'camp-delete': async id => {
     const d = state.drafts.find(x => x.id === id);
@@ -5112,9 +5170,11 @@ modal.addEventListener('click', e => { if (e.target === modal) modal.close(); })
 
 $('#camp-search').addEventListener('input', e => { ui.camp.q = e.target.value; renderCampaigns(); });
 $('#camp-kind').addEventListener('change', e => { ui.camp.kind = e.target.value; renderCampaigns(); });
-$('#camp-status').addEventListener('change', e => { ui.camp.status = e.target.value; renderCampaigns(); });
+$('#camp-sub').addEventListener('click', e => { const b = e.target.closest('[data-csub]'); if (!b) return; ui.campSub = b.dataset.csub; renderCampaigns(); $(`#camp-sub [data-csub="${ui.campSub}"]`).focus(); });
+$('#hist-sub').addEventListener('click', e => { const b = e.target.closest('[data-hsub]'); if (!b) return; ui.hist.status = b.dataset.hsub; renderSent(); $(`#hist-sub [data-hsub="${ui.hist.status}"]`).focus(); });
+$('#rep-sub').addEventListener('click', e => { const b = e.target.closest('[data-rsub]'); if (!b) return; ui.repSub = b.dataset.rsub; renderReports(); $(`#rep-sub [data-rsub="${ui.repSub}"]`).focus(); });
 $('#hist-search').addEventListener('input', e => { ui.hist.q = e.target.value; renderSent(); });
-[['#hist-kind', 'kind'], ['#hist-status', 'status'], ['#hist-period', 'period']].forEach(([sel, k]) => $(sel).addEventListener('change', e => { ui.hist[k] = e.target.value; renderSent(); }));
+[['#hist-kind', 'kind'], ['#hist-period', 'period']].forEach(([sel, k]) => $(sel).addEventListener('change', e => { ui.hist[k] = e.target.value; renderSent(); }));
 $('#tpl-search').addEventListener('input', e => { ui.tplSearch = e.target.value; resetBlocks(); renderTemplates(); });
 // adresātu grupu kartītes – pārslēgšana ar bultiņām
 $('#tpl-aud').addEventListener('keydown', e => {
@@ -5214,13 +5274,7 @@ $('#c-list').addEventListener('change', e => {
 });
 $('#c-hl').addEventListener('change', e => $('#c-preview').classList.toggle('hl', e.target.checked));
 // Veidnes: apakšcilnes un sadaļa "Sagataves"
-$('#tpl-subtabs').addEventListener('click', e => {
-  const b = e.target.closest('[data-tview]');
-  if (!b || b.dataset.tview === ui.tplView) return;
-  ui.tplView = b.dataset.tview;
-  ui.tplView === 'veidnes' ? renderTemplates() : renderSagataves();
-  $(`[data-tview="${ui.tplView}"]`).focus();
-});
+const setTplView = v => { ui.tplView = v; v === 'veidnes' ? renderTemplates() : renderSagataves(); window.scrollTo({top:0}); };
 $('#sag-group').addEventListener('click', e => {
   const b = e.target.closest('[data-sgroup]');
   if (!b || b.dataset.sgroup === ui.sagGroup) return;

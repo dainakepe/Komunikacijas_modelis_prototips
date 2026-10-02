@@ -1,6 +1,8 @@
 # Komunikācijas moduļa prototips
 
-CSP datu vākšanas sistēmas komunikācijas moduļa prototips: komunikācijas kampaņas, vēstuļu veidnes, komunikācijas vēsture un simulēta nosūtīšana. Respondentu dati nāk no citiem DELTA moduļiem (prototipā – izdomāti testa dati).
+CSP datu vākšanas sistēmas komunikācijas moduļa prototips: komunikācijas kampaņas, vēstuļu veidnes, sūtīšanas vēsture, atskaites un simulēta nosūtīšana. Respondentu dati nāk no citiem DELTA moduļiem (prototipā – izdomāti testa dati).
+
+> **Galvenā atsauce:** komunikācijas moduļa funkcionālais apraksts – [`docs/komunikacija_specifikacija.md`](docs/komunikacija_specifikacija.md). Prototipa struktūra un funkcijas tiek veidotas atbilstoši tam.
 
 Prototips ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var atvērt tieši pārlūkā vai publicēt ar GitHub Pages. Pielikumu bibliotēkas PDF faili atrodas mapē `pielikumi/` un tiek ielādēti ar relatīvu ceļu.
 
@@ -12,23 +14,32 @@ Prototips ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var a
 ## Sākumlapa (DELTA)
 
 Atverot prototipu, vispirms redzama DELTA sistēmas sākumlapa ar moduļu kartītēm.
-- Visas moduļu kartītes ir vienāda izmēra un neaktīvas, ar birku "Nav pieejams prototipā". Pirmajā rindā ir "Metadatu pārvaldība", "Respondentu pārvaldība" un "Datu vākšana", otrajā – "Datu vākšanas pārraudzība", "Mikrodatu pārvaldība" un "Administrēšana".
-- Kartītē **Respondentu pārvaldība** zem apraksta ir aktīva poga **Komunikācija** ("Kampaņas, vēstuļu veidnes un vēsture") CSP krāsā ar aploksnes ikonu un bultiņu →. Tā atver komunikācijas moduli ar cilni "Kampaņas". Pārējā kartītes daļa nav klikšķināma – prototipā pieejama tikai komunikācija.
+- Visas moduļu kartītes ir vienāda izmēra un neaktīvas (pelēkas). Tajās ir tikai ikona un nosaukums, bez paskaidrojošiem tekstiem. Pirmajā rindā ir "Metadatu pārvaldība", "Respondentu pārvaldība" un "Datu vākšana", otrajā – "Datu vākšanas pārraudzība", "Mikrodatu pārvaldība" un "Administrēšana".
+- Kartītē **Respondentu pārvaldība** ir maza aktīva zaļa poga **Komunikācija** (tikai aploksnes ikona, nosaukums un bultiņa →). Tā atver komunikācijas moduli ar cilni "Kampaņas". Pārējā kartītes daļa nav klikšķināma – prototipā pieejama tikai komunikācija.
 - **Navigācija.** Komunikācijas moduļa galvenē ir nosaukums "Komunikācija" ar apakšvirsrakstu "Respondentu pārvaldība" un navigācijas ceļš, piem., "DELTA › Respondentu pārvaldība › Komunikācija › Kampaņas" (kampaņas redaktorā arī kampaņas nosaukums). Sākumlapā var atgriezties ar saitēm "DELTA" vai "Respondentu pārvaldība" ceļā, ar CSP logo vai ar saiti "← DELTA sākums".
 
 ## Moduļa cilnes
 
-Komunikācijas modulim ir trīs cilnes:
+Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
 1. **Kampaņas** (pirmā un noklusējuma cilne). Tajā ir saraksts "Komunikācijas kampaņas" un poga "+ Jauna kampaņa".
 2. **Veidnes.** Vēstuļu veidnes un sagataves.
-3. **Vēsture.** Nosūtītās vēstules, sagrupētas pa kampaņām.
+3. **Sūtīšanas vēsture.** Nosūtītās vēstules, sagrupētas pa kampaņām.
+4. **Atskaites.** Šajā solī ir tikai tukši skati ar uzrakstu "Tiks papildināts".
 
-Atsevišķas cilnes "Respondenti" vairs nav, jo respondentu dati nāk no citiem DELTA moduļiem. Tie ir redzami kampaņas solī "Respondenti" un respondenta kartītē. Vecās saites turpina darboties: `#sagatavot` atver kampaņas redaktoru, `#nosutitas` atver cilni "Vēsture", bet `#respondenti` atver cilni "Kampaņas".
+- **Noformējums.** Cilnēm nav skaita ciparu. Teksts ir lielāks (16,5 px), pustrekns, ar ikonu pirms nosaukuma. Aktīvajai cilnei ir tirkīzzaļš (#009999) teksts, bieza apakšlīnija un ļoti gaišs tirkīzzaļš fons. Neaktīvās ir tumši pelēkas un, uzbraucot ar peli, kļūst tirkīzzaļas.
+- **Navigācijas ceļš:** "DELTA › Respondentu pārvaldība › Komunikācija › [cilne]".
+- **Apakšsadaļas** ir filtru pogas zem virsraksta (bez skaitītājiem):
+  - Kampaņas: Melnraksti · Ieplānotās · Izpildē · Pabeigtās. Pirmajā reizē atveras pirmā sadaļa, kurā ir kampaņas;
+  - Veidnes: adresātu grupu kartītes (Fiziskām personām · Juridiskām personām · Cita komunikācija). "Sagataves" ir poga augšējā labajā stūrī pirms "Pastāvīgās daļas", un tā atver atsevišķu skatu ar pogu "← Atpakaļ uz veidnēm";
+  - Sūtīšanas vēsture: Visas · Gaida parakstu · Nosūtītas · Piegādātas · Neveiksmīgas. Parakstīšana vēl nav ieviesta, tāpēc sadaļa "Gaida parakstu" ir tukša;
+  - Atskaites: Nosūtīšanas kopsavilkums · Piegādes rezultāti · Neveiksmīgās ziņas · Atkārtotā nosūtīšana · Citi pārskati.
 
-**Kampaņu saraksts.** Sarakstā ir visas kampaņas: melnraksti, plānotās un nosūtītās.
-- Kolonnas: nosaukums un saturs, veids, statuss (Melnraksts / Plānota / Nosūtīta), datums, respondentu skaits un rezultāts (piegādes statusi).
+Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA moduļiem. Tie ir redzami kampaņas solī "Respondenti" un respondenta kartītē. Vecās saites turpina darboties: `#sagatavot` atver kampaņas redaktoru, `#nosutitas` atver cilni "Sūtīšanas vēsture", bet `#respondenti` atver cilni "Kampaņas".
+
+**Kampaņu saraksts.** Kampaņas ir sadalītas sadaļās pēc statusa: melnraksti, ieplānotās, izpildē (vēstules vēl tiek sūtītas) un pabeigtās.
+- Kolonnas: nosaukums un saturs, veids, statuss (Melnraksts / Ieplānota / Izpildē / Pabeigta), datums, respondentu skaits un rezultāts (piegādes statusi).
 - Melnrakstu var turpināt vai dzēst. Plānoto kampaņu var izpildīt uzreiz ("Izpildīt tagad") vai dzēst. Nosūtītai kampaņai ir poga "Skatīt vēsturē".
-- Sarakstā var meklēt un filtrēt pēc veida un statusa.
+- Sarakstā var meklēt un filtrēt pēc kampaņas veida.
 - Var būt vairāki melnraksti vienlaikus. Katrs tiek saglabāts automātiski.
 - Testa datos ir divas agrāk nosūtītas kampaņas, lai vēsturē un respondenta kartītē būtu ko redzēt.
 
@@ -60,9 +71,9 @@ Veidnes var būt divu veidu:
 
 ### Veidnes izveide un rediģēšana
 
-Veidne atveras gandrīz pilnekrāna logā ar pogu **"← Atpakaļ uz veidnēm"**.
+Veidne atveras centrētā modālajā logā, kura platums ir apmēram puse ekrāna (900–1100 px), bet augstums – līdz 90 % ekrāna. Logā ir iekšēja ritināšana, poga × aizvēršanai un fiksētas pogas "Atcelt" / "Saglabāt" apakšā.
 
-- **Izkārtojums.** Kreisajā kolonnā (~45 %) ir forma, labajā (~55 %) – priekšskatījums, kas, ritinot formu, paliek redzams.
+- **Izkārtojums.** Divas kolonnas: forma un priekšskatījums, kas, ritinot formu, paliek redzams. Ja ekrāns ir šaurāks par 900 px, kolonnas ir viena zem otras.
 - **Kompakta forma.** "Adresāts", "Kategorija" un "Valodas versija" ir vienā rindā. Paskaidrojumi ir paslēpti aiz mazas **"i"** ikonas un parādās, uzbraucot ar peli vai fokusējot to.
 
 **Vēstules veids** ir divas kompaktas pogas ar ikonu un nosaukumu. Zem izvēlētās pogas atveras apakšizvēlne; neizvēlētās pogas apakšizvēlne ir paslēpta.
@@ -117,7 +128,7 @@ Abos veidos var lietot iepriekš definētus laukus. Tos ievieto ar izvēlni "+ I
 
 ## Sagataves
 
-Cilnē **Veidnes** ir divas apakšcilnes: **"Veidnes"** un **"Sagataves"**. Atsevišķas cilnes "Pielikumi" vairs nav; vecā saite `#pielikumi` atver sadaļu "Sagataves".
+Sagataves atver ar pogu **"Sagataves"** cilnes "Veidnes" augšējā labajā stūrī. Tās ir atsevišķā skatā ar pogu "← Atpakaļ uz veidnēm". Vecās saites `#sagataves` un `#pielikumi` atver šo skatu.
 
 Sagataves ir divās grupās:
 - **E-pasta satura šabloni** – teksta sagataves, no kurām var sākt jaunu e-pasta veidni (poga "Jauna veidne" kartītē vai "No sagataves" redaktorā). Sākotnēji tie ir esošo e-pasta satura veidņu teksti un trīs papildu šabloni, lai katrai adresātu grupai katrā kategorijā ir vismaz viens. Šablonus var pievienot, rediģēt un dzēst.
@@ -193,7 +204,7 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
 - Katram respondentam izmanto pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, mēģina nākamo.
 - Simulācijā e-adreses `_DEFAULT@00000000112` un `_PRIVATE@00000000222` nav aktivizētas, un e-pasti uz domēnu `nepiegadajams.example` nav sasniedzami.
 - Priekšskatījumā un nosūtītajā vēstulē redzama prioritāšu secība un katrs mēģinājums: adreses veids, adrese un rezultāts.
-- Cilnē "Vēsture" katras kampaņas blokā redzama izmantotā prioritāte, piem., "eAdrese → E-pasts 1 → E-pasts 2", un katrai vēstulei – izmantotā adrese un mēģinājumi.
+- Cilnē "Sūtīšanas vēsture" katras kampaņas blokā redzama izmantotā prioritāte, piem., "eAdrese → E-pasts 1 → E-pasts 2", un katrai vēstulei – izmantotā adrese un mēģinājumi.
 
 ### Pārskatu tabula vēstulē – `{pārskatu_tabula}`
 
@@ -243,14 +254,15 @@ Kampaņai ir seši soļi:
 5. **Adreses.** Šeit izvēlas adrešu prioritāti.
 6. **Pārbaude un nosūtīšana.** Šeit redzams katras vēstules priekšskatījums, kopsavilkums un poga "Nosūtīt".
 
-**Melnraksts.** Kampaņa, arī tās saturs, tiek automātiski saglabāta kā melnraksts, tāpēc darbu var turpināt vēlāk, arī pēc lapas pārlādes. Melnraksti redzami kampaņu sarakstā. Poga "Dzēst melnrakstu" redaktorā to dzēš. Pēc nosūtīšanas atveras cilne "Vēsture" ar šīs kampaņas bloku, bet pēc plānošanas – kampaņu saraksts.
+**Melnraksts.** Kampaņa, arī tās saturs, tiek automātiski saglabāta kā melnraksts, tāpēc darbu var turpināt vēlāk, arī pēc lapas pārlādes. Melnraksti redzami kampaņu sarakstā. Poga "Dzēst melnrakstu" redaktorā to dzēš. Pēc nosūtīšanas atveras cilne "Sūtīšanas vēsture" ar šīs kampaņas bloku, bet pēc plānošanas – kampaņu saraksta sadaļa "Ieplānotās".
 
-## Vēsture
+## Sūtīšanas vēsture
 
-Cilnē **Vēsture** nosūtītās vēstules ir sagrupētas pa kampaņām.
+Cilnē **Sūtīšanas vēsture** nosūtītās vēstules ir sagrupētas pa kampaņām.
 - **Kampaņas bloks** ir izvēršams. Galvenē redzams kampaņas nosaukums, veids (Uzaicinājums / Pirmstermiņa atgādinājums / Nokavēta termiņa atgādinājums / Cits), datums, saturs, adrešu prioritāte un rezultātu kopsavilkums (vēstuļu skaits un statusi). Plānotajām kampaņām redzams arī plānotais datums.
 - **Bloka iekšpusē** katrai vēstulei redzams adresāts (uzklikšķinot atveras respondenta kartīte), izmantotā adrese, mēģinājumi un statuss, kā arī poga "Skatīt".
-- **Filtri:** kampaņas veids, statuss, periods (šodien, pēdējās 7, 30 vai 90 dienas) un meklēšana pēc respondenta vai adreses.
+- **Apakšsadaļas** pēc statusa: Visas · Gaida parakstu · Nosūtītas · Piegādātas · Neveiksmīgas.
+- **Filtri:** kampaņas veids, periods (šodien, pēdējās 7, 30 vai 90 dienas) un meklēšana pēc respondenta vai adreses.
 - Augšā ir kopējā statistika un poga "Notīrīt vēsturi".
 
 ## Nosacījumi un vēstuļu varianti
