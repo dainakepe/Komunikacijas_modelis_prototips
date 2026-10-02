@@ -161,7 +161,7 @@ Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (pro
 - daudziem ir tikai viens e-pasts, dažiem aizpildītas visas adreses;
 - vienam respondentam nav nevienas adreses.
 
-**Prioritāte sesijā.** Sadaļas "Sagatavot komunikāciju" 3. solī "Adreses" izvēlas "1. prioritāte", "2. prioritāte" un "3. prioritāte".
+**Prioritāte sesijā.** Sadaļas "Sagatavot komunikāciju" 5. solī "Adreses" izvēlas "1. prioritāte", "2. prioritāte" un "3. prioritāte".
 - Vienu adreses veidu nevar izvēlēties divreiz. 1. prioritāte ir obligāta.
 - Noklusējums: eAdrese → E-pasts 1 → E-pasts 2.
 - Kopsavilkumā redzams, cik respondentiem vēstule tiks sūtīta uz katras prioritātes adresi un cik respondentiem nav nevienas atbilstošas adreses. Šos respondentus var apskatīt un tiem ievadīt manuālo e-pastu.
@@ -179,9 +179,30 @@ Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (pro
   - rindas: "Visi atlasītie pienākumi" (uzaicinājumiem) vai "Tikai neiesniegtie" (atgādinājumiem).
 
   Uzklikšķinot uz bloka redaktorā, iestatījumus var mainīt vai bloku dzēst.
-- **Atlase sagatavošanā.** Sadaļas "Sagatavot komunikāciju" 4. solī var atlasīt pienākumus pēc pārskata vai apsekojuma, perioda un statusa. Tiek rādīti tikai respondenti ar atbilstošiem pienākumiem.
+- **Atlase sagatavošanā.** Sadaļas "Sagatavot komunikāciju" 2. solī "Respondenti" var atlasīt pienākumus pēc pārskata vai apsekojuma, perioda un statusa. Tiek rādīti tikai respondenti ar atbilstošiem pienākumiem.
 - **Ģenerēšana.** Tabula tiek izveidota katram respondentam no viņa pienākumiem, kas atbilst šai atlasei. Kavētie termiņi ir izcelti sarkanā krāsā. E-adreses ziņojumā tabula tiek pārvērsta tekstā.
 - **Esošās veidnes.** Tabula pievienota uzaicinājuma ("Uzaicinājums sniegt datus apsekojumā (vēstule pielikumā)" – PDF dokumentā) un atgādinājuma ("Atgādinājums par datu iesniegšanas termiņu") veidnēm juridiskām personām.
+
+## Sūtīšanas sesija (Sagatavot komunikāciju)
+
+Sesijai ir seši soļi:
+
+1. **Sesija.** Šeit norāda sesijas nosaukumu (pēc noklusējuma "Sūtījums Nr. N"), adresātu un apsekojuma un vēstules datus. Adresāts nosaka, kuras veidnes tiek piedāvātas. Mainot adresātu, tiek pielāgots arī filtrs "Respondenta veids".
+2. **Respondenti.** Atlasa respondentus pēc pienākumiem un pazīmēm.
+3. **Saturs.** Ir divas kartītes: "Izmantot veidni" un "Noformēt saturu".
+   - **Izmantot veidni.** Atveras veidņu izvēle. Tajā redzamas tikai sesijas adresātam paredzētās veidnes, sagrupētas pēc kategorijas, ar meklēšanu un teksta priekšskatījumu. Izvēlēto veidni var izmantot uzreiz ("Izmantot veidni") vai pielāgot ("Pielāgot šai sesijai"). Pielāgojot atveras redaktors ar veidnes saturu. Izmaiņas attiecas tikai uz šo sesiju, un pati veidne netiek mainīta.
+   - **Noformēt saturu.** Atveras tas pats redaktors, kas veidnes izveidei, ar visām tā iespējām. Atšķirības no veidnes izveides:
+     - nav lauku "Veidnes nosaukums" un "Kategorija", adresāts tiek ņemts no sesijas;
+     - virsraksts ir "Vēstules saturs: [sesijas nosaukums]";
+     - priekšskatījumā redzami sesijā atzīmētie respondenti, starp kuriem var pārslēgties ar ← →;
+     - apakšā ir pogas "Atcelt", "Saglabāt arī kā veidni" un "Izmantot sesijā".
+   - **Saglabāt arī kā veidni.** Prasa norādīt veidnes nosaukumu un kategoriju. Saturs tiek saglabāts kā jauna veidne, un sesija to izmanto.
+   - **Kopsavilkums.** Kad saturs ir apstiprināts, solī redzams satura avots ("Veidne: [nosaukums]", "Veidne, pielāgota sesijai" vai "Individuāls saturs"), temats un vēstules veids. Ir pogas "Labot saturu" un "Izvēlēties citu saturu".
+4. **Paraksts.** Parakstītājs un amats tiek izmantoti laukos `{parakstītājs}` un `{amats}`, kā arī PDF vēstules parakstā. Pēc noklusējuma tie tiek ņemti no sadaļas "Pastāvīgās daļas". Šeit veiktās izmaiņas attiecas tikai uz šo sesiju.
+5. **Adreses.** Šeit izvēlas adrešu prioritāti.
+6. **Pārbaude un nosūtīšana.** Šeit redzams katras vēstules priekšskatījums, kopsavilkums un poga "Nosūtīt".
+
+**Melnraksts.** Sesija, arī tās saturs, tiek automātiski saglabāta pārlūkā kā melnraksts, tāpēc pēc lapas pārlādes darbu var turpināt. Poga "Sākt no jauna" dzēš melnrakstu. Pēc nosūtīšanas sākas jauna sesija. Nosūtīto vēstuļu sadaļā sesijas tabulā redzams sesijas nosaukums un saturs.
 
 ## Nosacījumi un vēstuļu varianti
 
