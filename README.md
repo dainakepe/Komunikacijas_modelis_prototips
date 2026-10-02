@@ -1,6 +1,6 @@
 # Komunikācijas moduļa prototips
 
-CSP datu vākšanas sistēmas komunikācijas moduļa prototips: vēstuļu veidnes, respondenti, komunikācijas sagatavošana ar priekšskatījumu un simulēta nosūtīšana.
+CSP datu vākšanas sistēmas komunikācijas moduļa prototips: komunikācijas kampaņas, vēstuļu veidnes, komunikācijas vēsture un simulēta nosūtīšana. Respondentu dati nāk no citiem DELTA moduļiem (prototipā – izdomāti testa dati).
 
 Prototips ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var atvērt tieši pārlūkā vai publicēt ar GitHub Pages. Pielikumu bibliotēkas PDF faili atrodas mapē `pielikumi/` un tiek ielādēti ar relatīvu ceļu.
 
@@ -13,8 +13,24 @@ Prototips ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var a
 
 Atverot prototipu, vispirms redzama DELTA sistēmas sākumlapa ar moduļu kartītēm.
 - Visas moduļu kartītes ir vienāda izmēra un neaktīvas, ar birku "Nav pieejams prototipā". Pirmajā rindā ir "Metadatu pārvaldība", "Respondentu pārvaldība" un "Datu vākšana", otrajā – "Datu vākšanas pārraudzība", "Mikrodatu pārvaldība" un "Administrēšana".
-- Kartītē **Respondentu pārvaldība** zem apraksta ir aktīva poga **Komunikācija** ("Vēstuļu veidnes un sūtīšana") CSP krāsā ar aploksnes ikonu un bultiņu →. Tā atver komunikācijas moduli ar cilni "Veidnes". Pārējā kartītes daļa nav klikšķināma – prototipā pieejama tikai komunikācija.
-- **Navigācija.** Komunikācijas moduļa galvenē ir nosaukums "Komunikācija" ar apakšvirsrakstu "Respondentu pārvaldība" un navigācijas ceļš "DELTA › Respondentu pārvaldība › Komunikācija". Sākumlapā var atgriezties ar saitēm "DELTA" vai "Respondentu pārvaldība" ceļā, ar CSP logo vai ar saiti "← DELTA sākums".
+- Kartītē **Respondentu pārvaldība** zem apraksta ir aktīva poga **Komunikācija** ("Kampaņas, vēstuļu veidnes un vēsture") CSP krāsā ar aploksnes ikonu un bultiņu →. Tā atver komunikācijas moduli ar cilni "Kampaņas". Pārējā kartītes daļa nav klikšķināma – prototipā pieejama tikai komunikācija.
+- **Navigācija.** Komunikācijas moduļa galvenē ir nosaukums "Komunikācija" ar apakšvirsrakstu "Respondentu pārvaldība" un navigācijas ceļš, piem., "DELTA › Respondentu pārvaldība › Komunikācija › Kampaņas" (kampaņas redaktorā arī kampaņas nosaukums). Sākumlapā var atgriezties ar saitēm "DELTA" vai "Respondentu pārvaldība" ceļā, ar CSP logo vai ar saiti "← DELTA sākums".
+
+## Moduļa cilnes
+
+Komunikācijas modulim ir trīs cilnes:
+1. **Kampaņas** (pirmā un noklusējuma cilne). Tajā ir saraksts "Komunikācijas kampaņas" un poga "+ Jauna kampaņa".
+2. **Veidnes.** Vēstuļu veidnes un sagataves.
+3. **Vēsture.** Nosūtītās vēstules, sagrupētas pa kampaņām.
+
+Atsevišķas cilnes "Respondenti" vairs nav, jo respondentu dati nāk no citiem DELTA moduļiem. Tie ir redzami kampaņas solī "Respondenti" un respondenta kartītē. Vecās saites turpina darboties: `#sagatavot` atver kampaņas redaktoru, `#nosutitas` atver cilni "Vēsture", bet `#respondenti` atver cilni "Kampaņas".
+
+**Kampaņu saraksts.** Sarakstā ir visas kampaņas: melnraksti, plānotās un nosūtītās.
+- Kolonnas: nosaukums un saturs, veids, statuss (Melnraksts / Plānota / Nosūtīta), datums, respondentu skaits un rezultāts (piegādes statusi).
+- Melnrakstu var turpināt vai dzēst. Plānoto kampaņu var izpildīt uzreiz ("Izpildīt tagad") vai dzēst. Nosūtītai kampaņai ir poga "Skatīt vēsturē".
+- Sarakstā var meklēt un filtrēt pēc veida un statusa.
+- Var būt vairāki melnraksti vienlaikus. Katrs tiek saglabāts automātiski.
+- Testa datos ir divas agrāk nosūtītas kampaņas, lai vēsturē un respondenta kartītē būtu ko redzēt.
 
 ## Veidņu grupēšana
 
@@ -68,7 +84,7 @@ Ja pēc satura ievadīšanas nomaina vēstules veidu, sistēma brīdina: "Mainot
 - Zem ziņojuma teksta ar saspraudes ikonu redzami pielikumi.
 - Ja galvenā vēstule ir PDF dokuments, zem pavadteksta uzreiz redzams pats dokuments, kura lapas var ritināt. Telefonā redzama pirmās lapas sīkbilde.
 - DOCX failam redzama faila kartīte ar nosaukumu, izmēru un pogu "Atvērt".
-- Pielikumi redzami arī sadaļā "Sagatavot komunikāciju" un nosūtītajās vēstulēs.
+- Pielikumi redzami arī kampaņas redaktorā un nosūtītajās vēstulēs.
 
 Veidnēm ar veidu "E-pasta saturs" redaktorā var pievienot:
 - **attēlus** (poga **Attēls**). Attēlu var augšupielādēt no datora (PNG, JPG vai GIF, ne lielāku par 1 MB) vai norādīt `https://` saiti. Obligāti jānorāda alternatīvais teksts, un var izvēlēties platumu (mazs, vidējs, pilns) un novietojumu (pa kreisi, centrā vai pa labi). Augšupielādētie attēli glabājas pārlūkā kā data URL;
@@ -85,7 +101,7 @@ Rīkjosla ir sagrupēta šādi: teksta stils | B, I, U, teksta krāsa | līdzin�
 - **Teksta krāsa.** Poga "A" atver paleti: CSP tirkīzzaļā `#009999`, tumši tirkīzzaļa `#006B6B`, melna `#1F2933`, tumši pelēka `#4B5563` un sarkana `#B42318`. Var ievadīt arī savu HEX kodu. "Noņemt krāsu" atgriež atlasītajam tekstam noklusēto krāsu.
 - **Pogas krāsa.** Pogas logā ir lauks "Pogas krāsa" ar to pašu paleti un HEX ievadi. Noklusētā krāsa ir `#009999`. Pogas teksta krāsa (balta vai melna) tiek izvēlēta automātiski, lai teksts būtu labi salasāms.
 
-Viss formatējums tiek saglabāts veidnē un ir redzams veidnes priekšskatījumā un sadaļā "Sagatavot komunikāciju" tieši tā, kā to redzēs saņēmējs.
+Viss formatējums tiek saglabāts veidnē un ir redzams veidnes priekšskatījumā un kampaņas redaktorā tieši tā, kā to redzēs saņēmējs.
 
 PDF dokuments sastāv no divām daļām:
 - **pastāvīgās daļas:** veidlapas galva, apsekojuma baneris, konfidencialitātes sadaļa, plašāka informācija, paraksts un kājene. Tās rediģē sadaļā "Pastāvīgās daļas";
@@ -128,9 +144,9 @@ Pielikumu sagatavju funkcijas:
 
 Sagatavēs paraksti ir noņemti, parakstītāju vārdi aizstāti ar izdomātiem ("A. Paraugs", "L. Paraudziņa"), un apsekojuma vadītāja tālrunis aizstāts ar `60000000`.
 
-## Respondenti (dati no Respondentu pārvaldības)
+## Respondentu dati
 
-Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (prototipā – izdomāti testa dati). Respondenti ir sagrupēti pēc pārskatiem un periodiem, kas viņiem jāiesniedz.
+Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas statusi no Datu vākšanas pārraudzības (prototipā – izdomāti testa dati). Komunikācijas modulī tie ir redzami kampaņas solī "Respondenti" un respondenta kartītē.
 
 - **Datu modelis:**
   - **respondents:** tips (juridiska / fiziska persona), nosaukums vai vārds, reģistrācijas Nr. (juridiskām personām), e-adrese, e-pasts 1, e-pasts 2;
@@ -144,11 +160,13 @@ Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (pro
   - termiņi ir gan pagātnē, gan nākotnē, un statusi ir jaukti;
   - trīs pārskatiem termiņa noteikums ir izvēlēts tā, lai pēdējā perioda termiņš būtu tieši pēc 3, 5 un 7 dienām no šodienas (nedēļas degvielas cenu, mēneša rūpniecības produkcijas un ceturkšņa darba samaksas pārskats);
   - testa dati tiek aprēķināti attiecībā pret šodienu, kad tie tiek izveidoti vai atjaunoti ("Atjaunot sākotnējos testa datus").
-- **Pārslēgs** "Juridiskās personas / Fiziskās personas".
-- **Filtri:** pārskats (vai apsekojums), periodiskums, periods, statuss, termiņš no–līdz un meklēšana pēc nosaukuma vai reģ. Nr.
-- **Juridiskās personas:** tabula ar respondentu, kontaktiem, pienākumu skaitu un neiesniegto skaitu. Uzklikšķinot uz rindas, tā izvēršas un parāda pienākumu tabulu: Pārskats | Periods | Termiņš | Statuss.
-- **Fiziskās personas:** sagrupētas pa apsekojumiem sakļaujamos blokos. Katrā blokā ir saraksts ar vārdu, e-pastiem, e-adresi un statusu.
-- **Respondenta forma un CSV imports** papildināti ar laukiem "Reģistrācijas Nr." un "E-pasts 2".
+
+**Respondenta kartīte.** Uzklikšķinot uz respondenta nosaukuma kampaņā (atlases tabulā, adrešu solī) vai vēsturē, no labās puses atveras sānu panelis. Tajā ir:
+- pamatdati (nosaukums, tips, reģ. Nr., kontaktpersona, pazīmes) ar norādi "Dati no Respondentu pārvaldības";
+- adreses: eAdrese, E-pasts 1 un E-pasts 2 (sinhronizētas, tikai lasāmas, ar pogu "Sinhronizēt") un E-pasts 3 (manuāli, rediģējams, ar formāta pārbaudi);
+- pārskati un periodi (tikai lasāmi): pārskats, periods, termiņš un statuss;
+- komunikācijas vēsture: kampaņas, kurās respondents bijis, vēstules, datumi un piegādes statusi (ar pogu "Skatīt");
+- ja kartīte atvērta no kampaņas redaktora, arī norāde, vai respondents ir iekļauts šajā kampaņā.
 
 ### Respondentu adreses un adrešu prioritāte
 
@@ -156,7 +174,7 @@ Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (pro
 - **eAdrese** (juridiskām personām – uzņēmuma eAdrese), **E-pasts 1** un **E-pasts 2**. Tās ir sinhronizētas no Respondentu pārvaldības.
 - **E-pasts 3 (manuāli)**, ko darbinieks var ievadīt vai labot komunikācijas modulī.
 
-**Izvērstā respondenta rinda** (gan juridiskām, gan fiziskām personām) parāda:
+**Respondenta kartītē** redzamas:
 - sinhronizētās adreses kā tikai lasāmas, ar birku "No Respondentu pārvaldības", datumu "Sinhronizēts: …" un pogu "Sinhronizēt" (simulācija);
 - lauku "E-pasts 3 (manuāli)" ar e-pasta formāta pārbaudi un pogu "Saglabāt", kā arī informāciju, kas un kad to ievadīja.
 
@@ -165,16 +183,17 @@ Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (pro
 - daudziem ir tikai viens e-pasts, dažiem aizpildītas visas adreses;
 - vienam respondentam nav nevienas adreses.
 
-**Prioritāte sesijā.** Sadaļas "Sagatavot komunikāciju" 5. solī "Adreses" izvēlas "1. prioritāte", "2. prioritāte" un "3. prioritāte".
+**Prioritāte kampaņā.** Kampaņas 5. solī "Adreses" izvēlas "1. prioritāte", "2. prioritāte" un "3. prioritāte".
 - Vienu adreses veidu nevar izvēlēties divreiz. 1. prioritāte ir obligāta.
 - Noklusējums: eAdrese → E-pasts 1 → E-pasts 2.
-- Kopsavilkumā redzams, cik respondentiem vēstule tiks sūtīta uz katras prioritātes adresi un cik respondentiem nav nevienas atbilstošas adreses. Šos respondentus var apskatīt un tiem ievadīt manuālo e-pastu.
+- Kopsavilkumā redzams, cik respondentiem vēstule tiks sūtīta uz katras prioritātes adresi un cik respondentiem nav nevienas atbilstošas adreses.
+- **Respondenti bez derīgas adreses.** Ja kādam respondentam nav nevienas adreses atbilstoši izvēlētajai prioritātei, solī redzams šo respondentu saraksts. Katram var turpat ievadīt E-pastu 3 vai izņemt viņu no kampaņas ("Izņemt no kampaņas").
 
 **Sūtīšana:**
 - Katram respondentam izmanto pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, mēģina nākamo.
 - Simulācijā e-adreses `_DEFAULT@00000000112` un `_PRIVATE@00000000222` nav aktivizētas, un e-pasti uz domēnu `nepiegadajams.example` nav sasniedzami.
 - Priekšskatījumā un nosūtītajā vēstulē redzama prioritāšu secība un katrs mēģinājums: adreses veids, adrese un rezultāts.
-- Cilnē "Nosūtītās" ir **sūtīšanas sesiju** saraksts ar izmantoto prioritāti, piem., "eAdrese → E-pasts 1 → E-pasts 2". Uzklikšķinot uz sesijas, tabulā redzamas tikai tās vēstules.
+- Cilnē "Vēsture" katras kampaņas blokā redzama izmantotā prioritāte, piem., "eAdrese → E-pasts 1 → E-pasts 2", un katrai vēstulei – izmantotā adrese un mēģinājumi.
 
 ### Pārskatu tabula vēstulē – `{pārskatu_tabula}`
 
@@ -183,19 +202,19 @@ Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (pro
   - rindas: "Visi atlasītie pienākumi" (uzaicinājumiem) vai "Tikai neiesniegtie" (atgādinājumiem).
 
   Uzklikšķinot uz bloka redaktorā, iestatījumus var mainīt vai bloku dzēst.
-- **Atlase sagatavošanā.** Sadaļas "Sagatavot komunikāciju" 2. solī "Respondenti" pienākumus atlasa pēc sesijas veida, pārskata un perioda (skatīt "Sūtīšanas sesija").
+- **Atlase kampaņā.** Kampaņas 2. solī "Respondenti" pienākumus atlasa pēc kampaņas veida, pārskata un perioda (skatīt "Komunikācijas kampaņa").
 - **Ģenerēšana.** Tabula tiek izveidota katram respondentam no viņa pienākumiem, kas atbilst šai atlasei. Kavētie termiņi ir izcelti sarkanā krāsā. E-adreses ziņojumā tabula tiek pārvērsta tekstā.
 - **Esošās veidnes.** Tabula pievienota uzaicinājuma ("Uzaicinājums sniegt datus apsekojumā (vēstule pielikumā)" – PDF dokumentā) un atgādinājuma ("Atgādinājums par datu iesniegšanas termiņu") veidnēm juridiskām personām.
 
-## Sūtīšanas sesija (Sagatavot komunikāciju)
+## Komunikācijas kampaņa
 
-Sesijai ir seši soļi:
+Kampaņai ir seši soļi:
 
-1. **Sesija.** Šeit norāda sesijas nosaukumu (pēc noklusējuma "Sūtījums Nr. N"), adresātu un apsekojuma un vēstules datus. Adresāts nosaka, kuras veidnes tiek piedāvātas. Mainot adresātu, tiek pielāgots arī filtrs "Respondenta veids".
-2. **Respondenti.** Atlase ir atkarīga no sesijas veida.
-   - **Sesijas veids** ir pirmais lauks, ko izvēlas ar lielām pogām: "Uzaicinājums", "Atgādinājums" vai "Cits (informatīvs u.c.)". Pēc šī veida tiek filtrēta veidņu izvēle 3. solī: uzaicinājumi, atgādinājumi vai informatīvie un citi ziņojumi.
+1. **Kampaņa.** Šeit norāda kampaņas nosaukumu (pēc noklusējuma "Kampaņa Nr. N"), adresātu un apsekojuma un vēstules datus. Adresāts nosaka, kuras veidnes tiek piedāvātas. Mainot adresātu, tiek pielāgots arī filtrs "Respondenta veids".
+2. **Respondenti.** Atlase ir atkarīga no kampaņas veida.
+   - **Kampaņas veids** ir pirmais lauks, ko izvēlas ar lielām pogām: "Uzaicinājums", "Atgādinājums" vai "Cits (informatīvs u.c.)". Pēc šī veida tiek filtrēta veidņu izvēle 3. solī: uzaicinājumi, atgādinājumi vai informatīvie un citi ziņojumi.
    - **Filtri:**
-     - pārskats vai apsekojums (vairākizvēle, atbilstoši sesijas adresātam);
+     - pārskats vai apsekojums (vairākizvēle, atbilstoši kampaņas adresātam);
      - periodiskums;
      - konkrēts periods (vairākizvēle).
 
@@ -203,7 +222,7 @@ Sesijai ir seši soļi:
    - **"Uzaicinājums" un "Cits"** atlasa visus respondentus, kuriem ir pienākums atlasītajos pārskatos un periodos. Termiņš un statuss netiek ņemti vērā.
    - **"Atgādinājums"** atlasa tikai neiesniegtos pienākumus. Papildus jāizvēlas viens no veidiem:
      - **Pirms termiņa.** Jānorāda "Sūtīšanas datums" (noklusējumā šodiena) un "Dienas līdz termiņam" N. Termiņa datums tiek aprēķināts kā sūtīšanas datums + N dienas, un tiek atlasīti tikai tie neiesniegtie pienākumi, kuru termiņš ir tieši šajā datumā. Tiek parādīts aprēķinātais termiņš un pārskati un periodi, kas tam atbilst (piem., "Termiņš 07.10.2026.: Mēneša rūpniecības produkcijas pārskats, 2026. g. septembris"). Ja tādu nav, tiek parādīts paziņojums "Šajā datumā nav pārskatu ar termiņu pēc N dienām".
-     - **Plānota sesija.** Ja sūtīšanas datums ir nākotnē, sesija saņem statusu "Plānota", un poga "Nosūtīt" kļūst par "Plānot sūtīšanu". Plānotajā datumā atlase tiek pārrēķināta pēc aktuālajiem statusiem. Prototipā to simulē poga "Izpildīt tagad" sesiju sarakstā sadaļā "Nosūtītās".
+     - **Plānota kampaņa.** Ja sūtīšanas datums ir nākotnē, kampaņa saņem statusu "Plānota", un poga "Nosūtīt" kļūst par "Plānot sūtīšanu". Plānotajā datumā atlase tiek pārrēķināta pēc aktuālajiem statusiem. Prototipā to simulē poga "Izpildīt tagad" kampaņu sarakstā.
      - **Pēc termiņa (nokavēts).** Tiek atlasīti neiesniegtie pienākumi, kuru termiņš ir pagājis. Var norādīt neobligātu lauku "Kavēts vismaz N dienas".
    - **Papildu atlase pēc pazīmēm** (respondenta veids, dalības veids, iepriekšējā dalība, valoda) ir sakļaujamā sadaļā.
    - **Atlases rezultāts:**
@@ -212,19 +231,27 @@ Sesijai ir seši soļi:
      - norāde "Dati no Datu vākšanas pārraudzības" un poga "Atjaunot statusus" (simulācija: daļa neiesniegto pienākumu kļūst iesniegti).
    - Ja respondentam ir atlasīti vairāki pārskati vai periodi, viņš saņem vienu vēstuli. `{pārskatu_tabula}` ietver tikai atlasītos pienākumus, bet atgādinājumā tikai neiesniegtos.
 3. **Saturs.** Ir divas kartītes: "Izmantot veidni" un "Noformēt saturu".
-   - **Izmantot veidni.** Atveras veidņu izvēle. Tajā redzamas tikai sesijas adresātam paredzētās veidnes, sagrupētas pēc kategorijas, ar meklēšanu un teksta priekšskatījumu. Izvēlēto veidni var izmantot uzreiz ("Izmantot veidni") vai pielāgot ("Pielāgot šai sesijai"). Pielāgojot atveras redaktors ar veidnes saturu. Izmaiņas attiecas tikai uz šo sesiju, un pati veidne netiek mainīta.
+   - **Izmantot veidni.** Atveras veidņu izvēle. Tajā redzamas tikai kampaņas adresātam paredzētās veidnes, sagrupētas pēc kategorijas, ar meklēšanu un teksta priekšskatījumu. Izvēlēto veidni var izmantot uzreiz ("Izmantot veidni") vai pielāgot ("Pielāgot šai kampaņai"). Pielāgojot atveras redaktors ar veidnes saturu. Izmaiņas attiecas tikai uz šo kampaņu, un pati veidne netiek mainīta.
    - **Noformēt saturu.** Atveras tas pats redaktors, kas veidnes izveidei, ar visām tā iespējām. Atšķirības no veidnes izveides:
-     - nav lauku "Veidnes nosaukums" un "Kategorija", adresāts tiek ņemts no sesijas;
-     - virsraksts ir "Vēstules saturs: [sesijas nosaukums]";
-     - priekšskatījumā redzami sesijā atzīmētie respondenti, starp kuriem var pārslēgties ar ← →;
-     - apakšā ir pogas "Atcelt", "Saglabāt arī kā veidni" un "Izmantot sesijā".
-   - **Saglabāt arī kā veidni.** Prasa norādīt veidnes nosaukumu un kategoriju. Saturs tiek saglabāts kā jauna veidne, un sesija to izmanto.
-   - **Kopsavilkums.** Kad saturs ir apstiprināts, solī redzams satura avots ("Veidne: [nosaukums]", "Veidne, pielāgota sesijai" vai "Individuāls saturs"), temats un vēstules veids. Ir pogas "Labot saturu" un "Izvēlēties citu saturu".
-4. **Paraksts.** Parakstītājs un amats tiek izmantoti laukos `{parakstītājs}` un `{amats}`, kā arī PDF vēstules parakstā. Pēc noklusējuma tie tiek ņemti no sadaļas "Pastāvīgās daļas". Šeit veiktās izmaiņas attiecas tikai uz šo sesiju.
+     - nav lauku "Veidnes nosaukums" un "Kategorija", adresāts tiek ņemts no kampaņas;
+     - virsraksts ir "Vēstules saturs: [kampaņas nosaukums]";
+     - priekšskatījumā redzami kampaņā atzīmētie respondenti, starp kuriem var pārslēgties ar ← →;
+     - apakšā ir pogas "Atcelt", "Saglabāt arī kā veidni" un "Izmantot kampaņā".
+   - **Saglabāt arī kā veidni.** Prasa norādīt veidnes nosaukumu un kategoriju. Saturs tiek saglabāts kā jauna veidne, un kampaņa to izmanto.
+   - **Kopsavilkums.** Kad saturs ir apstiprināts, solī redzams satura avots ("Veidne: [nosaukums]", "Veidne, pielāgota kampaņai" vai "Individuāls saturs"), temats un vēstules veids. Ir pogas "Labot saturu" un "Izvēlēties citu saturu".
+4. **Paraksts.** Parakstītājs un amats tiek izmantoti laukos `{parakstītājs}` un `{amats}`, kā arī PDF vēstules parakstā. Pēc noklusējuma tie tiek ņemti no sadaļas "Pastāvīgās daļas". Šeit veiktās izmaiņas attiecas tikai uz šo kampaņu.
 5. **Adreses.** Šeit izvēlas adrešu prioritāti.
 6. **Pārbaude un nosūtīšana.** Šeit redzams katras vēstules priekšskatījums, kopsavilkums un poga "Nosūtīt".
 
-**Melnraksts.** Sesija, arī tās saturs, tiek automātiski saglabāta pārlūkā kā melnraksts, tāpēc pēc lapas pārlādes darbu var turpināt. Poga "Sākt no jauna" dzēš melnrakstu. Pēc nosūtīšanas sākas jauna sesija. Nosūtīto vēstuļu sadaļā sesijas tabulā redzams sesijas nosaukums, veids (Uzaicinājums / Pirmstermiņa atgādinājums / Nokavēta termiņa atgādinājums / Cits) un saturs. Plānotajām sesijām redzams arī sūtīšanas datums.
+**Melnraksts.** Kampaņa, arī tās saturs, tiek automātiski saglabāta kā melnraksts, tāpēc darbu var turpināt vēlāk, arī pēc lapas pārlādes. Melnraksti redzami kampaņu sarakstā. Poga "Dzēst melnrakstu" redaktorā to dzēš. Pēc nosūtīšanas atveras cilne "Vēsture" ar šīs kampaņas bloku, bet pēc plānošanas – kampaņu saraksts.
+
+## Vēsture
+
+Cilnē **Vēsture** nosūtītās vēstules ir sagrupētas pa kampaņām.
+- **Kampaņas bloks** ir izvēršams. Galvenē redzams kampaņas nosaukums, veids (Uzaicinājums / Pirmstermiņa atgādinājums / Nokavēta termiņa atgādinājums / Cits), datums, saturs, adrešu prioritāte un rezultātu kopsavilkums (vēstuļu skaits un statusi). Plānotajām kampaņām redzams arī plānotais datums.
+- **Bloka iekšpusē** katrai vēstulei redzams adresāts (uzklikšķinot atveras respondenta kartīte), izmantotā adrese, mēģinājumi un statuss, kā arī poga "Skatīt".
+- **Filtri:** kampaņas veids, statuss, periods (šodien, pēdējās 7, 30 vai 90 dienas) un meklēšana pēc respondenta vai adreses.
+- Augšā ir kopējā statistika un poga "Notīrīt vēsturi".
 
 ## Nosacījumi un vēstuļu varianti
 
