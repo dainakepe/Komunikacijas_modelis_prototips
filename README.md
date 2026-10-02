@@ -134,12 +134,16 @@ Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (pro
 
 - **Datu modelis:**
   - **respondents:** tips (juridiska / fiziska persona), nosaukums vai vārds, reģistrācijas Nr. (juridiskām personām), e-adrese, e-pasts 1, e-pasts 2;
-  - **pārskats:** nosaukums, kods un periodiskums (mēneša, ceturkšņa, pusgada, gada);
-  - **pienākums (matrica):** respondents, pārskats, periods (piem., "2026. gada septembris", "2026. g. 3. ceturksnis"), iesniegšanas termiņš, iesniegšanas datums un statuss. Statuss ir "Iesniegts", "Nav iesniegts" vai "Kavēts" (termiņš pagājis, bet pārskats nav iesniegts). Vienam respondentam var būt vairāki pienākumi.
-  - Fiziskās personas ir piesaistītas apsekojumam (Darbaspēka apsekojums, Mājsaimniecību budžeta apsekojums) ar vienu periodu un termiņu.
+  - **pārskats:** nosaukums, kods, periodiskums (Nedēļa / Mēnesis / Ceturksnis / Pusgads / Gads) un termiņa noteikums, piem., "15. datums pēc pārskata perioda beigām". Termiņš tiek aprēķināts katram periodam, un tas ir vienāds visiem šī pārskata respondentiem;
+  - **pienākums:** respondents × pārskats × periods (piem., "2026. g. oktobris", "2026. g. 4. ceturksnis", "2026. g. 39. nedēļa"), termiņš, iesniegšanas statuss ("Iesniegts" / "Nav iesniegts") un iesniegšanas datums. Ja pārskats nav iesniegts un termiņš ir pagājis, tas tiek rādīts kā "Nav iesniegts (kavēts)". Vienam respondentam var būt vairāki pienākumi.
+  - **Iesniegšanas statusi** ir dati no Datu vākšanas pārraudzības. Tie ir tikai lasāmi; prototipā tie ir testa dati.
+  - Fiziskās personas ir piesaistītas apsekojumiem (Darbaspēka, Ceļotāju, Mājsaimniecību budžeta apsekojums).
 - **Testa dati:**
-  - 15 uzņēmumi ar 1–5 pienākumiem katram, 6 pārskati ar dažādu periodiskumu un 10 fiziskās personas divos apsekojumos;
-  - periodi un termiņi tiek aprēķināti attiecībā pret šodienu, tāpēc statusi vienmēr ir jaukti.
+  - 15 uzņēmumi un 7 pārskati ar visiem periodiskumiem;
+  - 10 fiziskās personas trīs apsekojumos;
+  - termiņi ir gan pagātnē, gan nākotnē, un statusi ir jaukti;
+  - trīs pārskatiem termiņa noteikums ir izvēlēts tā, lai pēdējā perioda termiņš būtu tieši pēc 3, 5 un 7 dienām no šodienas (nedēļas degvielas cenu, mēneša rūpniecības produkcijas un ceturkšņa darba samaksas pārskats);
+  - testa dati tiek aprēķināti attiecībā pret šodienu, kad tie tiek izveidoti vai atjaunoti ("Atjaunot sākotnējos testa datus").
 - **Pārslēgs** "Juridiskās personas / Fiziskās personas".
 - **Filtri:** pārskats (vai apsekojums), periodiskums, periods, statuss, termiņš no–līdz un meklēšana pēc nosaukuma vai reģ. Nr.
 - **Juridiskās personas:** tabula ar respondentu, kontaktiem, pienākumu skaitu un neiesniegto skaitu. Uzklikšķinot uz rindas, tā izvēršas un parāda pienākumu tabulu: Pārskats | Periods | Termiņš | Statuss.
@@ -179,7 +183,7 @@ Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (pro
   - rindas: "Visi atlasītie pienākumi" (uzaicinājumiem) vai "Tikai neiesniegtie" (atgādinājumiem).
 
   Uzklikšķinot uz bloka redaktorā, iestatījumus var mainīt vai bloku dzēst.
-- **Atlase sagatavošanā.** Sadaļas "Sagatavot komunikāciju" 2. solī "Respondenti" var atlasīt pienākumus pēc pārskata vai apsekojuma, perioda un statusa. Tiek rādīti tikai respondenti ar atbilstošiem pienākumiem.
+- **Atlase sagatavošanā.** Sadaļas "Sagatavot komunikāciju" 2. solī "Respondenti" pienākumus atlasa pēc sesijas veida, pārskata un perioda (skatīt "Sūtīšanas sesija").
 - **Ģenerēšana.** Tabula tiek izveidota katram respondentam no viņa pienākumiem, kas atbilst šai atlasei. Kavētie termiņi ir izcelti sarkanā krāsā. E-adreses ziņojumā tabula tiek pārvērsta tekstā.
 - **Esošās veidnes.** Tabula pievienota uzaicinājuma ("Uzaicinājums sniegt datus apsekojumā (vēstule pielikumā)" – PDF dokumentā) un atgādinājuma ("Atgādinājums par datu iesniegšanas termiņu") veidnēm juridiskām personām.
 
@@ -188,7 +192,25 @@ Cilne **Respondenti** atspoguļo datus no Respondentu pārvaldības moduļa (pro
 Sesijai ir seši soļi:
 
 1. **Sesija.** Šeit norāda sesijas nosaukumu (pēc noklusējuma "Sūtījums Nr. N"), adresātu un apsekojuma un vēstules datus. Adresāts nosaka, kuras veidnes tiek piedāvātas. Mainot adresātu, tiek pielāgots arī filtrs "Respondenta veids".
-2. **Respondenti.** Atlasa respondentus pēc pienākumiem un pazīmēm.
+2. **Respondenti.** Atlase ir atkarīga no sesijas veida.
+   - **Sesijas veids** ir pirmais lauks, ko izvēlas ar lielām pogām: "Uzaicinājums", "Atgādinājums" vai "Cits (informatīvs u.c.)". Pēc šī veida tiek filtrēta veidņu izvēle 3. solī: uzaicinājumi, atgādinājumi vai informatīvie un citi ziņojumi.
+   - **Filtri:**
+     - pārskats vai apsekojums (vairākizvēle, atbilstoši sesijas adresātam);
+     - periodiskums;
+     - konkrēts periods (vairākizvēle).
+
+     Ja nekas nav atzīmēts, tiek ņemti visi pārskati vai periodi.
+   - **"Uzaicinājums" un "Cits"** atlasa visus respondentus, kuriem ir pienākums atlasītajos pārskatos un periodos. Termiņš un statuss netiek ņemti vērā.
+   - **"Atgādinājums"** atlasa tikai neiesniegtos pienākumus. Papildus jāizvēlas viens no veidiem:
+     - **Pirms termiņa.** Jānorāda "Sūtīšanas datums" (noklusējumā šodiena) un "Dienas līdz termiņam" N. Termiņa datums tiek aprēķināts kā sūtīšanas datums + N dienas, un tiek atlasīti tikai tie neiesniegtie pienākumi, kuru termiņš ir tieši šajā datumā. Tiek parādīts aprēķinātais termiņš un pārskati un periodi, kas tam atbilst (piem., "Termiņš 07.10.2026.: Mēneša rūpniecības produkcijas pārskats, 2026. g. septembris"). Ja tādu nav, tiek parādīts paziņojums "Šajā datumā nav pārskatu ar termiņu pēc N dienām".
+     - **Plānota sesija.** Ja sūtīšanas datums ir nākotnē, sesija saņem statusu "Plānota", un poga "Nosūtīt" kļūst par "Plānot sūtīšanu". Plānotajā datumā atlase tiek pārrēķināta pēc aktuālajiem statusiem. Prototipā to simulē poga "Izpildīt tagad" sesiju sarakstā sadaļā "Nosūtītās".
+     - **Pēc termiņa (nokavēts).** Tiek atlasīti neiesniegtie pienākumi, kuru termiņš ir pagājis. Var norādīt neobligātu lauku "Kavēts vismaz N dienas".
+   - **Papildu atlase pēc pazīmēm** (respondenta veids, dalības veids, iepriekšējā dalība, valoda) ir sakļaujamā sadaļā.
+   - **Atlases rezultāts:**
+     - kopsavilkums: respondentu skaits, pienākumu skaits un sadalījums pa pārskatiem;
+     - tabula ar respondentiem: izvēršot rindu, redzami respondenta atlasītie pienākumi (pārskats, periods, termiņš, statuss), un atsevišķus respondentus var izņemt;
+     - norāde "Dati no Datu vākšanas pārraudzības" un poga "Atjaunot statusus" (simulācija: daļa neiesniegto pienākumu kļūst iesniegti).
+   - Ja respondentam ir atlasīti vairāki pārskati vai periodi, viņš saņem vienu vēstuli. `{pārskatu_tabula}` ietver tikai atlasītos pienākumus, bet atgādinājumā tikai neiesniegtos.
 3. **Saturs.** Ir divas kartītes: "Izmantot veidni" un "Noformēt saturu".
    - **Izmantot veidni.** Atveras veidņu izvēle. Tajā redzamas tikai sesijas adresātam paredzētās veidnes, sagrupētas pēc kategorijas, ar meklēšanu un teksta priekšskatījumu. Izvēlēto veidni var izmantot uzreiz ("Izmantot veidni") vai pielāgot ("Pielāgot šai sesijai"). Pielāgojot atveras redaktors ar veidnes saturu. Izmaiņas attiecas tikai uz šo sesiju, un pati veidne netiek mainīta.
    - **Noformēt saturu.** Atveras tas pats redaktors, kas veidnes izveidei, ar visām tā iespējām. Atšķirības no veidnes izveides:
@@ -202,7 +224,7 @@ Sesijai ir seši soļi:
 5. **Adreses.** Šeit izvēlas adrešu prioritāti.
 6. **Pārbaude un nosūtīšana.** Šeit redzams katras vēstules priekšskatījums, kopsavilkums un poga "Nosūtīt".
 
-**Melnraksts.** Sesija, arī tās saturs, tiek automātiski saglabāta pārlūkā kā melnraksts, tāpēc pēc lapas pārlādes darbu var turpināt. Poga "Sākt no jauna" dzēš melnrakstu. Pēc nosūtīšanas sākas jauna sesija. Nosūtīto vēstuļu sadaļā sesijas tabulā redzams sesijas nosaukums un saturs.
+**Melnraksts.** Sesija, arī tās saturs, tiek automātiski saglabāta pārlūkā kā melnraksts, tāpēc pēc lapas pārlādes darbu var turpināt. Poga "Sākt no jauna" dzēš melnrakstu. Pēc nosūtīšanas sākas jauna sesija. Nosūtīto vēstuļu sadaļā sesijas tabulā redzams sesijas nosaukums, veids (Uzaicinājums / Pirmstermiņa atgādinājums / Nokavēta termiņa atgādinājums / Cits) un saturs. Plānotajām sesijām redzams arī sūtīšanas datums.
 
 ## Nosacījumi un vēstuļu varianti
 
