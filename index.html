@@ -647,6 +647,40 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .scope-sum.is-warn{background:#FFF7E6;border-color:#F2D49B}
 .warn-txt{color:#8a5a00;display:inline-flex;gap:5px;align-items:flex-start}
 .warn-txt .icon{width:15px;height:15px;flex:none;margin-top:2px}
+.vars-box{margin-top:14px}
+.vars-box > summary .tip{margin-left:6px}
+.vars-h{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:14px;color:var(--primary-darker);margin:12px 0 6px}
+.vars-src{margin:10px 0 6px}
+.vars-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.vars-table th{text-align:left;font-size:12px;text-transform:uppercase;letter-spacing:.03em;color:var(--text-muted);padding:6px 8px;border-bottom:1px solid var(--border)}
+.vars-table td{padding:7px 8px;border-bottom:1px solid var(--border-light);vertical-align:middle}
+.vars-table td:nth-child(2){word-break:break-word}
+.vars-table .cell-sub{display:block}
+.vars-table input{width:100%;min-width:180px;padding:5px 8px}
+.vars-table .actions{white-space:nowrap;text-align:right}
+.vars-table .actions .btn + .btn,.vars-table .actions .btn + .link-btn{margin-left:4px}
+.vars-grp{border:1px solid var(--border);border-radius:8px;margin-top:8px;background:#fff}
+.vars-grp > summary{cursor:pointer;padding:8px 12px;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vars-grp > summary small{color:var(--text-muted)}
+.vars-grp[open] > summary{border-bottom:1px solid var(--border-light)}
+.vars-grp .table-wrap{padding:0 8px 6px}
+.pill-mod{background:#FFF4E5;color:#8A4B00;border-color:#F3C98B}
+.vars-grp > summary{list-style:none}
+.vars-grp > summary::-webkit-details-marker{display:none}
+.vars-grp > summary::before{content:'';width:7px;height:7px;border-right:2px solid var(--primary-dark);border-bottom:2px solid var(--primary-dark);transform:rotate(-45deg);transition:transform .15s;margin-right:4px}
+.vars-grp[open] > summary::before{transform:rotate(45deg)}
+@media (max-width:640px){
+  /* mainīgo tabula – rindas kā kartītes */
+  .vars-table thead{display:none}
+  .vars-table,.vars-table tbody,.vars-table tr,.vars-table td{display:block;width:100%}
+  .vars-table tr{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:8px 0;border-bottom:1px solid var(--border-light)}
+  .vars-table td{border:0;padding:0 4px}
+  .vars-table td:nth-child(1),.vars-table td:nth-child(2){grid-column:1/-1}
+  .vars-table td:nth-child(2){font-weight:600}
+  .vars-table td:nth-child(3){align-self:center;font-size:12.5px;color:var(--text-muted)}
+  .vars-table .actions{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:2px 8px;white-space:normal}
+  .vars-table input{min-width:0}
+}
 .scope-recap{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);font-size:13.5px}
 .scope-recap .btn{margin-left:auto}
 .sel-block > .label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
@@ -1502,20 +1536,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
             <div class="field"><label for="cf-date">Vēstules datums <span class="muted">{datums}</span></label><input type="date" id="cf-date" data-f="date"></div>
             <div class="field"><label for="cf-docnr">Dokumenta Nr. <span class="muted">{dok_nr}</span></label><input type="text" id="cf-docnr" data-f="docNr"></div>
           </div>
-          <details class="more">
-            <summary>Apsekojuma kontakti, noformējums un tulkojumi</summary>
-            <div class="form-grid">
-              <div class="field"><label for="cf-survey-en">Nosaukums angliski <span class="muted">EN</span></label><input type="text" id="cf-survey-en" data-f="survey_en"></div>
-              <div class="field"><label for="cf-survey-ru">Nosaukums krieviski <span class="muted">RU</span></label><input type="text" id="cf-survey-ru" data-f="survey_ru"></div>
-            </div>
-            <div class="field"><label for="cf-link">E-anketas saite <span class="muted">{e-anketa}</span></label><input type="text" id="cf-link" data-f="link"></div>
-            <div class="form-grid">
-              <div class="field"><label for="cf-email">E-pasts <span class="muted">{apsekojuma_epasts}</span></label><input type="text" id="cf-email" data-f="email"></div>
-              <div class="field"><label for="cf-web">Tīmekļvietne <span class="muted">{apsekojuma_vietne}</span></label><input type="text" id="cf-web" data-f="web"></div>
-              <div class="field"><label for="cf-tags">Tēmturi banerī</label><input type="text" id="cf-tags" data-f="tags"></div>
-              <div class="field"><label for="cf-slogan">Sauklis zem banera</label><input type="text" id="cf-slogan" data-f="slogan"></div>
-            </div>
-          </details>
         </div>
         <div class="step" data-wstep="2" hidden>
           <div class="step-title"><span class="step-num">2</span><h2>Respondenti</h2><span class="tip" tabindex="0" role="note" aria-label="Uzaicinājums, informatīvs ziņojums un cits – tiek atlasīti visi respondenti ar pienākumu kampaņas tvērumā. Atgādinājums – tikai neiesniegtie pienākumi." data-tip="Uzaicinājums, informatīvs ziņojums un cits – tiek atlasīti visi respondenti ar pienākumu kampaņas tvērumā. Atgādinājums – tikai neiesniegtie pienākumi.">i</span></div>
@@ -1558,6 +1578,10 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <div class="step-title"><span class="step-num">3</span><h2>Saturs</h2></div>
           <span class="err" id="c-content-err" hidden></span>
           <div id="c-content"></div>
+          <details class="more vars-box" id="c-vars">
+            <summary>Mainīgo vērtības <span class="tip" tabindex="0" role="note" aria-label="Apsekojuma dati vēstules mainīgajiem tiek ņemti automātiski no Metadatu pārvaldības. Vērtību var mainīt tikai šai kampaņai. Ja kampaņā ir vairāki apsekojumi, katram respondentam vēstulē tiek izmantotas viņa apsekojuma vērtības. Tēmturi un sauklis attiecas uz šo sūtījumu." data-tip="Apsekojuma dati vēstules mainīgajiem tiek ņemti automātiski no Metadatu pārvaldības. Vērtību var mainīt tikai šai kampaņai. Ja kampaņā ir vairāki apsekojumi, katram respondentam vēstulē tiek izmantotas viņa apsekojuma vērtības. Tēmturi un sauklis attiecas uz šo sūtījumu.">i</span></summary>
+            <div id="c-vars-body"></div>
+          </details>
         </div>
         <div class="step" data-wstep="4" hidden>
           <div class="step-title"><span class="step-num">4</span><h2>Paraksts</h2></div>
@@ -1830,6 +1854,23 @@ const SEED_REPORTS = [
   {id:'a-eus',  code:'EU-SILC', name:'Iedzīvotāju ienākumu un dzīves apstākļu apsekojums', freq:'pusg', aud:'fiz', rule:{type:'day', day:20}},
   {id:'a-ikt',  code:'IKT',    name:'Informācijas un komunikāciju tehnoloģiju lietošana 2026. gadā', freq:'int', aud:'fiz', rule:{type:'days', days:21}},
 ];
+// Apsekojuma dati vēstules mainīgajiem (no Metadatu pārvaldības; prototipā – izdomāti testa dati)
+const SURVEY_META = {
+  'p-deg':  {survey_en:'Weekly Fuel Price Report', survey_ru:'Еженедельный отчёт о ценах на топливо', link:'https://e-anketa.csp.example/1-deg', email:'cenas@csp.example', web:'csp.example/degviela'},
+  'p-apgr': {survey_en:'Monthly Turnover Report', survey_ru:'Ежемесячный отчёт об обороте', link:'https://e-anketa.csp.example/1-apgr', email:'apgrozijums@csp.example', web:'csp.example/apgrozijums'},
+  'p-rup':  {survey_en:'Monthly Industrial Production Report', survey_ru:'Ежемесячный отчёт о промышленной продукции', link:'https://e-anketa.csp.example/1-rup', email:'rupnieciba@csp.example', web:'csp.example/rupnieciba'},
+  'p-ds':   {survey_en:'Quarterly Earnings Report', survey_ru:'Квартальный отчёт о заработной плате', link:'https://e-anketa.csp.example/2-ds', email:'darba-samaksa@csp.example', web:'csp.example/darba-samaksa'},
+  'p-vak':  {survey_en:'Quarterly Job Vacancy Report', survey_ru:'Квартальный отчёт о вакансиях', link:'https://e-anketa.csp.example/1-vak', email:'vakances@csp.example', web:'csp.example/vakances'},
+  'p-inv':  {survey_en:'Semi-annual Investment Report', survey_ru:'Полугодовой отчёт об инвестициях', link:'https://e-anketa.csp.example/1-inv', email:'investicijas@csp.example', web:'csp.example/investicijas'},
+  'p-gada': {survey_en:'Annual Activity Report', survey_ru:'Годовой отчёт о деятельности', link:'https://e-anketa.csp.example/1-gada', email:'gada-parskats@csp.example', web:'csp.example/gada-parskats'},
+  'a-dsa':  {survey_en:'Labour Force Survey', survey_ru:'Обследование рабочей силы', link:'https://e-anketa.csp.example/dsa', email:'dsa@csp.example', web:'csp.example/dsa'},
+  'a-cel':  {survey_en:'Travel Survey', survey_ru:'Обследование путешественников', link:'https://e-anketa.csp.example/cel', email:'turisms@csp.example', web:'csp.example/adb'},
+  'a-mba':  {survey_en:'Household Budget Survey', survey_ru:'Обследование бюджетов домохозяйств', link:'https://e-anketa.csp.example/mba', email:'mba@csp.example', web:'csp.example/mba'},
+  'p-ino':  {survey_en:'Community Innovation Survey', survey_ru:'Обследование инноваций на предприятиях', link:'https://e-anketa.csp.example/ino', email:'inovacijas@csp.example', web:'csp.example/inovacijas'},
+  'a-lai':  {survey_en:'Time Use Survey', survey_ru:'Обследование использования времени', link:'https://e-anketa.csp.example/lai', email:'laiks@csp.example', web:'csp.example/laika-izlietojums'},
+  'a-eus':  {survey_en:'Survey on Income and Living Conditions', survey_ru:'Обследование доходов и условий жизни', link:'https://e-anketa.csp.example/eu-silc', email:'eu-silc@csp.example', web:'csp.example/eu-silc'},
+  'a-ikt':  {survey_en:'ICT Usage in Households 2026', survey_ru:'Использование информационно-коммуникационных технологий в 2026 году', link:'https://e-anketa.csp.example/ikt', email:'ikt@csp.example', web:'csp.example/ikt'},
+};
 const ruleLabel = r => !r ? '' : r.type === 'days' ? `${r.days}. diena pēc pārskata perioda beigām`
   : `${r.day}. datums ${(r.months || 1) > 1 ? `${r.months}. mēnesī ` : ''}pēc pārskata perioda beigām`;
 // Pārskatu tabulas bloks veidnēs ({pārskatu_tabula})
@@ -2608,6 +2649,7 @@ function applyAddrData(s){
 function seedReports(today = dOnly(new Date())){
   return SEED_REPORTS.map(p0 => {
     const {dyn, ...p} = clone(p0);
+    p.meta = clone(SURVEY_META[p.id] || {});
     let anchor = periodBack(p.freq, 1, today);
     if (dyn){
       const target = addDaysTo(today, dyn);
@@ -2653,7 +2695,7 @@ function loadState(){
       s.attachments = s.attachments || [];
       if (!Array.isArray(s.duties) || !Array.isArray(s.reports)) migrateRespData(s);
       // pārskatiem jābūt termiņa noteikumam (jaunais datu modelis)
-      else if (!s.reports.every(p => p.rule) || SEED_REPORTS.some(p => !s.reports.some(x => x.id === p.id))) seedDutyData(s);
+      else if (!s.reports.every(p => p.rule) || SEED_REPORTS.some(p => !s.reports.some(x => x.id === p.id)) || !s.reports.every(p => p.meta)) seedDutyData(s);
       s.planned = s.planned || [];
       if (!Array.isArray(s.mailSamples)) s.mailSamples = defaultMailSamples(s.templates);
       if (s.respondents.some(r => r.syncedAt === undefined)) applyAddrData(s);
@@ -2720,12 +2762,14 @@ const compose = {
   filt: {},
   // soļi, kuros lietotājs mēģināja turpināt vai saglabāt – tikai tajos rāda kļūdas
   tried: new Set(),
+  // mainīgo vērtību izmaiņas šai kampaņai: {apsekojuma id: {mainīgais: vērtība}}
+  varOvr: {},
 };
 // Kampaņas melnraksts – tiek saglabāts pārlūkā, lai darbu var turpināt vēlāk
 const sessionSnapshot = () => ({name:compose.name, aud:compose.aud, kind:compose.kind, remind:compose.remind, sel:clone(compose.sel),
   excluded:[...compose.excluded], surveyIdx:compose.surveyIdx, f:{...compose.f}, prio:[...compose.prio], filt:{...compose.filt}, sign:{...compose.sign},
   content: compose.content ? clone(compose.content) : null, when:compose.when, sendTime:compose.sendTime, esign:clone(compose.esign),
-  custom:clone(compose.custom), step:compose.step});
+  custom:clone(compose.custom), step:compose.step, varOvr:clone(compose.varOvr)});
 function applySnapshot(d){
   Object.assign(compose, {
     name: d.name || defaultSessionName(), aud: AUDS[d.aud] ? d.aud : 'fiz',
@@ -2735,7 +2779,7 @@ function applySnapshot(d){
     filt: {...(d.filt || {})}, sign: {signer:'', position:'', ...(d.sign || {})}, content: d.content ? clone(d.content) : null, index: 0,
     // agrākiem melnrakstiem: sūtīšanas datums nākotnē = ieplānota
     when: d.when || (d.sel && d.sel.sendDate > todayIso() ? 'plan' : 'now'), sendTime: d.sendTime || '09:00',
-    esign: {...defaultEsign(), ...(d.esign || {})}, custom: clone(d.custom || {}), step: d.step || 1, pvCh: '', tried: new Set(),
+    esign: {...defaultEsign(), ...(d.esign || {})}, custom: clone(d.custom || {}), step: d.step || 1, pvCh: '', tried: new Set(), varOvr: clone(d.varOvr || {}),
   });
 }
 // Kampaņu melnraksti (agrāk – viens melnraksts state.draft)
@@ -2776,7 +2820,7 @@ function renderDraftInfo(){
 function newSession(full){
   Object.assign(compose, {draftId:'k' + uid(), name:defaultSessionName(), content:null, sign:{signer:'', position:''}, excluded:new Set(), open:new Set(), index:0, noneOpen:false});
   // jaunai kampaņai – noklusējuma veids un atlase; pēc nosūtīšanas saglabājas adresāts, apsekojuma dati un adrešu prioritāte
-  Object.assign(compose, {kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', when:'now', sendTime:'09:00', esign:defaultEsign(), custom:{}, step:1, pvCh:'', tried:new Set()});
+  Object.assign(compose, {kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', when:'now', sendTime:'09:00', esign:defaultEsign(), custom:{}, step:1, pvCh:'', tried:new Set(), varOvr:{}});
   if (full) Object.assign(compose, {aud:'fiz', surveyIdx:0, prio:[...DEFAULT_PRIO], filt:{},
     f:{...SURVEYS[0], start:isoDate(addDays(3)), deadline:isoDate(addDays(30)), date:isoDate(new Date())}});
   compose.f.docNr = nextDocNr();
@@ -2788,6 +2832,8 @@ const ui = {campView:'list', camp:{q:'', kind:'', status:''}, hist:{q:'', kind:'
 // Sakļautie kategoriju bloki (tikai šajā kampaņā – pēc noklusējuma visi izvērsti)
 // Izvērstie kategoriju bloki (pēc noklusējuma visi sakļauti)
 ui.tplOpen = new Set();
+// mainīgo vērtības: rediģējamā vērtība un izvērstie apsekojumu bloki
+ui.varEdit = ''; ui.varOpen = new Set();
 ui.tab = '';
 const blockKey = (aud, cat) => aud + ':' + cat;
 // Sakļauj visus blokus; ja ir meklēšana – izvērš blokus ar rezultātiem
@@ -2808,14 +2854,14 @@ function dutyDates(r, f){
 }
 // {apsekojums}: viens apsekojums – lauks "Nosaukums vēstulē"; vairāki – respondenta apsekojumu nosaukumi
 function surveyNameFor(r, f, lang){
-  const one = (lang !== 'lv' && f['survey_' + lang]) || f.survey || '';
-  const sr = compose.sel.reports.length ? compose.sel.reports : [...new Set(baseDuties().map(d => d.reportId))];
+  const sr = campReports(), v1 = sr.length === 1 ? varsOf(sr[0]) : null;
+  const one = (lang !== 'lv' && ((v1 || f)['survey_' + lang])) || f.survey || '';
   if (sr.length <= 1) return one;
   const ids = r ? [...new Set(msgDuties(r).map(d => d.reportId))].filter(id => sr.includes(id)) : sr;
-  return (ids.length ? ids : sr).map(id => { const p = repById(id); if (!p) return id; const ld = letterDataOf(p); return (lang !== 'lv' && ld['survey_' + lang]) || ld.survey; }).join(', ');
+  return (ids.length ? ids : sr).map(id => { const p = repById(id); if (!p) return id; return (lang !== 'lv' && varsOf(id)['survey_' + lang]) || p.name; }).join(', ');
 }
 function ctxFor(r, f = compose.f, lang = 'lv'){
-  const L = layoutFor(lang);
+  const L = layoutFor(lang), vid = varReportFor(r), v = vid ? varsOf(vid) : f;
   return {
     'vārds': r ? (r.contact || r.name) : '',
     // jauktajai komunikācijai: uzņēmumam – nosaukums, fiziskai personai – vārds
@@ -2824,9 +2870,10 @@ function ctxFor(r, f = compose.f, lang = 'lv'){
     'apsekojums': surveyNameFor(r, f, lang),
     'sākums': fmtDate(dutyDates(r, f).start),
     'termiņš': fmtDate(dutyDates(r, f).deadline),
-    'e-anketa': f.link || '',
-    'apsekojuma_epasts': f.email || '',
-    'apsekojuma_vietne': f.web || '',
+    // apsekojuma dati – respondenta apsekojuma vērtības (ar izmaiņām šai kampaņai)
+    'e-anketa': v.link || '',
+    'apsekojuma_epasts': v.email || '',
+    'apsekojuma_vietne': v.web || '',
     'datums': fmtDate(f.date),
     'dok_nr': f.docNr || '',
     'tālrunis': L.phone || '',
@@ -5030,8 +5077,21 @@ function baseDuties(){
 const scopeReports = () => { const ids = new Set(baseDuties().map(d => d.reportId)); return (state.reports || []).filter(p => ids.has(p.id)); };
 // Apsekojuma dati vēstulei (nosaukums, tulkojumi, kontakti) – no apsekojumu kataloga vai pēc pārskata nosaukuma
 function letterDataOf(p){
-  const sv = SURVEYS.find(x => x.survey === p.name);
-  return sv ? {...sv} : {survey:p.name, survey_en:'', survey_ru:'', tags:'', slogan:'', link:'https://e-anketa.csp.example', email:'info@csp.example', web:'csp.example'};
+  const sv = SURVEYS.find(x => x.survey === p.name) || {};
+  return {survey:p.name, ...metaOf(p), tags:sv.tags || '', slogan:sv.slogan || ''};
+}
+// Mainīgo vērtības: apsekojuma dati (Metadatu pārvaldība) + izmaiņas šai kampaņai
+const VAR_ROWS = [['survey_en', 'Nosaukums angliski', '{apsekojums} EN'], ['survey_ru', 'Nosaukums krieviski', '{apsekojums} RU'],
+  ['link', 'E-anketas saite', '{e-anketa}'], ['email', 'Apsekojuma e-pasts', '{apsekojuma_epasts}'], ['web', 'Tīmekļvietne', '{apsekojuma_vietne}']];
+const metaOf = p => ({survey_en:'', survey_ru:'', link:'https://e-anketa.csp.example', email:'info@csp.example', web:'csp.example', ...(SURVEY_META[p.id] || {}), ...(p.meta || {})});
+function varsOf(id){ const p = repById(id); return p ? {...metaOf(p), ...((compose.varOvr || {})[id] || {})} : null; }
+// kampaņas apsekojumi un apsekojums, kura vērtības izmanto respondenta vēstulē
+const campReports = () => compose.sel.reports.length ? compose.sel.reports.filter(id => repById(id)) : [...new Set(baseDuties().map(d => d.reportId))];
+function varReportFor(r){
+  const sr = campReports();
+  if (!sr.length) return null;
+  const own = r ? msgDuties(r).map(d => d.reportId).find(id => sr.includes(id)) : null;
+  return own || sr[0];
 }
 function selectedDuties(){
   let ds = baseDuties();
@@ -5109,6 +5169,32 @@ function renderPerRows(){
       <button type="button" class="icon-btn" data-pr-rm="${i}" aria-label="Noņemt ${i + 1}. periodu" title="Noņemt">${ICON.x}</button></div>`; }).join('');
   $('#c-per-tags').innerHTML = sel.periods.map(k => `<span class="per-tag">${esc(periodLabel(k).replace(/ \(.*\)$/, ''))}</span>`).join('');
 }
+// Solis "Saturs": sadaļa "Mainīgo vērtības"
+function renderVars(){
+  const box = $('#c-vars-body');
+  if (!box) return;
+  const sr = campReports(), ov = compose.varOvr;
+  const row = (id, [k, l, chip]) => {
+    const p = repById(id), base = metaOf(p)[k] || '', o = (ov[id] || {})[k], val = o ?? base, ed = ui.varEdit === `${id}|${k}`;
+    return `<tr><td><span class="var-chip">${esc(chip)}</span><span class="cell-sub">${esc(l)}</span></td>
+      <td>${ed ? `<input type="text" id="var-in" data-var="${id}|${k}" value="${esc(val)}" aria-label="${esc(l)} (${esc(p.name)})">` : val ? esc(val) : '<span class="muted">—</span>'}</td>
+      <td>${o != null ? '<span class="pill pill-mod">Mainīts</span>' : 'No apsekojuma'}</td>
+      <td class="actions">${ed ? `<button type="button" class="btn btn-primary btn-sm" data-var-save="${id}|${k}">Saglabāt</button><button type="button" class="btn btn-ghost btn-sm" data-var-cancel>Atcelt</button>`
+        : `<button type="button" class="btn btn-ghost btn-sm" data-var-edit="${id}|${k}">Mainīt šai kampaņai</button>${o != null ? `<button type="button" class="link-btn" data-var-reset="${id}|${k}">Atjaunot</button>` : ''}`}</td></tr>`;
+  };
+  const table = id => `<div class="table-wrap"><table class="vars-table"><thead><tr><th>Mainīgais</th><th>Vērtība</th><th>Avots</th><th><span class="sr-only">Darbības</span></th></tr></thead>
+    <tbody>${VAR_ROWS.map(rw => row(id, rw)).join('')}</tbody></table></div>`;
+  const src = '<span class="pill pill-src">Dati no Metadatu pārvaldības</span>';
+  const surveys = !sr.length ? '<p class="muted">Kampaņas tvērumā nav apsekojuma.</p>'
+    : sr.length === 1 ? `<h4 class="vars-h">${esc(repById(sr[0]).name)} ${src}</h4>${table(sr[0])}`
+    : `<div class="vars-src">${src}</div>` + sr.map(id => { const p = repById(id), n = Object.keys(ov[id] || {}).length;
+        return `<details class="vars-grp" data-var-grp="${id}" ${ui.varOpen.has(id) ? 'open' : ''}><summary><b>${esc(p.name)}</b><small>${esc(p.code)}</small>${n ? `<span class="pill pill-mod">Mainīts: ${n}</span>` : ''}</summary>${table(id)}</details>`; }).join('');
+  box.innerHTML = surveys + `<h4 class="vars-h">Kampaņas noformējums</h4>
+    <div class="form-grid">
+      <div class="field"><label for="cf-tags">Tēmturi banerī</label><input type="text" id="cf-tags" data-fv="tags" value="${esc(compose.f.tags || '')}"></div>
+      <div class="field"><label for="cf-slogan">Sauklis zem banera</label><input type="text" id="cf-slogan" data-fv="slogan" value="${esc(compose.f.slogan || '')}"></div>
+    </div>`;
+}
 function renderScope(){
   const sel = compose.sel, reps = audReports();
   // izvēles, kas neatbilst adresātam, tiek noņemtas
@@ -5139,7 +5225,13 @@ function renderScope(){
   }
   // vēstules dati: {apsekojums} – ja atlase attiecas uz vienu apsekojumu
   const sr = sel.reports.length ? sel.reports.map(repById) : scopeReports(), one = sr.length === 1 ? sr[0] : null;
-  if (one && compose.f.surveyFor !== one.id){ Object.assign(compose.f, letterDataOf(one), {surveyFor:one.id}); $$('[data-f]').forEach(inp => inp.value = compose.f[inp.dataset.f] || ''); }
+  if (one && compose.f.surveyFor !== one.id){
+    const ld = letterDataOf(one);
+    // tēmturi un sauklis – kampaņas līmenī (ja nav mainīti, tiek ņemti no apsekojuma)
+    if (compose.f.bannerEdited){ delete ld.tags; delete ld.slogan; }
+    Object.assign(compose.f, ld, {surveyFor:one.id}); $$('[data-f]').forEach(inp => inp.value = compose.f[inp.dataset.f] || '');
+  }
+  renderVars();
   $('#c-survey-box').hidden = !one;
   // 2. solī – kritēriju kopsavilkums
   $('#c-scope-recap').innerHTML = `<span><b>Kampaņas tvērums (1. solis):</b></span>
@@ -6537,6 +6629,34 @@ $('#c-rep-tags').addEventListener('click', e => {
   repToggle(b.dataset.repRm);
   $('#c-rep-search').focus({preventScroll:true});
 });
+// Mainīgo vērtības: mainīt šai kampaņai / atjaunot; tēmturi un sauklis
+function varCommit(key, value){
+  const [id, k] = key.split('|'), p = repById(id), o = compose.varOvr[id] = {...(compose.varOvr[id] || {})};
+  if (value === (metaOf(p)[k] || '')) delete o[k]; else o[k] = value;
+  if (!Object.keys(o).length) delete compose.varOvr[id];
+}
+const varsChanged = focusKey => { ui.varEdit = ''; renderVars(); renderComposePreview(); const b = focusKey && $(`#c-vars-body [data-var-edit="${focusKey}"]`); if (b) b.focus(); };
+$('#c-vars-body').addEventListener('click', e => {
+  const ed = e.target.closest('[data-var-edit]'), sv = e.target.closest('[data-var-save]'), rs = e.target.closest('[data-var-reset]');
+  if (ed){ ui.varEdit = ed.dataset.varEdit; renderVars(); const i = $('#var-in'); if (i){ i.focus(); i.select(); } }
+  else if (sv){ varCommit(sv.dataset.varSave, $('#var-in').value.trim()); varsChanged(sv.dataset.varSave); }
+  else if (rs){ const [id, k] = rs.dataset.varReset.split('|'); varCommit(rs.dataset.varReset, metaOf(repById(id))[k] || ''); varsChanged(rs.dataset.varReset); }
+  else if (e.target.closest('[data-var-cancel]')){ const k = ui.varEdit; varsChanged(k); }
+});
+$('#c-vars-body').addEventListener('keydown', e => {
+  if (e.target.id !== 'var-in') return;
+  if (e.key === 'Enter'){ e.preventDefault(); const k = e.target.dataset.var; varCommit(k, e.target.value.trim()); varsChanged(k); }
+  if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); varsChanged(e.target.dataset.var); }
+});
+$('#c-vars-body').addEventListener('input', e => {
+  const k = e.target.dataset.fv;
+  if (!k) return;
+  compose.f[k] = e.target.value.trim(); compose.f.bannerEdited = true; renderComposePreview();
+});
+$('#c-vars-body').addEventListener('toggle', e => {
+  const g = e.target.closest && e.target.closest('[data-var-grp]');
+  if (g) g.open ? ui.varOpen.add(g.dataset.varGrp) : ui.varOpen.delete(g.dataset.varGrp);
+}, true);
 // Konkrēts periods: rindas pievienošana, maiņa un noņemšana (fokuss paliek attiecīgajā laukā)
 $('#c-per-add').addEventListener('click', () => {
   const s = compose.sel;
