@@ -1115,6 +1115,28 @@ mark.v-miss,mark.v-unk{background:var(--danger-bg);color:var(--danger);border-ra
 .stat.s-sent{border-left-color:var(--info)} .stat.s-sent .n{color:var(--info)}
 .stat.s-err{border-left-color:var(--danger)} .stat.s-err .n{color:var(--danger)}
 .filters{display:flex;gap:10px;flex-wrap:wrap;padding:14px;border-bottom:1px solid var(--border-light)}
+/* Sūtīšanas vēstures filtri: 2 rindas, aktīvo filtru birkas */
+.hf-row{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:flex-end;padding:12px 14px 0}
+.hf-row:nth-child(2){padding-bottom:12px}
+.hf-field{display:flex;flex-direction:column;gap:4px;min-width:0;max-width:100%}
+.hf-l{font-size:12px;font-weight:600;color:var(--text-muted)}
+.hf-grow{flex:1 1 240px}
+#hist-nmk{width:240px;max-width:100%}
+.hf-period{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.hf-period select{width:auto;min-width:0}
+.hf-period .dt-field input[type="text"]{width:140px}
+.hf-dash{color:var(--text-muted)}
+.hf-row select{width:190px;max-width:100%}
+.hf-row #hist-camp{width:280px}
+.hf-clear{margin-left:auto;align-self:flex-end;padding:8px 2px}
+.hf-chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px 12px;border-top:1px solid var(--border-light)}
+@media (max-width:640px){
+  .hf-field{flex:1 1 100%}
+  #hist-nmk,.hf-row select,.hf-row #hist-camp{width:100%;min-width:0}
+  .hf-period .dt-field{flex:1 1 120px}
+  .hf-period .dt-field input[type="text"]{width:100%}
+  .hf-period select{flex:1 1 100%}
+}
 .filters .search{flex:1 1 240px}
 .filters select{width:auto;min-width:160px}
 
@@ -1761,18 +1783,35 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     </div>
     <div class="subnav" id="hist-sub" role="group" aria-label="Vēstuļu statuss"></div>
     <div class="stats" id="sent-stats"></div>
-    <div class="card" style="margin-bottom:14px">
-      <div class="filters" style="border-bottom:0">
-        <label class="search"><span class="sr-only">Meklēt pēc respondenta</span>
-          <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="hist-search" placeholder="Meklēt pēc respondenta vai adreses…">
-        </label>
-        <label><span class="sr-only">Kampaņa</span><select id="hist-camp"></select></label>
-        <label><span class="sr-only">Kampaņas veids</span><select id="hist-kind"></select></label>
-        <label><span class="sr-only">Kanāls</span><select id="hist-ch"><option value="">Visi kanāli</option><option value="eadrese">eAdrese</option><option value="epasts">E-pasts</option></select></label>
-        <label><span class="sr-only">Periods</span>
-          <select id="hist-period"><option value="">Jebkurā laikā</option><option value="0">Šodien</option><option value="7">Pēdējās 7 dienas</option><option value="30">Pēdējās 30 dienas</option><option value="90">Pēdējās 90 dienas</option></select></label>
+    <div class="card hist-filters" style="margin-bottom:14px">
+      <div class="hf-row">
+        <div class="hf-field hf-grow"><span class="hf-l" aria-hidden="true">Meklēt</span>
+          <label class="search"><span class="sr-only">Meklēt pēc respondenta vai adreses</span>
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" id="hist-search" placeholder="Respondents vai adrese…">
+          </label></div>
+        <div class="hf-field"><label class="hf-l" for="hist-nmk">NMK</label><input type="text" id="hist-nmk" placeholder="Viens vai vairāki, ar komatu" autocomplete="off"></div>
+        <div class="hf-field"><span class="hf-l" id="hist-per-l">Nosūtīšanas periods</span>
+          <div class="hf-period" role="group" aria-labelledby="hist-per-l">
+            <select id="hist-quick" aria-label="Nosūtīšanas periods – ātrā izvēle"></select>
+            <div class="dt-field"><input type="text" id="hist-from" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-label="Nosūtīšanas periods no (DD.MM.GGGG)" aria-describedby="hist-per-err">
+              <button type="button" class="dt-btn" data-hcal="from" aria-label="Periods no – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+              <input type="date" id="hist-from-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div>
+            <span class="hf-dash" aria-hidden="true">–</span>
+            <div class="dt-field"><input type="text" id="hist-to" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-label="Nosūtīšanas periods līdz (DD.MM.GGGG)" aria-describedby="hist-per-err">
+              <button type="button" class="dt-btn" data-hcal="to" aria-label="Periods līdz – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+              <input type="date" id="hist-to-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div>
+          </div>
+          <span class="err" id="hist-per-err" hidden></span></div>
       </div>
+      <div class="hf-row">
+        <div class="hf-field"><label class="hf-l" for="hist-camp">Kampaņa</label><select id="hist-camp"></select></div>
+        <div class="hf-field"><label class="hf-l" for="hist-kind">Kampaņas veids</label><select id="hist-kind"></select></div>
+        <div class="hf-field"><label class="hf-l" for="hist-ch">Kanāls</label><select id="hist-ch"><option value="">Visi kanāli</option><option value="eadrese">eAdrese</option><option value="epasts">E-pasts</option></select></div>
+        <div class="hf-field"><label class="hf-l" for="hist-creator">Kampaņas veidotājs</label><select id="hist-creator"></select></div>
+        <button type="button" class="link-btn hf-clear" id="hist-clear" hidden>Notīrīt filtrus</button>
+      </div>
+      <div class="hf-chips" id="hist-chips" aria-label="Aktīvie filtri" hidden></div>
     </div>
     <div id="hist-body"></div>
     <div class="table-foot" id="hist-foot" style="border:0;padding-left:2px"></div>
@@ -2983,7 +3022,7 @@ function newSession(full){
   compose.f.docNr = nextDocNr();
   clearTimeout(draftTimer); state.activeDraft = compose.draftId;
 }
-const ui = {campView:'list', camp:{q:'', kind:'', status:''}, hist:{q:'', kind:'', status:'', period:'', camp:'', ch:''}, histRow:new Set(), histLimit:50, cardId:'',
+const ui = {campView:'list', camp:{q:'', kind:'', status:''}, hist:{q:'', kind:'', status:'', camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histRow:new Set(), histLimit:50, cardId:'',
   rep:{from:'', to:'', camp:'', kind:'', ch:'', sort:{key:'date', dir:'desc'}},
   tplView:'veidnes', sagGroup:'mail', sag:{q:'', aud:'', cat:'', lang:''}, newIds:new Set(), tplAud:'fiz', tplSearch:'', attSearch:'', attAud:'', attCat:'', attLang:''};
 // Sakļautie kategoriju bloki (tikai šajā kampaņā – pēc noklusējuma visi izvērsti)
@@ -5871,7 +5910,7 @@ function doSend(meta = {}){
     const msg = buildMessage(letterTpl(t, r), r, false);
     const attempts = deliveryAttempts(r, compose.prio, `${batch}|${r.id}|${now}`), fin = finalAttempt(attempts);
     if (!signing) stampAttempts(attempts, now);
-    const rec = {id:'s' + uid(), batch, seed:!!meta.seed, sessionName:compose.name, sessionKind:sessKindKey(), plannedFor:meta.plannedFor || '', contentSource:compose.content.source, sentAt:now,
+    const rec = {id:'s' + uid(), batch, seed:!!meta.seed, createdBy:meta.seed ? '' : CURRENT_USER, sessionName:compose.name, sessionKind:sessKindKey(), plannedFor:meta.plannedFor || '', contentSource:compose.content.source, sentAt:now,
       templateId:compose.content.templateId || '', templateName:contentName(t), kind:t.kind, respondentId:r.id,
       recipient:r.name, address:fin.address, addrType:fin.type, channel:ADDR_TYPES[fin.type].ch, prio:compose.prio.filter(Boolean), attempts, docNr:compose.f.docNr,
       duties:msgDuties(r).map(d => d.id),
@@ -6078,11 +6117,45 @@ function renderCampaigns(){
 }
 // Sūtīšanas vēsture ar atlasītu kampaņu
 function showHistoryOf(batch){
-  Object.assign(ui.hist, {camp:String(batch), status:'', q:'', kind:'', ch:'', period:''});
-  $('#hist-search').value = ''; $('#hist-ch').value = ''; $('#hist-period').value = '';
+  Object.assign(ui.hist, histDefaults(), {camp:String(batch), status:''}); ui.histRaw = {};
+  $('#hist-search').value = ''; $('#hist-ch').value = '';
   showTab('vesture');
 }
-const periodFrom = p => { if (p === '' || p == null) return ''; const d = addDays(-(+p)); d.setHours(0, 0, 0, 0); return d.toISOString(); };
+// Sūtīšanas vēstures filtri (bez statusa)
+const histDefaults = () => ({q:'', kind:'', camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''});
+const HIST_QUICK = [['', 'Jebkurā laikā'], ['today', 'Šodien'], ['7d', 'Pēdējās 7 dienas'], ['month', 'Šis mēnesis'], ['prev', 'Iepriekšējais mēnesis'], ['year', 'Šis gads']];
+function histRange(q){
+  const t = new Date(), y = t.getFullYear(), m = t.getMonth(), today = isoDate(t);
+  if (q === 'today') return {from:today, to:today};
+  if (q === '7d') return {from:isoDate(addDays(-6)), to:today};
+  if (q === 'month') return {from:isoDate(new Date(y, m, 1)), to:today};
+  if (q === 'prev') return {from:isoDate(new Date(y, m - 1, 1)), to:isoDate(new Date(y, m, 0))};
+  if (q === 'year') return {from:isoDate(new Date(y, 0, 1)), to:today};
+  return {from:'', to:''};
+}
+// kampaņu veidotāji (testa datos – dažādiem testa kampaņām dažādi)
+const CREATORS = [CURRENT_USER, 'Rūta Testa', 'Mārtiņš Paraudziņš', 'Elīna Izdomāta'];
+function assignCreators(){ (state.sent || []).forEach(x => { if (!x.createdBy) x.createdBy = x.seed ? CREATORS[x.batch % CREATORS.length] : CURRENT_USER; }); }
+const histNmks = h => splitVals(h.nmk);
+const respNmk = id => { const r = state.respondents.find(y => y.id === id); return r ? lc(r.nmk) : ''; };
+function histMatch(x, h){
+  const q = norm(h.q), nm = histNmks(h), d = h.from || h.to ? isoDate(new Date(x.sentAt)) : '';
+  return (!h.camp || String(x.batch) === String(h.camp)) && (!h.kind || x.sessionKind === h.kind) && (!h.ch || x.channel === h.ch) &&
+    (!h.creator || x.createdBy === h.creator) && (!h.from || d >= h.from) && (!h.to || d <= h.to) &&
+    (!nm.length || nm.includes(respNmk(x.respondentId))) && (!q || norm([x.recipient, x.address].join(' ')).includes(q));
+}
+// aktīvie filtri – birkas ar ×
+function histChips(h){
+  const out = [], camp = h.camp && state.sent.find(x => String(x.batch) === String(h.camp));
+  if (h.q.trim()) out.push(['q', `Meklēt: ${h.q.trim()}`]);
+  if (histNmks(h).length) out.push(['nmk', `NMK: ${histNmks(h).join(', ')}`]);
+  if (h.from || h.to) out.push(['period', `Periods: ${h.quick && h.quick !== 'custom' ? HIST_QUICK.find(([k]) => k === h.quick)[1] + ' · ' : ''}${h.from ? dmy(h.from) : '…'} – ${h.to ? dmy(h.to) : '…'}`]);
+  if (h.camp) out.push(['camp', `Kampaņa: ${camp ? camp.sessionName || `Kampaņa Nr. ${h.camp}` : `Nr. ${h.camp}`}`]);
+  if (h.kind) out.push(['kind', `Veids: ${SESS_LABELS[h.kind] || h.kind}`]);
+  if (h.ch) out.push(['ch', `Kanāls: ${CHANNELS[h.ch] || h.ch}`]);
+  if (h.creator) out.push(['creator', `Veidotājs: ${h.creator}`]);
+  return out;
+}
 const campOpts = (cur, list = state.sent) => {
   const bs = [...new Set(list.map(x => x.batch))].sort((a, b) => b - a);
   return `<option value="">Visas kampaņas</option>` + bs.map(b => { const x0 = list.find(x => x.batch === b);
@@ -6137,9 +6210,11 @@ function histDetail(x){
 const HIST_SUBS = [['', 'Visas'], ['paraksts', 'Gaida parakstu'], ['nosutits', 'Nosūtītas'], ['piegadats', 'Piegādātas'], ['kluda', 'Neveiksmīgas']];
 function renderSent(){
   const all = state.sent, h = ui.hist;
-  const c = st => all.filter(x => x.status === st).length;
+  // rādītāji un statusa pogas – pēc izvēlētajiem filtriem
+  const base = all.filter(x => histMatch(x, h));
+  const c = st => base.filter(x => x.status === st).length;
   $('#sent-stats').innerHTML = `
-    <div class="card stat"><div class="n">${all.length}</div><div class="l">Kopā vēstules</div></div>
+    <div class="card stat"><div class="n">${base.length}</div><div class="l">Kopā vēstules</div></div>
     <div class="card stat s-ok"><div class="n">${c('piegadats')}</div><div class="l">Piegādātas (eAdrese)</div></div>
     <div class="card stat s-sent"><div class="n">${c('nosutits')}</div><div class="l">Nosūtītas (e-pasts)</div></div>
     <div class="card stat s-err"><div class="n">${c('kluda')}</div><div class="l">Neveiksmīgas</div></div>`;
@@ -6148,12 +6223,22 @@ function renderSent(){
   $('#sent-purge-btn').disabled = !nOld;
   $('#sent-purge-btn').innerHTML = `${ICON.trash}Dzēst ierakstus, vecākus par 2 gadiem${nOld ? ` (${nOld})` : ''}`;
   $('#sent-purge-wrap').title = nOld ? `Tiks dzēsti ${nOld} ${plural(nOld, 'ieraksts', 'ieraksti')}, kas nosūtīti pirms ${fmtDate(isoDate(twoYearsAgo()))}` : 'Nav ierakstu, kas vecāki par 2 gadiem';
-  $('#hist-sub').innerHTML = subnavHtml(HIST_SUBS, h.status, 'hsub');
+  $('#hist-sub').innerHTML = subnavHtml(HIST_SUBS.map(([k, l]) => [k, `${l} (${k ? c(k) : base.length})`]), h.status, 'hsub');
   $('#hist-camp').innerHTML = campOpts(h.camp);
   $('#hist-kind').innerHTML = kindOpts(h.kind);
-  const q = norm(h.q), from = periodFrom(h.period);
-  const list = all.filter(x => (!h.status || x.status === h.status) && (!h.camp || String(x.batch) === String(h.camp)) && (!h.kind || x.sessionKind === h.kind) &&
-    (!h.ch || x.channel === h.ch) && (!from || x.sentAt >= from) && (!q || norm([x.recipient, x.address].join(' ')).includes(q)));
+  $('#hist-ch').value = h.ch;
+  $('#hist-creator').innerHTML = optList([...new Set(all.map(x => x.createdBy).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'lv')).map(n => [n, n]), h.creator, 'Visi');
+  $('#hist-quick').innerHTML = HIST_QUICK.map(([k, l]) => `<option value="${k}" ${h.quick === k ? 'selected' : ''}>${esc(l)}</option>`).join('') + (h.quick === 'custom' ? '<option value="custom" selected>Norādīts periods</option>' : '');
+  [['#hist-search', h.q], ['#hist-nmk', h.nmk], ['#hist-from', ui.histRaw.from ?? dmy(h.from)], ['#hist-to', ui.histRaw.to ?? dmy(h.to)]].forEach(([sel, v]) => { if (document.activeElement !== $(sel)) $(sel).value = v; });
+  const perErr = ui.histRaw.from != null || ui.histRaw.to != null ? 'Nederīgs datums – ievadiet DD.MM.GGGG.' : h.from && h.to && h.from > h.to ? 'Datums “no” ir vēlāks par “līdz”.' : '';
+  $('#hist-per-err').hidden = !perErr; $('#hist-per-err').textContent = perErr;
+  $('#hist-from').setAttribute('aria-invalid', String(ui.histRaw.from != null || (!!perErr && ui.histRaw.to == null)));
+  $('#hist-to').setAttribute('aria-invalid', String(ui.histRaw.to != null));
+  const chips = histChips(h), active = chips.length > 0;
+  $('#hist-clear').hidden = !active;
+  $('#hist-chips').hidden = !active;
+  $('#hist-chips').innerHTML = chips.map(([k, l]) => `<span class="ms-tag"><span>${esc(l)}</span><button type="button" data-hchip="${k}" aria-label="Noņemt filtru: ${esc(l)}">×</button></span>`).join('');
+  const list = base.filter(x => !h.status || x.status === h.status);
   // parakstīšanai nodotās kampaņas
   const signB = [...new Set(list.filter(x => x.status === 'paraksts').map(x => x.batch))];
   const signBars = signB.map(b => { const xs = all.filter(x => x.batch === b && x.status === 'paraksts'), x0 = xs[0];
@@ -6161,7 +6246,7 @@ function renderSent(){
       <button type="button" class="btn btn-primary btn-sm" data-action="camp-sign" data-id="${b}">Parakstīt</button></div>`; }).join('');
   $('#hist-body').innerHTML = !all.length ? `<div class="card"><div class="empty">${ICON.inbox}<h3>Vēl nav nosūtītu vēstuļu</h3>
       <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></div>`
-    : !list.length ? `<div class="card"><div class="empty">${h.status === 'paraksts' && !q && !h.kind && !h.period && !h.camp && !h.ch
+    : !list.length ? `<div class="card"><div class="empty">${h.status === 'paraksts' && !active
         ? '<h3>Nav vēstuļu, kas gaida parakstu</h3>'
         : '<h3>Nekas netika atrasts</h3>'}</div></div>`
     : signBars + `<div class="card"><div class="table-wrap"><table class="hl-table">
@@ -6655,7 +6740,7 @@ const actions = {
       message:'Visas veidnes, pastāvīgās daļas, respondentu dati, kampaņas un komunikācijas vēsture tiks aizstāta ar sākotnējiem testa datiem.'});
     if (!ok) return;
     state = seedData(); state.drafts = []; state.planned = [];
-    newSession(true); seedHistory(); save();
+    newSession(true); seedHistory(); assignCreators(); save();
     ui.histRow = new Set(); ui.campView = 'list';
     renderAll(); showTab(ui.tab === 'veidnes' ? 'veidnes' : ui.tab === 'vesture' ? 'vesture' : 'kampanas'); toast('Testa dati atjaunoti.');
   },
@@ -6686,7 +6771,32 @@ $('#camp-sub').addEventListener('click', e => { const b = e.target.closest('[dat
 $('#hist-sub').addEventListener('click', e => { const b = e.target.closest('[data-hsub]'); if (!b) return; ui.hist.status = b.dataset.hsub; ui.histLimit = 50; renderSent(); $(`#hist-sub [data-hsub="${ui.hist.status}"]`).focus(); });
 $('#rep-sub').addEventListener('click', e => { const b = e.target.closest('[data-rsub]'); if (!b) return; ui.repSub = b.dataset.rsub; renderReports(); $(`#rep-sub [data-rsub="${ui.repSub}"]`).focus(); });
 $('#hist-search').addEventListener('input', e => { ui.hist.q = e.target.value; ui.histLimit = 50; renderSent(); });
-[['#hist-camp', 'camp'], ['#hist-kind', 'kind'], ['#hist-ch', 'ch'], ['#hist-period', 'period']].forEach(([sel, k]) => $(sel).addEventListener('change', e => { ui.hist[k] = e.target.value; ui.histLimit = 50; renderSent(); }));
+[['#hist-camp', 'camp'], ['#hist-kind', 'kind'], ['#hist-ch', 'ch'], ['#hist-creator', 'creator']].forEach(([sel, k]) => $(sel).addEventListener('change', e => { ui.hist[k] = e.target.value; ui.histLimit = 50; renderSent(); }));
+$('#hist-nmk').addEventListener('input', e => { ui.hist.nmk = e.target.value; ui.histLimit = 50; renderSent(); });
+$('#hist-quick').addEventListener('change', e => { const q = e.target.value; if (q === 'custom') return; Object.assign(ui.hist, {quick:q}, histRange(q)); ui.histRaw = {}; ui.histLimit = 50; renderSent(); });
+// perioda datumi (DD.MM.GGGG); nederīgu ievadi saglabā laukā un parāda kļūdu
+function histDateSet(k, v){
+  v = String(v || '').trim();
+  const iso = v ? parseDmy(v) : '';
+  if (v && !iso){ ui.histRaw[k] = v; renderSent(); return; }
+  delete ui.histRaw[k]; ui.hist[k] = iso;
+  ui.hist.quick = ui.hist.from || ui.hist.to ? 'custom' : '';
+  ui.histLimit = 50; renderSent();
+}
+['from', 'to'].forEach(k => {
+  $(`#hist-${k}`).addEventListener('change', e => histDateSet(k, e.target.value));
+  $(`#hist-${k}`).addEventListener('keydown', e => { if (e.key === 'Enter') histDateSet(k, e.target.value); });
+  $(`#hist-${k}-pick`).addEventListener('change', e => { if (e.target.value){ histDateSet(k, e.target.value); $(`#hist-${k}`).focus(); } });
+});
+$('#tab-vesture').addEventListener('click', e => {
+  const cal = e.target.closest('[data-hcal]');
+  if (cal){ const k = cal.dataset.hcal, n = $(`#hist-${k}-pick`); n.value = ui.hist[k] || ''; try { n.showPicker(); } catch (err) { $(`#hist-${k}`).focus(); } return; }
+  const chip = e.target.closest('[data-hchip]');
+  if (chip){ const k = chip.dataset.hchip;
+    if (k === 'period'){ Object.assign(ui.hist, {quick:'', from:'', to:''}); ui.histRaw = {}; } else ui.hist[k] = '';
+    ui.histLimit = 50; renderSent(); const nxt = $('#hist-chips [data-hchip]') || $('#hist-search'); nxt.focus(); return; }
+  if (e.target.closest('#hist-clear')){ Object.assign(ui.hist, histDefaults()); ui.histRaw = {}; ui.histLimit = 50; renderSent(); $('#hist-search').focus(); }
+});
 [['#rep-from', 'from'], ['#rep-to', 'to'], ['#rep-camp', 'camp'], ['#rep-kind', 'kind'], ['#rep-ch', 'ch']].forEach(([sel, k]) => $(sel).addEventListener('change', e => { ui.rep[k] = e.target.value; ui.repInit = true; renderReports(); }));
 $('#rep-quick').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (!b) return; Object.assign(ui.rep, quickRange(b.dataset.q)); ui.repInit = true; renderReports(); });
 // vēstules rinda – izvērš statusu ceļu (izņemot saites un pogas)
@@ -7000,6 +7110,7 @@ function renderAll(){
   renderCounts(); renderSagataves(); renderTemplates(); renderCompose(); renderCampaigns(); renderSent();
 }
 if (!state.histSeeded) seedHistory();
+assignCreators();
 save();
 renderAll();
 renderDraftInfo();

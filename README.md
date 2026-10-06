@@ -334,8 +334,13 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
 ## Sūtīšanas vēsture
 
 Cilnē **Sūtīšanas vēsture** (specifikācija F16, F17) ir visas nosūtītās un nosūtīšanas procesā esošās vēstules.
-- **Apakšsadaļas** pēc statusa: Visas · Gaida parakstu · Nosūtītas · Piegādātas · Neveiksmīgas.
-- **Filtri:** kampaņa, kampaņas veids, kanāls (eAdrese / e-pasts), periods (šodien, pēdējās 7, 30 vai 90 dienas) un meklēšana pēc respondenta vai adreses.
+- **Apakšsadaļas** pēc statusa: Visas · Gaida parakstu · Nosūtītas · Piegādātas · Neveiksmīgas. Pie katras pogas iekavās redzams vēstuļu skaits pēc izvēlētajiem filtriem.
+- **Filtri** (divās rindās):
+  - 1. rinda: **meklēšana** (respondents vai adrese), **NMK** (viens vai vairāki, atdalot ar komatu – atlasa vēstules respondentiem ar šiem NMK), **Nosūtīšanas periods** – datuma diapazons "no – līdz" (DD.MM.GGGG, ar kalendāra pogu) un ātrās izvēles: Šodien, Pēdējās 7 dienas, Šis mēnesis, Iepriekšējais mēnesis, Šis gads, Jebkurā laikā. Ātrā izvēle aizpilda datumus; ja datumus maina manuāli, izvēlnē redzams "Norādīts periods". Nederīgam datumam vai ja "no" ir vēlāks par "līdz", zem lauka redzama kļūda;
+  - 2. rinda: **Kampaņa**, **Kampaņas veids**, **Kanāls** (eAdrese / e-pasts), **Kampaņas veidotājs** (darbinieki, kuri izveidojuši kampaņas; noklusējumā "Visi"). Labajā pusē – saite **"Notīrīt filtrus"**, kas redzama tikai tad, ja kāds filtrs ir aktīvs (statusa izvēle paliek);
+  - zem filtru bloka aktīvie filtri redzami kā birkas ar × katram (noņem attiecīgo filtru).
+- **Rādītāju kartītes** (kopā, piegādātas, nosūtītas, neveiksmīgas) un statusa pogu skaiti tiek pārrēķināti pēc izvēlētajiem filtriem.
+- **Kampaņas veidotājs** tiek saglabāts katrai nosūtītajai vēstulei (jaunām kampaņām – pašreizējais lietotājs). Testa datos kampaņām piešķirti dažādi izdomāti veidotāji: Testa Darbinieks, Rūta Testa, Mārtiņš Paraudziņš, Elīna Izdomāta.
 - Tabulā sākotnēji redzami 50 jaunākie ieraksti; poga "Rādīt vēl" ielādē nākamos 50.
 - **Tabula:** katrai vēstulei redzams adresāts (uzklikšķinot atveras respondenta kartīte), kampaņa, statuss, kanāls, adrese un nosūtīšanas laiks. Statusa šūnā redzamas arī NDR klases, "Atkārtoti nosūtīta" un "Manuāla pārbaude" / "Izskatīta".
 - **Izvērstā rinda:**
