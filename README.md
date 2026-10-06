@@ -194,6 +194,9 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
   - Fiziskās personas ir piesaistītas apsekojumiem (Darbaspēka, Ceļotāju, Mājsaimniecību budžeta, Laika izlietojuma, Iedzīvotāju ienākumu un dzīves apstākļu, IKT lietošanas apsekojums).
 - **Testa dati:**
   - 15 uzņēmumi un 8 pārskati ar visiem periodiskumiem (arī "Intervija" – Uzņēmumu inovāciju apsekojums);
+  - katram respondentam: NMK, NMK/PS (fiziskām personām nav), UUK, Tsav, pasta adrese, atbildīgais operators un statusa šifrs;
+  - vairākas vienības vienā NMK: SIA “Ziemeļblāzmas Koks” (galvenā vienība, Valmieras ražotne, Rēzeknes noliktava) un AS “Baltijas Stikls” (galvenā vienība, Liepājas rūpnīca);
+  - jau nosūtīti uzaicinājumi: "Darbaspēka apsekojums – uzaicinājums" un "Ceturkšņa darba samaksas pārskats – uzaicinājums" (daļai uzņēmumu) – lai var pārbaudīt "Izslēgt jau uzaicinātos";
   - 10 fiziskās personas sešos apsekojumos ar visiem periodiskumiem: Gads (Mājsaimniecību budžeta), Pusgads (Iedzīvotāju ienākumu un dzīves apstākļu), Ceturksnis (Darbaspēka), Mēnesis (Ceļotāju), Nedēļa (Laika izlietojuma), Intervija (IKT lietošana 2026. gadā);
   - termiņi ir gan pagātnē, gan nākotnē, un statusi ir jaukti;
   - trīs pārskatiem termiņa noteikums ir izvēlēts tā, lai pēdējā perioda termiņš būtu tieši pēc 3, 5 un 7 dienām no šodienas (nedēļas degvielas cenu, mēneša rūpniecības produkcijas un ceturkšņa darba samaksas pārskats);
@@ -273,8 +276,19 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
        - poga "+ Pievienot periodu" pievieno rindu, poga × to noņem;
        - zem rindām izvēlētie periodi redzami kā birkas, piem., "2026. g. 3. ceturksnis", "2025. gads";
        - konkrētais periods attiecas uz savu periodiskumu. Ja konkrēts periods nav norādīts (skaidrojums – "i" padomā pie "Konkrēts periods"), tiek atlasīti visi izvēlētā periodiskuma aktīvie periodi – tie, kuros datu vākšana nav beigusies (termiņš vēl nav pienācis vai kāds pienākums nav iesniegts). Ja norādīts tikai dažiem periodiskumiem, pārējiem tiek ņemti aktīvie periodi;
-     - **Pēc apsekojuma:** meklējama vairākizvēle ar apsekojumiem / pārskatiem (atbilstoši adresātam). Pie katra redzams kods, periodiskums un termiņa noteikums. Izvēlētie apsekojumi redzami kā birkas ar ×. Sarakstā var pārvietoties ar bultiņām un izvēlēties ar Enter. Ja izvēlēts apsekojums, kas neatbilst izvēlētajam periodiskumam, tiek parādīts brīdinājums;
-     - zem kartītēm ir dzīvs kopsavilkums "Atlasīti X respondenti, Y pārskati/periodi";
+     - **Pēc apsekojuma:** meklējama vairākizvēle ar apsekojumiem / pārskatiem (atbilstoši adresātam). Pie katra redzams kods, periodiskums un termiņa noteikums. Izvēlētie apsekojumi redzami kā birkas ar ×. Sarakstā var pārvietoties ar bultiņām un izvēlēties ar Enter. Ja izvēlēts apsekojums, kas neatbilst izvēlētajam periodiskumam, tiek parādīts brīdinājums; Saraksts ir atkarīgs no perioda izvēles (rāda tikai izvēlētā periodiskuma apsekojumus), un tā augšā ir "Visi apsekojumi" (bez ierobežojuma pēc apsekojuma). Zem tā – **"Atbildīgais operators"** (izvēlne ar testa darbiniekiem, noklusējumā "Visi").
+     - Periodiskuma birkām ir arī "Visi" (atzīmē visus periodiskumus).
+     - **Pēc respondenta** – sakļaujama trešā kartīte zem abām (pēc noklusējuma sakļauta; virsrakstā aktīvo filtru skaits, piem., "2 filtri"):
+       - meklēšana: "Nosaukums" (daļējs teksts);
+       - identifikatori: "NMK", "NMK/PS", "UUK", "Tsav" (var ievadīt vairākas vērtības, atdalot ar komatu; precīza atbilstība);
+       - adreses: "Pasta adrese", "E-pasts", "eAdrese" (daļējs teksts);
+       - "Izslēgt pēc statusa šifra": izkrītoša vairākizvēle ar šifriem un to paskaidrojumiem (1 – Aktīva vienība, 2 – Darbība uz laiku pārtraukta, 5 – Likvidācijas procesā, 8 – Atteicies sniegt datus, q – Datu kvalitātes pārbaude, a – Adrese nav aktuāla, v – Vienība apvienota ar citu) un respondentu skaitu pie katra;
+       - "Ielādēt sarakstu no faila": CSV vai TXT ar NMK vai UUK sarakstu (atdalīti ar komatu, semikolu vai jaunu rindu; galvenes rinda tiek izlaista). Atlasē paliek tikai sarakstā esošie. Pēc ielādes redzams, cik atrasti un cik nav atrasti, ar pogām "Skatīt neatrastos" un "Noņemt".
+     - **Atlases opcijas** (slēdži vienā rindā):
+       - "Izslēgt jau uzaicinātos" – neiekļauj pienākumus (un līdz ar to respondentus), par kuriem jau nosūtīts uzaicinājums (pēc nosūtīto vēstuļu pienākumu sarakstiem; neveiksmīgās vēstules netiek ņemtas vērā);
+       - "Apvienot vēstules pēc NMK" – vairākas vienības ar vienu NMK saņem vienu kopīgu vēstuli: adresāts ir pirmā vienība, bet `{pārskatu_tabula}` ietver visu vienību pienākumus (pie citu vienību pienākumiem – vienības nosaukums). 2. solī pie vēstules adresāta redzams "Apvienota vēstule: N vienības (NMK …)".
+     - zem kartītēm ir dzīvs kopsavilkums "Atlasīti X respondenti, Y pārskati/periodi" (apvienojot – arī apvienoto vienību skaits);
+     - apakšā pogas **"Notīrīt filtrus"** un **"Saglabāt filtru"** (ar nosaukumu; saglabātie filtri ir izvēlnē **"Mani filtri"** bloka augšā un izmantojami citās kampaņās; tos var arī dzēst).
    - **vēstules dati:**
      - "Nosaukums vēstulē `{apsekojums}`" redzams, ja atlase attiecas uz vienu apsekojumu (tas tiek aizpildīts no apsekojuma datiem, un to var labot). Ja apsekojumi ir vairāki, lauks ir paslēpts: apsekojumu nosaukumi vēstulē redzami blokā `{pārskatu_tabula}`, bet `{apsekojums}` tiek aizstāts ar respondenta apsekojumu nosaukumiem;
      - "Vēstules datums `{datums}`" un "Dokumenta Nr. `{dok_nr}`";
