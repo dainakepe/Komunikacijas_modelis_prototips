@@ -179,13 +179,13 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
 
 - **Datu modelis:**
   - **respondents:** tips (juridiska / fiziska persona), nosaukums vai vārds, reģistrācijas Nr. (juridiskām personām), e-adrese, e-pasts 1, e-pasts 2;
-  - **pārskats:** nosaukums, kods, periodiskums (Nedēļa / Mēnesis / Ceturksnis / Pusgads / Gads) un termiņa noteikums, piem., "15. datums pēc pārskata perioda beigām". Termiņš tiek aprēķināts katram periodam, un tas ir vienāds visiem šī pārskata respondentiem;
+  - **pārskats:** nosaukums, kods, periodiskums (Gads / Pusgads / Ceturksnis / Mēnesis / Nedēļa / Intervija; intervēšanas vilnis prototipā ir 2 mēneši) un termiņa noteikums, piem., "15. datums pēc pārskata perioda beigām". Termiņš tiek aprēķināts katram periodam, un tas ir vienāds visiem šī pārskata respondentiem;
   - **pienākums:** respondents × pārskats × periods (piem., "2026. g. oktobris", "2026. g. 4. ceturksnis", "2026. g. 39. nedēļa"), termiņš, iesniegšanas statuss ("Iesniegts" / "Nav iesniegts") un iesniegšanas datums. Ja pārskats nav iesniegts un termiņš ir pagājis, tas tiek rādīts kā "Nav iesniegts (kavēts)". Vienam respondentam var būt vairāki pienākumi.
   - **Iesniegšanas statusi** ir dati no Datu vākšanas pārraudzības. Tie ir tikai lasāmi; prototipā tie ir testa dati.
-  - Fiziskās personas ir piesaistītas apsekojumiem (Darbaspēka, Ceļotāju, Mājsaimniecību budžeta apsekojums).
+  - Fiziskās personas ir piesaistītas apsekojumiem (Darbaspēka, Ceļotāju, Mājsaimniecību budžeta, Laika izlietojuma, Iedzīvotāju ienākumu un dzīves apstākļu, IKT lietošanas apsekojums).
 - **Testa dati:**
-  - 15 uzņēmumi un 7 pārskati ar visiem periodiskumiem;
-  - 10 fiziskās personas trīs apsekojumos;
+  - 15 uzņēmumi un 8 pārskati ar visiem periodiskumiem (arī "Intervija" – Uzņēmumu inovāciju apsekojums);
+  - 10 fiziskās personas sešos apsekojumos ar visiem periodiskumiem: Gads (Mājsaimniecību budžeta), Pusgads (Iedzīvotāju ienākumu un dzīves apstākļu), Ceturksnis (Darbaspēka), Mēnesis (Ceļotāju), Nedēļa (Laika izlietojuma), Intervija (IKT lietošana 2026. gadā);
   - termiņi ir gan pagātnē, gan nākotnē, un statusi ir jaukti;
   - trīs pārskatiem termiņa noteikums ir izvēlēts tā, lai pēdējā perioda termiņš būtu tieši pēc 3, 5 un 7 dienām no šodienas (nedēļas degvielas cenu, mēneša rūpniecības produkcijas un ceturkšņa darba samaksas pārskats);
   - testa dati tiek aprēķināti attiecībā pret šodienu, kad tie tiek izveidoti vai atjaunoti ("Atjaunot sākotnējos testa datus").
@@ -249,19 +249,22 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
 - Pogu **"Saglabāt melnrakstu"** var izmantot jebkurā solī. Kampaņa tiek saglabāta arī automātiski.
 
 1. **Pamatdati** (F1):
-   - kampaņas nosaukums (pēc noklusējuma "Kampaņa Nr. N") un adresāts;
-   - komunikācijas veids ar lielām pogām: Uzaicinājums / Atgādinājums / Informatīvs ziņojums / Cits. Pēc veida tiek filtrēta veidņu izvēle 3. solī;
-   - nosūtīšanas datums un laiks: "Nosūtīt tūlīt" vai "Ieplānot" (datums šodien vai vēlāk un laiks);
-   - apsekojuma un vēstules dati.
+   - **adresāts** (Fiziskās personas / Juridiskās personas / Visi) un **kampaņas nosaukums** (pēc noklusējuma "Kampaņa Nr. N");
+   - **komunikācijas veids**: četras kompaktas pogas vienā rindā (ikona un nosaukums) – Uzaicinājums / Atgādinājums / Informatīvs ziņojums / Cits. Pēc veida tiek filtrēta veidņu izvēle 3. solī;
+   - **nosūtīšanas datums un laiks**: "Nosūtīt tūlīt" vai "Ieplānot" (datums šodien vai vēlāk un laiks);
+   - **"Ko attiecina kampaņa"** – divas līdzvērtīgas kartītes blakus (uz šauriem ekrāniem viena zem otras). Var izmantot vienu vai abas, bet jābūt aizpildītai vismaz vienai. Ja aizpildītas abas, atlase ir abu kritēriju krustpunkts (piem., konkrēts apsekojums konkrētā periodā):
+     - **Pēc perioda:** periodiskums kā pogas-birkas (vairākizvēle): Gads, Pusgads, Ceturksnis, Mēnesis, Nedēļa, Intervija. Pēc tam neobligāti var atzīmēt konkrētus periodus (vairākizvēle), piem., "2026. gads", "2026. g. 2. pusgads", "2026. g. 3. ceturksnis", "2026. g. septembris", "2026. g. 40. nedēļa", "2026. g. 5. intervēšanas vilnis". Ja konkrēts periods nav norādīts, tiek atlasīti visi izvēlētā periodiskuma **aktīvie periodi** – tie, kuros datu vākšana nav beigusies (termiņš vēl nav pienācis vai kāds pienākums nav iesniegts). Slēgtie periodi sarakstā atzīmēti ar "(slēgts)";
+     - **Pēc apsekojuma:** meklējama vairākizvēle ar apsekojumiem / pārskatiem (atbilstoši adresātam). Pie katra redzams kods, periodiskums un termiņa noteikums. Izvēlētie apsekojumi redzami kā birkas ar ×. Sarakstā var pārvietoties ar bultiņām un izvēlēties ar Enter. Ja izvēlēts apsekojums, kas neatbilst izvēlētajam periodiskumam, tiek parādīts brīdinājums;
+     - zem kartītēm ir dzīvs kopsavilkums "Atlasīti X respondenti, Y pārskati/periodi";
+   - **vēstules dati:**
+     - "Nosaukums vēstulē `{apsekojums}`" redzams, ja atlase attiecas uz vienu apsekojumu (tas tiek aizpildīts no apsekojuma datiem, un to var labot). Ja apsekojumi ir vairāki, lauks ir paslēpts: apsekojumu nosaukumi vēstulē redzami blokā `{pārskatu_tabula}`, bet `{apsekojums}` tiek aizstāts ar respondenta apsekojumu nosaukumiem;
+     - "Vēstules datums `{datums}`" un "Dokumenta Nr. `{dok_nr}`";
+     - laukā nav "Sākums" un "Termiņš": `{termiņš}` tiek ņemts automātiski no pārskata un perioda datiem (respondenta tuvākais termiņš, kas nosūtīšanas dienā vēl nav pagājis; ja tāda nav – agrākais), bet `{sākums}` ir nākamā diena pēc attiecīgā perioda beigām;
+     - sakļaujamā sadaļā – apsekojuma kontakti, noformējums un tulkojumi.
 
    Adresāts nosaka, kuras veidnes tiek piedāvātas. Mainot adresātu, tiek pielāgots arī filtrs "Respondenta veids".
 2. **Respondenti** (F2, F11). Atlase ir atkarīga no komunikācijas veida.
-   - **Filtri:**
-     - pārskats vai apsekojums (vairākizvēle, atbilstoši kampaņas adresātam);
-     - periodiskums;
-     - konkrēts periods (vairākizvēle).
-
-     Ja nekas nav atzīmēts, tiek ņemti visi pārskati vai periodi.
+   - **Atlases kritēriji** tiek izvēlēti 1. solī ("Ko attiecina kampaņa"). 2. solī redzams to kopsavilkums (periodiskums, periodi, apsekojumi) ar pogu "Mainīt 1. solī".
    - **Uzaicinājums, informatīvs ziņojums un cits** atlasa visus respondentus, kuriem ir pienākums atlasītajos pārskatos un periodos. Termiņš un statuss netiek ņemti vērā.
    - **"Atgādinājums"** atlasa tikai neiesniegtos pienākumus. Papildus jāizvēlas viens no veidiem:
      - **Pirms termiņa.** Jānorāda "Dienas līdz termiņam" N. Nosūtīšanas datums ir šodiena vai 1. solī ieplānotais datums. Termiņa datums tiek aprēķināts kā nosūtīšanas datums + N dienas, un tiek atlasīti tikai tie neiesniegtie pienākumi, kuru termiņš ir tieši šajā datumā. Tiek parādīts aprēķinātais termiņš un pārskati un periodi, kas tam atbilst (piem., "Termiņš 07.10.2026.: Mēneša rūpniecības produkcijas pārskats, 2026. g. septembris"). Ja tādu nav, tiek parādīts paziņojums "Šajā datumā nav pārskatu ar termiņu pēc N dienām".
