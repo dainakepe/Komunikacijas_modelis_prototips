@@ -603,8 +603,20 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .scope-card h4{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--primary-darker);margin:0 0 4px}
 .scope-ic .icon{width:18px;height:18px;color:var(--primary)}
 .scope-card .label{margin-top:4px}
-.tag-opts{display:flex;flex-wrap:wrap;gap:6px}
-.tag-opt{appearance:none;font:inherit;font-size:13px;font-weight:600;border:1px solid var(--border);border-radius:999px;padding:4px 12px;background:#fff;color:var(--text);cursor:pointer}
+.scope-h{display:flex;align-items:center;gap:4px}
+.scope-h .tip{margin-left:6px}
+.tag-opts{display:flex;flex-wrap:wrap;gap:4px}
+.tag-opt{appearance:none;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--border);border-radius:999px;padding:3px 7px;background:#fff;color:var(--text);cursor:pointer;white-space:nowrap}
+@media (min-width:1200px){.tag-opts{flex-wrap:nowrap}}
+.per-rows{display:flex;flex-direction:column;gap:6px}
+.per-rows:empty{display:none}
+.per-row{display:grid;grid-template-columns:86px minmax(0,1fr) 32px;align-items:center;gap:6px}
+.per-rows.multi .per-row{grid-template-columns:minmax(104px,124px) 86px minmax(0,1fr) 32px}
+.per-row select{width:100%;min-width:0;padding-top:6px;padding-bottom:6px;font-size:13.5px}
+.per-add{align-self:flex-start;margin-top:6px}
+.per-tags{display:flex;flex-wrap:wrap;gap:5px}
+.per-tags:not(:empty){margin-top:8px}
+.per-tag{display:inline-flex;align-items:center;border:1px solid var(--primary);background:var(--primary-50);color:var(--primary-darker);border-radius:999px;padding:2px 10px;font-size:12.5px;font-weight:600}
 .tag-opt:hover{border-color:var(--primary-300);background:var(--primary-50)}
 .tag-opt[aria-pressed="true"]{border-color:var(--primary);background:var(--primary);color:#fff}
 .tag-opt[disabled]{opacity:.45;cursor:not-allowed;background:#fff;border-color:var(--border)}
@@ -1121,6 +1133,16 @@ main.home{padding-top:32px;padding-bottom:48px}
   .scope-grid{grid-template-columns:1fr}
 }
 @media (max-width:640px){
+  /* vairāki periodiskumi: periodiskums un gads vienā rindiņā, periods – zem tiem */
+  .per-rows.multi .per-row{grid-template-columns:minmax(0,1fr) 86px 32px}
+  .per-rows.multi .pr-freq{grid-row:1;grid-column:1}
+  .per-rows.multi .pr-year{grid-row:1;grid-column:2}
+  .per-rows.multi .per-row .icon-btn{grid-row:1;grid-column:3}
+  .per-rows.multi .pr-n{grid-row:2;grid-column:1/3}
+  .per-rows.multi .per-row > span{display:none}
+  .per-rows.multi .per-row + .per-row{border-top:1px dashed var(--border-light);padding-top:6px}
+}
+@media (max-width:640px){
   .idea-frame{padding:20px 16px 16px}
   .idea-head{flex-direction:column;gap:8px}
 }
@@ -1439,8 +1461,8 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
               </div>
             </div>
             <span class="err" id="c-when-err" hidden></span></div>
-          <h3 class="sub-h">Ko attiecina kampaņa <span class="req">*</span></h3>
-          <p class="hint scope-lead">Izvēlieties periodu, apsekojumu vai abus. Ja aizpildītas abas izvēles, tiek atlasīti pienākumi, kas atbilst abām (piem., konkrēts apsekojums konkrētā periodā).</p>
+          <h3 class="sub-h scope-h">Kampaņas tvērums <span class="req">*</span><span class="tip" tabindex="0" role="note" aria-label="Var izmantot vienu vai abas izvēles, bet jābūt aizpildītai vismaz vienai. Ja aizpildītas abas, tiek atlasīti pienākumi, kas atbilst abām (piem., konkrēts apsekojums konkrētā periodā). Ja konkrēts periods nav norādīts, tiek atlasīti visi izvēlētā periodiskuma aktīvie periodi – tie, kuros termiņš vēl nav pienācis vai kāds pienākums nav iesniegts." data-tip="Var izmantot vienu vai abas izvēles, bet jābūt aizpildītai vismaz vienai. Ja aizpildītas abas, tiek atlasīti pienākumi, kas atbilst abām (piem., konkrēts apsekojums konkrētā periodā). Ja konkrēts periods nav norādīts, tiek atlasīti visi izvēlētā periodiskuma aktīvie periodi – tie, kuros termiņš vēl nav pienācis vai kāds pienākums nav iesniegts.">i</span></h3>
+          <p class="hint scope-lead">Norādiet periodu, apsekojumu vai abus.</p>
           <div class="scope-grid">
             <section class="scope-card" aria-labelledby="c-sc-per">
               <h4 id="c-sc-per"><span class="scope-ic" aria-hidden="true"></span>Pēc perioda</h4>
@@ -1448,7 +1470,9 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
               <div class="tag-opts" id="c-freqs" role="group" aria-labelledby="c-freqs-l"></div>
               <div id="c-per-box" hidden>
                 <span class="label" id="c-periods-l">Konkrēts periods <span class="muted">(neobligāti)</span></span>
-                <div class="chk-chips" id="c-periods" role="group" aria-labelledby="c-periods-l"></div>
+                <div class="per-rows" id="c-per-rows" role="group" aria-labelledby="c-periods-l"></div>
+                <button type="button" class="btn btn-ghost btn-sm per-add" id="c-per-add">+ Pievienot periodu</button>
+                <div class="per-tags" id="c-per-tags" aria-live="polite"></div>
               </div>
               <span class="sel-hint" id="c-periods-hint"></span>
             </section>
@@ -2658,12 +2682,14 @@ state.sent.forEach(r => { if (r.status === 'rinda') finalizeStatus(r); });
 const nextDocNr = () => `${state.layout.docPrefix}${new Date().getFullYear()}/${(state.seq || 0) + 1}`;
 const defaultSessionName = () => `Kampaņa Nr. ${(state.seq || 0) + 1}`;
 // atlase (1. solis "Ko attiecina kampaņa"): periodiskumi un periodi un/vai apsekojumi (pārskati)
-const defaultSel = () => ({freqs:[], periods:[], reports:[], sendDate:todayIso(), days:5, lateDays:''});
+const defaultSel = () => ({freqs:[], periods:[], perRows:[], reports:[], sendDate:todayIso(), days:5, lateDays:''});
 // agrākiem melnrakstiem un ieplānotajām kampaņām: viens periodiskums (freq) -> saraksts (freqs);
 // agrāk bez atlases tika ņemti visi pārskati – tad atzīmē visus periodiskumus
 const migrateSel = sel => {
   const raw = sel || {}, x = {...defaultSel(), ...raw};
   if (!Array.isArray(raw.freqs)) x.freqs = raw.freq ? [raw.freq] : sel && !(raw.reports || []).length ? Object.keys(FREQS) : [];
+  // konkrētie periodi -> perioda rindas (periodiskums, gads, periods)
+  if (!Array.isArray(raw.perRows)) x.perRows = (x.periods || []).map(keyToRow);
   delete x.freq; return x;
 };
 const compose = {
@@ -4991,13 +5017,17 @@ function activeKeys(){
   (state.duties || []).forEach(d => { if (d.deadline >= today || !d.submitted) act.add(d.reportId + '|' + d.period); });
   return act;
 }
-// Atlase: (periodiskums un periods) ∩ (apsekojums); ja periods nav norādīts – visi aktīvie periodi
+// Atlase: (periodiskums un periods) ∩ (apsekojums); ja periodiskumam nav norādīts periods – visi tā aktīvie periodi
 function baseDuties(){
   const sel = compose.sel;
   if (!hasScope(sel)) return [];
   const reps = new Set(audReports().filter(p => (!sel.freqs.length || sel.freqs.includes(p.freq)) && (!sel.reports.length || sel.reports.includes(p.id))).map(p => p.id));
-  const act = sel.periods.length ? null : activeKeys();
-  return (state.duties || []).filter(d => reps.has(d.reportId) && (act ? act.has(d.reportId + '|' + d.period) : sel.periods.includes(d.period)));
+  // konkrētie periodi attiecas uz savu periodiskumu; periodiskumam bez norādīta perioda – aktīvie periodi
+  const act = activeKeys(), byF = {};
+  sel.periods.forEach(k => { const f = freqOfPeriod(k); (byF[f] = byF[f] || []).push(k); });
+  return (state.duties || []).filter(d => { if (!reps.has(d.reportId)) return false;
+    const ks = byF[(repById(d.reportId) || {}).freq];
+    return ks ? ks.includes(d.period) : act.has(d.reportId + '|' + d.period); });
 }
 // pārskati, uz kuriem attiecas atlase (vēstulē – {apsekojums})
 const scopeReports = () => { const ids = new Set(baseDuties().map(d => d.reportId)); return (state.reports || []).filter(p => ids.has(p.id)); };
@@ -5026,7 +5056,7 @@ function selStats(){
   const m = state.respondents.filter(matchesFilt), sel = m.filter(r => !compose.excluded.has(r.id));
   return {match:m.length, sel:sel.length, excl:m.length - sel.length, noAddr:sel.filter(r => !addrPlan(r).length).length, outFilt:0};
 }
-// 1. solis: "Ko attiecina kampaņa" – pēc perioda (periodiskums, konkrēts periods) un pēc apsekojuma
+// 1. solis: "Kampaņas tvērums" – pēc perioda (periodiskums, konkrēts periods) un pēc apsekojuma
 const repOptLabel = p => `${p.code} · ${FREQS[p.freq]}`;
 function renderRepList(){
   const sel = compose.sel, q = norm($('#c-rep-search').value.trim()), reps = audReports().filter(p => !q || norm(`${p.name} ${p.code} ${FREQS[p.freq]}`).includes(q));
@@ -5037,6 +5067,51 @@ function renderRepList(){
     : '<div class="ms-empty">Nekas nav atrasts.</div>';
   msActive(null);
 }
+// Konkrēts periods: rindas ar izvēlnēm "Periodiskums" (ja izvēlēti vairāki), "Gads" un "Periods"
+const PER_YEAR0 = 2020;
+const weeksInYear = y => isoWeekOf(new Date(y, 11, 28))[1];
+function keyToRow(k){ const [, v = ''] = String(k).split(':'), [y, n] = v.split('-'); return {freq:freqOfPeriod(k) || '', year:+y, n:n ? +n : ''}; }
+function rowKey(r){
+  if (!r.freq || !r.year) return '';
+  if (r.freq === 'gads') return `Y:${r.year}`;
+  if (!r.n) return '';
+  return {pusg:`H:${r.year}-${r.n}`, cet:`Q:${r.year}-${r.n}`, men:`M:${r.year}-${pad(r.n)}`, ned:`W:${r.year}-${pad(r.n)}`, int:`I:${r.year}-${r.n}`}[r.freq] || '';
+}
+// izvēlnes "Periods" saturs pēc periodiskuma un gada
+function perOpts(freq, y){
+  const sh = d => `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.`;
+  if (freq === 'pusg') return [1, 2].map(n => [n, `${n}. pusgads`]);
+  if (freq === 'cet') return [1, 2, 3, 4].map(n => [n, `${n}. ceturksnis`]);
+  if (freq === 'men') return MONTHS.map((m, i) => [i + 1, m]);
+  if (freq === 'ned') return Array.from({length:weeksInYear(y)}, (_, i) => { const st = weekMonday(y, i + 1); return [i + 1, `${i + 1}. nedēļa (${sh(st)}–${sh(addDaysTo(st, 6))})`]; });
+  if (freq === 'int'){
+    // intervēšanas viļņi no testa datiem (pienākumi apsekojumos ar periodiskumu "Intervija")
+    const ids = new Set(audReports().filter(p => p.freq === 'int').map(p => p.id));
+    const ns = [...new Set((state.duties || []).filter(d => ids.has(d.reportId) && d.period.startsWith(`I:${y}-`)).map(d => +d.period.split('-')[1]))].sort((a, b) => a - b);
+    return ns.map(n => { const b = periodBounds(`I:${y}-${n}`); return [n, `${n}. vilnis (${MONTHS[b.start.getMonth()]}–${MONTHS[b.end.getMonth()]})`]; });
+  }
+  return [];
+}
+function syncPerRows(){
+  const sel = compose.sel;
+  sel.perRows = (sel.perRows || []).map(r => ({...r, freq:sel.freqs.length === 1 ? sel.freqs[0] : r.freq})).filter(r => !r.freq || sel.freqs.includes(r.freq));
+  if (!sel.freqs.length) sel.perRows = [];
+  sel.periods = [...new Set(sel.perRows.map(rowKey).filter(Boolean))];
+}
+function renderPerRows(){
+  const sel = compose.sel, multi = sel.freqs.length > 1, thisY = new Date().getFullYear();
+  const years = Array.from({length:thisY + 2 - PER_YEAR0}, (_, i) => PER_YEAR0 + i);
+  $('#c-per-rows').classList.toggle('multi', multi);
+  $('#c-per-rows').innerHTML = sel.perRows.map((r, i) => {
+    const opts = r.freq && r.freq !== 'gads' ? perOpts(r.freq, r.year) : [];
+    return `<div class="per-row" data-row="${i}">
+      ${multi ? `<select class="pr-freq" data-pr="freq" aria-label="Periodiskums (${i + 1}. periods)"><option value="">Periodiskums…</option>${sel.freqs.map(k => `<option value="${k}" ${r.freq === k ? 'selected' : ''}>${esc(FREQS[k])}</option>`).join('')}</select>` : ''}
+      <select class="pr-year" data-pr="year" aria-label="Gads (${i + 1}. periods)">${years.map(y => `<option value="${y}" ${r.year === y ? 'selected' : ''}>${y}</option>`).join('')}</select>
+      ${r.freq === 'gads' ? '<span aria-hidden="true"></span>' : `<select class="pr-n" data-pr="n" aria-label="Periods (${i + 1}. periods)" ${r.freq ? '' : 'disabled'}>
+        <option value="">${!r.freq ? 'Vispirms periodiskums' : opts.length ? 'Periods…' : 'Šajā gadā nav viļņu'}</option>${opts.map(([n, l]) => `<option value="${n}" ${+r.n === n ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`}
+      <button type="button" class="icon-btn" data-pr-rm="${i}" aria-label="Noņemt ${i + 1}. periodu" title="Noņemt">${ICON.x}</button></div>`; }).join('');
+  $('#c-per-tags').innerHTML = sel.periods.map(k => `<span class="per-tag">${esc(periodLabel(k).replace(/ \(.*\)$/, ''))}</span>`).join('');
+}
 function renderScope(){
   const sel = compose.sel, reps = audReports();
   // izvēles, kas neatbilst adresātam, tiek noņemtas
@@ -5045,14 +5120,12 @@ function renderScope(){
   // a) Pēc perioda
   $('#c-freqs').innerHTML = Object.entries(FREQS).map(([k, l]) => { const n = reps.filter(p => p.freq === k).length;
     return `<button type="button" class="tag-opt" data-freq="${k}" aria-pressed="${sel.freqs.includes(k)}" ${n ? '' : 'disabled title="Nav apsekojumu ar šo periodiskumu"'}>${esc(l)}</button>`; }).join('');
-  const fReps = new Set(reps.filter(p => sel.freqs.includes(p.freq)).map(p => p.id)), act = activeKeys();
-  const pers = periodOpts((state.duties || []).filter(d => fReps.has(d.reportId)));
-  sel.periods = sel.periods.filter(k => pers.some(([x]) => x === k));
+  syncPerRows();
   $('#c-per-box').hidden = !sel.freqs.length;
-  $('#c-periods').innerHTML = pers.map(([k, l]) => { const on = sel.periods.includes(k), live = [...fReps].some(id => act.has(id + '|' + k));
-    return `<label class="${on ? 'on' : ''}"><input type="checkbox" data-per="${esc(k)}" ${on ? 'checked' : ''}>${esc(l)}${live ? '' : ' <small>(slēgts)</small>'}</label>`; }).join('') || '<span class="hint">Nav periodu.</span>';
+  renderPerRows();
   $('#c-periods-hint').textContent = !sel.freqs.length ? 'Izvēlieties vienu vai vairākus periodiskumus.'
-    : sel.periods.length ? `Atzīmēti periodi: ${sel.periods.length}` : 'Konkrēts periods nav norādīts – tiek atlasīti visi izvēlētā periodiskuma aktīvie periodi.';
+    : !sel.periods.length ? 'Tiks atlasīti visi izvēlētā periodiskuma aktīvie periodi.'
+    : (fr => fr.length ? `Periodiskumam bez norādīta perioda (${fr.map(k => FREQS[k]).join(', ')}) tiks atlasīti visi aktīvie periodi.` : '')(sel.freqs.filter(f => !sel.periods.some(k => freqOfPeriod(k) === f)));
   // b) Pēc apsekojuma
   $('#c-rep-tags').innerHTML = sel.reports.map(id => { const p = repById(id);
     return `<span class="ms-tag"><span title="${esc(p.name)}">${esc(p.name)} <small>${esc(FREQS[p.freq])}</small></span><button type="button" data-rep-rm="${p.id}" aria-label="Noņemt: ${esc(p.name)}">×</button></span>`; }).join('');
@@ -5082,7 +5155,7 @@ function renderScope(){
     : 'Lauks “Nosaukums vēstulē” <span class="var-chip">{apsekojums}</span> tiek aizpildīts, kad atlase attiecas uz vienu apsekojumu.';
   $('#c-deadline-info').innerHTML = `${ICON.info} <span><span class="var-chip">{termiņš}</span> un <span class="var-chip">{sākums}</span> tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi).</span>`;
   // 2. solī – kritēriju kopsavilkums
-  $('#c-scope-recap').innerHTML = `<span><b>Atlase (1. solis):</b></span>
+  $('#c-scope-recap').innerHTML = `<span><b>Kampaņas tvērums (1. solis):</b></span>
     <span>Periodiskums: <b>${sel.freqs.length ? esc(sel.freqs.map(k => FREQS[k]).join(', ')) : '—'}</b></span>
     <span>Periods: <b>${sel.periods.length ? esc(sel.periods.map(periodLabel).join(', ')) : sel.freqs.length || sel.reports.length ? 'visi aktīvie' : '—'}</b></span>
     <span>Apsekojumi: <b>${sel.reports.length ? esc(sel.reports.map(id => repById(id).name).join(', ')) : '—'}</b></span>
@@ -5157,7 +5230,7 @@ function renderCompose(){
 const WIZ_STEPS = ['Pamatdati', 'Respondenti', 'Saturs', 'Paraksts', 'Adreses', 'Pārbaude'];
 function stepIssues(n){
   switch (n){
-    case 1: return [compose.name.trim() ? '' : 'Norādiet nosaukumu.', hasScope() ? '' : 'Norādiet, uz ko attiecas kampaņa (periods vai apsekojums).',
+    case 1: return [compose.name.trim() ? '' : 'Norādiet nosaukumu.', hasScope() ? '' : 'Norādiet kampaņas tvērumu (periodu vai apsekojumu).',
       compose.when === 'plan' && planError() ? planError() : ''].filter(Boolean);
     case 2: return selectedResp().length ? [] : ['Nav atlasīts neviens respondents.'];
     case 3: return currentTemplate() ? [] : ['Nav izvēlēts saturs.'];
@@ -6459,13 +6532,31 @@ $('#c-rep-tags').addEventListener('click', e => {
   repToggle(b.dataset.repRm);
   $('#c-rep-search').focus({preventScroll:true});
 });
-$('#c-periods').addEventListener('change', e => {
-  const k = e.target.dataset.per;
-  if (!k) return;
+// Konkrēts periods: rindas pievienošana, maiņa un noņemšana (fokuss paliek attiecīgajā laukā)
+$('#c-per-add').addEventListener('click', () => {
   const s = compose.sel;
-  s.periods = e.target.checked ? [...new Set([...s.periods, k])] : s.periods.filter(x => x !== k);
+  s.perRows.push({freq:s.freqs.length === 1 ? s.freqs[0] : '', year:new Date().getFullYear(), n:''});
   selChanged();
-  const inp = $(`#c-periods [data-per="${CSS.escape(k)}"]`); if (inp) inp.focus();
+  const row = $(`#c-per-rows [data-row="${s.perRows.length - 1}"]`);
+  if (row) (row.querySelector('[data-pr="freq"]') || row.querySelector('[data-pr="n"]') || row.querySelector('[data-pr="year"]')).focus();
+});
+$('#c-per-rows').addEventListener('change', e => {
+  const k = e.target.dataset.pr, row = e.target.closest('[data-row]');
+  if (!k || !row) return;
+  const i = +row.dataset.row, r = compose.sel.perRows[i];
+  if (k === 'freq'){ r.freq = e.target.value; r.n = ''; }
+  else if (k === 'year'){ r.year = +e.target.value; if (r.freq === 'ned' && r.n > weeksInYear(r.year)) r.n = ''; if (r.freq === 'int') r.n = perOpts('int', r.year).some(([n]) => n === +r.n) ? r.n : ''; }
+  else r.n = e.target.value ? +e.target.value : '';
+  selChanged();
+  const el = $(`#c-per-rows [data-row="${i}"] [data-pr="${k}"]`); if (el) el.focus();
+});
+$('#c-per-rows').addEventListener('click', e => {
+  const b = e.target.closest('[data-pr-rm]');
+  if (!b) return;
+  const i = +b.dataset.prRm;
+  compose.sel.perRows.splice(i, 1);
+  selChanged();
+  const nx = $(`#c-per-rows [data-row="${Math.min(i, compose.sel.perRows.length - 1)}"] [data-pr-rm]`) || $('#c-per-add'); nx.focus();
 });
 // 1. solis: nosūtīšana tūlīt vai ieplānot; 4. solis: paraksts
 $('#c-when').addEventListener('click', e => {
