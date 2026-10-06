@@ -189,6 +189,7 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
   - **respondents:** tips (juridiska / fiziska persona), nosaukums vai vārds, reģistrācijas Nr. (juridiskām personām), e-adrese, e-pasts 1, e-pasts 2;
   - **pārskats:** nosaukums, kods, periodiskums (Gads / Pusgads / Ceturksnis / Mēnesis / Nedēļa / Intervija; intervēšanas vilnis prototipā ir 2 mēneši) un termiņa noteikums, piem., "15. datums pēc pārskata perioda beigām". Termiņš tiek aprēķināts katram periodam, un tas ir vienāds visiem šī pārskata respondentiem;
   - **pienākums:** respondents × pārskats × periods (piem., "2026. g. oktobris", "2026. g. 4. ceturksnis", "2026. g. 39. nedēļa"), termiņš, iesniegšanas statuss ("Iesniegts" / "Nav iesniegts") un iesniegšanas datums. Ja pārskats nav iesniegts un termiņš ir pagājis, tas tiek rādīts kā "Nav iesniegts (kavēts)". Vienam respondentam var būt vairāki pienākumi.
+  - **apsekojuma dati vēstulei** (no Metadatu pārvaldības; prototipā – izdomāti testa dati): nosaukums angliski un krieviski, e-anketas saite, apsekojuma e-pasts un tīmekļvietne. Tie glabājas pie katra pārskata / apsekojuma un kampaņā tiek ņemti automātiski;
   - **Iesniegšanas statusi** ir dati no Datu vākšanas pārraudzības. Tie ir tikai lasāmi; prototipā tie ir testa dati.
   - Fiziskās personas ir piesaistītas apsekojumiem (Darbaspēka, Ceļotāju, Mājsaimniecību budžeta, Laika izlietojuma, Iedzīvotāju ienākumu un dzīves apstākļu, IKT lietošanas apsekojums).
 - **Testa dati:**
@@ -278,7 +279,6 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
      - "Nosaukums vēstulē `{apsekojums}`" redzams, ja atlase attiecas uz vienu apsekojumu (tas tiek aizpildīts no apsekojuma datiem, un to var labot). Ja apsekojumi ir vairāki, lauks ir paslēpts: apsekojumu nosaukumi vēstulē redzami blokā `{pārskatu_tabula}`, bet `{apsekojums}` tiek aizstāts ar respondenta apsekojumu nosaukumiem;
      - "Vēstules datums `{datums}`" un "Dokumenta Nr. `{dok_nr}`";
      - laukā nav "Sākums" un "Termiņš": `{termiņš}` tiek ņemts automātiski no pārskata un perioda datiem (respondenta tuvākais termiņš, kas nosūtīšanas dienā vēl nav pagājis; ja tāda nav – agrākais), bet `{sākums}` ir nākamā diena pēc attiecīgā perioda beigām;
-     - sakļaujamā sadaļā – apsekojuma kontakti, noformējums un tulkojumi.
 
    Adresāts nosaka, kuras veidnes tiek piedāvātas. Mainot adresātu, tiek pielāgots arī filtrs "Respondenta veids".
 2. **Respondenti** (F2, F11). Atlase ir atkarīga no komunikācijas veida.
@@ -303,6 +303,11 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
      - apakšā ir pogas "Atcelt", "Saglabāt arī kā veidni" un "Izmantot kampaņā".
    - **Saglabāt arī kā veidni.** Prasa norādīt veidnes nosaukumu un kategoriju. Saturs tiek saglabāts kā jauna veidne, un kampaņa to izmanto.
    - **Kopsavilkums.** Kad saturs ir apstiprināts, solī redzams satura avots ("Veidne: [nosaukums]", "Veidne, pielāgota kampaņai" vai "Individuāls saturs"), temats un vēstules veids. Ir pogas "Labot saturu" un "Izvēlēties citu saturu".
+   - **Mainīgo vērtības** – sakļaujama sadaļa zem satura izvēles (pēc noklusējuma sakļauta), ar norādi "Dati no Metadatu pārvaldības":
+     - ja kampaņā ir viens apsekojums – tabula: mainīgais (`{apsekojums}` EN / RU, `{e-anketa}`, `{apsekojuma_epasts}`, `{apsekojuma_vietne}`), vērtība un avots "No apsekojuma". Poga "Mainīt šai kampaņai" ļauj vērtību mainīt (Enter – saglabāt, Escape – atcelt); mainītā vērtība ir atzīmēta ar birku "Mainīts", un to var atjaunot ("Atjaunot");
+     - ja kampaņā ir vairāki apsekojumi – vērtības sagrupētas izvēršamos blokos pa apsekojumiem (blokā redzams mainīto vērtību skaits), un vēstulē katram respondentam tiek izmantotas viņa apsekojuma vērtības;
+     - "Tēmturi banerī" un "Sauklis zem banera" – kampaņas līmeņa lauki (sākotnēji no apsekojuma, ja tam tādi ir);
+     - priekšskatījumā un nosūtītajās vēstulēs mainīgie tiek aizpildīti ar šīm vērtībām. Izmaiņas tiek saglabātas kampaņas melnrakstā.
 4. **Paraksts** (F8):
    - "Nav jāparaksta" vai "Jāparaksta" (DVS NAMEJS integrācija; prototipā – simulācija);
    - ja jāparaksta – parakstīšanas veids (Secīga / Paralēla / Paka) un parakstītāji. Secīgai parakstīšanai secība ir atzīmēšanas kārtībā;
