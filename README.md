@@ -26,10 +26,18 @@ Atverot prototipu, vispirms redzama DELTA sistēmas sākumlapa ar moduļu kartī
 - Kartītē **Respondentu pārvaldība** ir maza aktīva zaļa poga **Komunikācija** (tikai aploksnes ikona, nosaukums un bultiņa →). Tā atver komunikācijas moduli ar cilni "Kampaņas". Pārējā kartītes daļa nav klikšķināma – prototipā pieejama tikai komunikācija.
 - **Navigācija.** Komunikācijas moduļa galvenē ir nosaukums "Komunikācija" ar apakšvirsrakstu "Respondentu pārvaldība" un navigācijas ceļš, piem., "DELTA › Respondentu pārvaldība › Komunikācija › Kampaņas" (kampaņas redaktorā arī kampaņas nosaukums). Sākumlapā var atgriezties ar saitēm "DELTA" vai "Respondentu pārvaldība" ceļā, ar CSP logo vai ar saiti "← DELTA sākums".
 
+## Paskaidrojošie teksti un kļūdas
+
+Ekrāni ir tīri: pastāvīgi redzamu paskaidrojošo tekstu un informatīvo paziņojumu nav.
+- **Padomi "i".** Svarīgā informācija ir mazā "i" ikonā blakus attiecīgajam virsrakstam vai laukam. Padoms parādās, uzbraucot ar peli vai fokusējot ar tastatūru (pie ekrāna malām tas tiek izlīdzināts, lai neiziet ārpus ekrāna). Tā ir arī lapu virsrakstiem (piem., "Komunikācijas kampaņas", "Sūtīšanas vēsture", "Atskaites", "Sagataves"), kampaņas soļiem, grafiku virsrakstiem atskaitēs un modālo logu virsrakstiem.
+- **Redzams paliek tikai būtiskais:** lauku un pogu nosaukumi, statusi, kopsavilkuma skaitļi un īsi stāvokļa paziņojumi (piem., "Nekas netika atrasts", "Nav pārskatu ar šo termiņu").
+- **Kļūdas** (obligātie lauki un pārbaudes) tiek rādītas tikai pēc mēģinājuma pāriet uz nākamo soli ("Tālāk", pāreja uz vēlāku soli progresa joslā), saglabāt melnrakstu vai nosūtīt: īss sarkans teksts pie konkrētā lauka (piem., "Norādiet periodu vai apsekojumu.", "Nosūtīšanas datums nedrīkst būt pagātnē.", "Norādiet vismaz vienu parakstītāju."). Progresa joslā "!" parādās tikai soļiem, kuros ir bijis šāds mēģinājums. Poga "Nosūtīt" vairs nav bloķēta: ja ir kļūdas, kampaņa netiek nosūtīta, un kopsavilkumā tiek parādīts kļūdu saraksts.
+- Ilustrācijas rāmī sākumlapā teikums zem virsraksta paliek, jo tas ir daļa no ilustrācijas.
+
 ## Moduļa cilnes
 
 Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
-1. **Kampaņas** (pirmā un noklusējuma cilne). Tajā ir saraksts "Komunikācijas kampaņas" un poga "+ Jauna kampaņa". Zem virsraksta ir viens paskaidrojošs teikums: "Kampaņa ir viena sūtīšana izvēlētiem respondentiem: uzaicinājums, atgādinājums vai cita informācija."
+1. **Kampaņas** (pirmā un noklusējuma cilne). Tajā ir saraksts "Komunikācijas kampaņas" un poga "+ Jauna kampaņa". Skaidrojums "Kampaņa ir viena sūtīšana izvēlētiem respondentiem: uzaicinājums, atgādinājums vai cita informācija." ir "i" padomā blakus virsrakstam.
 2. **Veidnes.** Vēstuļu veidnes un sagataves.
 3. **Sūtīšanas vēsture.** Nosūtītās vēstules, sagrupētas pa kampaņām.
 4. **Atskaites.** Rādītāji, grafiki un tabulas par sūtīšanas rezultātiem ar CSV eksportu un MI kopsavilkumu.
@@ -256,14 +264,14 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
      - noklusējums – rītdiena plkst. 09:00;
      - pagātnes datumu un laiku nevar izvēlēties: kalendārā tie nav pieejami, šodienai laika ieteikumos ir tikai nākotnes laiki, bet ievadītam pagātnes vai nederīgam datumam vai laikam tiek parādīta kļūda, un kampaņu nevar ieplānot;
      - uz šauriem ekrāniem datuma un laika lauki pārceļas zem pārslēga;
-   - **"Kampaņas tvērums"** – zem virsraksta īss teksts "Norādiet periodu, apsekojumu vai abus."; pārējais skaidrojums ir "i" ikonas padomā blakus virsrakstam. Divas līdzvērtīgas, vienāda augstuma kartītes blakus (uz šauriem ekrāniem viena zem otras). Var izmantot vienu vai abas, bet jābūt aizpildītai vismaz vienai. Ja aizpildītas abas, atlase ir abu kritēriju krustpunkts (piem., konkrēts apsekojums konkrētā periodā):
+   - **"Kampaņas tvērums"** – skaidrojums ("Norādiet periodu, apsekojumu vai abus." u. c.) ir "i" ikonas padomā blakus virsrakstam. Divas līdzvērtīgas, vienāda augstuma kartītes blakus (uz šauriem ekrāniem viena zem otras). Var izmantot vienu vai abas, bet jābūt aizpildītai vismaz vienai. Ja aizpildītas abas, atlase ir abu kritēriju krustpunkts (piem., konkrēts apsekojums konkrētā periodā):
      - **Pēc perioda:** periodiskums kā kompaktas pogas-birkas vienā rindā (vairākizvēle): Gads, Pusgads, Ceturksnis, Mēnesis, Nedēļa, Intervija (uz šaurākiem ekrāniem tās var pārcelties nākamajā rindā).
      - **Konkrēts periods (neobligāti)** tiek norādīts ar izkrītošajām izvēlnēm:
        - viena perioda rinda: "Gads" (no 2020 līdz nākamajam gadam, noklusējumā tekošais) un blakus "Periods", kura saturs atkarīgs no periodiskuma: Pusgads – 1., 2. pusgads; Ceturksnis – 1.–4. ceturksnis; Mēnesis – janvāris–decembris; Nedēļa – 1.–52./53. nedēļa (ar datumiem); Intervija – intervēšanas viļņi no testa datiem. Periodiskumam "Gads" otrās izvēlnes nav;
        - ja izvēlēti vairāki periodiskumi, rindā vispirms izvēlas periodiskumu, tad gadu un periodu (uz šauriem ekrāniem "Periods" ir zem tiem);
        - poga "+ Pievienot periodu" pievieno rindu, poga × to noņem;
        - zem rindām izvēlētie periodi redzami kā birkas, piem., "2026. g. 3. ceturksnis", "2025. gads";
-       - konkrētais periods attiecas uz savu periodiskumu. Ja konkrēts periods nav norādīts, mazā tekstā redzams "Tiks atlasīti visi izvēlētā periodiskuma aktīvie periodi." – tie, kuros datu vākšana nav beigusies (termiņš vēl nav pienācis vai kāds pienākums nav iesniegts). Ja norādīts tikai dažiem periodiskumiem, pārējiem tiek ņemti aktīvie periodi;
+       - konkrētais periods attiecas uz savu periodiskumu. Ja konkrēts periods nav norādīts (skaidrojums – "i" padomā pie "Konkrēts periods"), tiek atlasīti visi izvēlētā periodiskuma aktīvie periodi – tie, kuros datu vākšana nav beigusies (termiņš vēl nav pienācis vai kāds pienākums nav iesniegts). Ja norādīts tikai dažiem periodiskumiem, pārējiem tiek ņemti aktīvie periodi;
      - **Pēc apsekojuma:** meklējama vairākizvēle ar apsekojumiem / pārskatiem (atbilstoši adresātam). Pie katra redzams kods, periodiskums un termiņa noteikums. Izvēlētie apsekojumi redzami kā birkas ar ×. Sarakstā var pārvietoties ar bultiņām un izvēlēties ar Enter. Ja izvēlēts apsekojums, kas neatbilst izvēlētajam periodiskumam, tiek parādīts brīdinājums;
      - zem kartītēm ir dzīvs kopsavilkums "Atlasīti X respondenti, Y pārskati/periodi";
    - **vēstules dati:**
@@ -332,7 +340,7 @@ Cilnē **Sūtīšanas vēsture** (specifikācija F16, F17) ir visas nosūtītās
   - rindas dzēšanas poga ir aktīva tikai šādiem ierakstiem; jaunākiem tā ir neaktīva ar padomu "Ierakstus var dzēst tikai pēc 2 gadiem";
   - augšā ir poga **"Dzēst ierakstus, vecākus par 2 gadiem"**. Iekavās redzams dzēšamo ierakstu skaits. Pirms dzēšanas parādās apstiprinājuma logs ar ierakstu un kampaņu skaitu un robežas datumu. Ja šādu ierakstu nav, poga ir neaktīva;
   - noteikums tiek pārbaudīts arī pašā darbībā, tāpēc jaunāku ierakstu nevar izdzēst.
-- Nosūtīšana prototipā ir simulēta (vēstules reāli netiek sūtītas), bet paskaidrojošais teksts par to no cilnes noņemts.
+- Nosūtīšana prototipā ir simulēta (vēstules reāli netiek sūtītas).
 
 ## Atskaites
 
