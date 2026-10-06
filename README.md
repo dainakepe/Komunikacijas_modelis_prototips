@@ -105,7 +105,7 @@ Veidne atveras centrētā modālajā logā, kura platums ir apmēram puse ekrān
 - **Vēstule pielikumā:**
   - **"No sagatavēm"** atver logu ar pielikumu sagatavēm (meklēšana, filtri, PDF priekšskatījums). Izvēlētais dokuments kļūst par veidnes galveno vēstuli.
   - **"Augšupielādēt failu"** – PDF vai DOCX, līdz 1 MB. Fails tiek pievienots arī pielikumu sagatavēm.
-  - Saite **"vai veidot dokumentu redaktorā ar laukiem"** saglabā iespēju veidot ģenerētu PDF dokumentu ar laukiem un nosacījumiem.
+  - Saite **"vai veidot dokumentu redaktorā ar laukiem"** saglabā iespēju veidot ģenerētu PDF dokumentu ar laukiem.
   - Izvēlētais dokuments redzams kartītē ar pogām "Priekšskatīt", "Nomainīt" un "Noņemt". Zem tās ir pavadteksta redaktors ar pavadteksta sagatavēm.
 
 Ja pēc satura ievadīšanas nomaina vēstules veidu, sistēma brīdina: "Mainot vēstules veidu, ievadītais saturs var tikt zaudēts. Turpināt?".
@@ -126,7 +126,7 @@ Uzklikšķinot uz attēla vai pogas redaktorā, to var rediģēt vai dzēst. Pri
 
 ### Teksta formatēšana redaktorā
 
-Rīkjosla ir sagrupēta šādi: teksta stils | B, I, U, teksta krāsa | līdzināšana | saraksti | saite, attēls, poga | nosacījums un mainīgie.
+Rīkjosla ir sagrupēta šādi: teksta stils | B, I, U, teksta krāsa, Notīrīt | līdzināšana | saraksti | saite, attēls, poga | **+ Ievietot lauku…** (mainīgie un pārskatu tabulas bloks). Rīkjosla ir kompakta: veidnes redaktorā tā ietilpst divās rindās – otrajā rindā ir saraksti, saite, attēls, poga un "+ Ievietot lauku…"; platākā redaktorā – vienā rindā. Pogas "Nosacījums" vairs nav.
 
 - **Teksta stils.** Izvēlnē var izvēlēties "Parasts teksts", "Virsraksts 1", "Virsraksts 2" vai "Virsraksts 3". Stils attiecas uz rindkopu, kurā ir kursors, vai uz visām atlasītajām rindkopām. Atsevišķa virsraksta lauka vairs nav. Esošo veidņu virsraksti (arī PDF dokumenta virsraksts) automātiski pārcelti teksta sākumā kā "Virsraksts 1", tāpēc saturs nezūd.
 - **Līdzināšana.** Pa kreisi, centrā vai pa labi. Līdzināšana attiecas uz visu rindkopu, arī uz virsrakstiem un attēliem tajā.
@@ -297,7 +297,7 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
 2. **Respondenti** (F2, F11). Šajā solī ir tikai atlasīto respondentu tabula un saite **"← Mainīt tvērumu"**, kas atgriež uz 1. soli. Visi atlases iestatījumi (kampaņas tvērums, atgādinājuma veids, dienas līdz termiņam / kavējums, statusu atjaunošana) ir 1. solī.
    - **Uzaicinājums, informatīvs ziņojums un cits** atlasa visus respondentus, kuriem ir pienākums kampaņas tvērumā. Termiņš un statuss netiek ņemti vērā.
    - **"Atgādinājums"** atlasa tikai neiesniegtos pienākumus: "Pirms termiņa" – ar termiņu tieši nosūtīšanas datums + N dienas; "Pēc termiņa" – ar pagājušu termiņu (neobligāti – kavēts vismaz N dienas). Ieplānotai atgādinājuma kampaņai atlase izpildes brīdī tiek pārrēķināta pēc aktuālajiem statusiem (prototipā – poga "Izpildīt tagad" kampaņu sarakstā).
-   - Atlase notiek **tikai pēc kampaņas tvēruma** un atgādinājumiem – pēc iesniegšanas statusa un termiņa. Papildu atlases pēc pazīmēm nav. Respondentu pazīmes (veids, dalības veids, iepriekšējā dalība, valoda) paliek datos, jo tās izmanto veidņu nosacījumos un valodas versijas izvēlē vēstulēs.
+   - Atlase notiek **tikai pēc kampaņas tvēruma** un atgādinājumiem – pēc iesniegšanas statusa un termiņa. Papildu atlases pēc pazīmēm nav. Respondentu pazīmes (veids, dalības veids, iepriekšējā dalība, valoda) paliek datos, jo tās izmanto valodas versijas izvēlē un adresātu grupēšanā (fiziskās / juridiskās personas).
    - **Tabula:** meklēšana, "Iekļaut visus" / "Izņemt visus", kolonnas Respondents, **eAdrese**, **E-pasts 1**, **E-pasts 2** un Pienākumi. Neaizpildīta adrese – pelēks "—"; garas adreses saīsinātas ar "…", pilnā adrese redzama, uzbraucot ar peli. Ja respondentam nav nevienas adreses, pie nosaukuma ir brīdinājuma ikona ar padomu "Nav nevienas adreses". Uz šauriem ekrāniem tabulu var ritināt horizontāli. Izvēršot rindu, redzami respondenta atlasītie pienākumi (pārskats, periods, termiņš, statuss), un atsevišķus respondentus var izņemt;
    - Zem kampaņas tvēruma 1. solī ir norāde "Statusi atjaunoti …" un poga "Atjaunot statusus" (iesniegšanas statusi no Datu vākšanas pārraudzības; simulācija: daļa neiesniegto pienākumu kļūst iesniegti).
    - Ja respondentam ir atlasīti vairāki pārskati vai periodi, viņš saņem vienu vēstuli. `{pārskatu_tabula}` ietver tikai atlasītos pienākumus, bet atgādinājumā tikai neiesniegtos.
@@ -375,21 +375,27 @@ Skati:
 - **Atkārtotā nosūtīšana:** rādītāji un tabula ar mēģinājumu skaitu un iemeslu: pagaidu kļūda, pāreja uz nākamo adresi vai manuāla atkārtota nosūtīšana.
 - **Citi pārskati:** parakstīšanas rezultāti pa kampaņām (veids, parakstītāji, parakstītās vēstules, gaida parakstu, laiki).
 
-## Nosacījumi un vēstuļu varianti
+## Respondentu pazīmes
 
-Nosacījumus var veidot pēc trim respondenta pazīmēm:
+Respondentiem ir pazīmes:
 - **respondenta veids:** uzņēmums vai privātpersona. Ja tas nav norādīts, to nosaka pēc e-adreses: `_DEFAULT@` nozīmē uzņēmumu, `_PRIVATE@` nozīmē privātpersonu. Ja e-adreses nav, skatās, vai norādīta kontaktpersona;
 - **dalības veids:** e-anketa, tikai telefonintervija vai klātienes intervija;
-- **iepriekšējā dalība:** piedalījās, nepiedalījās vai izlasē pirmo reizi.
+- **iepriekšējā dalība:** piedalījās, nepiedalījās vai izlasē pirmo reizi;
+- **valoda** (sk. sadaļu "Valodas").
 
-Redaktorā ar pogu **◇ Nosacījums** iezīmētās rindkopas kļūst par bloku, kas redzams tikai respondentiem ar izvēlēto pazīmes vērtību vai vērtībām. Tā vienā veidnē var būt vairāki varianti, piemēram, "Kā piedalīties aptaujā?" e-anketas un telefonintervijas respondentiem.
+**CSV importā** pazīmes var norādīt kolonnās `respondenta veids`, `dalības veids`, `iepriekšējā dalība` un `valoda`. Tās nav obligātas. Atpazīst arī saīsinājumus CAWI/CATI/CAPI un vērtības jā/nē.
 
-- **Veidnes priekšskatījumā** variantu var pārslēgt.
-- **Sagatavošanā:**
-  - respondentus var atlasīt pēc pazīmēm;
-  - kopsavilkumā redzams, cik vēstuļu būs katrā variantā;
-  - katras vēstules priekšskatījumā redzams tās variants.
-- **CSV importā** pazīmes var norādīt kolonnās `respondenta veids`, `dalības veids`, `iepriekšējā dalība` un `valoda`. Tās nav obligātas. Atpazīst arī saīsinājumus CAWI/CATI/CAPI un vērtības jā/nē.
+**Nosacījumu (teksta daļu, kas redzamas tikai noteiktiem respondentiem) lietotāja saskarnē vairs nav:**
+- redaktora rīkjoslā nav pogas "Nosacījums";
+- veidņu kartītēs nav rindas "Nosacījumi: …" ar birkām;
+- veidnes un kampaņas satura priekšskatījumā nav varianta izvēles, kampaņas kopsavilkumā – variantu skaita, vēstules priekšskatījumā – rindas "Variants"; izvēle "Iezīmēt laukus" iezīmē tikai laukus.
+
+**Esošās veidnes.** Teksta daļas, kas agrāk bija nosacījumi, pārvērstas par parastu tekstu: atstāts vispārīgais (noklusējuma) variants, pārējie varianti izdzēsti. Vispārīgais variants ir:
+- dalības veids – e-anketa (paliek norādes par e-anketu; teksti telefonintervijas un klātienes intervijas respondentiem izdzēsti);
+- iepriekšējā dalība – izlasē pirmo reizi (pateicība par iepriekšējo dalību un aicinājums "ja iepriekš nepiedalījāties" izdzēsti);
+- respondenta veids – atbilstoši veidnes adresātam: fiziskām personām – teksts privātpersonai, juridiskām personām – teksts uzņēmumam, veidnēm visiem – teksts privātpersonai.
+
+Tas attiecas arī uz pārlūkā jau saglabātajām veidnēm un valodu versijām, e-pasta satura šabloniem, melnrakstiem, ieplānotajām kampaņām un pastāvīgajām daļām (pārvērš, ielādējot lapu), kā arī uz ielīmētu tekstu. Nosūtīto vēstuļu vēsture netiek mainīta.
 
 ## Valodas
 
