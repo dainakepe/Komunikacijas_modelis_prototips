@@ -1049,8 +1049,15 @@ dialog.modal.full .modal-body{flex:1;padding:14px 20px}
 .tip{position:relative;display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--primary-100);color:var(--primary-darker);font:700 11px/1 Georgia,serif;font-style:italic;cursor:help;vertical-align:1px;margin-left:3px;flex:none}
 .tip[hidden]{display:none}
 .tip:hover,.tip:focus-visible{background:var(--primary);color:#fff;outline:none}
-.tip::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);width:max-content;max-width:280px;background:#1F2933;color:#fff;font:400 12.5px/1.45 inherit;font-family:system-ui,sans-serif;font-style:normal;padding:8px 10px;border-radius:6px;box-shadow:var(--shadow-lg);opacity:0;visibility:hidden;transition:opacity .12s;z-index:30;pointer-events:none;text-align:left;white-space:normal}
+.tip::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);width:max-content;max-width:280px;background:#1F2933;color:#fff;font-weight:400;font-size:12.5px;line-height:1.45;font-family:var(--font);font-style:normal;letter-spacing:0;text-transform:none;padding:8px 10px;border-radius:6px;box-shadow:var(--shadow-lg);opacity:0;visibility:hidden;transition:opacity .12s;z-index:30;pointer-events:none;text-align:left;white-space:normal}
 .tip:hover::after,.tip:focus-visible::after{opacity:1;visibility:visible}
+/* padoms pie ekrāna malas – izlīdzināts, lai neiziet ārpus ekrāna */
+.tip.tip-l::after{left:-8px;transform:none}
+.tip.tip-r::after{left:auto;right:-8px;transform:none}
+h1 .tip,h2 .tip,h3 .tip,h4 .tip{vertical-align:middle;margin-left:6px}
+.ms-tag.is-off{border-style:dashed;border-color:#C9A227;background:#FFF7E6}
+.ms-tag.is-off .icon{width:13px;height:13px;color:#8a5a00;margin-right:3px;vertical-align:-2px}
+.step-title .tip{margin-left:2px}
 /* Vēstules veids: kompaktas pogas, apakšizvēlne zem izvēlētās */
 .kind-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
 .kind-col{display:flex;flex-direction:column;gap:6px}
@@ -1375,8 +1382,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       <div class="page-head">
         <div>
           <button type="button" class="btn btn-ghost btn-sm back-link" data-action="sag-back">← Atpakaļ uz veidnēm</button>
-          <h1>Sagataves</h1>
-          <p>Atkārtoti izmantojami materiāli, no kuriem veido vai papildina veidnes: e-pasta satura šabloni un pielikumu sagataves.</p>
+          <h1>Sagataves <span class="tip" tabindex="0" role="note" aria-label="Atkārtoti izmantojami materiāli, no kuriem veido vai papildina veidnes: e-pasta satura šabloni un pielikumu sagataves." data-tip="Atkārtoti izmantojami materiāli, no kuriem veido vai papildina veidnes: e-pasta satura šabloni un pielikumu sagataves.">i</span></h1>
         </div>
       </div>
       <div class="seg sag-group" id="sag-group" role="group" aria-label="Sagatavju grupa"></div>
@@ -1401,8 +1407,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   <div id="camp-list">
     <div class="page-head">
       <div>
-        <h1>Komunikācijas kampaņas</h1>
-        <p>Kampaņa ir viena sūtīšana izvēlētiem respondentiem: uzaicinājums, atgādinājums vai cita informācija.</p>
+        <h1>Komunikācijas kampaņas <span class="tip" tabindex="0" role="note" aria-label="Kampaņa ir viena sūtīšana izvēlētiem respondentiem: uzaicinājums, atgādinājums vai cita informācija." data-tip="Kampaņa ir viena sūtīšana izvēlētiem respondentiem: uzaicinājums, atgādinājums vai cita informācija.">i</span></h1>
       </div>
       <div class="toolbar"><button class="btn btn-primary" data-action="camp-new"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Jauna kampaņa</button></div>
     </div>
@@ -1425,8 +1430,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     <div class="page-head">
       <div>
         <button type="button" class="btn btn-ghost btn-sm back-link" data-action="camp-back">← Komunikācijas kampaņas</button>
-        <h1 id="c-title">Jauna kampaņa</h1>
-        <p>Kampaņu sagatavo sešos soļos. Starp soļiem var pārvietoties brīvi, un melnrakstu var saglabāt jebkurā solī.</p>
+        <h1><span id="c-title">Jauna kampaņa</span> <span class="tip" tabindex="0" role="note" aria-label="Kampaņu sagatavo sešos soļos. Starp soļiem var pārvietoties brīvi, un melnrakstu var saglabāt jebkurā solī." data-tip="Kampaņu sagatavo sešos soļos. Starp soļiem var pārvietoties brīvi, un melnrakstu var saglabāt jebkurā solī.">i</span></h1>
       </div>
       <div class="compose-head-side">
         <div class="draft-info" id="c-draft" aria-live="polite" hidden></div>
@@ -1439,7 +1443,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <div class="step-title"><span class="step-num">1</span><h2>Pamatdati</h2></div>
           <div class="form-grid">
             <div class="field"><label for="c-aud">Adresāts</label><select id="c-aud"></select></div>
-            <div class="field"><label for="c-name">Kampaņas nosaukums <span class="req">*</span></label><input type="text" id="c-name" maxlength="120"></div>
+            <div class="field"><label for="c-name">Kampaņas nosaukums <span class="req">*</span></label><input type="text" id="c-name" maxlength="120"><span class="err" id="c-name-err" hidden></span></div>
           </div>
           <div class="field"><span class="label">Komunikācijas veids <span class="req">*</span></span>
             <div class="skind-opts" id="c-kind" role="group" aria-label="Komunikācijas veids"></div></div>
@@ -1461,24 +1465,22 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
               </div>
             </div>
             <span class="err" id="c-when-err" hidden></span></div>
-          <h3 class="sub-h scope-h">Kampaņas tvērums <span class="req">*</span><span class="tip" tabindex="0" role="note" aria-label="Var izmantot vienu vai abas izvēles, bet jābūt aizpildītai vismaz vienai. Ja aizpildītas abas, tiek atlasīti pienākumi, kas atbilst abām (piem., konkrēts apsekojums konkrētā periodā). Ja konkrēts periods nav norādīts, tiek atlasīti visi izvēlētā periodiskuma aktīvie periodi – tie, kuros termiņš vēl nav pienācis vai kāds pienākums nav iesniegts." data-tip="Var izmantot vienu vai abas izvēles, bet jābūt aizpildītai vismaz vienai. Ja aizpildītas abas, tiek atlasīti pienākumi, kas atbilst abām (piem., konkrēts apsekojums konkrētā periodā). Ja konkrēts periods nav norādīts, tiek atlasīti visi izvēlētā periodiskuma aktīvie periodi – tie, kuros termiņš vēl nav pienācis vai kāds pienākums nav iesniegts.">i</span></h3>
-          <p class="hint scope-lead">Norādiet periodu, apsekojumu vai abus.</p>
+          <h3 class="sub-h scope-h">Kampaņas tvērums <span class="req">*</span><span class="tip" tabindex="0" role="note" aria-label="Norādiet periodu, apsekojumu vai abus. Jābūt aizpildītai vismaz vienai izvēlei. Ja aizpildītas abas, tiek atlasīti pienākumi, kas atbilst abām (piem., konkrēts apsekojums konkrētā periodā)." data-tip="Norādiet periodu, apsekojumu vai abus. Jābūt aizpildītai vismaz vienai izvēlei. Ja aizpildītas abas, tiek atlasīti pienākumi, kas atbilst abām (piem., konkrēts apsekojums konkrētā periodā).">i</span></h3>
           <div class="scope-grid">
             <section class="scope-card" aria-labelledby="c-sc-per">
               <h4 id="c-sc-per"><span class="scope-ic" aria-hidden="true"></span>Pēc perioda</h4>
               <span class="label" id="c-freqs-l">Periodiskums</span>
               <div class="tag-opts" id="c-freqs" role="group" aria-labelledby="c-freqs-l"></div>
               <div id="c-per-box" hidden>
-                <span class="label" id="c-periods-l">Konkrēts periods <span class="muted">(neobligāti)</span></span>
+                <span class="label" id="c-periods-l">Konkrēts periods <span class="muted">(neobligāti)</span><span class="tip" tabindex="0" role="note" aria-label="Ja periods nav norādīts, tiek atlasīti visi izvēlētā periodiskuma aktīvie periodi – tie, kuros termiņš vēl nav pienācis vai kāds pienākums nav iesniegts. Konkrētais periods attiecas uz savu periodiskumu." data-tip="Ja periods nav norādīts, tiek atlasīti visi izvēlētā periodiskuma aktīvie periodi – tie, kuros termiņš vēl nav pienācis vai kāds pienākums nav iesniegts. Konkrētais periods attiecas uz savu periodiskumu.">i</span></span>
                 <div class="per-rows" id="c-per-rows" role="group" aria-labelledby="c-periods-l"></div>
                 <button type="button" class="btn btn-ghost btn-sm per-add" id="c-per-add">+ Pievienot periodu</button>
                 <div class="per-tags" id="c-per-tags" aria-live="polite"></div>
               </div>
-              <span class="sel-hint" id="c-periods-hint"></span>
             </section>
             <section class="scope-card" aria-labelledby="c-sc-rep">
               <h4 id="c-sc-rep"><span class="scope-ic" aria-hidden="true"></span>Pēc apsekojuma</h4>
-              <label class="label" for="c-rep-search">Apsekojumi / pārskati</label>
+              <span class="label"><label for="c-rep-search">Apsekojumi / pārskati</label><span class="tip" tabindex="0" role="note" aria-label="Var izvēlēties vienu vai vairākus. Apsekojums, kas neatbilst izvēlētajam periodiskumam, netiek atlasīts (birka atzīmēta ar ⚠)." data-tip="Var izvēlēties vienu vai vairākus. Apsekojums, kas neatbilst izvēlētajam periodiskumam, netiek atlasīts (birka atzīmēta ar ⚠).">i</span></span>
               <div class="ms" id="c-rep-ms">
                 <div class="ms-tags" id="c-rep-tags"></div>
                 <div class="ms-input">
@@ -1487,21 +1489,19 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                 </div>
                 <div class="ms-list" id="c-rep-list" role="listbox" aria-multiselectable="true" aria-label="Apsekojumi un pārskati" hidden></div>
               </div>
-              <span class="sel-hint" id="c-reports-hint"></span>
             </section>
           </div>
+          <span class="err" id="c-scope-err" hidden></span>
           <div class="scope-sum" id="c-scope-sum" aria-live="polite"></div>
-          <h3 class="sub-h">Vēstules dati</h3>
+          <h3 class="sub-h">Vēstules dati <span class="tip" tabindex="0" role="note" aria-label="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). Lauks “Nosaukums vēstulē” ir pieejams, ja atlase attiecas uz vienu apsekojumu; ja apsekojumi ir vairāki, nosaukumi tiek ņemti no {pārskatu_tabula}." data-tip="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). Lauks “Nosaukums vēstulē” ir pieejams, ja atlase attiecas uz vienu apsekojumu; ja apsekojumi ir vairāki, nosaukumi tiek ņemti no {pārskatu_tabula}.">i</span></h3>
           <div class="field" id="c-survey-box">
             <label for="cf-survey">Nosaukums vēstulē <span class="muted">{apsekojums}</span></label>
             <input type="text" id="cf-survey" data-f="survey">
           </div>
-          <p class="hint" id="c-survey-multi" hidden></p>
           <div class="form-grid">
             <div class="field"><label for="cf-date">Vēstules datums <span class="muted">{datums}</span></label><input type="date" id="cf-date" data-f="date"></div>
             <div class="field"><label for="cf-docnr">Dokumenta Nr. <span class="muted">{dok_nr}</span></label><input type="text" id="cf-docnr" data-f="docNr"></div>
           </div>
-          <p class="hint" id="c-deadline-info"></p>
           <details class="more">
             <summary>Apsekojuma kontakti, noformējums un tulkojumi</summary>
             <div class="form-grid">
@@ -1518,29 +1518,28 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           </details>
         </div>
         <div class="step" data-wstep="2" hidden>
-          <div class="step-title"><span class="step-num">2</span><h2>Respondenti</h2></div>
-          <p class="hint" id="c-kind-info"></p>
+          <div class="step-title"><span class="step-num">2</span><h2>Respondenti</h2><span class="tip" tabindex="0" role="note" aria-label="Uzaicinājums, informatīvs ziņojums un cits – tiek atlasīti visi respondenti ar pienākumu kampaņas tvērumā. Atgādinājums – tikai neiesniegtie pienākumi." data-tip="Uzaicinājums, informatīvs ziņojums un cits – tiek atlasīti visi respondenti ar pienākumu kampaņas tvērumā. Atgādinājums – tikai neiesniegtie pienākumi.">i</span></div>
           <div class="sel-block" id="c-remind-box" hidden><span class="label">Atgādinājums</span>
             <div class="seg" id="c-remind" role="group" aria-label="Atgādinājuma veids">
               <button type="button" data-remind="before">Pirms termiņa</button><button type="button" data-remind="after">Pēc termiņa (nokavēts)</button></div></div>
           <div class="sel-block scope-recap" id="c-scope-recap"></div>
           <div class="sel-block" id="c-before-box" hidden>
             <div class="form-grid">
-              <div class="field"><span class="label">Nosūtīšanas datums</span><span class="hint" id="c-send-info"></span></div>
-              <div class="field"><label for="c-days">Dienas līdz termiņam</label><input type="number" id="c-days" min="0" max="365" step="1"></div>
+              <div class="field"><span class="label">Nosūtīšanas datums</span><span id="c-send-info"></span></div>
+              <div class="field"><label for="c-days">Dienas līdz termiņam <span class="tip" tabindex="0" role="note" aria-label="Termiņš = nosūtīšanas datums + N dienas. Tiek atlasīti neiesniegtie pienākumi, kuru termiņš ir tieši šajā datumā. Ieplānotai kampaņai atlase tiek pārrēķināta izpildes brīdī." data-tip="Termiņš = nosūtīšanas datums + N dienas. Tiek atlasīti neiesniegtie pienākumi, kuru termiņš ir tieši šajā datumā. Ieplānotai kampaņai atlase tiek pārrēķināta izpildes brīdī.">i</span></label><input type="number" id="c-days" min="0" max="365" step="1"></div>
             </div>
             <div id="c-target" aria-live="polite"></div>
           </div>
           <div class="sel-block" id="c-after-box" hidden>
             <div class="form-grid">
-              <div class="field"><label for="c-late">Kavēts vismaz <span class="muted">(dienas, neobligāti)</span></label><input type="number" id="c-late" min="0" max="999" step="1" placeholder="—"></div>
+              <div class="field"><label for="c-late">Kavēts vismaz <span class="muted">(dienas, neobligāti)</span> <span class="tip" tabindex="0" role="note" aria-label="Tiek atlasīti neiesniegtie pienākumi, kuru termiņš ir pagājis (vismaz pirms norādītā dienu skaita)." data-tip="Tiek atlasīti neiesniegtie pienākumi, kuru termiņš ir pagājis (vismaz pirms norādītā dienu skaita).">i</span></label><input type="number" id="c-late" min="0" max="999" step="1" placeholder="—"></div>
             </div>
-            <div id="c-after-info" class="sel-hint"></div>
           </div>
           <details class="more sel-block"><summary>Papildu atlase pēc pazīmēm</summary>
             <div class="r-filters" id="c-filters"></div></details>
           <div class="sel-result">
-            <h3>Atlases rezultāts</h3>
+            <h3>Atlases rezultāts <span class="tip" tabindex="0" role="note" aria-label="Katrs respondents saņem vienu vēstuli; blokā {pārskatu_tabula} – tikai viņa atlasītie pienākumi (atgādinājumā – neiesniegtie)." data-tip="Katrs respondents saņem vienu vēstuli; blokā {pārskatu_tabula} – tikai viņa atlasītie pienākumi (atgādinājumā – neiesniegtie).">i</span></h3>
+            <span class="err" id="c-resp-err" hidden></span>
             <div class="dvp-note" id="c-dvp"></div>
             <div class="sel-sum" id="c-sel-sum" aria-live="polite"></div>
           <div class="r-tools">
@@ -1557,20 +1556,20 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         </div>
         <div class="step" id="c-step-content" data-wstep="3" hidden>
           <div class="step-title"><span class="step-num">3</span><h2>Saturs</h2></div>
+          <span class="err" id="c-content-err" hidden></span>
           <div id="c-content"></div>
         </div>
         <div class="step" data-wstep="4" hidden>
           <div class="step-title"><span class="step-num">4</span><h2>Paraksts</h2></div>
-          <div class="field"><span class="label">Elektroniskais paraksts <span class="muted">(DVS NAMEJS)</span></span>
+          <div class="field"><span class="label">Elektroniskais paraksts <span class="muted">(DVS NAMEJS)</span><span class="tip" tabindex="0" role="note" aria-label="Ja jāparaksta, vēstules tiek nodotas parakstīšanai (DVS NAMEJS integrācija; prototipā – simulācija ar pogu “Parakstīt”). Citādi tās tiek nosūtītas bez parakstīšanas posma." data-tip="Ja jāparaksta, vēstules tiek nodotas parakstīšanai (DVS NAMEJS integrācija; prototipā – simulācija ar pogu “Parakstīt”). Citādi tās tiek nosūtītas bez parakstīšanas posma.">i</span></span>
             <div class="seg" id="c-esign" role="group" aria-label="Elektroniskais paraksts">
               <button type="button" data-esign="0">Nav jāparaksta</button><button type="button" data-esign="1">Jāparaksta</button></div>
-            <span class="hint" id="c-esign-hint"></span></div>
+</div>
           <div id="c-esign-box" hidden>
             <div class="field"><span class="label">Parakstīšanas veids</span><div class="esign-modes" id="c-esign-mode" role="group" aria-label="Parakstīšanas veids"></div></div>
-            <div class="field"><span class="label">Parakstītāji <span class="req">*</span></span><div class="chk-list" id="c-signers"></div><span class="sel-hint" id="c-signers-hint"></span></div>
+            <div class="field"><span class="label">Parakstītāji <span class="req">*</span><span class="tip" tabindex="0" role="note" aria-label="Secīgai parakstīšanai secība ir atzīmēšanas kārtībā." data-tip="Secīgai parakstīšanai secība ir atzīmēšanas kārtībā.">i</span></span><div class="chk-list" id="c-signers"></div><span class="err" id="c-signers-err" hidden></span></div>
           </div>
-          <h3 class="sub-h">Paraksts vēstulē</h3>
-          <p class="hint">Tiek izmantots laukos <span class="var-chip">{parakstītājs}</span> un <span class="var-chip">{amats}</span>, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu.</p>
+          <h3 class="sub-h">Paraksts vēstulē <span class="tip" tabindex="0" role="note" aria-label="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu." data-tip="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu.">i</span></h3>
           <div class="form-grid">
             <div class="field"><label for="cs-signer">Parakstītājs <span class="muted">{parakstītājs}</span></label><input type="text" id="cs-signer" data-sign="signer"></div>
             <div class="field"><label for="cs-position">Amats <span class="muted">{amats}</span></label><input type="text" id="cs-position" data-sign="position"></div>
@@ -1578,13 +1577,13 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <button type="button" class="link-btn sign-reset" id="c-sign-reset" data-action="c-sign-reset" hidden>Atjaunot noklusējumu</button>
         </div>
         <div class="step" data-wstep="5" hidden>
-          <div class="step-title"><span class="step-num">5</span><h2>Adreses</h2></div>
-          <p class="hint">Katram respondentam vēstule tiek sūtīta uz pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, tiek mēģināta nākamā.</p>
+          <div class="step-title"><span class="step-num">5</span><h2>Adreses</h2><span class="tip" tabindex="0" role="note" aria-label="Katram respondentam vēstule tiek sūtīta uz pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, tiek mēģināta nākamā." data-tip="Katram respondentam vēstule tiek sūtīta uz pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, tiek mēģināta nākamā.">i</span></div>
           <div class="prio-grid" id="c-prio">
             <div class="field"><label for="c-prio-0">1. prioritāte <span class="req">*</span></label><select id="c-prio-0" data-prio="0"></select></div>
             <div class="field"><label for="c-prio-1">2. prioritāte</label><select id="c-prio-1" data-prio="1"></select></div>
             <div class="field"><label for="c-prio-2">3. prioritāte</label><select id="c-prio-2" data-prio="2"></select></div>
           </div>
+          <span class="err" id="c-prio-err" hidden></span>
           <div class="prio-sum" id="c-prio-sum" aria-live="polite"></div>
           <div class="prio-none" id="c-prio-none" hidden></div>
         </div>
@@ -1634,8 +1633,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   <section id="tab-vesture" class="tab-panel" hidden>
     <div class="page-head">
       <div>
-        <h1>Sūtīšanas vēsture</h1>
-        <p>Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts.</p>
+        <h1>Sūtīšanas vēsture <span class="tip" tabindex="0" role="note" aria-label="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts." data-tip="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts.">i</span></h1>
       </div>
       <span class="purge-wrap" id="sent-purge-wrap"><button class="btn btn-danger-ghost" data-action="sent-purge" id="sent-purge-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>Dzēst ierakstus, vecākus par 2 gadiem</button></span>
     </div>
@@ -1662,8 +1660,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   <section id="tab-atskaites" class="tab-panel" hidden>
     <div class="page-head">
       <div>
-        <h1>Atskaites</h1>
-        <p>Apkopota informācija par komunikācijas procesu un tā rezultātiem, ar eksportu (piem., CSV).</p>
+        <h1>Atskaites <span class="tip" tabindex="0" role="note" aria-label="Apkopota informācija par komunikācijas procesu un tā rezultātiem, ar eksportu (piem., CSV)." data-tip="Apkopota informācija par komunikācijas procesu un tā rezultātiem, ar eksportu (piem., CSV).">i</span></h1>
       </div>
     </div>
     <div class="subnav" id="rep-sub" role="group" aria-label="Atskaites"></div>
@@ -2721,6 +2718,8 @@ const compose = {
   index: 0,
   mode: 'one',
   filt: {},
+  // soļi, kuros lietotājs mēģināja turpināt vai saglabāt – tikai tajos rāda kļūdas
+  tried: new Set(),
 };
 // Kampaņas melnraksts – tiek saglabāts pārlūkā, lai darbu var turpināt vēlāk
 const sessionSnapshot = () => ({name:compose.name, aud:compose.aud, kind:compose.kind, remind:compose.remind, sel:clone(compose.sel),
@@ -2736,7 +2735,7 @@ function applySnapshot(d){
     filt: {...(d.filt || {})}, sign: {signer:'', position:'', ...(d.sign || {})}, content: d.content ? clone(d.content) : null, index: 0,
     // agrākiem melnrakstiem: sūtīšanas datums nākotnē = ieplānota
     when: d.when || (d.sel && d.sel.sendDate > todayIso() ? 'plan' : 'now'), sendTime: d.sendTime || '09:00',
-    esign: {...defaultEsign(), ...(d.esign || {})}, custom: clone(d.custom || {}), step: d.step || 1, pvCh: '',
+    esign: {...defaultEsign(), ...(d.esign || {})}, custom: clone(d.custom || {}), step: d.step || 1, pvCh: '', tried: new Set(),
   });
 }
 // Kampaņu melnraksti (agrāk – viens melnraksts state.draft)
@@ -2777,7 +2776,7 @@ function renderDraftInfo(){
 function newSession(full){
   Object.assign(compose, {draftId:'k' + uid(), name:defaultSessionName(), content:null, sign:{signer:'', position:''}, excluded:new Set(), open:new Set(), index:0, noneOpen:false});
   // jaunai kampaņai – noklusējuma veids un atlase; pēc nosūtīšanas saglabājas adresāts, apsekojuma dati un adrešu prioritāte
-  Object.assign(compose, {kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', when:'now', sendTime:'09:00', esign:defaultEsign(), custom:{}, step:1, pvCh:''});
+  Object.assign(compose, {kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', when:'now', sendTime:'09:00', esign:defaultEsign(), custom:{}, step:1, pvCh:'', tried:new Set()});
   if (full) Object.assign(compose, {aud:'fiz', surveyIdx:0, prio:[...DEFAULT_PRIO], filt:{},
     f:{...SURVEYS[0], start:isoDate(addDays(3)), deadline:isoDate(addDays(30)), date:isoDate(new Date())}});
   compose.f.docNr = nextDocNr();
@@ -3021,8 +3020,7 @@ function mailView({toName, toAddr, channel, subjectHtml, bodyHtml, bodyTextHtml,
          <div class="mail-subject">${subjectHtml}</div>
          <div class="mail-body rich">${bodyHtml}</div>${attHtml}
          <div class="mail-foot">${footerHtml}</div>`
-      : `<div class="mail-note">${ICON.info}<span>Prototipā pieņemts, ka e-adreses ziņojumā tiek nosūtīts vienkāršs teksts – formatējums netiek saglabāts.</span></div>
-         <div class="mail-subject">${subjectHtml}</div>
+      : `<div class="mail-subject">${subjectHtml} ${tip('Prototipā pieņemts, ka e-adreses ziņojumā tiek nosūtīts vienkāršs teksts – formatējums netiek saglabāts.')}</div>
          <div class="mail-body mail-plain">${bodyTextHtml}</div>${attHtml}`}
   </article>`;
 }
@@ -3384,12 +3382,12 @@ function createEditor(host, html, {onChange, compact = false, cta = true, cond =
    DIALOGI
    ===================================================================== */
 const modal = $('#modal');
-function openModal({title, content, actions = [], wide = false, full = false, editor = false, back = ''}){
+function openModal({title, content, actions = [], wide = false, full = false, editor = false, back = '', info = ''}){
   if (modal.open) modal.close();
   modal.className = 'modal' + (editor ? ' editor' : full ? ' full' : wide ? ' wide' : '');
   modal.innerHTML = `
     <div class="modal-wrap">
-      <div class="modal-head"><div class="modal-title">${back ? `<button type="button" class="btn btn-ghost btn-sm modal-back" data-close>${esc(back)}</button>` : ''}<h2>${esc(title)}</h2></div>
+      <div class="modal-head"><div class="modal-title">${back ? `<button type="button" class="btn btn-ghost btn-sm modal-back" data-close>${esc(back)}</button>` : ''}<h2>${esc(title)}${info ? tip(info) : ''}</h2></div>
         <button class="icon-btn" data-close aria-label="Aizvērt">${ICON.x}</button></div>
       <div class="modal-body">${content}</div>
       ${actions.length ? `<div class="modal-foot">${actions.map((a, i) =>
@@ -3405,12 +3403,12 @@ function openModal({title, content, actions = [], wide = false, full = false, ed
 }
 // Otrā līmeņa logs (piem., attēla vai pogas iestatījumi virs veidnes redaktora)
 const submodal = $('#submodal');
-function openSubModal({title, content, actions = [], size = ''}){
+function openSubModal({title, content, actions = [], size = '', info = ''}){
   if (submodal.open) submodal.close();
   submodal.className = 'modal' + (size ? ' ' + size : '');
   submodal.innerHTML = `
     <div class="modal-wrap">
-      <div class="modal-head"><h2>${esc(title)}</h2>
+      <div class="modal-head"><h2>${esc(title)}${info ? tip(info) : ''}</h2>
         <button class="icon-btn" data-close aria-label="Aizvērt">${ICON.x}</button></div>
       <div class="modal-body">${content}</div>
       <div class="modal-foot">${actions.map((a, i) => `<button type="button" class="btn ${a.cls || 'btn-secondary'}" data-act="${i}">${a.label}</button>`).join('')}</div>
@@ -3460,15 +3458,13 @@ function openImageDialog(data, onDone){
     <div class="field"><span class="label">Attēla avots</span>
       <div class="seg" id="im-mode" role="group" aria-label="Attēla avots">
         <button type="button" data-mode="file">Augšupielādēt no datora</button><button type="button" data-mode="url">Saite (URL)</button></div></div>
-    <div class="field" id="im-file-box"><label for="im-file">Attēla fails</label>
-      <input type="file" id="im-file" accept=".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/gif">
-      <span class="hint">PNG, JPG vai GIF, ne lielāks par 1 MB. Prototipā attēls tiek saglabāts pārlūkā (kā data URL).</span></div>
+    <div class="field" id="im-file-box"><label for="im-file">Attēla fails ${tip('PNG, JPG vai GIF, ne lielāks par 1 MB. Prototipā attēls tiek saglabāts pārlūkā (kā data URL).')}</label>
+      <input type="file" id="im-file" accept=".png,.jpg,.jpeg,.gif,image/png,image/jpeg,image/gif"></div>
     <div class="field" id="im-url-box"><label for="im-url">Attēla saite</label>
       <input type="text" id="im-url" placeholder="https://…" value="${mode === 'url' ? esc(src) : ''}"></div>
     <span class="err" id="im-src-err" hidden></span>
-    <div class="field" style="margin-top:10px"><label for="im-alt">Alternatīvais teksts <span class="req">*</span></label>
+    <div class="field" style="margin-top:10px"><label for="im-alt">Alternatīvais teksts <span class="req">*</span>${tip('Īss attēla apraksts cilvēkiem, kuri attēlu neredz (ekrāna lasītājs, bloķēti attēli).')}</label>
       <input type="text" id="im-alt" maxlength="200" value="${esc(d.alt)}" placeholder="piem., Aptaujas baneris">
-      <span class="hint">Īss attēla apraksts cilvēkiem, kuri attēlu neredz (ekrāna lasītājs, bloķēti attēli).</span>
       <span class="err" id="im-alt-err" hidden></span></div>
     <div class="form-grid">
       <div class="field"><span class="label">Platums</span>${radios('im-w', IMG_WIDTHS, d.w)}</div>
@@ -3527,8 +3523,7 @@ function openRtabDialog(data, onDone){
     if (!cols.length){ err.hidden = false; err.textContent = 'Izvēlieties vismaz vienu kolonnu.'; return; }
     close(); onDone({cols, rows:$('input[name="rt-rows"]:checked', submodal).value});
   }});
-  openSubModal({title:'Pārskatu tabula', content:`
-    <p class="hint">Sagatavojot vēstuli, tabula tiek izveidota katram respondentam no viņa pienākumiem (Respondentu pārvaldība), kas atlasīti kampaņā. Kavētie termiņi tiek izcelti sarkanā krāsā.</p>
+  openSubModal({title:'Pārskatu tabula', info:'Sagatavojot vēstuli, tabula tiek izveidota katram respondentam no viņa pienākumiem (Respondentu pārvaldība), kas atlasīti kampaņā. Kavētie termiņi tiek izcelti sarkanā krāsā.', content:`
     <div class="field"><span class="label">Kolonnas</span>
       <div class="checks">${Object.entries(RTAB_COLS).map(([k, v]) => `<label><input type="checkbox" id="rt-col-${k}" ${d.cols.includes(k) ? 'checked' : ''}> ${esc(v)}</label>`).join('')}</div>
       <span class="err" id="rt-err" hidden></span></div>
@@ -3557,17 +3552,15 @@ function openButtonDialog(data, onDone){
   openSubModal({title: data ? 'Rediģēt pogu' : 'Ievietot pogu', actions, content:`
     <div class="field"><label for="bt-text">Pogas teksts <span class="req">*</span></label>
       <input type="text" id="bt-text" maxlength="60" value="${esc(d.text)}" placeholder="piem., EDV"><span class="err" id="bt-text-err" hidden></span></div>
-    <div class="field"><div class="label-row"><label for="bt-url">Saite <span class="req">*</span></label>
+    <div class="field"><div class="label-row"><label for="bt-url">Saite <span class="req">*</span>${tip('Saitei jāsākas ar https:// vai tā var būt lauks, piem., {e-anketa}.')}</label>
         <select class="mini" id="bt-field" aria-label="Ievietot lauku saitē"><option value="">+ lauks</option>${fieldOptions()}</select></div>
       <input type="text" id="bt-url" value="${esc(d.url)}" placeholder="https://edv.csp.example vai {e-anketa}">
-      <span class="hint">Saitei jāsākas ar https:// vai tā var būt lauks, piem., {e-anketa}.</span>
       <span class="err" id="bt-url-err" hidden></span></div>
-    <div class="field"><span class="label">Pogas krāsa</span>
+    <div class="field"><span class="label">Pogas krāsa ${tip('Teksta krāsa (balta vai melna) tiek izvēlēta automātiski, lai tas būtu labi salasāms.')}</span>
       <div class="toolbar">
         <div class="swatches" id="bt-swatches">${paletteColors().map(c => `<button type="button" class="swatch" data-hex="${c.hex}" style="background:${c.hex}" title="${esc(c.name)} ${c.hex}" aria-label="${esc(c.name)}" aria-pressed="false"></button>`).join('')}</div>
         <input type="text" class="hex-input" id="bt-hex" maxlength="7" placeholder="#009999" aria-label="Pogas krāsa – HEX kods">
       </div>
-      <span class="hint">Teksta krāsa (balta vai melna) tiek izvēlēta automātiski, lai tas būtu labi salasāms.</span>
       <span class="err" id="bt-hex-err" hidden></span></div>
     <div class="field"><span class="label">Priekšskatījums</span><div class="media-preview" id="bt-preview"></div></div>`});
   function showErr(sel, msg){ const e = $(sel, submodal); e.hidden = !msg; e.textContent = msg; }
@@ -3714,9 +3707,9 @@ function renderTemplates(){
   const tplWord = n => n === 0 ? 'veidņu' : plural(n, 'veidne', 'veidnes');
   $('#tpl-aud').innerHTML = Object.entries(AUDS).map(([k, a]) => {
     const n = state.templates.filter(t => t.aud === k).length;
-    return `<button type="button" class="aud-card" role="tab" id="aud-${k}" aria-selected="${k === ui.tplAud}" aria-controls="tpl-blocks" tabindex="${k === ui.tplAud ? 0 : -1}" data-action="aud" data-aud="${k}">
+    return `<button type="button" class="aud-card" role="tab" id="aud-${k}" aria-selected="${k === ui.tplAud}" aria-controls="tpl-blocks" tabindex="${k === ui.tplAud ? 0 : -1}" data-action="aud" data-aud="${k}"${a.sub ? ` title="${esc(a.sub)}"` : ''}>
       <span class="aud-icon">${ICON[a.icon]}</span>
-      <span class="aud-text"><b>${esc(a.tab)}</b>${a.sub ? `<small>${esc(a.sub)}</small>` : ''}</span>
+      <span class="aud-text"><b>${esc(a.tab)}</b></span>
       <span class="aud-count">${n}<small>${tplWord(n)}</small></span></button>`;
   }).join('');
   $('#tpl-blocks').setAttribute('aria-labelledby', 'aud-' + ui.tplAud);
@@ -3756,6 +3749,14 @@ function blankBody(aud){
     : `<p>Labdien, ${F('vārds')}!</p><p><br></p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`;
 }
 // Mazs padoms ar "i" ikonu (parādās, uzbraucot ar peli vai fokusējot)
+// padoma novietojums pie ekrāna malām
+['mouseover', 'focusin'].forEach(ev => document.addEventListener(ev, e => {
+  const t = e.target.closest && e.target.closest('.tip');
+  if (!t) return;
+  const r = t.getBoundingClientRect(), w = Math.min(280, innerWidth - 24) / 2 + 8;
+  t.classList.toggle('tip-l', r.left + r.width / 2 < w);
+  t.classList.toggle('tip-r', r.left + r.width / 2 > innerWidth - w);
+}));
 const tip = (text, id = '') => `<span class="tip" tabindex="0" role="note" aria-label="${esc(text)}" data-tip="${esc(text)}"${id ? ` id="${id}"` : ''}>i</span>`;
 const sameText = (a, b) => htmlToText(a || '').replace(/\s+/g, ' ').trim() === htmlToText(b || '').replace(/\s+/g, ' ').trim();
 // Sagataves izvēlētajam adresātam – no sadaļas "Sagataves" (e-pasta satura šabloni)
@@ -3785,7 +3786,7 @@ function subConfirm({title, message, okLabel = 'Turpināt'}){
 }
 // Izvēle starp diviem (vai vairākiem) avotiem – lielas kartītes
 function openSourceChoice({title, intro = '', opts, links = [], onPick}){
-  openSubModal({title, size:'mid', content:`${intro ? `<p class="hint">${intro}</p>` : ''}
+  openSubModal({title, size:'mid', info:intro, content:`
     <div class="start-opts">${opts.map(o => `<button type="button" class="start-opt" data-src-opt="${o.key}">${o.icon}<b>${esc(o.label)}</b><small>${esc(o.desc)}</small></button>`).join('')}</div>
     ${links.map(l => `<button type="button" class="link-btn" data-src-opt="${l.key}">${esc(l.label)}</button>`).join('')}`,
     actions:[{label:'Atcelt', cls:'btn-secondary'}]});
@@ -3802,7 +3803,7 @@ function pickFile(onFile, host = modal){
 // E-pasta satura sagatavju logs (sagrupēts pēc kategorijas, filtrēts pēc adresāta)
 function openMailSamples(aud, onPick){
   const list = mailSamples(aud);
-  openSubModal({title:'No sagataves', size:'mid', content:`<p class="hint">E-pasta satura šabloni no sadaļas “Veidnes › Sagataves”. Adresāts: <b>${esc(attAudLabel(aud))}</b>. Izvēlētās sagataves teksts un formatējums tiks ielādēts redaktorā, un to varēsiet brīvi labot.</p>
+  openSubModal({title:'No sagataves', size:'mid', info:`E-pasta satura šabloni no sadaļas “Veidnes › Sagataves” (adresāts: ${attAudLabel(aud)}). Izvēlētās sagataves teksts un formatējums tiks ielādēts redaktorā, un to varēsiet brīvi labot.`, content:`
     ${CATS.map(c => {
       const items = list.filter(s => s.cat === c.key);
       return `<section class="ms-group"><h3>${esc(c.label)} <span class="pill pill-cat">${items.length}</span></h3>
@@ -3848,7 +3849,7 @@ function openTemplateEditor(id, preset = {}){
   let started = base ? true : presetSample ? 'sample' : false;
   // šablons, no kura veidne izveidota (sagatavju izmantošanas informācijai)
   let fromSample = presetSample ? presetSample.id : (base && base.fromSample) || '';
-  let startNote = presetSample ? `Ielādēta sagatave “${presetSample.name}”. Tekstu un formatējumu var brīvi labot.` : '';
+  let startNote = presetSample ? `Sagatave: ${presetSample.name}` : '';
   // galvenā vēstule: null – nav izvēlēta; 'gen' – ģenerēts dokuments ar laukiem; {lib, name, size} – fails no bibliotēkas
   let main = t.kind === 'pielikums' ? (t.main && t.main.lib ? {...t.main} : 'gen') : null;
   let pv = main === 'gen' ? 'doc' : 'epasts';
@@ -4002,7 +4003,7 @@ function openTemplateEditor(id, preset = {}){
   // Kampaņas saturs (veidne netiek mainīta)
   const sessionRec = () => clone({...current(), name: baseTpl ? baseTpl.name : t.name || ''});
   function saveAsTemplate(closeEditor){
-    openSubModal({title:'Saglabāt arī kā veidni', content:`<p class="hint">Saturs tiks saglabāts kā jauna veidne, un kampaņa turpinās to izmantot. Adresāts: <b>${esc(AUDS[aud()].group)}</b> (no kampaņas).</p>
+    openSubModal({title:'Saglabāt arī kā veidni', info:`Saturs tiks saglabāts kā jauna veidne (adresāts: ${AUDS[aud()].group}), un kampaņa turpinās to izmantot.`, content:`
       <div class="field"><label for="sv-name">Veidnes nosaukums <span class="req">*</span></label><input type="text" id="sv-name" maxlength="120"><span class="err" id="sv-name-err" hidden></span></div>
       <div class="field"><label for="sv-cat">Kategorija</label><select id="sv-cat">${CATS.map(c => `<option value="${c.key}" ${$('#te-cat').value === c.key ? 'selected' : ''}>${esc(c.one)}</option>`).join('')}</select></div>`,
       actions:[{label:'Atcelt', cls:'btn-secondary'}, {label:'Saglabāt veidni', cls:'btn-primary', onClick: closeSub => {
@@ -4240,7 +4241,7 @@ function openTemplateEditor(id, preset = {}){
       started = 'blank'; startNote = '';
       setBody(blankBody(aud())); syncKind(); bodyEd.area.focus();
     } else openMailSamples(aud(), s => {
-      started = 'sample'; fromSample = s.id; startNote = `Ielādēta sagatave “${s.name}”. Tekstu un formatējumu var brīvi labot.`;
+      started = 'sample'; fromSample = s.id; startNote = `Sagatave: ${s.name}`;
       setBody(s.body);
       if (!subj.value.trim()){ subj.value = s.subject; collect(); }
       syncKind();
@@ -4359,8 +4360,7 @@ function openLibPicker({title, onlySag = false, aud = '', back, onPick, intro = 
   if (back) actions.push({label:'← Atpakaļ', cls:'btn-ghost left', onClick: () => back()});
   actions.push({label:'Atcelt', cls:'btn-secondary'});
   actions.push({label:'Izvēlēties', cls:'btn-primary', onClick: close => { const a = attById(sel); if (!a) return; close(); onPick(a); }});
-  openSubModal({title, size:'wide', content:`
-    ${intro ? `<p class="hint">${esc(intro)}</p>` : ''}
+  openSubModal({title, size:'wide', info:intro, content:`
     <div class="lp-filters">
       <label class="search"><span class="sr-only">Meklēt dokumentus</span>
         <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -4530,7 +4530,7 @@ function renderSagataves(){
       ${CATS.map(c => { const items = inA.filter(x => x.cat === c.key); return items.length ? `<h3 class="sag-cat-h">${esc(c.label)} <span class="count">${items.length}</span></h3>
         <div class="att-grid">${items.map(att ? attCard : msCard).join('')}</div>` : ''; }).join('')}</section>`;
   }).join('');
-  $('#sag-body').innerHTML = groups || `<div class="empty">${ICON.file}<h3>Nav atrasta neviena sagatave</h3><p>Mainiet meklēšanas nosacījumus vai pievienojiet jaunu sagatavi.</p></div>`;
+  $('#sag-body').innerHTML = groups || `<div class="empty">${ICON.file}<h3>Nav atrasta neviena sagatave</h3></div>`;
 }
 const renderAttachments = renderSagataves;
 // E-pasta satura šablona pievienošana un rediģēšana
@@ -4548,7 +4548,7 @@ function openMailSampleForm(id){
       <div class="field full"><span class="label">E-pasta saturs <span class="req">*</span></span><div id="ms-body"></div><span class="err" id="ms-body-err" hidden></span></div>
       ${ex && (ex.versions || []).length ? `<div class="field full"><span class="label">Iepriekšējās versijas</span><ul class="ver-list">${ex.versions.map((v, i) =>
         `<li>Versija ${ex.versions.length - i} · ${esc(v.subject)} · aizstāta ${esc(fmtDateTime(v.replaced))}${v.by ? `, ${esc(v.by)}` : ''} <button type="button" class="link-btn" data-msver="${i}">Ielādēt redaktorā</button></li>`).join('')}</ul></div>` : ''}
-      ${ex ? `<div class="field full"><span class="hint">${tplsFromSample(ex.id).length ? `Izmantots veidnēs: ${tplsFromSample(ex.id).map(t => esc(t.name)).join(', ')}. Šablona labojumi esošās veidnes nemaina.` : 'Šablons vēl nav izmantots nevienā veidnē.'}</span></div>` : ''}
+      ${ex ? `<div class="field full"><span class="hint">${tplsFromSample(ex.id).length ? `Izmantots veidnēs: ${tplsFromSample(ex.id).map(t => esc(t.name)).join(', ')}${tip('Šablona labojumi esošās veidnes nemaina.')}` : 'Vēl nav izmantots nevienā veidnē'}</span></div>` : ''}
     </div>`,
     actions:[
       {label:'Atcelt', cls:'btn-secondary'},
@@ -4594,9 +4594,9 @@ function openAttForm(id){
   openModal({
     title: existing ? 'Rediģēt pielikuma sagatavi' : 'Pievienot pielikuma sagatavi',
     content:`<div class="form-grid">
-      <div class="field full"><label for="af-file">Fails${existing ? '' : ' <span class="req">*</span>'}</label>
+      <div class="field full"><label for="af-file">Fails${existing ? '' : ' <span class="req">*</span>'}${tip(`PDF vai DOCX, ne lielāks par 1 MB. Prototipā fails tiek saglabāts pārlūkā.${existing ? ' Izvēlieties jaunu failu, ja vēlaties aizstāt pašreizējo.' : ''}`)}</label>
         <input type="file" id="af-file" accept="${ATT_ACCEPT}">
-        <span class="hint">${existing ? `Pašreizējais fails: <b>${esc(a.fileName)}</b> (${fmtSize(a.size)}). Izvēlieties jaunu, ja to vēlaties aizstāt. ` : ''}PDF vai DOCX, ne lielāks par 1 MB. Prototipā fails tiek saglabāts pārlūkā.</span>
+        ${existing ? `<span class="hint">Pašreizējais fails: <b>${esc(a.fileName)}</b> (${fmtSize(a.size)})</span>` : ''}
         <span class="err" id="af-file-err" hidden></span></div>
       ${existing && (existing.versions || []).length ? `<div class="field full"><span class="label">Iepriekšējās versijas</span><ul class="ver-list">${existing.versions.map((v, i) =>
         `<li>${esc(v.fileName)} · ${fmtSize(v.size)} · aizstāta ${fmtDateTime(v.replaced)} <button type="button" class="link-btn" data-ver="${i}">Atvērt</button></li>`).join('')}</ul></div>` : ''}
@@ -4664,9 +4664,8 @@ function openAttToTemplate(id){
   }).join('');
   openModal({
     title:'Pievienot veidnei',
-    content:`<p>Pielikums <b>${esc(a.name)}</b> tiks pievienots veidnei kā papildu pielikums un būs redzams katrā vēstulē.</p>
-      <div class="field"><label for="at-tpl">Veidne</label><select id="at-tpl">${groups}</select>
-      <span class="hint">Veidnes, kurām šis pielikums jau ir pievienots, nav izvēlamas.</span></div>`,
+    content:`<p>Pielikums: <b>${esc(a.name)}</b></p>
+      <div class="field"><label for="at-tpl">Veidne ${tip('Pielikums tiks pievienots veidnei kā papildu pielikums un būs redzams katrā vēstulē. Veidnes, kurām tas jau ir pievienots, nav izvēlamas.')}</label><select id="at-tpl">${groups}</select></div>`,
     actions:[
       {label:'Atcelt', cls:'btn-secondary'},
       {label:'Pievienot', cls:'btn-primary', onClick: close => {
@@ -4703,8 +4702,8 @@ function openLayoutEditor(){
   let lang = 'lv', confEd, infoEd;
   const LV_KEYS = ['org', 'address', 'city', 'docPrefix', 'signer', 'position', 'closing', 'phone', 'esign', 'emailFooter', 'confTitle', 'infoTitle'];
   const val = k => lang === 'lv' ? (work[k] || '') : ((work.tr[lang] || {})[k] || '');
-  const inp = (key, label, hint = '', full = false) => `<div class="field ${full ? 'full' : ''}"><label for="ly-${key}">${label}</label>
-    <input type="text" id="ly-${key}" value="${esc(val(key))}" placeholder="${lang === 'lv' ? '' : esc(work[key] || '')}">${hint ? `<span class="hint">${hint}</span>` : ''}</div>`;
+  const inp = (key, label, hint = '', full = false) => `<div class="field ${full ? 'full' : ''}"><label for="ly-${key}">${label}${hint ? tip(hint.replace(/<[^>]+>/g, '')) : ''}</label>
+    <input type="text" id="ly-${key}" value="${esc(val(key))}" placeholder="${lang === 'lv' ? '' : esc(work[key] || '')}"></div>`;
   const form = () => lang === 'lv' ? `
     <fieldset class="box"><legend>Veidlapas galva</legend><div class="form-grid">
       ${inp('org', 'Iestādes nosaukums')}
@@ -4720,7 +4719,6 @@ function openLayoutEditor(){
       ${inp('esign', 'E-paraksta atzīme', '', true)}
       ${inp('emailFooter', 'E-pasta kājene', 'Redzama formatētā e-pasta apakšā. Var lietot laukus.', true)}
     </div></fieldset>` : `
-    <div class="alert alert-info" style="margin:0 0 14px">${ICON.info}<span>${esc(LANGS[lang].label)} tulkojums. Ja lauks ir tukšs, tiek lietots latviešu teksts (tas redzams pelēkā krāsā laukā). Rekvizīti, parakstītājs un tālrunis ir kopīgi visām valodām.</span></div>
     <fieldset class="box"><legend>Veidlapas galva un paraksts</legend><div class="form-grid">
       ${inp('org', 'Iestādes nosaukums')}
       ${inp('city', 'Vieta')}
@@ -4729,9 +4727,8 @@ function openLayoutEditor(){
       ${inp('esign', 'E-paraksta atzīme', '', true)}
       ${inp('emailFooter', 'E-pasta kājene', '', true)}
     </div></fieldset>`;
-  openModal({title:'Pastāvīgās daļas', wide:true, content:`
-    <p class="hint" style="margin-bottom:10px">Šīs daļas parasti saglabājas visās vēstulēs. Izmaiņas attiecas uz visām veidnēm.</p>
-    <div class="lang-row" style="margin-bottom:14px"><span class="label">Valoda</span>
+  openModal({title:'Pastāvīgās daļas', wide:true, info:'Šīs daļas parasti saglabājas visās vēstulēs. Izmaiņas attiecas uz visām veidnēm.', content:`
+    <div class="lang-row" style="margin-bottom:14px"><span class="label">Valoda ${tip('Tulkojumā tukšam laukam tiek lietots latviešu teksts (tas redzams pelēkā krāsā laukā). Rekvizīti, parakstītājs un tālrunis ir kopīgi visām valodām.')}</span>
       <div class="seg" id="ly-lang" role="group" aria-label="Valoda">${LANG_KEYS.map(l => `<button type="button" data-lang="${l}">${LANGS[l].short}</button>`).join('')}</div></div>
     <div id="ly-form"></div>
     <div class="form-grid">
@@ -4911,7 +4908,7 @@ let contentNote = '';
 function renderContent(){
   const c = compose.content;
   if (c && c.source === 'tpl' && !currentTemplate()){
-    compose.content = null; contentNote = 'Iepriekš izvēlētā veidne vairs nav pieejama – izvēlieties saturu no jauna.';
+    compose.content = null; contentNote = 'Iepriekš izvēlētā veidne vairs nav pieejama.';
   }
   const t = currentTemplate(), box = $('#c-content');
   if (!t){
@@ -4924,9 +4921,9 @@ function renderContent(){
   const b = baseTemplate();
   box.innerHTML = `<div class="content-sum">
     <h3 class="cs-src">${c.source === 'custom' ? ICON.edit : ICON.file}${c.source === 'tpl' ? `Veidne: ${esc(t.name)}` : esc(CONTENT_SRC[c.source])}</h3>
-    ${c.source === 'tplmod' && b ? `<div class="cs-subj">Pamatā: <b>${esc(b.name)}</b> · izmaiņas attiecas tikai uz šo kampaņu, veidne netiek mainīta.</div>` : ''}
+    ${c.source === 'tplmod' && b ? `<div class="cs-subj">Pamatā: <b>${esc(b.name)}</b>${tip('Izmaiņas attiecas tikai uz šo kampaņu, veidne netiek mainīta.')}</div>` : ''}
     <div class="cs-subj">Temats: ${esc(t.subject || '—')}</div>
-    ${!SESS_KINDS[compose.kind].cats.includes(t.cat) ? `<p class="content-note" style="margin:6px 0 0">Satura kategorija – “${esc((CAT_BY_KEY[t.cat] || {}).one || t.cat)}”, bet kampaņas veids – “${esc(SESS_KINDS[compose.kind].label)}”.</p>` : ''}
+    ${!SESS_KINDS[compose.kind].cats.includes(t.cat) ? `<p class="content-note" style="margin:6px 0 0">${ICON.warn} Kategorija “${esc((CAT_BY_KEY[t.cat] || {}).one || t.cat)}” ≠ kampaņas veids “${esc(SESS_KINDS[compose.kind].label)}”</p>` : ''}
     <div class="tpl-info" id="c-tpl-info"></div>
     <div class="cs-actions">
       <button type="button" class="btn btn-secondary btn-sm" data-action="c-edit-content">${ICON.edit}Labot saturu</button>
@@ -4951,7 +4948,7 @@ function openTemplatePicker(){
   let sel = compose.content && compose.content.templateId || '', q = '';
   const cats = SESS_KINDS[compose.kind].cats;
   const list = () => state.templates.filter(t => t.aud === compose.aud && cats.includes(t.cat));
-  const m = openModal({title:'Izmantot veidni', full:true, back:'← Atpakaļ uz kampaņu', content:`<p class="hint">Kampaņas adresāts: <b>${esc(AUDS[compose.aud].group)}</b> · kampaņas veids: <b>${esc(SESS_KINDS[compose.kind].label)}</b>. Tiek rādītas tikai atbilstošās veidnes (${esc(cats.map(c => CAT_BY_KEY[c].label).join(', '))}).</p>
+  const m = openModal({title:'Izmantot veidni', full:true, back:'← Atpakaļ uz kampaņu', info:`Tiek rādītas tikai kampaņas adresātam (${AUDS[compose.aud].group}) un veidam (${SESS_KINDS[compose.kind].label}) atbilstošās veidnes: ${cats.map(c => CAT_BY_KEY[c].label).join(', ')}.`, content:`
     <div class="tp-grid">
       <div class="tp-list">
         <label class="search"><span class="sr-only">Meklēt veidnes</span>
@@ -5123,37 +5120,27 @@ function renderScope(){
   syncPerRows();
   $('#c-per-box').hidden = !sel.freqs.length;
   renderPerRows();
-  $('#c-periods-hint').textContent = !sel.freqs.length ? 'Izvēlieties vienu vai vairākus periodiskumus.'
-    : !sel.periods.length ? 'Tiks atlasīti visi izvēlētā periodiskuma aktīvie periodi.'
-    : (fr => fr.length ? `Periodiskumam bez norādīta perioda (${fr.map(k => FREQS[k]).join(', ')}) tiks atlasīti visi aktīvie periodi.` : '')(sel.freqs.filter(f => !sel.periods.some(k => freqOfPeriod(k) === f)));
+
   // b) Pēc apsekojuma
-  $('#c-rep-tags').innerHTML = sel.reports.map(id => { const p = repById(id);
-    return `<span class="ms-tag"><span title="${esc(p.name)}">${esc(p.name)} <small>${esc(FREQS[p.freq])}</small></span><button type="button" data-rep-rm="${p.id}" aria-label="Noņemt: ${esc(p.name)}">×</button></span>`; }).join('');
+  // apsekojums, kas neatbilst izvēlētajam periodiskumam, netiek atlasīts – birka atzīmēta ar ⚠
+  $('#c-rep-tags').innerHTML = sel.reports.map(id => { const p = repById(id), off = sel.freqs.length && !sel.freqs.includes(p.freq), t = off ? `${p.name} – neatbilst izvēlētajam periodiskumam, netiek atlasīts` : p.name;
+    return `<span class="ms-tag${off ? ' is-off' : ''}"><span title="${esc(t)}">${off ? ICON.warn : ''}${esc(p.name)} <small>${esc(FREQS[p.freq])}</small></span><button type="button" data-rep-rm="${p.id}" aria-label="Noņemt: ${esc(p.name)}">×</button></span>`; }).join('');
   if (!$('#c-rep-list').hidden) renderRepList();
-  const off = sel.freqs.length ? sel.reports.map(repById).filter(p => !sel.freqs.includes(p.freq)) : [];
-  $('#c-reports-hint').innerHTML = off.length ? `<span class="warn-txt">${ICON.warn} Neatbilst izvēlētajam periodiskumam: ${esc(off.map(p => `${p.name} (${FREQS[p.freq]})`).join(', '))} – netiek atlasīts.</span>`
-    : sel.reports.length ? `Izvēlēti: ${sel.reports.length}` : 'Var izvēlēties vienu vai vairākus apsekojumus.';
+
   $('#c-sc-per').parentElement.classList.toggle('is-on', sel.freqs.length > 0);
   $('#c-sc-rep').parentElement.classList.toggle('is-on', sel.reports.length > 0);
   // dzīvs kopsavilkums
   const box = $('#c-scope-sum');
-  if (!hasScope(sel)){
-    box.className = 'scope-sum is-empty';
-    box.innerHTML = `${ICON.info} Izvēlieties periodiskumu vai apsekojumu – jābūt aizpildītai vismaz vienai izvēlei.`;
-  } else {
+  box.hidden = !hasScope(sel);
+  if (hasScope(sel)){
     const rs = state.respondents.filter(matchesFilt), ds = rs.flatMap(r => selDutiesOf(r)), np = new Set(ds.map(d => d.reportId + '|' + d.period)).size;
     box.className = 'scope-sum' + (rs.length ? '' : ' is-warn');
-    box.innerHTML = rs.length ? `Atlasīti <b>${rs.length}</b> ${plural(rs.length, 'respondents', 'respondenti')}, <b>${np}</b> ${np === 1 ? 'pārskats/periods' : 'pārskati/periodi'}${isReminder() ? ' <span class="muted">(atgādinājumam – tikai neiesniegtie pienākumi)</span>' : ''}`
-      : `${ICON.warn} Atlasīti <b>0</b> respondenti – ${sel.freqs.length && sel.reports.length ? 'izvēlētie apsekojumi neatbilst izvēlētajam periodiskumam vai periodiem' : 'izvēlētajiem kritērijiem nav aktīvu pienākumu'}.`;
+    box.innerHTML = `${rs.length ? '' : ICON.warn}Atlasīti <b>${rs.length}</b> ${plural(rs.length, 'respondents', 'respondenti')}, <b>${np}</b> ${np === 1 ? 'pārskats/periods' : 'pārskati/periodi'}`;
   }
   // vēstules dati: {apsekojums} – ja atlase attiecas uz vienu apsekojumu
   const sr = sel.reports.length ? sel.reports.map(repById) : scopeReports(), one = sr.length === 1 ? sr[0] : null;
   if (one && compose.f.surveyFor !== one.id){ Object.assign(compose.f, letterDataOf(one), {surveyFor:one.id}); $$('[data-f]').forEach(inp => inp.value = compose.f[inp.dataset.f] || ''); }
   $('#c-survey-box').hidden = !one;
-  $('#c-survey-multi').hidden = !!one;
-  $('#c-survey-multi').innerHTML = sr.length > 1 ? `Atlase attiecas uz vairākiem apsekojumiem (${sr.length}), tāpēc lauks “Nosaukums vēstulē” nav pieejams. Apsekojumu nosaukumi vēstulē tiek ņemti no bloka <span class="var-chip">{pārskatu_tabula}</span>; mainīgais <span class="var-chip">{apsekojums}</span> tiek aizstāts ar respondenta apsekojumu nosaukumiem.`
-    : 'Lauks “Nosaukums vēstulē” <span class="var-chip">{apsekojums}</span> tiek aizpildīts, kad atlase attiecas uz vienu apsekojumu.';
-  $('#c-deadline-info').innerHTML = `${ICON.info} <span><span class="var-chip">{termiņš}</span> un <span class="var-chip">{sākums}</span> tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi).</span>`;
   // 2. solī – kritēriju kopsavilkums
   $('#c-scope-recap').innerHTML = `<span><b>Kampaņas tvērums (1. solis):</b></span>
     <span>Periodiskums: <b>${sel.freqs.length ? esc(sel.freqs.map(k => FREQS[k]).join(', ')) : '—'}</b></span>
@@ -5170,16 +5157,14 @@ function renderFilters(){
   // atgādinājums
   $('#c-before-box').hidden = !(reminder && compose.remind === 'before');
   $('#c-after-box').hidden = !(reminder && compose.remind === 'after');
-  $('#c-send-info').innerHTML = compose.when === 'plan' ? `<b>${esc(whenLabel())}</b> (ieplānota, 1. solis)` : `<b>${esc(fmtDate(todayIso()))}</b> – tūlītēja nosūtīšana (1. solis)`;
-  $('#c-kind-info').innerHTML = `Komunikācijas veids: <b>${esc(SESS_KINDS[compose.kind].label)}</b> (1. solis). ${isReminder() ? 'Atgādinājumam tiek atlasīti tikai neiesniegtie pienākumi.' : 'Tiek atlasīti visi respondenti ar pienākumu atlasītajos pārskatos un periodos.'}${hasScope() ? '' : ' <b>1. solī nav izvēlēts ne periods, ne apsekojums.</b>'}`;
+  $('#c-send-info').innerHTML = compose.when === 'plan' ? `<b>${esc(whenLabel())}</b> <span class="pill st-plan">Ieplānota</span>` : `<b>${esc(fmtDate(todayIso()))}</b>`;
   $('#c-days').value = sel.days;
   $('#c-late').value = sel.lateDays;
   renderTargetInfo();
   $('#c-filters').innerHTML = ATTRS.map(a => `<select data-filt="${a.key}" aria-label="Atlase: ${esc(a.label)}">
     <option value="">${esc(a.label)}: visi</option>${Object.entries(a.values).map(([k, v]) =>
       `<option value="${k}" ${compose.filt[a.key] === k ? 'selected' : ''}>${esc(a.cond === false ? `${v.label} (${v.short})` : v.short)}</option>`).join('')}</select>`).join('');
-  $('#c-dvp').innerHTML = `<span class="pill pill-src">Dati no Datu vākšanas pārraudzības</span>
-    <span>Iesniegšanas statusi (tikai lasāmi; prototipā – testa dati) · atjaunoti ${esc(fmtDateTime(state.statusSyncedAt || new Date().toISOString()))}</span>
+  $('#c-dvp').innerHTML = `<span>Statusi atjaunoti ${esc(fmtDateTime(state.statusSyncedAt || new Date().toISOString()))}${tip('Iesniegšanas statusi ir dati no Datu vākšanas pārraudzības (tikai lasāmi; prototipā – testa dati).')}</span>
     <button type="button" class="btn btn-ghost btn-sm" data-action="c-status-sync"><svg class="icon" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16M20 20v-4h-4"/></svg>Atjaunot statusus</button>`;
 }
 // Pirmstermiņa atgādinājums: aprēķinātais termiņš un tam atbilstošie pārskati un periodi
@@ -5187,7 +5172,6 @@ function renderTargetInfo(){
   if (!isReminder()) return;
   if (compose.remind === 'after'){
     const n = parseInt(compose.sel.lateDays, 10) || 0;
-    $('#c-after-info').textContent = `Tiek atlasīti neiesniegtie pienākumi, kuru termiņš ir pagājis${n ? ` vismaz pirms ${n} ${plural(n, 'dienas', 'dienām')} (termiņš līdz ${fmtDate(lateLimit())})` : ` (termiņš līdz ${fmtDate(isoDate(addDays(-1)))})`}`;
     return;
   }
   const t = remindTarget(), n = Math.max(0, parseInt(compose.sel.days, 10) || 0);
@@ -5197,11 +5181,10 @@ function renderTargetInfo(){
     g.all++; if (!d.submitted) g.open++;
   });
   const gs = Object.values(groups), open = gs.reduce((a, g) => a + g.open, 0);
-  $('#c-target').innerHTML = `<div class="target-box"><b>Termiņš ${esc(fmtDate(t))}</b> <span class="muted">(sūtīšanas datums + ${n} ${plural(n, 'diena', 'dienas')})</span>
+  $('#c-target').innerHTML = `<div class="target-box"><b>Termiņš ${esc(fmtDate(t))}</b>
     ${gs.length ? `<ul>${gs.map(g => `<li>Termiņš ${esc(fmtDate(t))}: <b>${esc(g.p.name)}</b>, ${esc(periodLabel(g.period))} <span class="muted">– neiesniegti ${g.open} no ${g.all}</span></li>`).join('')}</ul>
-      ${!open ? '<div class="alert alert-info">' + ICON.info + '<span>Visi pārskati ar šo termiņu jau ir iesniegti – atgādinājums nav jāsūta.</span></div>' : ''}`
-      : `<div class="alert alert-warn">${ICON.warn}<span>Šajā datumā nav pārskatu ar termiņu pēc ${n} ${plural(n, 'dienas', 'dienām')}.</span></div>`}
-    ${isPlanned() ? `<div class="plan-note">${ICON.calendar}<span><span class="pill st-plan">Ieplānota</span> Izpildes brīdī (${esc(whenLabel())}) atlase tiks pārrēķināta pēc aktuālajiem iesniegšanas statusiem.</span></div>` : ''}</div>`;
+      ${!open ? '<div class="alert alert-info">' + ICON.info + '<span>Visi jau iesniegti.</span></div>' : ''}`
+      : `<div class="alert alert-warn">${ICON.warn}<span>Nav pārskatu ar šo termiņu.</span></div>`}</div>`;
 }
 // Atlases kopsavilkums
 function renderSelSummary(){
@@ -5210,7 +5193,7 @@ function renderSelSummary(){
   ds.forEach(d => { by[d.reportId] = (by[d.reportId] || 0) + 1; });
   $('#c-sel-sum').innerHTML = `Atlasīti <b>${sel.length}</b> ${plural(sel.length, 'respondents', 'respondenti')} · <b>${ds.length}</b> ${plural(ds.length, 'pienākums', 'pienākumi')}${isReminder() ? ' (neiesniegti)' : ''}
     ${Object.keys(by).length ? `<div class="pills">${Object.entries(by).map(([id, c]) => `<span class="pill pill-cat">${esc((repById(id) || {}).name || id)} – ${c}</span>`).join('')}</div>` : ''}
-    <span class="sel-hint">Katrs respondents saņem vienu vēstuli; blokā <span class="var-chip">{pārskatu_tabula}</span> – tikai viņa atlasītie${isReminder() ? ' (neiesniegtie)' : ''} pienākumi.</span>`;
+`;
 }
 function renderCompose(){
   renderBasics();
@@ -5239,20 +5222,42 @@ function stepIssues(n){
     default: return [];
   }
 }
+// Kļūdas pie konkrētajiem laukiem – tikai pēc mēģinājuma pāriet uz nākamo soli, saglabāt vai nosūtīt
+function stepFieldErrors(){
+  return {
+    '#c-name-err': [1, compose.name.trim() ? '' : 'Norādiet nosaukumu.'],
+    '#c-scope-err': [1, hasScope() ? '' : 'Norādiet periodu vai apsekojumu.'],
+    '#c-when-err': [1, compose.when === 'plan' ? planError() : ''],
+    '#c-resp-err': [2, selectedResp().length ? '' : 'Nav atlasīts neviens respondents.'],
+    '#c-content-err': [3, currentTemplate() ? '' : 'Izvēlieties saturu.'],
+    '#c-signers-err': [4, compose.esign.required && !compose.esign.signers.length ? 'Norādiet vismaz vienu parakstītāju.' : ''],
+    '#c-prio-err': [5, recipients().length || !selectedResp().length ? '' : 'Nevienam atlasītajam respondentam nav derīgas adreses.'],
+  };
+}
+function renderStepErrors(){
+  Object.entries(stepFieldErrors()).forEach(([sel, [n, msg]]) => {
+    const el = $(sel); if (!el) return;
+    const m = compose.tried.has(n) ? msg : '';
+    el.hidden = !m; el.textContent = m;
+  });
+  $('#c-name').setAttribute('aria-invalid', String(compose.tried.has(1) && !compose.name.trim()));
+}
+// atzīmē soli kā "mēģināts" (Tālāk, pāreja uz vēlāku soli, Saglabāt melnrakstu)
+const markTried = n => { compose.tried.add(n); };
 function renderWizard(){
   const cur = compose.step;
   $('#wiz').dataset.step = cur;
   $$('#wiz [data-wstep]').forEach(el => { el.hidden = +el.dataset.wstep !== cur; });
   $('#wiz-steps').innerHTML = WIZ_STEPS.map((l, i) => {
-    const n = i + 1, iss = n < 6 ? stepIssues(n) : [], st = n < cur ? (iss.length ? 'is-warn' : 'is-done') : '';
-    return `<li><button type="button" class="wiz-step ${st}" data-action="wiz-go" data-id="${n}" ${n === cur ? 'aria-current="step"' : ''} title="${esc(iss.join(' '))}">
+    const n = i + 1, iss = n < 6 ? stepIssues(n) : [], st = n < cur ? (iss.length ? (compose.tried.has(n) ? 'is-warn' : '') : 'is-done') : '';
+    return `<li><button type="button" class="wiz-step ${st}" data-action="wiz-go" data-id="${n}" ${n === cur ? 'aria-current="step"' : ''} title="${st === 'is-warn' ? esc(iss.join(' ')) : ''}">
       <span class="n">${st === 'is-done' ? ICON.check : st === 'is-warn' ? '!' : n}</span><span class="t">${esc(l)}</span></button></li>`;
   }).join('');
   $('#wiz-prev').disabled = cur <= 1;
   $('#wiz-next').hidden = cur >= 6;
   if (cur < 6) $('#wiz-next').textContent = `Tālāk: ${WIZ_STEPS[cur]} →`;
-  const iss = cur < 6 ? stepIssues(cur) : [];
-  $('#wiz-issues').textContent = iss.join(' ');
+  $('#wiz-issues').textContent = '';
+  renderStepErrors();
   if (cur === 6) renderFinalSummary();
 }
 function setStep(n){
@@ -5313,7 +5318,7 @@ function renderBasics(){
   // laika ieteikumi ik pēc 30 min (šodienai – tikai nākotnes laiki)
   const today = compose.sel.sendDate === todayIso(), nowHm = hmNow();
   $('#c-plan-times').innerHTML = Array.from({length:48}, (_, i) => `${pad(Math.floor(i / 2))}:${i % 2 ? '30' : '00'}`).filter(t => !today || t > nowHm).map(t => `<option value="${t}"></option>`).join('');
-  const msg = compose.when === 'plan' ? planError() : '';
+  const msg = compose.when === 'plan' && compose.tried.has(1) ? planError() : '';
   $('#c-when-err').hidden = !msg; $('#c-when-err').textContent = msg;
   ['date', 'time'].forEach(k => $(`#c-plan-${k}`).setAttribute('aria-invalid', String(!!msg && msg.toLowerCase().includes(k === 'date' ? 'datum' : 'laik'))));
 }
@@ -5322,11 +5327,9 @@ function renderEsign(){
   const es = compose.esign;
   $$('#c-esign button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.esign === +es.required)));
   $('#c-esign-box').hidden = !es.required;
-  $('#c-esign-hint').textContent = es.required ? 'Vēstules tiks nodotas parakstīšanai (DVS NAMEJS integrācija; prototipā – simulācija ar pogu “Parakstīt”).' : 'Vēstules tiks nosūtītas bez parakstīšanas posma.';
   $('#c-esign-mode').innerHTML = Object.entries(ESIGN_MODES).map(([k, m]) => `<button type="button" class="esign-mode" data-emode="${k}" aria-pressed="${es.mode === k}"><b>${esc(m.label)}</b><small>${esc(m.desc)}</small></button>`).join('');
   $('#c-signers').innerHTML = SIGNERS.map(x => { const i = es.signers.indexOf(x.id);
     return `<label><input type="checkbox" data-signer="${x.id}" ${i >= 0 ? 'checked' : ''}><span>${esc(x.name)}${i >= 0 && es.mode === 'seciga' ? `<span class="signer-ord" title="Parakstīšanas secība">${i + 1}</span>` : ''}<small>${esc(x.role)}</small></span></label>`; }).join('');
-  $('#c-signers-hint').textContent = !es.required ? '' : !es.signers.length ? 'Atzīmējiet vismaz vienu parakstītāju.' : es.mode === 'seciga' ? 'Secība – atzīmēšanas kārtībā.' : '';
 }
 // Solis "Paraksts" (noklusējums – no pastāvīgajām daļām)
 function renderSign(){
@@ -5350,13 +5353,13 @@ function renderPrio(){
   $('#c-prio-sum').innerHTML = sel.length
     ? `<ul>${pr.map((k, i) => k ? `<li><span>${i + 1}. prioritāte · ${esc(addrShort(k))}</span><b>${tiers[i]}</b></li>` : '').join('')}
         <li class="${none.length ? 'is-none' : ''}"><span>Nav nevienas atbilstošas adreses</span><b>${none.length}</b></li></ul>`
-    : '<span class="hint">Atlasiet respondentus 2. solī – šeit būs redzams, uz kuru adresi katram tiks sūtīta vēstule.</span>';
+    : '<span class="muted">Nav atlasītu respondentu.</span>';
   const box = $('#c-prio-none');
   box.hidden = !none.length;
   const freeSlot = pr.indexOf('');
-  box.innerHTML = none.length ? `<h3 class="none-head">Respondenti bez derīgas adreses (${none.length})</h3><p class="hint">Šiem respondentiem nav nevienas adreses pēc izvēlētās prioritātes. Var ievadīt manuālo e-pastu (E-pasts 3)${pr.includes('email3') ? '.'
-      : freeSlot > 0 ? ` – tas tiks pievienots kā ${freeSlot + 1}. prioritāte.` : ', bet tas tiks izmantots tikai tad, ja “E-pasts 3 (manuāli)” ir kādā prioritātē.'}
-      ${!pr.includes('email3') && freeSlot < 0 ? '<button type="button" class="link-btn" data-action="c-prio-e3">Izmantot E-pastu 3 kā 3. prioritāti</button>' : ''}</p>
+  box.innerHTML = none.length ? `<h3 class="none-head">Respondenti bez derīgas adreses (${none.length})${tip(`Šiem respondentiem nav nevienas adreses pēc izvēlētās prioritātes. Var ievadīt manuālo e-pastu (E-pasts 3)${pr.includes('email3') ? '.'
+      : freeSlot > 0 ? ` – tas tiks pievienots kā ${freeSlot + 1}. prioritāte.` : ', bet tas tiks izmantots tikai tad, ja “E-pasts 3 (manuāli)” ir kādā prioritātē.'}`)}</h3>
+      ${!pr.includes('email3') && freeSlot < 0 ? '<p><button type="button" class="link-btn" data-action="c-prio-e3">Izmantot E-pastu 3 kā 3. prioritāti</button></p>' : ''}
     ${none.map(r => `<div class="none-row"><span>${respLink(r.id, r.name)}<small>${['eadrese', 'email1', 'email2', 'email3'].map(k => ADDR_TYPES[k].get(r) ? `${addrShort(k)}: ${esc(ADDR_TYPES[k].get(r))}` : '').filter(Boolean).join(' · ') || 'Nav norādīta neviena adrese'}</small></span>
       <span class="addr-e3"><input type="email" data-e3="${r.id}" value="${esc(r.email3 || '')}" placeholder="E-pasts 3 (manuāli)" aria-label="E-pasts 3 (manuāli): ${esc(r.name)}"><button type="button" class="btn btn-secondary btn-sm" data-action="c-e3-save" data-id="${r.id}">Saglabāt</button>
         <button type="button" class="btn btn-ghost btn-sm" data-action="c-exclude" data-id="${r.id}">Izņemt no kampaņas</button></span>
@@ -5433,10 +5436,9 @@ function renderComposePreview(){
   previewDocs = [];
   const pv = $('#c-preview');
   if (!t){
-    pv.innerHTML = `<div class="empty">${ICON.file}<h3>Nav izvēlēts vēstules saturs</h3><p>3. solī “Saturs” izmantojiet veidni vai noformējiet saturu.</p></div>`;
+    pv.innerHTML = `<div class="empty">${ICON.file}<h3>Nav izvēlēts vēstules saturs</h3></div>`;
   } else if (!n){
-    pv.innerHTML = `<div class="empty">${ICON.users}<h3>Nav neviena adresāta</h3>
-      <p>Mainiet atlasi 2. solī${selectedResp().length ? ' vai adrešu prioritāti 5. solī – atlasītajiem respondentiem nav adreses' : ''}.</p></div>`;
+    pv.innerHTML = `<div class="empty">${ICON.users}<h3>Nav neviena adresāta</h3></div>`;
   } else {
     const one = (r, inlineDoc) => {
       const msg = buildMessage(letterTpl(t, r), r, true);
@@ -5493,9 +5495,9 @@ function renderComposePreview(){
       return n > 3 ? `<details class="hint variants"><summary>Varianti: ${n}</summary>${pills}</details>` : `<div class="hint">Varianti: ${pills}</div>`;
     })() : '') +
     (skipped > 0 ? `<div class="hint">${skipped} ${plural(skipped, 'atzīmētais respondents', 'atzīmētie respondenti')} tiks ${plural(skipped, 'izlaists', 'izlaisti')} (${[st.noAddr ? 'nav adreses pēc izvēlētās prioritātes' : '', st.outFilt ? 'neatbilst atlasei' : ''].filter(Boolean).join('; ')}).</div>` : '') +
-    (issues.length ? `<ul>${issues.map(p => `<li>${esc(p)}</li>`).join('')}</ul>` : '');
+    (issues.length && compose.tried.has(6) ? `<ul class="send-errs">${issues.map(p => `<li>${esc(p)}</li>`).join('')}</ul>` : '');
   const btn = $('#c-send');
-  btn.disabled = issues.length > 0;
+  btn.disabled = false;
   btn.innerHTML = planned ? `${ICON.calendar}Ieplānot${n ? ` (${n})` : ''}` : compose.esign.required ? `${ICON.edit}Nodot parakstīšanai${n ? ` (${n})` : ''}` : `${ICON.send}Nosūtīt${n ? ` (${n})` : ''}`;
   renderWizard();
 }
@@ -5518,7 +5520,7 @@ function openLetterCustomizer(rid){
       <button type="button" class="icon-btn" data-lc-rm="${i}" aria-label="Noņemt ${esc(f.name)}">${ICON.x}</button></div>`).join('') : '<p class="hint">Papildu pielikumu nav.</p>';
     $$('[data-lc-rm]', modal).forEach(b => b.onclick = () => { files.splice(+b.dataset.lcRm, 1); renderFiles(); });
   };
-  openModal({title:`Pielāgot vēstuli: ${r.name}`, wide:true, content:`<p class="hint">Izmaiņas attiecas tikai uz šī respondenta vēstuli šajā kampaņā – veidne un pārējās vēstules netiek mainītas. Lauki, piem., <span class="var-chip">{vārds}</span>, tiek aizpildīti automātiski.</p>
+  openModal({title:`Pielāgot vēstuli: ${r.name}`, wide:true, info:'Izmaiņas attiecas tikai uz šī respondenta vēstuli šajā kampaņā – veidne un pārējās vēstules netiek mainītas. Lauki, piem., {vārds}, tiek aizpildīti automātiski.', content:`
     <div class="field"><label for="lc-subject">Ziņojuma temats</label><input type="text" id="lc-subject" maxlength="200" value="${esc(cur ? cur.subject : v.subject)}"></div>
     <div class="field"><span class="label">Teksts</span><div id="lc-body"></div></div>
     <div class="field"><span class="label">Papildu pielikumi</span><div class="file-list" id="lc-files"></div>
@@ -5542,13 +5544,18 @@ function openLetterCustomizer(rid){
 
 async function send(){
   const t = currentTemplate(), recs = recipients();
-  if (!t || !recs.length) return;
+  // mēģinājums nosūtīt: parāda visu soļu kļūdas
+  if (composeIssues(t, recs).length){
+    [1, 2, 3, 4, 5, 6].forEach(markTried);
+    renderComposePreview();
+    toast('Kampaņu nevar nosūtīt – novērsiet kļūdas.', true);
+    return;
+  }
   const n = recs.length;
   if (isPlanned()){
     const ok = await confirmDialog({title:'Ieplānot kampaņu?', okLabel:'Ieplānot',
       message:`Kampaņa <b>${esc(compose.name)}</b> (${esc(SESS_LABELS[sessKindKey()])}) tiks izpildīta <b>${esc(whenLabel())}</b>${compose.esign.required ? ' un nodota parakstīšanai' : ''}.
-        ${isReminder() ? `<br>Izpildes brīdī atlase tiks pārrēķināta pēc aktuālajiem iesniegšanas statusiem: atgādinājumu saņems tie, kuri līdz tam nebūs iesnieguši ${compose.remind === 'before' ? `pārskatus ar termiņu <b>${esc(fmtDate(remindTarget()))}</b>` : 'nokavētos pārskatus'} (pēc pašreizējiem statusiem – ${n} ${plural(n, 'adresāts', 'adresāti')}).` : `<br>Pēc pašreizējās atlases – ${n} ${plural(n, 'adresāts', 'adresāti')}.`}
-        <br><br><span class="muted">Prototipā ieplānoto kampaņu var izpildīt uzreiz ar pogu “Izpildīt tagad” kampaņu sarakstā.</span>`});
+        ${isReminder() ? `<br>Izpildes brīdī atlase tiks pārrēķināta pēc aktuālajiem iesniegšanas statusiem: atgādinājumu saņems tie, kuri līdz tam nebūs iesnieguši ${compose.remind === 'before' ? `pārskatus ar termiņu <b>${esc(fmtDate(remindTarget()))}</b>` : 'nokavētos pārskatus'} (pēc pašreizējiem statusiem – ${n} ${plural(n, 'adresāts', 'adresāti')}).` : `<br>Pēc pašreizējās atlases – ${n} ${plural(n, 'adresāts', 'adresāti')}.`}`});
     if (!ok) return;
     state.planned = state.planned || [];
     state.planned.unshift({id:'pl' + uid(), name:compose.name, kindKey:sessKindKey(), sendDate:compose.sel.sendDate, sendTime:compose.sendTime, target:remindTarget(),
@@ -5780,7 +5787,6 @@ function renderCampaigns(){
   const list = rows.filter(x => x.sub === ui.campSub && (!ui.camp.kind || x.kind === ui.camp.kind) && (!q || norm(x.name + ' ' + x.content).includes(q)));
   const ST = {draft:'<span class="pill st-draft">Melnraksts</span>', planned:'<span class="pill st-plan">Ieplānota</span>', active:'<span class="pill st-queue">Izpildē</span>', done:'<span class="pill st-sent">Pabeigta</span>'};
   $('#camp-tbody').innerHTML = !rows.length ? `<tr><td colspan="8"><div class="empty">${ICON.send}<h3>Vēl nav nevienas kampaņas</h3>
-      <p>Izveidojiet kampaņu: atlasiet respondentus, izvēlieties saturu un nosūtiet vēstules.</p>
       <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></td></tr>`
     : !list.length ? `<tr><td colspan="8"><div class="empty"><h3>${ui.camp.q || ui.camp.kind ? 'Nekas netika atrasts' : `Nav kampaņu sadaļā “${esc((CAMP_SUBS.find(([k]) => k === ui.campSub) || [])[1])}”`}</h3>
       <p>${ui.camp.q || ui.camp.kind ? 'Mainiet meklēšanas vai filtra nosacījumus.' : 'Izvēlieties citu sadaļu vai izveidojiet jaunu kampaņu.'}</p></div></td></tr>`
@@ -5846,8 +5852,8 @@ function histDetail(x){
           <td><span class="k-${k === 'skip' ? 'skip' : k}">${k === 'ok' ? 'Veiksmīgs' : k === 'temp' ? 'Pagaidu kļūda' : k === 'perm' ? 'Pastāvīga kļūda' : 'Netika izmantota'}</span>${k !== 'skip' ? `<span class="cell-sub">${esc(a.note)}</span>` : ''}</td>
           <td>${a.ndr ? `<div class="ndr"><span class="pill ${NDR_CLS[a.ndr.cls].cls}">${esc(NDR_CLS[a.ndr.cls].label)}</span><span class="pill pill-ai" title="Ticamība ${Math.round(a.ndr.conf * 100)}%">MI klasificēts · ${Math.round(a.ndr.conf * 100)}%</span></div>
             <div class="ndr"><span class="muted">Novirzīts:</span> <b>${esc(NDR_ROUTES[a.ndr.route])}</b></div><div class="ndr"><code>${esc(a.ndr.text)}</code></div>` : '<span class="muted">—</span>'}</td></tr>`; }).join('')}</tbody></table>` : '<p class="hint">Mēģinājumu vēl nav.</p>'}
-      ${x.status === 'kluda' ? `<div class="manual-box"><h4>Manuāla pārbaude</h4>
-        ${x.reviewed ? `<p class="hint">Izskatīta: ${esc(x.reviewed.by)}, ${esc(fmtDateTime(x.reviewed.at))}.</p>` : '<p class="hint">Visas pieejamās adreses ir izsmeltas. Ievadiet jaunu e-pasta adresi (tiks saglabāta kā respondenta E-pasts 3) un sūtiet atkārtoti vai atzīmējiet vēstuli kā izskatītu.</p>'}
+      ${x.status === 'kluda' ? `<div class="manual-box"><h4>Manuāla pārbaude${tip('Visas pieejamās adreses ir izsmeltas. Ievadiet jaunu e-pasta adresi (tiks saglabāta kā respondenta E-pasts 3) un sūtiet atkārtoti vai atzīmējiet vēstuli kā izskatītu.')}</h4>
+        ${x.reviewed ? `<p class="hint">Izskatīta: ${esc(x.reviewed.by)}, ${esc(fmtDateTime(x.reviewed.at))}.</p>` : ''}
         <div class="addr-e3"><input type="email" id="mr-${x.id}" value="${esc(r.email3 || '')}" placeholder="jauns.epasts@uznemums.example" aria-label="Jauns e-pasts: ${esc(x.recipient)}">
           <button type="button" class="btn btn-primary btn-sm" data-action="hist-resend" data-id="${x.id}">Sūtīt atkārtoti</button>
           ${x.reviewed ? '' : `<button type="button" class="btn btn-secondary btn-sm" data-action="hist-reviewed" data-id="${x.id}">Atzīmēt kā izskatītu</button>`}</div>
@@ -5883,11 +5889,10 @@ function renderSent(){
     return `<div class="card hist-sign" style="margin-bottom:10px">${ICON.edit}<span><b>${esc(x0.sessionName || `Kampaņa Nr. ${b}`)}</b> – gaida parakstu: <b>${xs.length}</b> ${plural(xs.length, 'vēstule', 'vēstules')}${x0.esign ? ` · ${esc((ESIGN_MODES[x0.esign.mode] || {}).label || '')}: ${esc(x0.esign.signers.join(x0.esign.mode === 'seciga' ? ' → ' : ', '))}` : ''}</span>
       <button type="button" class="btn btn-primary btn-sm" data-action="camp-sign" data-id="${b}">Parakstīt</button></div>`; }).join('');
   $('#hist-body').innerHTML = !all.length ? `<div class="card"><div class="empty">${ICON.inbox}<h3>Vēl nav nosūtītu vēstuļu</h3>
-      <p>Izveidojiet un nosūtiet kampaņu – vēstules parādīsies šeit.</p>
       <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></div>`
     : !list.length ? `<div class="card"><div class="empty">${h.status === 'paraksts' && !q && !h.kind && !h.period && !h.camp && !h.ch
-        ? '<h3>Nav vēstuļu, kas gaida parakstu</h3><p>Parakstīšanai nodotās vēstules parādīsies šeit (kampaņas 4. solis “Paraksts”).</p>'
-        : '<h3>Nekas netika atrasts</h3><p>Mainiet meklēšanas vai filtra nosacījumus.</p>'}</div></div>`
+        ? '<h3>Nav vēstuļu, kas gaida parakstu</h3>'
+        : '<h3>Nekas netika atrasts</h3>'}</div></div>`
     : signBars + `<div class="card"><div class="table-wrap"><table class="hl-table">
       <thead><tr><th>Adresāts</th><th>Kampaņa</th><th>Statuss</th><th>Kanāls</th><th>Adrese</th><th>Nosūtīšanas laiks</th><th><span class="sr-only">Izvērst</span></th></tr></thead>
       <tbody>${list.slice(0, ui.histLimit).map(x => { const op = ui.histRow.has(x.id), nd = ndrsOf(x);
@@ -5991,7 +5996,7 @@ function reportView(xs){
       return [g[0].sessionName || `Kampaņa Nr. ${b}`, SESS_LABELS[g[0].sessionKind] || '', fmtDateTime(g[0].sentAt), g.length, v.piegadats, v.nosutits, v.kluda, v.paraksts, `${pct(v.piegadats + v.nosutits, sentN)}%`]; });
     const head = ['Kampaņa', 'Veids', 'Datums', 'Vēstules', 'Piegādātas', 'Nosūtītas (e-pasts)', 'Neveiksmīgas', 'Gaida parakstu', 'Piegādes %'];
     const byCh = ['eadrese', 'epasts'].map(ch => { const g = xs.filter(x => x.channel === ch), v = statusCounts(g); return [CHANNELS[ch], g.length, v.piegadats, v.nosutits, v.kluda, `${pct(v.piegadats + v.nosutits, g.length - v.paraksts)}%`]; });
-    return {html:`<div class="card viz-card" style="margin-bottom:16px"><h3>Piegādes rezultāti pa kampaņām</h3><p class="viz-sub">Piegādes % – piegādātās un e-pasta serverim nodotās vēstules no nosūtītajām</p>${rows.length ? tableHtml(head, rows) : '<p class="hint">Nav datu atlasītajam periodam.</p>'}</div>
+    return {html:`<div class="card viz-card" style="margin-bottom:16px"><h3>Piegādes rezultāti pa kampaņām${tip('Piegādes % – piegādātās un e-pasta serverim nodotās vēstules no nosūtītajām.')}</h3>${rows.length ? tableHtml(head, rows) : '<p class="hint">Nav datu atlasītajam periodam.</p>'}</div>
       <div class="card viz-card"><h3>Pa kanāliem</h3>${tableHtml(['Kanāls', 'Vēstules', 'Piegādātas', 'Nosūtītas (e-pasts)', 'Neveiksmīgas', 'Piegādes %'], byCh)}</div>`,
       csv:[head, ...rows]};
   }
@@ -6007,7 +6012,7 @@ function reportView(xs){
     return {html:`<div class="viz-grid">
         <div class="card viz-card"><h3>NDR pa klasifikācijai</h3><p class="viz-sub">${nd.length} atgriezeniskie paziņojumi · ${failed.length} neveiksmīgas vēstules (${failed.filter(x => !x.reviewed).length} gaida manuālu pārbaudi)</p>${singleBars(byCls)}
           <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Klasifikācija', 'Skaits'], byCls.map(r => [r.label, r.v]))}</details></div>
-        <div class="card viz-card"><h3>Novirzījums</h3><p class="viz-sub">Kam paziņojums tiek novirzīts pēc klasifikācijas</p>${singleBars(byRoute)}
+        <div class="card viz-card"><h3>Novirzījums${tip('Kam paziņojums tiek novirzīts pēc klasifikācijas.')}</h3>${singleBars(byRoute)}
           <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Novirzīts', 'Skaits'], byRoute.map(r => [r.label, r.v]))}</details></div></div>
       <div class="card viz-card"><h3>Atgriezeniskie paziņojumi (NDR)</h3>${rows.length ? tableHtml(head, rows) : '<p class="hint">Atlasītajā periodā NDR nav.</p>'}</div>`,
       csv:[head, ...rows.map(r => r.map(c => c && typeof c === 'object' ? c.text : c))]};
@@ -6034,7 +6039,7 @@ function reportView(xs){
   const head = ['Kampaņa', 'Parakstīšanas veids', 'Parakstītāji', 'Vēstules', 'Parakstītas', 'Gaida parakstu', 'Nodota parakstīšanai', 'Parakstīta'];
   const rows = camps.map(([b, g]) => { const s0 = g.find(x => x.signedAt); return [g[0].sessionName || `Kampaņa Nr. ${b}`, (ESIGN_MODES[g[0].esign.mode] || {}).label || '', g[0].esign.signers.join(g[0].esign.mode === 'seciga' ? ' → ' : ', '),
     g.length, g.filter(x => x.signedAt).length, g.filter(x => x.status === 'paraksts').length, fmtDateTime(g[0].sentAt), s0 ? fmtDateTime(s0.signedAt) : '—']; });
-  return {html:`<div class="card viz-card"><h3>Parakstīšanas rezultāti</h3><p class="viz-sub">Kampaņas ar elektronisko parakstu (DVS NAMEJS; prototipā – simulācija)</p>${rows.length ? tableHtml(head, rows) : '<p class="hint">Atlasītajā periodā nav kampaņu ar parakstu.</p>'}</div>`,
+  return {html:`<div class="card viz-card"><h3>Parakstīšanas rezultāti${tip('Kampaņas ar elektronisko parakstu (DVS NAMEJS; prototipā – simulācija).')}</h3>${rows.length ? tableHtml(head, rows) : '<p class="hint">Atlasītajā periodā nav kampaņu ar parakstu.</p>'}</div>`,
     csv:[head, ...rows]};
 }
 // Nosūtīšanas kopsavilkums: rādītāji, grafiki un kārtojama kampaņu tabula
@@ -6086,8 +6091,8 @@ function lineChart(bs){
 const SUM_COLS = [['name', 'Kampaņa'], ['date', 'Datums'], ['kind', 'Veids'], ['sent', 'Nosūtītas'], ['deliv', 'Piegādātas'], ['fail', 'Neveiksmīgas'], ['rate', 'Piegādes %']];
 function summaryView(xs){
   const k = kpiSet(xs), kp = kpiSet(repLetters(true)), hasPrev = !!ui.rep.from && !ui.rep.camp;
-  const delta = (a, b, unit = '') => !hasPrev ? '' : a === b ? 'tāpat kā iepriekšējā periodā' : `${a > b ? '↑' : '↓'} ${Math.abs(a - b)}${unit} pret iepriekšējo periodu (bija ${b}${unit})`;
-  const kpi = (n, l, d) => `<div class="card kpi"><div class="n">${n}</div><div class="l">${esc(l)}</div>${d ? `<div class="delta">${esc(d)}</div>` : ''}</div>`;
+  const delta = (a, b, unit = '') => !hasPrev ? '' : a === b ? '= bez izmaiņām' : `${a > b ? '↑' : '↓'} ${Math.abs(a - b)}${unit} (bija ${b}${unit})`;
+  const kpi = (n, l, d) => `<div class="card kpi"><div class="n">${n}</div><div class="l">${esc(l)}</div>${d ? `<div class="delta" title="${d.startsWith('↑') || d.startsWith('↓') || d.startsWith('=') ? 'Salīdzinājumā ar iepriekšējo tāda paša garuma periodu' : ''}">${esc(d)}</div>` : ''}</div>`;
   const bs = monthBuckets(xs);
   const byCh = ['eadrese', 'epasts'].map(ch => ({label:CHANNELS[ch], v:xs.filter(x => x.channel === ch && isSent(x)).length, sub:`piegādātas ${xs.filter(x => x.channel === ch && isDeliv(x)).length}`}));
   const byKind = Object.keys(SESS_LABELS).map(kk => { const g = xs.filter(x => x.sessionKind === kk && isSent(x)); return {label:SESS_LABELS[kk], v:g.length, sub:`piegādātas ${g.filter(isDeliv).length}`}; }).filter(r => r.v);
@@ -6108,15 +6113,15 @@ function summaryView(xs){
       ${kpi(k.retr, 'Atkārtoti nosūtītas', delta(k.retr, kp.retr))}
       ${kpi(k.sign, 'Gaida parakstu', 'DVS NAMEJS')}
       ${kpi(k.rate + '%', 'Piegādes īpatsvars', delta(k.rate, kp.rate, ' p. p.'))}</div>
-    <div class="card viz-card" style="margin-bottom:16px"><h3>Nosūtītās un piegādātās ziņas pa mēnešiem</h3><p class="viz-sub">Piegādātas – piegādātas eAdresē vai nodotas e-pasta serverim</p>
+    <div class="card viz-card" style="margin-bottom:16px"><h3>Nosūtītās un piegādātās ziņas pa mēnešiem${tip('Piegādātas – piegādātas eAdresē vai nodotas e-pasta serverim.')}</h3>
       ${bs.length ? lineChart(bs) : '<p class="hint">Nav datu.</p>'}
       <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Nosūtītas', 'Piegādātas'], bs.map(b => [b.label, b.sent, b.deliv]))}</details></div>
     <div class="viz-grid g3">
-      <div class="card viz-card"><h3>Ziņas pa kanāliem</h3><p class="viz-sub">Nosūtītās ziņas</p>${singleBars(byCh)}</div>
-      <div class="card viz-card"><h3>Ziņas pēc kampaņas veida</h3><p class="viz-sub">Nosūtītās ziņas</p>${byKind.length ? singleBars(byKind) : '<p class="hint">Nav datu.</p>'}</div>
+      <div class="card viz-card"><h3>Ziņas pa kanāliem${tip('Nosūtītās ziņas.')}</h3>${singleBars(byCh)}</div>
+      <div class="card viz-card"><h3>Ziņas pēc kampaņas veida${tip('Nosūtītās ziņas.')}</h3>${byKind.length ? singleBars(byKind) : '<p class="hint">Nav datu.</p>'}</div>
       <div class="card viz-card"><h3>NDR iemeslu sadalījums</h3><p class="viz-sub">${nd.length} atgriezeniskie paziņojumi</p>${singleBars(byNdr)}</div>
     </div>
-    <div class="card viz-card"><h3>Kampaņas</h3><p class="viz-sub">${rows.length} ${plural(rows.length, 'kampaņa', 'kampaņas')} · kārtojiet, uzklikšķinot uz kolonnas nosaukuma</p>${rows.length ? tbl : '<p class="hint">Atlasītajā periodā kampaņu nav.</p>'}</div>`,
+    <div class="card viz-card"><h3>Kampaņas${tip('Tabulu var kārtot, uzklikšķinot uz kolonnas nosaukuma.')}</h3><p class="viz-sub">${rows.length} ${plural(rows.length, 'kampaņa', 'kampaņas')}</p>${rows.length ? tbl : '<p class="hint">Atlasītajā periodā kampaņu nav.</p>'}</div>`,
     csv:[SUM_COLS.map(c => c[1]), ...rows.map(r => [r.name, fmtDate(isoDate(new Date(r.date))), r.kind, r.sent, r.deliv, r.fail, `${r.rate}%`])]};
 }
 // MI kopsavilkums (simulēts teksts no atlasītajiem datiem)
@@ -6198,7 +6203,7 @@ function viewSent(id){
   const st = STATUSES[x.status];
   openModal({title:'Nosūtītā vēstule', wide:true, content: mailView({
     toName:x.recipient, toAddr:x.address, channel:x.channel,
-    subjectHtml:esc(x.subject), bodyHtml: x.archived ? '<p class="hint">Vēstules saturs testa datu arhīvā nav saglabāts – redzams temats un piegādes informācija.</p>' : resolveImages(x.bodyHtml),
+    subjectHtml:esc(x.subject), bodyHtml: x.archived ? '<p class="hint">Saturs arhīvā nav saglabāts.</p>' : resolveImages(x.bodyHtml),
     bodyTextHtml: x.archived ? 'Vēstules saturs testa datu arhīvā nav saglabāts.' : esc(x.bodyText), footerHtml:esc(x.footer || ''),
     atts:(x.attachments || []).map((a, j) => ({name:a.name, src:`sent:${x.id}:${j}`})), main:x.main || null, files:x.files || [], variant:x.variant || '',
     org:x.org || state.layout.org, lang:x.lang || '', wantLang:x.wantLang || '', fallback:!!x.fallback,
@@ -6264,10 +6269,10 @@ const actions = {
     openEditor();
   },
   'c-pick-tpl': () => openTemplatePicker(),
-  'wiz-go': id => setStep(+id),
+  'wiz-go': id => { if (+id > compose.step) markTried(compose.step); setStep(+id); },
   'wiz-prev': () => setStep(compose.step - 1),
-  'wiz-next': () => setStep(compose.step + 1),
-  'wiz-save': () => { flushDraft(true); toast(`Melnraksts “${compose.name}” saglabāts.`); },
+  'wiz-next': () => { markTried(compose.step); setStep(compose.step + 1); },
+  'wiz-save': () => { markTried(compose.step); flushDraft(true); renderWizard(); toast(`Melnraksts “${compose.name}” saglabāts.`); },
   'c-customize': id => openLetterCustomizer(id),
   'c-uncustom': id => { delete compose.custom[id]; renderComposeList(); renderComposePreview(); toast('Vēstule atjaunota atbilstoši kampaņas saturam.'); },
   'camp-sign': id => signBatch(id),
