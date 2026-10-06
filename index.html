@@ -384,6 +384,26 @@ td.contacts{display:table-cell}
 .wiz-nav .spacer{flex:1}
 .wiz-issues{font-size:13px;color:var(--warning);font-weight:600}
 .when-opts{display:flex;gap:8px;flex-wrap:wrap}
+/* Nosūtīšanas datums un laiks: kompakts pārslēgs un (ieplānojot) datuma un laika lauki tajā pašā rindā */
+.when-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}
+.when-row .seg{display:inline-flex;flex:none}
+.when-row .seg button{padding:8px 14px}
+.when-plan{display:flex;align-items:center;gap:8px}
+.when-plan[hidden]{display:none}
+.dt-field{position:relative;display:inline-flex;align-items:center}
+.dt-field input[type="text"]{width:150px;padding-right:38px;font-variant-numeric:tabular-nums}
+.dt-time input[type="text"]{width:118px}
+.dt-time input::-webkit-calendar-picker-indicator{display:none !important}
+.dt-btn{position:absolute;right:4px;top:50%;transform:translateY(-50%);appearance:none;border:0;background:transparent;width:30px;height:30px;border-radius:6px;display:grid;place-items:center;color:var(--primary-dark);cursor:pointer}
+.dt-btn:hover{background:var(--primary-50)}
+.dt-btn .icon,.dt-ic .icon{width:17px;height:17px}
+.dt-ic{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;display:flex}
+.dt-native{position:absolute;right:0;bottom:0;width:1px;height:1px;opacity:0;border:0;padding:0;pointer-events:none}
+@media (max-width:640px){
+  .when-plan{flex:1 1 100%}
+  .dt-field{flex:1}
+  .dt-field input[type="text"],.dt-time input[type="text"]{width:100%}
+}
 .esign-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .esign-mode{appearance:none;text-align:left;border:1.5px solid var(--border);border-radius:10px;background:#fff;padding:10px 12px;cursor:pointer;font:inherit;color:var(--text)}
 .esign-mode b{display:block;color:var(--primary-darker)}
@@ -1401,14 +1421,24 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           </div>
           <div class="field"><span class="label">Komunikācijas veids <span class="req">*</span></span>
             <div class="skind-opts" id="c-kind" role="group" aria-label="Komunikācijas veids"></div></div>
-          <div class="field"><span class="label">Nosūtīšanas datums un laiks</span>
-            <div class="seg when-opts" id="c-when" role="group" aria-label="Nosūtīšana">
-              <button type="button" data-when="now">Nosūtīt tūlīt</button><button type="button" data-when="plan">Ieplānot</button></div></div>
-          <div class="form-grid" id="c-when-plan" hidden>
-            <div class="field"><label for="c-plan-date">Datums</label><input type="date" id="c-plan-date"></div>
-            <div class="field"><label for="c-plan-time">Laiks</label><input type="time" id="c-plan-time" step="300"></div>
-          </div>
-          <span class="err" id="c-when-err" hidden></span>
+          <div class="field"><span class="label" id="c-when-l">Nosūtīšanas datums un laiks</span>
+            <div class="when-row">
+              <div class="seg when-opts" id="c-when" role="group" aria-labelledby="c-when-l">
+                <button type="button" data-when="now">Nosūtīt tūlīt</button><button type="button" data-when="plan">Ieplānot</button></div>
+              <div class="when-plan" id="c-when-plan" hidden>
+                <div class="dt-field">
+                  <input type="text" id="c-plan-date" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-label="Nosūtīšanas datums (DD.MM.GGGG)" aria-describedby="c-when-err">
+                  <button type="button" class="dt-btn" id="c-plan-cal" aria-label="Izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+                  <input type="date" id="c-plan-pick" class="dt-native" tabindex="-1" aria-hidden="true">
+                </div>
+                <div class="dt-field dt-time">
+                  <input type="text" id="c-plan-time" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off" list="c-plan-times" aria-label="Nosūtīšanas laiks (HH:MM, 24 stundu formātā)" aria-describedby="c-when-err">
+                  <span class="dt-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                  <datalist id="c-plan-times"></datalist>
+                </div>
+              </div>
+            </div>
+            <span class="err" id="c-when-err" hidden></span></div>
           <h3 class="sub-h">Ko attiecina kampaņa <span class="req">*</span></h3>
           <p class="hint scope-lead">Izvēlieties periodu, apsekojumu vai abus. Ja aizpildītas abas izvēles, tiek atlasīti pienākumi, kas atbilst abām (piem., konkrēts apsekojums konkrētā periodā).</p>
           <div class="scope-grid">
@@ -5128,7 +5158,7 @@ const WIZ_STEPS = ['Pamatdati', 'Respondenti', 'Saturs', 'Paraksts', 'Adreses', 
 function stepIssues(n){
   switch (n){
     case 1: return [compose.name.trim() ? '' : 'Norādiet nosaukumu.', hasScope() ? '' : 'Norādiet, uz ko attiecas kampaņa (periods vai apsekojums).',
-      compose.when === 'plan' && (!compose.sel.sendDate || compose.sel.sendDate < todayIso()) ? 'Norādiet nosūtīšanas datumu (šodien vai vēlāk).' : ''].filter(Boolean);
+      compose.when === 'plan' && planError() ? planError() : ''].filter(Boolean);
     case 2: return selectedResp().length ? [] : ['Nav atlasīts neviens respondents.'];
     case 3: return currentTemplate() ? [] : ['Nav izvēlēts saturs.'];
     case 4: return compose.esign.required && !compose.esign.signers.length ? ['Norādiet vismaz vienu parakstītāju.'] : [];
@@ -5174,15 +5204,45 @@ function renderFinalSummary(){
     <dt>Pielāgotas</dt><dd>${nCust ? `${nCust} ${plural(nCust, 'vēstule', 'vēstules')} <span class="pill pill-custom">Pielāgota</span>` : '<span class="muted">nav</span>'}</dd>`;
 }
 // 1. solis: komunikācijas veids un nosūtīšanas laiks
+// Ieplānošana: datums DD.MM.GGGG un laiks HH:MM (24 h); nedrīkst būt pagātnē
+const dmy = iso => iso ? iso.split('-').reverse().join('.') : '';
+const hmNow = () => { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+function parseDmy(v){
+  v = String(v || '').trim();
+  let m = v.match(/^(\d{4})-(\d{2})-(\d{2})$/), y, mo, d;
+  if (m) [, y, mo, d] = m.map(Number); else { m = v.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})\.?$/); if (!m) return ''; [, d, mo, y] = m.map(Number); }
+  const dt = new Date(y, mo - 1, d);
+  return dt.getFullYear() === y && dt.getMonth() === mo - 1 && dt.getDate() === d ? isoDate(dt) : '';
+}
+function parseHm(v){
+  const m = String(v || '').trim().match(/^(\d{1,2})[:.]?(\d{2})$/);
+  return m && +m[1] < 24 && +m[2] < 60 ? `${pad(+m[1])}:${m[2]}` : '';
+}
+function planError(){
+  if (ui.planDateRaw != null && !parseDmy(ui.planDateRaw)) return 'Norādiet derīgu datumu formātā DD.MM.GGGG.';
+  if (ui.planTimeRaw != null && !parseHm(ui.planTimeRaw)) return 'Norādiet derīgu laiku formātā HH:MM (24 stundu formātā, piem., 09:00).';
+  const d = compose.sel.sendDate, t = compose.sendTime || '09:00';
+  if (!d) return 'Norādiet nosūtīšanas datumu.';
+  if (d < todayIso()) return 'Nosūtīšanas datums nedrīkst būt pagātnē.';
+  if (d === todayIso() && t <= hmNow()) return 'Nosūtīšanas laiks nedrīkst būt pagātnē.';
+  return '';
+}
 function renderBasics(){
   $('#c-kind').innerHTML = Object.entries(SESS_KINDS).map(([k, v]) =>
     `<button type="button" class="skind-opt" data-skind="${k}" aria-pressed="${compose.kind === k}">${ICON[v.icon]}<span>${esc(v.label)}</span></button>`).join('');
   $$('#c-when button').forEach(b => b.setAttribute('aria-pressed', b.dataset.when === compose.when));
   $('#c-when-plan').hidden = compose.when !== 'plan';
-  $('#c-plan-date').value = compose.sel.sendDate || ''; $('#c-plan-date').min = todayIso();
-  $('#c-plan-time').value = compose.sendTime || '09:00';
-  const bad = compose.when === 'plan' && (!compose.sel.sendDate || compose.sel.sendDate < todayIso());
-  $('#c-when-err').hidden = !bad; $('#c-when-err').textContent = bad ? 'Ieplānotās nosūtīšanas datumam jābūt šodien vai vēlāk.' : '';
+  // nepabeigta (nederīga) ievade attiecas tikai uz atvērto kampaņu
+  if (ui.planRawFor !== compose.draftId){ ui.planRawFor = compose.draftId; ui.planDateRaw = ui.planTimeRaw = null; }
+  if (document.activeElement !== $('#c-plan-date') || !ui.planDateRaw) $('#c-plan-date').value = ui.planDateRaw ?? dmy(compose.sel.sendDate);
+  if (document.activeElement !== $('#c-plan-time') || !ui.planTimeRaw) $('#c-plan-time').value = ui.planTimeRaw ?? (compose.sendTime || '09:00');
+  $('#c-plan-pick').min = todayIso(); $('#c-plan-pick').value = compose.sel.sendDate || '';
+  // laika ieteikumi ik pēc 30 min (šodienai – tikai nākotnes laiki)
+  const today = compose.sel.sendDate === todayIso(), nowHm = hmNow();
+  $('#c-plan-times').innerHTML = Array.from({length:48}, (_, i) => `${pad(Math.floor(i / 2))}:${i % 2 ? '30' : '00'}`).filter(t => !today || t > nowHm).map(t => `<option value="${t}"></option>`).join('');
+  const msg = compose.when === 'plan' ? planError() : '';
+  $('#c-when-err').hidden = !msg; $('#c-when-err').textContent = msg;
+  ['date', 'time'].forEach(k => $(`#c-plan-${k}`).setAttribute('aria-invalid', String(!!msg && msg.toLowerCase().includes(k === 'date' ? 'datum' : 'laik'))));
 }
 // 4. solis: elektroniskais paraksts
 function renderEsign(){
@@ -6412,11 +6472,44 @@ $('#c-when').addEventListener('click', e => {
   const b = e.target.closest('[data-when]');
   if (!b || b.dataset.when === compose.when) return;
   compose.when = b.dataset.when;
-  if (compose.when === 'plan' && (!compose.sel.sendDate || compose.sel.sendDate <= todayIso())) compose.sel.sendDate = isoDate(addDays(1));
-  renderBasics(); selChanged();
+  // noklusējums: rītdiena plkst. 09:00
+  if (compose.when === 'plan' && (!compose.sel.sendDate || compose.sel.sendDate <= todayIso())){ compose.sel.sendDate = isoDate(addDays(1)); compose.sendTime = compose.sendTime || '09:00'; }
+  ui.planDateRaw = ui.planTimeRaw = null;
+  renderBasics(); selChanged(); renderWizard();
 });
-$('#c-plan-date').addEventListener('change', e => { compose.sel.sendDate = e.target.value; renderBasics(); selChanged(); });
-$('#c-plan-time').addEventListener('change', e => { compose.sendTime = e.target.value || '09:00'; renderComposePreview(); });
+// datuma un laika lauki: automātiska punktu / kola ievietošana; derīgu vērtību saglabā, nederīgu – parāda kļūdu
+$('#c-plan-date').addEventListener('input', e => {
+  const el = e.target, dg = el.value.replace(/\D/g, '').slice(0, 8);
+  if (!/^\d{4}-/.test(el.value) && e.inputType !== 'deleteContentBackward') el.value = [dg.slice(0, 2), dg.slice(2, 4), dg.slice(4)].filter(Boolean).join('.');
+});
+$('#c-plan-time').addEventListener('input', e => {
+  const el = e.target, dg = el.value.replace(/\D/g, '').slice(0, 4);
+  if (e.inputType && e.inputType.startsWith('insert') && dg.length >= 3 && !el.value.includes(':')) el.value = `${dg.slice(0, 2)}:${dg.slice(2)}`;
+});
+$('#c-plan-date').addEventListener('change', e => {
+  const iso = parseDmy(e.target.value);
+  ui.planDateRaw = iso ? null : e.target.value;
+  if (iso){ compose.sel.sendDate = iso; e.target.value = dmy(iso); }
+  renderBasics(); selChanged(); renderWizard();
+});
+$('#c-plan-time').addEventListener('change', e => {
+  const hm = parseHm(e.target.value);
+  ui.planTimeRaw = hm ? null : e.target.value;
+  if (hm){ compose.sendTime = hm; e.target.value = hm; }
+  renderBasics(); renderComposePreview(); renderWizard();
+});
+// kalendāra poga atver pārlūka datuma izvēli (vērtība – ISO; laukā rāda DD.MM.GGGG)
+$('#c-plan-cal').addEventListener('click', () => {
+  const n = $('#c-plan-pick');
+  n.min = todayIso(); n.value = compose.sel.sendDate || '';
+  try { n.showPicker(); } catch (err) { $('#c-plan-date').focus(); }
+});
+$('#c-plan-pick').addEventListener('change', e => {
+  if (!e.target.value) return;
+  ui.planDateRaw = null; compose.sel.sendDate = e.target.value < todayIso() ? todayIso() : e.target.value;
+  renderBasics(); selChanged(); renderWizard();
+  $('#c-plan-date').focus();
+});
 $('#c-esign').addEventListener('click', e => {
   const b = e.target.closest('[data-esign]');
   if (!b) return;
