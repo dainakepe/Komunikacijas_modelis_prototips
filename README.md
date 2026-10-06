@@ -288,10 +288,10 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
      - **Pirms termiņa.** Jānorāda "Dienas līdz termiņam" N. Nosūtīšanas datums ir šodiena vai 1. solī ieplānotais datums. Termiņa datums tiek aprēķināts kā nosūtīšanas datums + N dienas, un tiek atlasīti tikai tie neiesniegtie pienākumi, kuru termiņš ir tieši šajā datumā. Tiek parādīts aprēķinātais termiņš un pārskati un periodi, kas tam atbilst (piem., "Termiņš 07.10.2026.: Mēneša rūpniecības produkcijas pārskats, 2026. g. septembris"). Ja tādu nav, tiek parādīts paziņojums "Šajā datumā nav pārskatu ar termiņu pēc N dienām".
      - **Ieplānota atgādinājuma kampaņa.** Izpildes brīdī atlase tiek pārrēķināta pēc aktuālajiem statusiem. Prototipā to simulē poga "Izpildīt tagad" kampaņu sarakstā.
      - **Pēc termiņa (nokavēts).** Tiek atlasīti neiesniegtie pienākumi, kuru termiņš ir pagājis. Var norādīt neobligātu lauku "Kavēts vismaz N dienas".
-   - **Papildu atlase pēc pazīmēm** (respondenta veids, dalības veids, iepriekšējā dalība, valoda) ir sakļaujamā sadaļā.
+   - Atlase notiek **tikai pēc kampaņas tvēruma** (periods un/vai apsekojums) un atgādinājumiem – pēc iesniegšanas statusa un termiņa. Papildu atlases pēc pazīmēm nav. Respondentu pazīmes (veids, dalības veids, iepriekšējā dalība, valoda) paliek datos, jo tās izmanto veidņu nosacījumos un valodas versijas izvēlē vēstulēs.
    - **Atlases rezultāts:**
      - kopsavilkums: respondentu skaits, pienākumu skaits un sadalījums pa pārskatiem;
-     - tabula ar respondentiem: izvēršot rindu, redzami respondenta atlasītie pienākumi (pārskats, periods, termiņš, statuss), un atsevišķus respondentus var izņemt;
+     - tabula ar respondentiem: kolonnas Respondents, **eAdrese**, **E-pasts 1**, **E-pasts 2** un Pienākumi. Neaizpildīta adrese – pelēks "—"; garas adreses saīsinātas ar "…", pilnā adrese redzama, uzbraucot ar peli. Ja respondentam nav nevienas adreses, pie nosaukuma ir brīdinājuma ikona ar padomu "Nav nevienas adreses". Uz šauriem ekrāniem tabulu var ritināt horizontāli. Izvēršot rindu, redzami respondenta atlasītie pienākumi (pārskats, periods, termiņš, statuss), un atsevišķus respondentus var izņemt;
      - norāde "Dati no Datu vākšanas pārraudzības" un poga "Atjaunot statusus" (simulācija: daļa neiesniegto pienākumu kļūst iesniegti).
    - Ja respondentam ir atlasīti vairāki pārskati vai periodi, viņš saņem vienu vēstuli. `{pārskatu_tabula}` ietver tikai atlasītos pienākumus, bet atgādinājumā tikai neiesniegtos.
 3. **Saturs.** Ir divas kartītes: "Izmantot veidni" un "Noformēt saturu".
