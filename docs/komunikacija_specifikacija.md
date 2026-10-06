@@ -99,7 +99,31 @@ Tajā iespējams apskatīt komunikācijas:
 | Nr. | Funkcija | Apraksts |
 |---|---|---|
 | F16 | Komunikācijas vēsture un statusi | Katrai nosūtītajai vēstulei tiek saglabāta tās nosūtīšanas vēsture.<br>Pamata statusa ceļš:<br>Melnraksts → Gaida parakstu → Parakstīta → Nosūtīta → Piegādāta<br>Ja parakstīšana nav nepieciešama:<br>Melnraksts → Nosūtīta → Piegādāta<br>Iespējamie alternatīvie statusa ceļi:<br>Pagaidu kļūda → Atkārtots mēģinājums<br>Pastāvīga kļūda → Nākamā adrese<br>Visas adreses izsmeltas → Neveiksmīga → Manuāla pārbaude |
-| F17 | NDR apstrāde | Sistēma apstrādā atgriezeniskos paziņojumus par neveiksmīgu ziņas piegādi. NDR iespējams klasificēt, piemēram, pēc:<br>• pagaidu kļūdas;<br>• pastāvīgas kļūdas;<br>• surogātpasta;<br>• adresāta prombūtnes.<br>Atbilstoši klasifikācijai paziņojums tiek novirzīts sistēmai, darbiniekam vai abiem. NDR klasifikācijā paredzama arī MI izmantošanas iespēja. |
+| F17 | NDR un DIV kļūdu apstrāde | Sistēma centralizēti saņem un apstrādā paziņojumus par neveiksmīgu piegādi: e-pasta atgriezeniskos paziņojumus (NDR) un e-adreses (DIV) kļūdu statusus. Katrs paziņojums tiek automātiski piesaistīts sākotnējai ziņai un klasificēts pēc tipa:<br>• pagaidu kļūda – atkārtots mēģinājums;<br>• pastāvīga kļūda – adrese atzīmēta kā nederīga, sūtīšana uz nākamo adresi;<br>• sūtītāja puses kļūda (bloķēšana, noraidījums) – paziņojums administratoram;<br>• automātiska atbilde (prombūtne) – statuss netiek mainīts;<br>• neatpazīts – nodots darbiniekam manuālai izskatīšanai.<br>Atbilstoši klasifikācijai paziņojums tiek novirzīts sistēmai, darbiniekam vai abiem. Klasifikācijā paredzama arī MI izmantošanas iespēja. |
+
+**E-pasts**
+
+| Iemesls | Tips | Automātiskā rīcība |
+|---|---|---|
+| Adrese vai domēns neeksistē, konts slēgts | Pastāvīgs | Adresi atzīmēt kā nederīgu, sūtīt uz nākamo adresi, uzdevums kontaktu aktualizēšanai |
+| Pastkaste pilna | Īslaicīgs | Atkārtot 2–3 reizes 24–72 h laikā, tad nākamā adrese |
+| Serveris nesasniedzams, ātruma limits | Īslaicīgs | Atkārtot ar pieaugošu intervālu; pēc N reizēm – pastāvīgs |
+| Ziņa par lielu | Saturs | Sūtīt bez pielikuma, ar saiti |
+| Bloķēts kā spams, autentifikācijas kļūda | Sūtītāja puse | Adresi neaiztikt; brīdinājums administratoram |
+| Prombūtnes atbilde | Nav kļūda | Nekas; var izmantot atgriešanās datumu atgādinājumam |
+| "Adrese mainīta", neatpazīts teksts | Manuāli | Manuālā rinda |
+
+**E-adrese**
+
+| Pašreizējais statuss | Tips | Automātiskā rīcība |
+|---|---|---|
+| Pieņemts DIV / Notiek piegāde | Starpstatuss | Gaidīt; pēc noteikta laika tiek sūtīts uz e-pastu |
+| Saņēmēja pieņemts | Gala | Piegādāts |
+| Noraidīts DIV | Sūtītāja puse | Neatkārtot; brīdinājums administratoram |
+| Saņēmēja noraidīts | Pastāvīgs | Sūtīt uz e-pastu; ja atkārtojas – manuāli |
+| Nokavēta piegāde | Īslaicīgs | Atkārtot 1–2 reizes, tad e-pasts |
+| Nav publiskās atslēgas šifrēšanai | Saņēmēja konfigurācija | Sūtīt uz e-pastu; informēt respondentu |
+| Adresāta pastkastīte pilna | Īslaicīgs | Atkārtot pēc 24–72 h, paralēli e-pasts |
 
 ### 2.4. Atskaites
 
