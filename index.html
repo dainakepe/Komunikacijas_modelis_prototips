@@ -732,7 +732,25 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .rm-field label{font-weight:600;display:inline-flex;align-items:center;gap:4px}
 .rm-field input{width:76px;padding:6px 8px}
 .rm-date{font-size:12.5px;color:var(--text-muted);white-space:nowrap}
-.sel-top{display:flex;justify-content:flex-end;margin:-6px 0 6px}
+/* 2. solis: tvēruma josla (tikai lasāma) */
+.ctx-bar{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:6px 16px;padding:8px 10px;margin:-4px 0 10px;background:var(--bg);border:1px solid var(--border-light);border-radius:8px}
+.ctx-tags{display:flex;flex-wrap:wrap;gap:5px;flex:1 1 320px;min-width:0}
+.ctx-tag{display:inline-flex;align-items:center;gap:4px;max-width:100%;font-size:12.5px;padding:2px 9px;border-radius:12px;background:#fff;border:1px solid var(--border);color:var(--text)}
+.ctx-tag > span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctx-tag small{color:var(--text-muted);font-size:12px}
+.ctx-tag.is-rem{border-color:var(--primary-300);background:var(--primary-50);color:var(--primary-darker);font-weight:600}
+.ctx-more{appearance:none;font:inherit;font-size:12.5px;font-weight:600;padding:2px 9px;border-radius:12px;border:1px dashed var(--primary-300);background:transparent;color:var(--primary-dark);cursor:pointer}
+.ctx-more:hover{background:var(--primary-50)}
+.ctx-sum{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;font-size:13px;white-space:nowrap}
+.rep-filter{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);font-weight:600;min-width:0;max-width:100%}
+.rep-filter select{width:auto;min-width:0;flex:1 1 auto;max-width:280px;padding:5px 8px;font-size:13px;text-overflow:ellipsis}
+.sel-table .c-reps{min-width:170px}
+.rp-tags{display:flex;flex-wrap:wrap;gap:4px}
+.rp-tag{display:inline-block;font-size:12px;padding:1px 7px;border-radius:10px;background:var(--primary-50);border:1px solid var(--primary-100);color:var(--primary-darker);white-space:nowrap;cursor:default}
+.rp-tag.is-more{background:var(--bg);border-color:var(--border);color:var(--text-muted)}
+.sel-table .skip-tag{position:relative;display:inline-block;color:var(--warning);font-weight:600;cursor:help;word-break:normal;white-space:nowrap;border-bottom:1px dotted currentColor}
+.skip-tag::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 6px);display:none;white-space:nowrap;background:#1F2933;color:#fff;font-size:12.5px;font-weight:400;line-height:1.45;padding:6px 9px;border-radius:6px;box-shadow:var(--shadow-lg);z-index:30;pointer-events:none}
+.skip-tag:hover::after,.skip-tag:focus-visible::after{display:block}
 .scope-recap{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg);font-size:13.5px}
 .scope-recap .btn{margin-left:auto}
 .sel-block > .label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
@@ -1635,7 +1653,10 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         </div>
         <div class="step" data-wstep="2" hidden>
           <div class="step-title"><span class="step-num">2</span><h2>Respondenti</h2><span class="tip" tabindex="0" role="note" aria-label="Uzaicinājums, informatīvs ziņojums un cits – tiek atlasīti visi respondenti ar pienākumu kampaņas tvērumā. Atgādinājums – tikai neiesniegtie pienākumi." data-tip="Uzaicinājums, informatīvs ziņojums un cits – tiek atlasīti visi respondenti ar pienākumu kampaņas tvērumā. Atgādinājums – tikai neiesniegtie pienākumi.">i</span></div>
-          <div class="sel-top"><button type="button" class="link-btn" data-action="wiz-go" data-id="1">← Mainīt tvērumu</button></div>
+          <div class="ctx-bar" id="c-ctx" aria-label="Kampaņas tvērums (no 1. soļa)">
+            <div class="ctx-tags" id="c-ctx-tags"></div>
+            <div class="ctx-sum"><span id="c-ctx-sum"></span><button type="button" class="link-btn" data-action="wiz-go" data-id="1">Mainīt tvērumu</button></div>
+          </div>
           <div class="sel-result">
             <span class="err" id="c-resp-err" hidden></span>
           <div class="r-tools">
@@ -1643,6 +1664,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
               <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
               <input type="search" id="c-search" placeholder="Meklēt…">
             </label>
+            <label class="rep-filter"><span>Apsekojums</span><select id="c-rep-filter"></select></label>
             <button class="btn btn-ghost btn-sm" data-action="c-all">Iekļaut visus</button>
             <button class="btn btn-ghost btn-sm" data-action="c-none">Izņemt visus</button>
           </div>
@@ -2955,7 +2977,7 @@ function renderDraftInfo(){
 function newSession(full){
   Object.assign(compose, {draftId:'k' + uid(), name:defaultSessionName(), content:null, sign:{signer:'', position:''}, excluded:new Set(), open:new Set(), index:0, noneOpen:false});
   // jaunai kampaņai – noklusējuma veids un atlase; pēc nosūtīšanas saglabājas adresāts, apsekojuma dati un adrešu prioritāte
-  Object.assign(compose, {kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', when:'now', sendTime:'09:00', esign:defaultEsign(), custom:{}, step:1, pvCh:'', tried:new Set(), varOvr:{}});
+  Object.assign(compose, {kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', repF:'', when:'now', sendTime:'09:00', esign:defaultEsign(), custom:{}, step:1, pvCh:'', tried:new Set(), varOvr:{}});
   if (full) Object.assign(compose, {aud:'fiz', surveyIdx:0, prio:[...DEFAULT_PRIO], filt:{},
     f:{...SURVEYS[0], start:isoDate(addDays(3)), deadline:isoDate(addDays(30)), date:isoDate(new Date())}});
   compose.f.docNr = nextDocNr();
@@ -3776,7 +3798,7 @@ function showTab(name, opts = {}){
 function openEditor(draftId){
   if (draftId && draftId !== compose.draftId){
     const d = (state.drafts || []).find(x => x.id === draftId);
-    if (d){ flushDraft(); applySnapshot(d); compose.draftId = d.id; compose.open = new Set(); compose.search = ''; }
+    if (d){ flushDraft(); applySnapshot(d); compose.draftId = d.id; compose.open = new Set(); compose.search = ''; compose.repF = ''; }
   }
   state.activeDraft = compose.draftId;
   showTab('kampanas', {edit:true});
@@ -5558,27 +5580,87 @@ function renderPrio(){
         <button type="button" class="btn btn-ghost btn-sm" data-action="c-exclude" data-id="${r.id}">Izņemt no kampaņas</button></span>
       <span class="err" id="c-e3-err-${r.id}" hidden></span></div>`).join('')}` : '';
 }
+// Īss perioda apzīmējums birkām: "2026", "3. cet.", "sept.", "38. ned." (cits gads – ar gadu)
+const MONTHS_SHORT = ['janv.', 'febr.', 'marts', 'apr.', 'maijs', 'jūn.', 'jūl.', 'aug.', 'sept.', 'okt.', 'nov.', 'dec.'];
+function periodShort(k, year = compose.sel.year){
+  const [t, v = ''] = String(k).split(':'), [y, n] = v.split('-');
+  if (t === 'Y') return y;
+  const s = t === 'Q' ? `${+n}. cet.` : t === 'H' ? `${+n}. pusg.` : t === 'M' ? MONTHS_SHORT[+n - 1] : t === 'W' ? `${+n}. ned.` : t === 'I' ? `${+n}. vilnis` : k;
+  return +y === +year ? s : `${y}. g. ${s}`;
+}
+// 2. solis: tvēruma josla – 1. soļa izvēle birkās (tikai lasāma)
+function scopeCtxTags(){
+  const sel = compose.sel, f = sel.resp || defaultResp(), tags = [];
+  const add = (label, val, cls = '', title = '') => tags.push({label, val, cls, title});
+  if (isReminder()){
+    if (compose.remind === 'before') add('', `Pirms termiņa, ${sel.days} ${plural(+sel.days, 'diena', 'dienas')} (termiņš ${dmy(remindTarget())})`, 'is-rem');
+    else { const n = parseInt(sel.lateDays, 10); add('', n ? `Pēc termiņa, kavēts ≥ ${n} ${plural(n, 'diena', 'dienas')}` : 'Pēc termiņa (nokavēts)', 'is-rem'); }
+  }
+  add('Gads', sel.year);
+  const inc = PF_KEYS.filter(k => sel.pf[k] !== 'none');
+  if (inc.length === PF_KEYS.length && inc.every(k => sel.pf[k] === 'all')) add('', 'Visi periodiskumi');
+  // periodiskums ar visiem periodiem – tikai nosaukums; ar konkrētu periodu – "Ceturksnis: 3. ceturksnis"
+  else inc.forEach(k => { const v = sel.pf[k], o = v === 'all' ? null : perOpts(k, +sel.year).find(([n]) => String(n) === v);
+    if (v === 'all') add('', PF_LABELS[k]); else add(PF_LABELS[k], o ? o[1].replace(/\s*\(.*\)$/, '') : v); });
+  if (sel.reports.length) sel.reports.forEach(id => { const p = repById(id); if (p) add('Apsekojums', p.code, '', p.name); });
+  else add('', 'Visi apsekojumi');
+  if (sel.operator){ const o = OPERATORS.find(x => x.id === sel.operator); add('Operators', o ? o.name : sel.operator); }
+  [['name', 'Nosaukums'], ['nmk', 'NMK'], ['nmkps', 'NMK/PS'], ['uuk', 'UUK'], ['email', 'E-pasts'], ['eaddr', 'eAdrese']].forEach(([k, l]) => { if (String(f[k] || '').trim()) add(l, f[k].trim()); });
+  if ((f.exclSt || []).length) add('Izslēgti statusa šifri', f.exclSt.join(', '));
+  if (f.list) add('Saraksts no faila', f.listName || 'fails');
+  if (sel.excludeInvited) add('', 'Bez jau uzaicinātajiem');
+  if (sel.mergeNmk) add('', 'Apvienots pēc NMK');
+  return tags;
+}
+const CTX_SHOW = 6;
+function renderScopeCtx(){
+  const tags = scopeCtxTags(), all = ui.ctxAll || tags.length <= CTX_SHOW + 1, shown = all ? tags : tags.slice(0, CTX_SHOW);
+  $('#c-ctx-tags').innerHTML = shown.map(t => { const txt = (t.label ? `${t.label}: ` : '') + t.val;
+    return `<span class="ctx-tag ${t.cls}" title="${esc(t.title ? `${txt} – ${t.title}` : txt)}"><span>${t.label ? `<small>${esc(t.label)}:</small> ` : ''}${esc(t.val)}</span></span>`; }).join('') +
+    (tags.length > CTX_SHOW + 1 ? `<button type="button" class="ctx-more" id="c-ctx-more" aria-expanded="${!!ui.ctxAll}">${ui.ctxAll ? 'Rādīt mazāk' : `+${tags.length - CTX_SHOW} vēl`}</button>` : '');
+  const rs = state.respondents.filter(matchesFilt), np = new Set(rs.flatMap(r => selDutiesOf(r)).map(d => d.reportId + '|' + d.period)).size;
+  $('#c-ctx-sum').innerHTML = `<b>${rs.length}</b> ${plural(rs.length, 'respondents', 'respondenti')} · <b>${np}</b> ${np === 1 ? 'pārskats/periods' : 'pārskati/periodi'}`;
+}
+// apsekojuma filtrs tabulā: tvērumā esošie apsekojumi ar respondentu skaitu
+function renderRepFilter(){
+  const rs = state.respondents.filter(matchesFilt), cnt = new Map();
+  rs.forEach(r => new Set(selDutiesOf(r).map(d => d.reportId)).forEach(id => cnt.set(id, (cnt.get(id) || 0) + 1)));
+  if (compose.repF && !cnt.has(compose.repF)) compose.repF = '';
+  const reps = [...cnt.keys()].map(repById).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name, 'lv'));
+  $('#c-rep-filter').innerHTML = `<option value="">Visi (${rs.length})</option>` + reps.map(p => `<option value="${p.id}" ${compose.repF === p.id ? 'selected' : ''}>${esc(p.name)} (${cnt.get(p.id)})</option>`).join('');
+  $('#c-rep-filter').value = compose.repF || '';
+}
+// tabulā redzamie respondenti (meklēšana un apsekojuma filtrs); uz tiem attiecas "Iekļaut visus" / "Izņemt visus"
+const visibleResp = () => state.respondents.filter(r => matchesResp(r, compose.search) && matchesFilt(r) && (!compose.repF || selDutiesOf(r).some(d => d.reportId === compose.repF)));
 // Atlases rezultāts: respondenti (izvēršot – atlasītie pienākumi); var izņemt atsevišķus respondentus
 function renderComposeList(){
-  const list = state.respondents.filter(r => matchesResp(r, compose.search) && matchesFilt(r));
+  renderScopeCtx(); renderRepFilter();
+  const list = visibleResp();
   // respondenta adreses atsevišķās kolonnās (garas – saīsinātas, pilnā adrese – uzbraucot ar peli)
   const addrCell = v => v ? `<td class="c-addr"><span class="addr-cut" title="${esc(v)}">${esc(v)}</span></td>` : '<td class="c-addr"><span class="muted">—</span></td>';
-  $('#c-list').innerHTML = list.length ? `<table class="sel-table"><thead><tr><th class="c-chk"><span class="sr-only">Iekļaut</span></th><th>Respondents</th><th>eAdrese</th><th>E-pasts 1</th><th>E-pasts 2</th><th class="num">Pienākumi</th><th class="c-tg"><span class="sr-only">Izvērst</span></th></tr></thead><tbody>
+  // apsekojumu un periodu birkas (pirmās 2, pārējās – "+N")
+  const repTags = ds => {
+    const seen = new Map();
+    ds.forEach(d => { const k = d.reportId + '|' + d.period; if (!seen.has(k)){ const p = repById(d.reportId) || {name:d.reportId, code:d.reportId}; seen.set(k, {txt:`${p.code} · ${periodShort(d.period)}`, full:`${p.name} – ${periodLabel(d.period)}`}); } });
+    const xs = [...seen.values()], rest = xs.slice(2);
+    return `<span class="rp-tags">${xs.slice(0, 2).map(x => `<span class="rp-tag" title="${esc(x.full)}">${esc(x.txt)}</span>`).join('')}${rest.length ? `<span class="rp-tag is-more" title="${esc(rest.map(x => x.full).join('\n'))}">+${rest.length}</span>` : ''}</span>`;
+  };
+  $('#c-list').innerHTML = list.length ? `<table class="sel-table"><thead><tr><th class="c-chk"><span class="sr-only">Iekļaut</span></th><th>Respondents</th><th>eAdrese</th><th>E-pasts 1</th><th>E-pasts 2</th><th class="c-reps">Apsekojumi / periodi</th><th class="c-tg"><span class="sr-only">Izvērst</span></th></tr></thead><tbody>
     ${list.map(r => {
       const first = addrPlan(r)[0], addr = first && first.address, ds = selDutiesOf(r), out = compose.excluded.has(r.id), op = compose.open.has(r.id);
-      const notSub = ds.filter(d => !d.submitted).length, noAny = !['eadrese', 'email1', 'email2', 'email3'].some(k => String(ADDR_TYPES[k].get(r) || '').trim());
+      const noAny = !['eadrese', 'email1', 'email2', 'email3'].some(k => String(ADDR_TYPES[k].get(r) || '').trim());
       return `<tr class="sel-row ${out ? 'is-out' : ''} ${addr ? '' : 'is-skip'}">
         <td class="c-chk"><input type="checkbox" data-rid="${r.id}" ${out ? '' : 'checked'} aria-label="Iekļaut: ${esc(r.name)}"></td>
-        <td>${noAny ? `<span class="no-addr" tabindex="0" role="img" aria-label="Nav nevienas adreses" data-tip="Nav nevienas adreses">${ICON.warn}</span>` : ''}${respLink(r.id, r.name)}${compose.custom[r.id] ? ' <span class="pill pill-custom">Pielāgota vēstule</span>' : ''}${(g => g.length > 1 ? `<small class="merge-note">Apvienota vēstule: ${g.length} vienības (NMK ${esc(r.nmk)}) – ${esc(g.slice(1).map(x => x.name).join(', '))}</small>` : '')(nmkGroup(r))}${addr ? '' : '<small><span class="skip">Nav adreses pēc izvēlētās prioritātes – tiks izlaists</span></small>'}</td>
+        <td>${noAny ? `<span class="no-addr" tabindex="0" role="img" aria-label="Nav nevienas adreses" data-tip="Nav nevienas adreses">${ICON.warn}</span>` : ''}${respLink(r.id, r.name)}${compose.custom[r.id] ? ' <span class="pill pill-custom">Pielāgota vēstule</span>' : ''}${(g => g.length > 1 ? `<small class="merge-note">Apvienota vēstule: ${g.length} vienības (NMK ${esc(r.nmk)}) – ${esc(g.slice(1).map(x => x.name).join(', '))}</small>` : '')(nmkGroup(r))}${addr ? '' : '<small><span class="skip-tag" tabindex="0" role="note" data-tip="Nav adreses pēc izvēlētās prioritātes – tiks izlaists" aria-label="Nav adreses pēc izvēlētās prioritātes – tiks izlaists">Nav adreses</span></small>'}</td>
         ${addrCell(r.eaddress)}${addrCell(r.email)}${addrCell(r.email2)}
-        <td class="num"><b>${ds.length}</b>${notSub && !isReminder() ? `<small>neiesn. ${notSub}</small>` : ''}</td>
-        <td class="c-tg"><button type="button" class="icon-btn row-tg" data-action="c-row-toggle" data-id="${r.id}" aria-expanded="${op}" aria-label="Pienākumi: ${esc(r.name)}">${ICON.chev}</button></td></tr>
-        ${op ? `<tr class="sel-duties"><td colspan="7"><table><thead><tr><th>Pārskats</th><th>Periods</th><th>Termiņš</th><th>Statuss</th></tr></thead><tbody>${ds.map(d => {
+        <td class="c-reps">${repTags(ds)}</td>
+        <td class="c-tg"><button type="button" class="icon-btn row-tg" data-action="c-row-toggle" data-id="${r.id}" aria-expanded="${op}" aria-label="Apsekojumi un periodi: ${esc(r.name)}">${ICON.chev}</button></td></tr>
+        ${op ? `<tr class="sel-duties"><td colspan="7"><table><thead><tr><th>Apsekojums</th><th>Periods</th><th>Termiņš</th><th>Statuss</th></tr></thead><tbody>${ds.map(d => {
           const p = repById(d.reportId) || {name:d.reportId, code:''};
           return `<tr><td>${esc(p.name)}</td><td>${esc(periodLabel(d.period))}</td><td class="${dutyStatus(d) === 'kavets' ? 'late' : ''}">${esc(fmtDate(d.deadline))}</td><td>${dutyPill(d)}${d.submitted ? ` <small>${esc(fmtDate(d.submitted))}</small>` : ''}</td></tr>`;
         }).join('')}</tbody></table></td></tr>` : ''}`;
     }).join('')}</tbody></table>`
-    : `<div class="empty" style="padding:20px"><p>${!state.respondents.length ? 'Respondentu saraksts ir tukšs.' : compose.search ? 'Neviens respondents neatbilst meklēšanai.'
+    : `<div class="empty" style="padding:20px"><p>${!state.respondents.length ? 'Respondentu saraksts ir tukšs.' : compose.search || compose.repF ? 'Neviens respondents neatbilst meklēšanai vai filtram.'
       : isReminder() && compose.remind === 'before' ? 'Nav neiesniegtu pienākumu ar aprēķināto termiņu.' : 'Atlasei neatbilst neviens respondents.'}</p></div>`;
   renderComposeCount();
 }
@@ -5586,7 +5668,8 @@ function renderComposeCount(){
   renderPrio();
   renderSelSummary();
   const st = selStats();
-  $('#c-count').textContent = `Iekļauti ${st.sel} no ${st.match}` +
+  const shown = compose.search || compose.repF ? visibleResp().length : null;
+  $('#c-count').textContent = `Iekļauti ${st.sel} no ${st.match}` + (shown != null ? ` · parādīti ${shown}` : '') +
     (st.excl ? ` · izņemti ${st.excl}` : '') +
     (st.noAddr ? ` · ${st.noAddr} bez atbilstošas adreses – netiks nosūtīti` : '');
 }
@@ -6542,8 +6625,8 @@ const actions = {
     } else toast('Manuālais e-pasts saglabāts.');
     renderPrio(); renderComposeList(); renderComposePreview(); refreshCard();
   },
-  'c-all': () => { state.respondents.filter(r => matchesResp(r, compose.search)).forEach(r => compose.excluded.delete(r.id)); renderComposeList(); renderComposePreview(); },
-  'c-none': () => { state.respondents.filter(r => matchesResp(r, compose.search) && matchesFilt(r)).forEach(r => compose.excluded.add(r.id)); compose.index = 0; renderComposeList(); renderComposePreview(); },
+  'c-all': () => { visibleResp().forEach(r => compose.excluded.delete(r.id)); renderComposeList(); renderComposePreview(); },
+  'c-none': () => { visibleResp().forEach(r => compose.excluded.add(r.id)); compose.index = 0; renderComposeList(); renderComposePreview(); },
   'c-row-toggle': id => { compose.open.has(id) ? compose.open.delete(id) : compose.open.add(id); renderComposeList(); const b = $(`#c-list [data-action="c-row-toggle"][data-id="${id}"]`); if (b) b.focus(); },
   'c-status-sync': () => {
     // simulācija: daļa neiesniegto pienākumu (ar tuvu vai nesen pagājušu termiņu) kļūst iesniegti
@@ -6656,6 +6739,8 @@ document.addEventListener('keydown', e => {
   if (b) b.click();
 });
 $('#c-search').addEventListener('input', e => { compose.search = e.target.value; renderComposeList(); });
+$('#c-rep-filter').addEventListener('change', e => { compose.repF = e.target.value; renderComposeList(); });
+$('#c-ctx').addEventListener('click', e => { if (e.target.closest('#c-ctx-more')){ ui.ctxAll = !ui.ctxAll; renderScopeCtx(); const b = $('#c-ctx-more'); if (b) b.focus(); } });
 // Solis "Respondenti": kampaņas veids, atgādinājums, atlases lauki
 const selChanged = () => { compose.index = 0; renderFilters(); renderComposeList(); renderComposePreview(); };
 $('#c-kind').addEventListener('click', e => {
