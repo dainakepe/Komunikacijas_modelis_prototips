@@ -196,6 +196,7 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
   - 15 uzņēmumi un 8 pārskati ar visiem periodiskumiem (arī "Intervija" – Uzņēmumu inovāciju apsekojums);
   - katram respondentam: NMK, NMK/PS (fiziskām personām nav), UUK, Tsav, pasta adrese, atbildīgais operators un statusa šifrs;
   - vairākas vienības vienā NMK: SIA “Ziemeļblāzmas Koks” (galvenā vienība, Valmieras ražotne, Rēzeknes noliktava) un AS “Baltijas Stikls” (galvenā vienība, Liepājas rūpnīca);
+  - tekošā gada gada pārskati (dažiem uzņēmumiem un mājsaimniecībām), lai "Gada pārskati" ir aktīva arī tekošajā gadā;
   - jau nosūtīti uzaicinājumi: "Darbaspēka apsekojums – uzaicinājums" un "Ceturkšņa darba samaksas pārskats – uzaicinājums" (daļai uzņēmumu) – lai var pārbaudīt "Izslēgt jau uzaicinātos";
   - 10 fiziskās personas sešos apsekojumos ar visiem periodiskumiem: Gads (Mājsaimniecību budžeta), Pusgads (Iedzīvotāju ienākumu un dzīves apstākļu), Ceturksnis (Darbaspēka), Mēnesis (Ceļotāju), Nedēļa (Laika izlietojuma), Intervija (IKT lietošana 2026. gadā);
   - termiņi ir gan pagātnē, gan nākotnē, un statusi ir jaukti;
@@ -268,18 +269,15 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
      - noklusējums – rītdiena plkst. 09:00;
      - pagātnes datumu un laiku nevar izvēlēties: kalendārā tie nav pieejami, šodienai laika ieteikumos ir tikai nākotnes laiki, bet ievadītam pagātnes vai nederīgam datumam vai laikam tiek parādīta kļūda, un kampaņu nevar ieplānot;
      - uz šauriem ekrāniem datuma un laika lauki pārceļas zem pārslēga;
-   - **"Kampaņas tvērums"** – skaidrojums ("Norādiet periodu, apsekojumu vai abus." u. c.) ir "i" ikonas padomā blakus virsrakstam. Divas līdzvērtīgas, vienāda augstuma kartītes blakus (uz šauriem ekrāniem viena zem otras). Var izmantot vienu vai abas, bet jābūt aizpildītai vismaz vienai. Ja aizpildītas abas, atlase ir abu kritēriju krustpunkts (piem., konkrēts apsekojums konkrētā periodā):
-     - **Pēc perioda:** periodiskums kā kompaktas pogas-birkas vienā rindā (vairākizvēle): Gads, Pusgads, Ceturksnis, Mēnesis, Nedēļa, Intervija (uz šaurākiem ekrāniem tās var pārcelties nākamajā rindā).
-     - **Konkrēts periods (neobligāti)** tiek norādīts ar izkrītošajām izvēlnēm:
-       - viena perioda rinda: "Gads" (no 2020 līdz nākamajam gadam, noklusējumā tekošais) un blakus "Periods", kura saturs atkarīgs no periodiskuma: Pusgads – 1., 2. pusgads; Ceturksnis – 1.–4. ceturksnis; Mēnesis – janvāris–decembris; Nedēļa – 1.–52./53. nedēļa (ar datumiem); Intervija – intervēšanas viļņi no testa datiem. Periodiskumam "Gads" otrās izvēlnes nav;
-       - ja izvēlēti vairāki periodiskumi, rindā vispirms izvēlas periodiskumu, tad gadu un periodu (uz šauriem ekrāniem "Periods" ir zem tiem);
-       - poga "+ Pievienot periodu" pievieno rindu, poga × to noņem;
-       - zem rindām izvēlētie periodi redzami kā birkas, piem., "2026. g. 3. ceturksnis", "2025. gads";
-       - konkrētais periods attiecas uz savu periodiskumu. Ja konkrēts periods nav norādīts (skaidrojums – "i" padomā pie "Konkrēts periods"), tiek atlasīti visi izvēlētā periodiskuma aktīvie periodi – tie, kuros datu vākšana nav beigusies (termiņš vēl nav pienācis vai kāds pienākums nav iesniegts). Ja norādīts tikai dažiem periodiskumiem, pārējiem tiek ņemti aktīvie periodi;
-     - **Pēc apsekojuma:** meklējama vairākizvēle ar apsekojumiem / pārskatiem (atbilstoši adresātam). Pie katra redzams kods, periodiskums un termiņa noteikums. Izvēlētie apsekojumi redzami kā birkas ar ×. Sarakstā var pārvietoties ar bultiņām un izvēlēties ar Enter. Ja izvēlēts apsekojums, kas neatbilst izvēlētajam periodiskumam, tiek parādīts brīdinājums; Saraksts ir atkarīgs no perioda izvēles (rāda tikai izvēlētā periodiskuma apsekojumus), un tā augšā ir "Visi apsekojumi" (bez ierobežojuma pēc apsekojuma). Zem tā – **"Atbildīgais operators"** (izvēlne ar testa darbiniekiem, noklusējumā "Visi").
-     - Periodiskuma birkām ir arī "Visi" (atzīmē visus periodiskumus).
-     - **Pēc respondenta** – sakļaujama trešā kartīte zem abām (pēc noklusējuma sakļauta; virsrakstā aktīvo filtru skaits, piem., "2 filtri"):
-       - meklēšana: "Nosaukums" (daļējs teksts);
+   - **"Kampaņas tvērums"** – skaidrojums ir "i" ikonas padomā blakus virsrakstam; augšējā labajā stūrī izvēlne **"Mani filtri"**. Trīs vienāda platuma un augstuma kartītes vienā rindā (zem 1000 px – viena zem otras). Atlase ir visu kartīšu kritēriju krustpunkts:
+     - **Pēc perioda** (tikai izkrītošās izvēlnes):
+       - "Gads" (obligāts; 2020 – nākamais gads, noklusējumā tekošais) – nosaka, par kura gada respondentiem (pārskatu periodiem) tiek sūtīta informācija;
+       - zem tā – izvēlne katram periodiskumam, pa divām blakus: "Gada pārskati" (Iekļaut / Neiekļaut), "Pusgads" (Visi / 1. / 2. pusgads / Neiekļaut), "Ceturksnis" (Visi / 1.–4. ceturksnis / Neiekļaut), "Mēnesis" (Visi / janvāris–decembris / Neiekļaut), "Nedēļa" (Visi / 1.–52./53. nedēļa ar datumiem / Neiekļaut), "Intervija" (Visi / intervēšanas viļņi no testa datiem / Neiekļaut);
+       - noklusējumā visas ir "Visi" / "Iekļaut" – tiek atlasīti visi izvēlētā gada respondenti neatkarīgi no periodiskuma. Konkrēts periods sašaurina atlasi līdz šim periodam, "Neiekļaut" izslēdz periodiskumu pilnībā. Izmainītās izvēlnes ir izceltas;
+       - izvēlnes, kurām izvēlētajā gadā nav datu, ir pelēkas un neaktīvas;
+       - jābūt iekļautam vismaz vienam periodiskumam.
+     - **Pēc apsekojuma:** meklējama vairākizvēle ar apsekojumiem / pārskatiem (atbilstoši adresātam). Pie katra redzams kods, periodiskums un termiņa noteikums. Izvēlētie apsekojumi redzami kā birkas ar ×. Sarakstā var pārvietoties ar bultiņām un izvēlēties ar Enter. Saraksts ir atkarīgs no perioda izvēles (rāda tikai apsekojumus, kuriem izvēlētajā periodā ir pienākumi; ja izvēlēts apsekojums bez pienākumiem periodā, birka atzīmēta ar ⚠), un tā augšā ir "Visi apsekojumi" (bez ierobežojuma pēc apsekojuma). Zem tā – **"Atbildīgais operators"** (izvēlne ar testa darbiniekiem, noklusējumā "Visi").
+     - **Pēc respondenta** – redzami lauki "Nosaukums" (daļējs teksts) un "NMK"; saite **"+ Vairāk filtru"** kartītes iekšpusē izvērš pārējos laukus (kartīte tad var kļūt augstāka par pārējām). Ja slēptie lauki aizpildīti, saitē redzams skaits, piem., "+ Vairāk filtru (2 aktīvi)". Virsrakstā – visu aktīvo filtru skaits:
        - identifikatori: "NMK", "NMK/PS", "UUK", "Tsav" (var ievadīt vairākas vērtības, atdalot ar komatu; precīza atbilstība);
        - adreses: "Pasta adrese", "E-pasts", "eAdrese" (daļējs teksts);
        - "Izslēgt pēc statusa šifra": izkrītoša vairākizvēle ar šifriem un to paskaidrojumiem (1 – Aktīva vienība, 2 – Darbība uz laiku pārtraukta, 5 – Likvidācijas procesā, 8 – Atteicies sniegt datus, q – Datu kvalitātes pārbaude, a – Adrese nav aktuāla, v – Vienība apvienota ar citu) un respondentu skaitu pie katra;
@@ -288,7 +286,7 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
        - "Izslēgt jau uzaicinātos" – neiekļauj pienākumus (un līdz ar to respondentus), par kuriem jau nosūtīts uzaicinājums (pēc nosūtīto vēstuļu pienākumu sarakstiem; neveiksmīgās vēstules netiek ņemtas vērā);
        - "Apvienot vēstules pēc NMK" – vairākas vienības ar vienu NMK saņem vienu kopīgu vēstuli: adresāts ir pirmā vienība, bet `{pārskatu_tabula}` ietver visu vienību pienākumus (pie citu vienību pienākumiem – vienības nosaukums). 2. solī pie vēstules adresāta redzams "Apvienota vēstule: N vienības (NMK …)".
      - zem kartītēm ir dzīvs kopsavilkums "Atlasīti X respondenti, Y pārskati/periodi" (apvienojot – arī apvienoto vienību skaits);
-     - apakšā pogas **"Notīrīt filtrus"** un **"Saglabāt filtru"** (ar nosaukumu; saglabātie filtri ir izvēlnē **"Mani filtri"** bloka augšā un izmantojami citās kampaņās; tos var arī dzēst).
+     - apakšā pogas **"Notīrīt filtrus"** un **"Saglabāt filtru"** (ar nosaukumu; saglabātie filtri ir izvēlnē "Mani filtri" un izmantojami citās kampaņās; tos var arī dzēst).
    - **vēstules dati:**
      - "Nosaukums vēstulē `{apsekojums}`" redzams, ja atlase attiecas uz vienu apsekojumu (tas tiek aizpildīts no apsekojuma datiem, un to var labot). Ja apsekojumi ir vairāki, lauks ir paslēpts: apsekojumu nosaukumi vēstulē redzami blokā `{pārskatu_tabula}`, bet `{apsekojums}` tiek aizstāts ar respondenta apsekojumu nosaukumiem;
      - "Vēstules datums `{datums}`" un "Dokumenta Nr. `{dok_nr}`";
