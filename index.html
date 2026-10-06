@@ -717,6 +717,17 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .sel-table small{display:block;color:var(--text-muted);font-size:12px;word-break:break-all}
 .sel-table tr.is-out > td:not(.c-chk){opacity:.5}
 .sel-table tr.is-skip b{color:var(--text-muted)}
+.sel-table{min-width:760px}
+.sel-table td:nth-child(2){max-width:240px}
+.sel-table td:nth-child(2) .resp-link{white-space:normal}
+.sel-table .c-addr{max-width:200px}
+.sel-sum .pill{white-space:normal;max-width:100%}
+.addr-cut{display:block;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.no-addr{position:relative;display:inline-flex;vertical-align:-2px;margin-right:5px;color:var(--warning);cursor:help}
+.no-addr .icon{width:15px;height:15px}
+.no-addr::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 6px);white-space:nowrap;background:#1F2933;color:#fff;font-size:12.5px;font-weight:400;line-height:1.45;padding:6px 9px;border-radius:6px;box-shadow:var(--shadow-lg);opacity:0;visibility:hidden;transition:opacity .12s;z-index:30;pointer-events:none}
+.no-addr::after{display:none}
+.no-addr:hover::after,.no-addr:focus-visible::after{display:block;opacity:1;visibility:visible}
 .sel-table .row-tg{width:26px;height:26px}
 .sel-table .row-tg .chev{transition:transform .15s}
 .sel-table .row-tg[aria-expanded="true"] .chev{transform:rotate(90deg)}
@@ -1084,7 +1095,8 @@ dialog.modal.full .modal-body{flex:1;padding:14px 20px}
 .tip[hidden]{display:none}
 .tip:hover,.tip:focus-visible{background:var(--primary);color:#fff;outline:none}
 .tip::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%);width:max-content;max-width:280px;background:#1F2933;color:#fff;font-weight:400;font-size:12.5px;line-height:1.45;font-family:var(--font);font-style:normal;letter-spacing:0;text-transform:none;padding:8px 10px;border-radius:6px;box-shadow:var(--shadow-lg);opacity:0;visibility:hidden;transition:opacity .12s;z-index:30;pointer-events:none;text-align:left;white-space:normal}
-.tip:hover::after,.tip:focus-visible::after{opacity:1;visibility:visible}
+.tip::after{display:none}
+.tip:hover::after,.tip:focus-visible::after{display:block;opacity:1;visibility:visible}
 /* padoms pie ekrāna malas – izlīdzināts, lai neiziet ārpus ekrāna */
 .tip.tip-l::after{left:-8px;transform:none}
 .tip.tip-r::after{left:auto;right:-8px;transform:none}
@@ -1555,8 +1567,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
               <div class="field"><label for="c-late">Kavēts vismaz <span class="muted">(dienas, neobligāti)</span> <span class="tip" tabindex="0" role="note" aria-label="Tiek atlasīti neiesniegtie pienākumi, kuru termiņš ir pagājis (vismaz pirms norādītā dienu skaita)." data-tip="Tiek atlasīti neiesniegtie pienākumi, kuru termiņš ir pagājis (vismaz pirms norādītā dienu skaita).">i</span></label><input type="number" id="c-late" min="0" max="999" step="1" placeholder="—"></div>
             </div>
           </div>
-          <details class="more sel-block"><summary>Papildu atlase pēc pazīmēm</summary>
-            <div class="r-filters" id="c-filters"></div></details>
           <div class="sel-result">
             <h3>Atlases rezultāts <span class="tip" tabindex="0" role="note" aria-label="Katrs respondents saņem vienu vēstuli; blokā {pārskatu_tabula} – tikai viņa atlasītie pienākumi (atgādinājumā – neiesniegtie)." data-tip="Katrs respondents saņem vienu vēstuli; blokā {pārskatu_tabula} – tikai viņa atlasītie pienākumi (atgādinājumā – neiesniegtie).">i</span></h3>
             <span class="err" id="c-resp-err" hidden></span>
@@ -5104,7 +5114,9 @@ function selectedDuties(){
 }
 const selDutiesOf = r => selectedDuties().filter(d => d.respondentId === r.id)
   .sort((a, b) => a.deadline.localeCompare(b.deadline) || periodStart(a.period) - periodStart(b.period));
-const matchesAttrs = r => { const at = respAttrs(r); return ATTRS.every(a => !compose.filt[a.key] || at[a.key] === compose.filt[a.key]); };
+// Atlase notiek tikai pēc kampaņas tvēruma (un atgādinājumiem – pēc statusa un termiņa).
+// Respondentu pazīmes paliek datos: tās izmanto veidņu nosacījumos un valodas versijas izvēlē.
+const matchesAttrs = () => true;
 // respondents atbilst atlasei, ja viņam ir vismaz viens atlasīts pienākums
 const matchesFilt = r => matchesAttrs(r) && selDutiesOf(r).length > 0;
 const selectedResp = () => state.respondents.filter(r => !compose.excluded.has(r.id) && matchesFilt(r));
@@ -5253,9 +5265,6 @@ function renderFilters(){
   $('#c-days').value = sel.days;
   $('#c-late').value = sel.lateDays;
   renderTargetInfo();
-  $('#c-filters').innerHTML = ATTRS.map(a => `<select data-filt="${a.key}" aria-label="Atlase: ${esc(a.label)}">
-    <option value="">${esc(a.label)}: visi</option>${Object.entries(a.values).map(([k, v]) =>
-      `<option value="${k}" ${compose.filt[a.key] === k ? 'selected' : ''}>${esc(a.cond === false ? `${v.label} (${v.short})` : v.short)}</option>`).join('')}</select>`).join('');
   $('#c-dvp').innerHTML = `<span>Statusi atjaunoti ${esc(fmtDateTime(state.statusSyncedAt || new Date().toISOString()))}${tip('Iesniegšanas statusi ir dati no Datu vākšanas pārraudzības (tikai lasāmi; prototipā – testa dati).')}</span>
     <button type="button" class="btn btn-ghost btn-sm" data-action="c-status-sync"><svg class="icon" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16M20 20v-4h-4"/></svg>Atjaunot statusus</button>`;
 }
@@ -5460,16 +5469,19 @@ function renderPrio(){
 // Atlases rezultāts: respondenti (izvēršot – atlasītie pienākumi); var izņemt atsevišķus respondentus
 function renderComposeList(){
   const list = state.respondents.filter(r => matchesResp(r, compose.search) && matchesFilt(r));
-  $('#c-list').innerHTML = list.length ? `<table class="sel-table"><thead><tr><th class="c-chk"><span class="sr-only">Iekļaut</span></th><th>Respondents</th><th class="num">Pienākumi</th><th class="c-tg"><span class="sr-only">Izvērst</span></th></tr></thead><tbody>
+  // respondenta adreses atsevišķās kolonnās (garas – saīsinātas, pilnā adrese – uzbraucot ar peli)
+  const addrCell = v => v ? `<td class="c-addr"><span class="addr-cut" title="${esc(v)}">${esc(v)}</span></td>` : '<td class="c-addr"><span class="muted">—</span></td>';
+  $('#c-list').innerHTML = list.length ? `<table class="sel-table"><thead><tr><th class="c-chk"><span class="sr-only">Iekļaut</span></th><th>Respondents</th><th>eAdrese</th><th>E-pasts 1</th><th>E-pasts 2</th><th class="num">Pienākumi</th><th class="c-tg"><span class="sr-only">Izvērst</span></th></tr></thead><tbody>
     ${list.map(r => {
       const first = addrPlan(r)[0], addr = first && first.address, ds = selDutiesOf(r), out = compose.excluded.has(r.id), op = compose.open.has(r.id);
-      const notSub = ds.filter(d => !d.submitted).length;
+      const notSub = ds.filter(d => !d.submitted).length, noAny = !['eadrese', 'email1', 'email2', 'email3'].some(k => String(ADDR_TYPES[k].get(r) || '').trim());
       return `<tr class="sel-row ${out ? 'is-out' : ''} ${addr ? '' : 'is-skip'}">
         <td class="c-chk"><input type="checkbox" data-rid="${r.id}" ${out ? '' : 'checked'} aria-label="Iekļaut: ${esc(r.name)}"></td>
-        <td>${respLink(r.id, r.name)}${compose.custom[r.id] ? ' <span class="pill pill-custom">Pielāgota vēstule</span>' : ''}<small>${addr ? `${esc(addrShort(first.type))}: ${esc(addr)}` : '<span class="skip">Nav adreses pēc izvēlētās prioritātes – tiks izlaists</span>'}</small></td>
+        <td>${noAny ? `<span class="no-addr" tabindex="0" role="img" aria-label="Nav nevienas adreses" data-tip="Nav nevienas adreses">${ICON.warn}</span>` : ''}${respLink(r.id, r.name)}${compose.custom[r.id] ? ' <span class="pill pill-custom">Pielāgota vēstule</span>' : ''}${addr ? '' : '<small><span class="skip">Nav adreses pēc izvēlētās prioritātes – tiks izlaists</span></small>'}</td>
+        ${addrCell(r.eaddress)}${addrCell(r.email)}${addrCell(r.email2)}
         <td class="num"><b>${ds.length}</b>${notSub && !isReminder() ? `<small>neiesn. ${notSub}</small>` : ''}</td>
         <td class="c-tg"><button type="button" class="icon-btn row-tg" data-action="c-row-toggle" data-id="${r.id}" aria-expanded="${op}" aria-label="Pienākumi: ${esc(r.name)}">${ICON.chev}</button></td></tr>
-        ${op ? `<tr class="sel-duties"><td colspan="4"><table><thead><tr><th>Pārskats</th><th>Periods</th><th>Termiņš</th><th>Statuss</th></tr></thead><tbody>${ds.map(d => {
+        ${op ? `<tr class="sel-duties"><td colspan="7"><table><thead><tr><th>Pārskats</th><th>Periods</th><th>Termiņš</th><th>Statuss</th></tr></thead><tbody>${ds.map(d => {
           const p = repById(d.reportId) || {name:d.reportId, code:''};
           return `<tr><td>${esc(p.name)}</td><td>${esc(periodLabel(d.period))}</td><td class="${dutyStatus(d) === 'kavets' ? 'late' : ''}">${esc(fmtDate(d.deadline))}</td><td>${dutyPill(d)}${d.submitted ? ` <small>${esc(fmtDate(d.submitted))}</small>` : ''}</td></tr>`;
         }).join('')}</tbody></table></td></tr>` : ''}`;
@@ -5521,8 +5533,6 @@ function renderComposePreview(){
     $$('#c-pvch button').forEach(b => b.setAttribute('aria-pressed', b.dataset.pvch === ch0)); }
   const audVeids = t ? AUDS[t.aud].veids : null;
   if (t) $('#c-tpl-info').innerHTML = audPill(t.aud) + catPill(t.cat) + kindPill(t.kind) + (mainNameOf(t) ? `<span>${ICON.clip} ${esc(mainNameOf(t))}</span>` : '') +
-    (audVeids && compose.filt.veids !== audVeids ? `<button type="button" class="btn btn-ghost btn-sm" data-action="aud-filter">Atlasīt tikai: ${esc(ATTR_BY_KEY.veids.values[audVeids].short)}</button>` : '') +
-    (t && !audVeids && compose.filt.veids ? `<button type="button" class="btn btn-ghost btn-sm" data-action="aud-filter">Atlasīt visus: fiziskās un juridiskās personas</button>` : '') +
     ((t.files || []).length ? `<span>+ ${t.files.length} ${plural(t.files.length, 'fails', 'faili')}</span>` : '');
 
   previewDocs = [];
@@ -6333,12 +6343,6 @@ const actions = {
     keys.forEach(k => allOpen ? ui.tplOpen.delete(k) : ui.tplOpen.add(k));
     renderTemplates(); $('#tpl-toggle-all').focus();
   },
-  'aud-filter': () => {
-    const t = currentTemplate();
-    if (!t) return;
-    compose.filt.veids = AUDS[t.aud].veids || ''; compose.index = 0;
-    renderFilters(); renderComposeList(); renderComposePreview();
-  },
   'tpl-edit': id => openTemplateEditor(id),
   'att-new': () => openAttForm(),
   'ms-edit': id => openMailSampleForm(id),
@@ -6535,7 +6539,6 @@ $('#c-name').addEventListener('blur', e => { e.target.value = compose.name; });
 // Kampaņas adresāts: nosaka piedāvātās veidnes un atlasa atbilstošos respondentus
 $('#c-aud').addEventListener('change', e => {
   compose.aud = e.target.value; compose.index = 0;
-  compose.filt.veids = AUDS[compose.aud].veids || '';
   selChanged();
 });
 $$('[data-sign]').forEach(inp => inp.addEventListener('input', () => {
@@ -6752,12 +6755,6 @@ $('#c-pvch').addEventListener('click', e => {
 });
 $('#c-days').addEventListener('input', e => { compose.sel.days = e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value, 10) || 0); compose.index = 0; renderTargetInfo(); renderComposeList(); renderComposePreview(); });
 $('#c-late').addEventListener('input', e => { compose.sel.lateDays = e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value, 10) || 0); compose.index = 0; renderTargetInfo(); renderComposeList(); renderComposePreview(); });
-$('#c-filters').addEventListener('change', e => {
-  const k = e.target.dataset.filt;
-  if (!k) return;
-  compose.filt[k] = e.target.value; compose.index = 0;
-  renderComposeList(); renderComposePreview();
-});
 $('#c-list').addEventListener('change', e => {
   const id = e.target.dataset.rid;
   if (!id) return;
