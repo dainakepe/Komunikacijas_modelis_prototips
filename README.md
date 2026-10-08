@@ -55,7 +55,14 @@ Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
 Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA moduļiem. Tie ir redzami kampaņas solī "Respondenti" un respondenta kartītē. Vecās saites turpina darboties: `#sagatavot` atver kampaņas redaktoru, `#nosutitas` atver cilni "Sūtīšanas vēsture", bet `#respondenti` atver cilni "Kampaņas".
 
 **Kampaņu saraksts** (specifikācija F1). Kompakts saraksts, kas ir viegli pārskatāms arī garam sarakstam.
-- **Augšējā josla** (vienā rindā): statusu filtri **Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās** ("Visas" – atverot cilni, vienmēr aktīva), meklēšana pēc nosaukuma, izvēlne "Visi kampaņu veidi" un labajā pusē **"+ Jauna kampaņa"** (uz šauriem ekrāniem – vairākās rindās).
+- **Augšdaļa** (no augšas uz leju):
+  - 1. rinda: virsraksts "Komunikācijas kampaņas" kreisajā pusē, poga **"+ Jauna kampaņa"** labajā pusē;
+  - 2. rinda: statusa pogas **Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās** ("Visas" – atverot cilni, vienmēr aktīva);
+  - 3. rinda: **filtru josla** (gaišs fons, viena rinda): meklēšana pēc kampaņas nosaukuma; **"Kampaņas veids"** (Visi veidi / Uzaicinājums / Atgādinājums / Informatīvs ziņojums / Cits; atgādinājumi – gan pirms, gan pēc termiņa); **"Veidotājs"** (Visi veidotāji / darbinieku vārdi; izvēlnē ir meklēšana, var pārvietoties ar bultiņām); **"Izveidota"** – datuma diapazons no–līdz (DD.MM.GGGG, ar kalendāru) un ātrās izvēles "Šodien", "Pēdējās 7 dienas", "Šis mēnesis", "Šis gads" (nederīgam datumam – kļūdas paziņojums); labajā malā saite **"Notīrīt"** (redzama tikai, ja kāds filtrs aktīvs);
+  - 4. rinda: tabula.
+- **Filtri darbojas kopā ar statusa pogām.** Ja nekas neatbilst, tabulas vietā redzams "Nav kampaņu, kas atbilst filtriem" un poga **"Notīrīt filtrus"** (statusa poga paliek).
+- **Izveides datums un veidotājs:** melnrakstam – kampaņas izveide (agrākiem melnrakstiem – saglabāšana) un pašreizējais lietotājs; ieplānotajai – izveide; nosūtītajai – izveide (testa datos – 1–6 dienas pirms nosūtīšanas) un kampaņas veidotājs. Testa datos ir 4 veidotāji (Testa Darbinieks, Rūta Testa, Mārtiņš Paraudziņš, Elīna Izdomāta) un dažādi izveides datumi, t. sk. pēdējo 6 mēnešu laikā.
+- **Šauri ekrāni:** filtru josla pārceļas divās rindās (meklēšana, veids, veidotājs / izveides periods un "Notīrīt"); telefonā filtri paslēpti aiz pogas **"Filtri"** (ar aktīvo filtru skaitu).
 - **Rindas** ~48 px augstas, viena teksta rinda; uzbraucot ar peli, rinda tiek izcelta:
   - **Kampaņa** – nosaukums pustreknā (garš – saīsināts ar "…"); uzbraucot ar peli vai fokusējot – padoms ar pilnu nosaukumu un "Saglabāta 08.10.2026., 13:50" (melnrakstiem) vai "Izveidoja: [vārds], 08.10.2026." (pārējām);
   - **Veids** – ikona un teksts (✉ Uzaicinājums, ◷ Atgādinājums, ⓘ Informatīvs ziņojums, Cits); atgādinājumam tajā pašā rindā pelēkā tekstā "pirms termiņa" / "pēc termiņa";
@@ -90,7 +97,7 @@ Bloku sakļaušana:
 - Pēc veidnes pievienošanas vai rediģēšanas izvēršas bloks, kurā tā atrodas.
 
 Papildus:
-- **Lauki veidnē.** Katrai veidnei ir lauki "Adresāts" un "Kategorija". Ja veidni pievieno no konkrēta bloka, abi lauki jau ir aizpildīti.
+- **Lauki veidnē.** Katrai veidnei ir lauki "Adresāts" (Iedzīvotāju statistika / Uzņēmumu statistika / Visi) un "Kategorija". Ja veidni pievieno no konkrēta bloka, abi lauki jau ir aizpildīti.
 - **Meklēšana.** Meklēšanas lauks filtrē aktīvās cilnes veidnes pēc nosaukuma un temata.
 - **Sagatavošana.** Veidņu izvēlne ir sagrupēta pēc adresāta un kategorijas. Ja atzīmētie respondenti neatbilst veidnes adresātam, sistēma par to brīdina, un ar vienu klikšķi var atlasīt tikai atbilstošos.
 
@@ -344,13 +351,13 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
    - **Tvēruma josla** (viena rinda, ~40 px, gaišs fons, mazs fonts, tikai lasāma): "Iedzīvotāju statistika · 1-DSA · 2026C3 · Cikls: 1., 2., 4. reize" (uzņēmumiem – izvēlētie pārskati un periodi, piem., "1-apgrozījums, 2-darbs · 2026C3", periodi – jaunākie 3, pārējie "+N"; atgādinājumam – "Pirms termiņa, 5 dienas (termiņš …)"; aktīvie filtri, piem., "Operators: …", "NMK: …"); garš teksts saīsināts ar "…", pilnais – uzbraucot ar peli. Labajā pusē – "**8** respondenti (6 gatavi)" (gatavi – ar derīgu vai automātiski labotu adresi) un saite **"Mainīt tvērumu"** (atgriež uz 1. soli).
    - **Uzaicinājums, informatīvs ziņojums un cits** atlasa visus respondentus, kuriem ir pienākums kampaņas tvērumā. Termiņš un statuss netiek ņemti vērā.
    - **"Atgādinājums"** atlasa tikai neiesniegtos pienākumus: "Pirms termiņa" – ar termiņu tieši nosūtīšanas datums + N dienas; "Pēc termiņa" – ar pagājušu termiņu (neobligāti – kavēts vismaz N dienas). Ieplānotai atgādinājuma kampaņai atlase izpildes brīdī tiek pārrēķināta pēc aktuālajiem statusiem (prototipā – poga "Izpildīt tagad" kampaņu sarakstā).
-   - Atlase notiek **tikai pēc kampaņas tvēruma** un atgādinājumiem – pēc iesniegšanas statusa un termiņa. Papildu atlases pēc pazīmēm nav. Respondentu pazīmes (veids, dalības veids, iepriekšējā dalība, valoda) paliek datos, jo tās izmanto adresātu grupēšanā (fiziskās / juridiskās personas).
+   - Atlase notiek **tikai pēc kampaņas tvēruma** un atgādinājumiem – pēc iesniegšanas statusa un termiņa. Papildu atlases pēc pazīmēm nav. Respondentu pazīmes (veids, dalības veids, iepriekšējā dalība) paliek datos, jo tās izmanto adresātu grupēšanā (fiziskās / juridiskās personas).
    - **Tabula:** virs tās vienā rindā – meklēšana, izvēlne **"Apsekojums"** (Visi / katrs tvērumā esošais apsekojums ar respondentu skaitu, piem., "1-C Ceļotāju apsekojums (9)") un labajā pusē saites "Iekļaut visus" / "Izņemt visus" (attiecas uz pašlaik redzamajiem – meklētajiem un filtrētajiem – respondentiem; zem tabulas tad redzams arī "parādīti N").
      - Kolonnas: Respondents, **E-pasts 1**, **E-pasts 2**, **Apsekojumi / periodi**; uzņēmumu statistikai (un jomai "Visi", kurā ir arī uzņēmumi) pirms e-pastiem ir kolonna **eAdrese**.
      - Adrešu šūnās – pārbaudes rezultāts: labotajām adresēm tirkīzzaļa birka **"Labots"** (uzbraucot ar peli vai uzklikšķinot – sākotnējā vērtība, labojuma iemesls un poga "Atsaukt"); kļūdainajām – sarkans teksts ar īsu iemeslu, uzklikšķinot adresi var labot turpat šūnā; tukšajām – pelēks "—". Garas adreses saīsinātas ar "…".
      - Rindām ar problēmām (adrese jālabo, nav nevienas adreses vai nav adreses pēc izvēlētās prioritātes) pie respondenta vārda ir neliela oranža ikona; iemesls – uzbraucot ar peli.
      - Kolonnā "Apsekojumi / periodi" – birkas ar apsekojuma un perioda kodu un ciklu / reizi, piem., "1-C · 2026M09 · 1. cikls", "1-apgrozījums · 2026M09"; redzamas pirmās 2, pārējās – "+N".
-     - Izvēršot rindu (bultiņa labajā pusē), redzama pilna informācija par respondentu (nosaukums, kontaktpersona, NMK, NMK/PS, UUK, veids, valoda, dalības veids, atbildīgais operators, statusa šifrs), visas elektroniskās adreses ar pārbaudes rezultātu (arī eAdrese iedzīvotāju statistikā un E-pasts 3), poga **"Pievienot e-pastu"** (E-pasts 3, ja tā vēl nav) un pienākumu tabula (apsekojums, periods ar ciklu, termiņš, statuss). Uz šauriem ekrāniem tabulu var ritināt horizontāli.
+     - Izvēršot rindu (bultiņa labajā pusē), redzama pilna informācija par respondentu (nosaukums, kontaktpersona, NMK, NMK/PS, UUK, veids, dalības veids, atbildīgais operators, statusa šifrs), visas elektroniskās adreses ar pārbaudes rezultātu (arī eAdrese iedzīvotāju statistikā un E-pasts 3), poga **"Pievienot e-pastu"** (E-pasts 3, ja tā vēl nav) un pienākumu tabula (apsekojums, periods ar ciklu, termiņš, statuss). Uz šauriem ekrāniem tabulu var ritināt horizontāli.
    - **Adrešu pārbaude.** eAdrese, E-pasts 1, E-pasts 2 (un E-pasts 3, ja ir) tiek pārbaudīti automātiski, atverot soli un pēc katra labojuma. Tiek atrasts: nav nevienas adreses; nav "@" vai vairāki "@"; atstarpes, komati, semikoli un citi neatļauti simboli; nav vārda pirms "@", nav domēna vai tas nepilnīgs ("janis@", "janis@gmail", "@inbox.lv"); pārrakstīšanās domēnā; dubultpunkti vai punkts sākumā / beigās; dublikāts (E-pasts 2 = E-pasts 1); adrese, kas pēc sūtīšanas vēstures jau atzīmēta kā nederīga ("Nederīga (nepiegāde)"); eAdrese neatbilst formātam (`_DEFAULT@…`, `_PRIVATE@…`).
      - **Automātiski labo** droši labojamās kļūdas: zināmas pārrakstīšanās domēnā (gmail.gmeil, gmial.com, gmail.con → gmail.com; inbox.lvv, inboks.lv → inbox.lv; outlok.com → outlook.com u. c.), liekas atstarpes un punkti, lielie burti → mazie (eAdresei – prefikss lielajiem burtiem). Pie adreses ir birka **"Labots"** (sākotnējā vērtība un poga **"Atsaukt"** – uzbraucot ar peli vai uzklikšķinot); atsauktā adrese kļūst par kļūdu ar pogu "Labot automātiski".
      - **Manuāli labo:** kļūdainā adrese ir sarkana ar īsu paziņojumu (piem., "Nav @", "Dubultpunkts", "Dublikāts (= E-pasts 1)"). Uzklikšķinot uz adreses, to var labot turpat tabulā (Enter – saglabāt, Escape – atcelt); saglabājot adrese tiek pārbaudīta vēlreiz – ja kļūda paliek, lauks paliek atvērts ar paziņojumu. Labojums attiecas uz šo kampaņu (birka "Labots", "Atsaukt" – atjauno sākotnējo); atzīmējot **"Saglabāt labojumu arī respondenta datos"**, tas tiek saglabāts arī respondenta datos (simulācija). Izvērstā rindā ir poga **"Pievienot e-pastu"** (E-pasts 3); ja E-pasts 3 nav prioritātēs, kampaņā tas tiek izmantots, kad citas adreses nav (5. solī – rinda "E-pasts 3 (pievienots)").
@@ -458,10 +465,9 @@ Skati:
 Respondentiem ir pazīmes:
 - **respondenta veids:** uzņēmums vai privātpersona. Ja tas nav norādīts, to nosaka pēc e-adreses: `_DEFAULT@` nozīmē uzņēmumu, `_PRIVATE@` nozīmē privātpersonu. Ja e-adreses nav, skatās, vai norādīta kontaktpersona;
 - **dalības veids:** e-anketa, tikai telefonintervija vai klātienes intervija;
-- **iepriekšējā dalība:** piedalījās, nepiedalījās vai izlasē pirmo reizi;
-- **valoda** (sk. sadaļu "Valodas").
+- **iepriekšējā dalība:** piedalījās, nepiedalījās vai izlasē pirmo reizi.
 
-**CSV importā** pazīmes var norādīt kolonnās `respondenta veids`, `dalības veids`, `iepriekšējā dalība` un `valoda`. Tās nav obligātas. Atpazīst arī saīsinājumus CAWI/CATI/CAPI un vērtības jā/nē.
+**CSV importā** pazīmes var norādīt kolonnās `respondenta veids`, `dalības veids` un `iepriekšējā dalība`. Tās nav obligātas. Atpazīst arī saīsinājumus CAWI/CATI/CAPI un vērtības jā/nē.
 
 **Nosacījumu (teksta daļu, kas redzamas tikai noteiktiem respondentiem) lietotāja saskarnē vairs nav:**
 - redaktora rīkjoslā nav pogas "Nosacījums";
@@ -481,7 +487,9 @@ Vēstules tiek veidotas un sūtītas **tikai latviešu valodā**.
 
 - Veidņu redaktorā, kampaņas satura redaktorā ("Izmantot veidni" → "Pielāgot šai kampaņai" un "Noformēt saturu"), veidņu izvēlē, sagatavēs un "Pastāvīgajās daļās" nav valodas izvēles (LV / RU / EN), valodu birku un padomu par valodām; priekšskatījumā nav rindas "Valoda".
 - Datos glabājas tikai latviešu teksts: veidņu un pastāvīgo daļu krievu un angļu versijas, kā arī apsekojumu nosaukumi angliski / krieviski ir dzēsti (arī pārlūkā jau saglabātajos datos – ielādējot lapu).
-- Respondenta pazīme **valoda** paliek respondenta datos (sk. "Respondentu pazīmes"), bet vēstules valodu tā neietekmē.
+- Respondentiem nav pazīmes "valoda" (tā dzēsta arī pārlūkā jau saglabātajos datos).
+- Kodā ir tikai viens veidņu redaktors – modālais logs. Tas atveras no "+ Jauna veidne", "+ Pievienot veidni" kategorijā, veidnes rediģēšanas, sagatavju "+ Jauna veidne" un kampaņas soļa "Saturs" ("Noformēt saturu", "Izmantot veidni" → "Pielāgot šai kampaņai"; "Saglabāt arī kā veidni" saglabā no tā paša loga). Lauks **"Adresāts"** lieto tos pašus nosaukumus kā kampaņās: "Iedzīvotāju statistika", "Uzņēmumu statistika", "Visi".
+- Kājenē redzams prototipa versijas numurs ("Versija 51"); ja pēc atjaunināšanas redzams vecāks numurs, lapa jāpārlādē (Ctrl+Shift+R).
 
 ## GitHub Pages
 
