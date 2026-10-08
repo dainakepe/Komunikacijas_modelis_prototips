@@ -633,9 +633,14 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .fz-form{display:flex;flex-direction:column;gap:12px}
 .fz-form .field{margin:0;min-width:0}
 .fz-form select{width:100%;max-width:520px}
-.fz-two{display:grid;grid-template-columns:repeat(2,minmax(0,260px));gap:12px;align-items:end}
-.fz-two select{max-width:none}
-@media (max-width:640px){.fz-two{grid-template-columns:1fr}}
+.fz-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:start;max-width:900px}
+.fz-three select{max-width:none}
+.scope-card .fz-three .label{margin-top:0}
+@media (max-width:700px){.fz-three{grid-template-columns:1fr}}
+.fz-dd > summary{display:flex;flex-wrap:wrap;gap:4px;align-items:center;min-height:40px;padding:5px 30px 5px 8px;white-space:normal}
+.fz-dd.is-disabled > summary{background:var(--bg);color:var(--text-muted);cursor:not-allowed}
+.fz-dd .dd-list label{white-space:nowrap}
+.cyc-tag{display:inline-flex;align-items:center;flex:none;font-size:12px;font-weight:600;padding:1px 7px;border-radius:999px;border:1px solid var(--primary);background:var(--primary-50);color:var(--primary-darker)}
 .per-year select{max-width:140px}
 .pf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 10px}
 .pf-grid .field{margin:0;gap:3px}
@@ -1692,12 +1697,14 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
               <!-- Iedzīvotāju statistika: apsekojums → gads → periods → reize / cikls -->
               <div class="fz-form" id="c-fz" hidden>
                 <div class="field"><label for="c-fz-rep">Apsekojums <span class="req">*</span></label><select id="c-fz-rep" aria-describedby="c-fz-rep-err"></select><span class="err" id="c-fz-rep-err" hidden></span></div>
-                <div class="fz-two">
+                <!-- Gads → Periods → Cikls vienā rindā -->
+                <div class="fz-three">
                   <div class="field"><label for="c-fz-year">Gads</label><select id="c-fz-year"></select></div>
-                  <div class="field"><label for="c-fz-per">Periods <span class="req">*</span> <span class="pill pill-src">Dati no Metadatu pārvaldības</span></label><select id="c-fz-per" aria-describedby="c-fz-per-err"></select><span class="err" id="c-fz-per-err" hidden></span></div>
+                  <div class="field"><label for="c-fz-per">Periods <span class="req">*</span></label><select id="c-fz-per" aria-describedby="c-fz-per-err"></select></div>
+                  <div class="field"><span class="label" id="c-fz-cyc-l">Cikls</span>
+                    <details class="dd fz-dd" id="c-fz-cyc"><summary id="c-fz-cyc-sum" aria-labelledby="c-fz-cyc-l c-fz-cyc-sum"></summary><div class="dd-list" id="c-fz-rounds" role="group" aria-labelledby="c-fz-cyc-l"></div></details></div>
                 </div>
-                <div class="field" id="c-fz-rounds-box" hidden><span class="label"><span id="c-fz-rounds-l">Reize</span> <span class="pill pill-src">Dati no Respondentu pārvaldības</span></span>
-                  <div class="chk-chips" id="c-fz-rounds" role="group" aria-labelledby="c-fz-rounds-l"></div><span class="hint" id="c-fz-rounds-hint" hidden></span></div>
+                <span class="err" id="c-fz-per-err" hidden></span><span class="hint" id="c-fz-rounds-hint" hidden></span>
               </div>
             </section>
             <section class="scope-card scope-resp" id="c-resp-card" aria-labelledby="c-sc-resp">
@@ -1764,7 +1771,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <span class="err" id="c-content-err" hidden></span>
           <div id="c-content"></div>
           <details class="more vars-box" id="c-vars">
-            <summary>Mainīgo vērtības <span class="tip" tabindex="0" role="note" aria-label="Apsekojuma dati vēstules mainīgajiem tiek ņemti automātiski no Metadatu pārvaldības. Vērtību var mainīt tikai šai kampaņai. Ja kampaņā ir vairāki apsekojumi, katram respondentam vēstulē tiek izmantotas viņa apsekojuma vērtības. Tēmturi un sauklis attiecas uz šo sūtījumu." data-tip="Apsekojuma dati vēstules mainīgajiem tiek ņemti automātiski no Metadatu pārvaldības. Vērtību var mainīt tikai šai kampaņai. Ja kampaņā ir vairāki apsekojumi, katram respondentam vēstulē tiek izmantotas viņa apsekojuma vērtības. Tēmturi un sauklis attiecas uz šo sūtījumu.">i</span></summary>
+            <summary>Mainīgo vērtības <span class="tip" tabindex="0" role="note" aria-label="Apsekojuma dati vēstules mainīgajiem tiek ņemti automātiski. Vērtību var mainīt tikai šai kampaņai. Ja kampaņā ir vairāki apsekojumi, katram respondentam vēstulē tiek izmantotas viņa apsekojuma vērtības. Tēmturi un sauklis attiecas uz šo sūtījumu." data-tip="Apsekojuma dati vēstules mainīgajiem tiek ņemti automātiski. Vērtību var mainīt tikai šai kampaņai. Ja kampaņā ir vairāki apsekojumi, katram respondentam vēstulē tiek izmantotas viņa apsekojuma vērtības. Tēmturi un sauklis attiecas uz šo sūtījumu.">i</span></summary>
             <div id="c-vars-body"></div>
           </details>
         </div>
@@ -3886,7 +3893,7 @@ function openRtabDialog(data, onDone){
     if (!cols.length){ err.hidden = false; err.textContent = 'Izvēlieties vismaz vienu kolonnu.'; return; }
     close(); onDone({cols, rows:$('input[name="rt-rows"]:checked', submodal).value});
   }});
-  openSubModal({title:'Pārskatu tabula', info:'Sagatavojot vēstuli, tabula tiek izveidota katram respondentam no viņa pienākumiem (Respondentu pārvaldība), kas atlasīti kampaņā. Kavētie termiņi tiek izcelti sarkanā krāsā.', content:`
+  openSubModal({title:'Pārskatu tabula', info:'Sagatavojot vēstuli, tabula tiek izveidota katram respondentam no viņa pienākumiem, kas atlasīti kampaņā. Kavētie termiņi tiek izcelti sarkanā krāsā.', content:`
     <div class="field"><span class="label">Kolonnas</span>
       <div class="checks">${Object.entries(RTAB_COLS).map(([k, v]) => `<label><input type="checkbox" id="rt-col-${k}" ${d.cols.includes(k) ? 'checked' : ''}> ${esc(v)}</label>`).join('')}</div>
       <span class="err" id="rt-err" hidden></span></div>
@@ -5160,7 +5167,7 @@ function dutyTable(ds, active){
     const p = repById(d.reportId), late = dutyStatus(d) === 'kavets';
     return `<tr><td><b>${esc(repTitle(p))}</b><span class="cell-sub">${esc(FREQS[p.freq])} · termiņš: ${esc(ruleLabel(p.rule))}</span></td><td>${esc(periodLabel(d.period))}</td>
       <td class="${late ? 'late' : ''}">${esc(fmtDate(d.deadline))}</td><td>${dutyPill(d)}${d.submitted ? `<span class="cell-sub">${esc(fmtDate(d.submitted))}</span>` : ''}</td></tr>`;
-  }).join('')}</tbody></table><p class="dvp-src">Iesniegšanas statusi – dati no Datu vākšanas pārraudzības (tikai lasāmi).</p>`;
+  }).join('')}</tbody></table>`;
 }
 const contactsCell = r => {
   const none = '<span class="none">nav norādīts</span>';
@@ -5178,8 +5185,7 @@ function addrPanel(r){
   return `<div class="addr-panel">
     <div class="addr-sync">
       <div class="addr-head"><b>Sinhronizētās adreses</b>
-        ${r.syncedAt ? `<span class="pill pill-src">No Respondentu pārvaldības</span><span class="muted">Sinhronizēts: ${fmtDateTime(r.syncedAt)}</span>`
-          : '<span class="pill pill-man">Pievienots komunikācijas modulī</span><span class="muted">Nav sinhronizēts</span>'}
+        ${r.syncedAt ? `<span class="muted">Sinhronizēts: ${fmtDateTime(r.syncedAt)}</span>` : '<span class="muted">Nav sinhronizēts</span>'}
         <button type="button" class="btn btn-ghost btn-sm" data-action="resp-sync" data-id="${r.id}"><svg class="icon" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16M20 20v-4h-4"/></svg>Sinhronizēt</button></div>
       <dl class="addr-list"><dt>eAdrese</dt><dd>${v(r.eaddress, 'eadrese')}</dd><dt>E-pasts 1</dt><dd>${v(r.email, 'email1')}</dd><dt>E-pasts 2</dt><dd>${v(r.email2, 'email2')}</dd>${invalidMark(r, 'email3') ? `<dt>E-pasts 3</dt><dd>${v(r.email3, 'email3')}</dd>` : ''}</dl>
       ${tasks.length ? `<div class="dr-tasks"><b>Uzdevumi</b><ul>${tasks.map(t => `<li>${esc(t.title)} – ${esc(addrShort(t.type))}: <span class="mono">${esc(t.address)}</span> <span class="muted">· ${esc(t.reason)} · ${esc(t.by)}, ${esc(fmtDate(isoDate(new Date(t.at))))}</span></li>`).join('')}</ul></div>` : ''}
@@ -5210,7 +5216,7 @@ function renderRespCard(){
       <button type="button" class="icon-btn" data-close aria-label="Aizvērt respondenta kartīti">${ICON.x}</button></div>
     <div class="drawer-body">
       ${inCamp}
-      <section class="dr-sec"><div class="dr-sec-head"><h3>Pamatdati</h3><span class="pill pill-src">Dati no Respondentu pārvaldības</span></div>
+      <section class="dr-sec"><div class="dr-sec-head"><h3>Pamatdati</h3></div>
         <dl class="dr-dl"><dt>Nosaukums</dt><dd>${esc(r.name)}</dd><dt>Tips</dt><dd>${jur ? 'Juridiska persona (uzņēmums)' : 'Fiziska persona (mājsaimniecība)'}</dd>
           ${jur ? `<dt>Reģ. Nr.</dt><dd>${r.regNr ? esc(r.regNr) : '<span class="muted">nav norādīts</span>'}</dd>` : ''}
           ${r.contact ? `<dt>Kontaktpersona</dt><dd>${esc(r.contact)}</dd>` : ''}
@@ -5376,13 +5382,13 @@ const fizMode = (aud = compose.aud) => aud === 'fiz';
 // apsekojuma periodi (Metadatu pārvaldība; prototipā – no 2024. gada līdz tekošajam periodam), jaunākais – pirmais
 const PER_FROM_YEAR = 2024;
 // reizes / cikli (Respondentu pārvaldība): respondenta pazīme katram periodam
-const ROUNDS = {'a-dsa':{label:'Reize', word:'reize', acc:'reizi', n:4}, 'a-cel':{label:'Cikls', word:'cikls', acc:'ciklu', n:3}};
+const ROUNDS = {'a-dsa':{label:'Cikls', word:'reize', acc:'reizi', n:4}, 'a-cel':{label:'Cikls', word:'cikls', acc:'ciklu', n:2}};
 const roundLabel = (id, n) => ROUNDS[id] ? `${n}. ${ROUNDS[id].word}` : '';
 // testa datos: reize / cikls katram pienākumam (respondents × periods), pēc kārtas grupā
 function assignRounds(s){
   Object.entries(ROUNDS).forEach(([rid, R]) => {
     const groups = groupBy((s.duties || []).filter(d => d.reportId === rid), d => d.period);
-    groups.forEach(ds => ds.sort((a, b) => +a.respondentId.slice(1) - +b.respondentId.slice(1)).forEach((d, i) => { if (!d.round) d.round = i % R.n + 1; }));
+    groups.forEach(ds => ds.sort((a, b) => +a.respondentId.slice(1) - +b.respondentId.slice(1)).forEach((d, i) => { if (!d.round || d.round > R.n) d.round = i % R.n + 1; }));
   });
 }
 // atzīmētās reizes (null – visas)
@@ -5543,10 +5549,9 @@ function renderVars(){
   };
   const table = id => `<div class="table-wrap"><table class="vars-table"><thead><tr><th>Mainīgais</th><th>Vērtība</th><th>Avots</th><th><span class="sr-only">Darbības</span></th></tr></thead>
     <tbody>${VAR_ROWS.map(rw => row(id, rw)).join('')}</tbody></table></div>`;
-  const src = '<span class="pill pill-src">Dati no Metadatu pārvaldības</span>';
   const surveys = !sr.length ? '<p class="muted">Kampaņas tvērumā nav apsekojuma.</p>'
-    : sr.length === 1 ? `<h4 class="vars-h">${esc(repTitle(repById(sr[0])))} ${src}</h4>${table(sr[0])}`
-    : `<div class="vars-src">${src}</div>` + sr.map(id => { const p = repById(id), n = Object.keys(ov[id] || {}).length;
+    : sr.length === 1 ? `<h4 class="vars-h">${esc(repTitle(repById(sr[0])))}</h4>${table(sr[0])}`
+    : sr.map(id => { const p = repById(id), n = Object.keys(ov[id] || {}).length;
         return `<details class="vars-grp" data-var-grp="${id}" ${ui.varOpen.has(id) ? 'open' : ''}><summary><b>${esc(repTitle(p))}</b>${n ? `<span class="pill pill-mod">Mainīts: ${n}</span>` : ''}</summary>${table(id)}</details>`; }).join('');
   box.innerHTML = surveys + `<h4 class="vars-h">Kampaņas noformējums</h4>
     <div class="form-grid">
@@ -5653,13 +5658,15 @@ function renderFz(){
   const pers = fz.year ? all.filter(k => periodYear(k) === +fz.year) : all;
   $('#c-fz-per').innerHTML = `<option value="">Izvēlieties periodu…</option>` + pers.map(k => `<option value="${k}" ${k === fz.period ? 'selected' : ''}>${esc(periodCode(k))}</option>`).join('');
   ['#c-fz-year', '#c-fz-per'].forEach(x => { $(x).disabled = !p; });
-  const R = ROUNDS[id], rs = fzRounds(sel);
-  $('#c-fz-rounds-box').hidden = !R;
-  if (R){
-    $('#c-fz-rounds-l').textContent = R.label;
-    $('#c-fz-rounds').innerHTML = Array.from({length:R.n}, (_, i) => i + 1).map(n => `<label><input type="checkbox" data-round="${n}" ${rs.includes(n) ? 'checked' : ''}>${esc(roundLabel(id, n))}</label>`).join('');
-    $('#c-fz-rounds-hint').hidden = rs.length > 0; $('#c-fz-rounds-hint').textContent = `Atzīmējiet vismaz vienu ${R.acc}.`;
-  }
+  // Cikls: izkrītošā vairākizvēle (apsekojumiem bez reizēm / cikliem – tukša un neaktīva)
+  const R = ROUNDS[id], rs = fzRounds(sel) || [], dd = $('#c-fz-cyc'), sum = $('#c-fz-cyc-sum');
+  dd.classList.toggle('is-disabled', !R);
+  if (!R) ui.cycOpen = false;
+  dd.open = !!(R && ui.cycOpen);
+  sum.setAttribute('aria-disabled', String(!R)); sum.tabIndex = R ? 0 : -1;
+  sum.innerHTML = !R ? '' : rs.length ? rs.map(n => `<span class="cyc-tag">${esc(roundLabel(id, n))}</span>`).join('') : '<span class="muted">Izvēlieties…</span>';
+  $('#c-fz-rounds').innerHTML = R ? Array.from({length:R.n}, (_, i) => i + 1).map(n => `<label><input type="checkbox" data-round="${n}" ${rs.includes(n) ? 'checked' : ''}>${esc(roundLabel(id, n))}</label>`).join('') : '';
+  $('#c-fz-rounds-hint').hidden = !R || rs.length > 0; if (R) $('#c-fz-rounds-hint').textContent = `Atzīmējiet vismaz vienu ${R.acc}.`;
 }
 // Atlases lauki
 function renderFilters(){
@@ -5673,7 +5680,7 @@ function renderFilters(){
   if (document.activeElement !== $('#c-days')) $('#c-days').value = sel.days;
   if (document.activeElement !== $('#c-late')) $('#c-late').value = sel.lateDays;
   renderTargetInfo();
-  $('#c-dvp').innerHTML = `<span>Statusi atjaunoti ${esc(fmtDateTime(state.statusSyncedAt || new Date().toISOString()))}${tip('Iesniegšanas statusi ir dati no Datu vākšanas pārraudzības (tikai lasāmi; prototipā – testa dati).')}</span>
+  $('#c-dvp').innerHTML = `<span>Statusi atjaunoti ${esc(fmtDateTime(state.statusSyncedAt || new Date().toISOString()))}</span>
     <button type="button" class="btn btn-ghost btn-sm" data-action="c-status-sync"><svg class="icon" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16M20 20v-4h-4"/></svg>Atjaunot statusus</button>`;
 }
 // Pirmstermiņa atgādinājums: aprēķinātais termiņš un tam atbilstošie pārskati un periodi
@@ -7258,7 +7265,7 @@ $('#c-aud').addEventListener('change', e => {
   selChanged();
 });
 // Iedzīvotāju statistika: mainot apsekojumu – gads, periods un reizes / cikli no jauna ar noklusējumiem
-function fzDefaults(id){ compose.sel.fz = {year:'', period:repPeriodList(repById(id))[0] || '', rounds:null}; }
+function fzDefaults(id){ compose.sel.fz = {year:'', period:repPeriodList(repById(id))[0] || '', rounds:null}; ui.cycOpen = false; }
 $('#c-fz-rep').addEventListener('change', e => {
   const id = e.target.value;
   compose.sel.reports = id ? [id] : [];
@@ -7273,6 +7280,11 @@ $('#c-fz-year').addEventListener('change', e => {
   selChanged(); $('#c-fz-year').focus();
 });
 $('#c-fz-per').addEventListener('change', e => { compose.sel.fz.period = e.target.value; selChanged(); renderStepErrors(); $('#c-fz-per').focus(); });
+// Cikls: izvēlne paliek atvērta, atzīmējot vairākas vērtības; neaktīvu nevar atvērt
+$('#c-fz-cyc-sum').addEventListener('click', e => { if ($('#c-fz-cyc').classList.contains('is-disabled')) e.preventDefault(); });
+$('#c-fz-cyc').addEventListener('toggle', e => { if (!e.target.classList.contains('is-disabled')) ui.cycOpen = e.target.open; });
+document.addEventListener('click', e => { const d = $('#c-fz-cyc'); if (d && d.open && !d.contains(e.target)){ d.open = false; ui.cycOpen = false; } });
+$('#c-fz-cyc').addEventListener('keydown', e => { if (e.key === 'Escape' && e.currentTarget.open){ e.preventDefault(); e.stopPropagation(); e.currentTarget.open = false; ui.cycOpen = false; $('#c-fz-cyc-sum').focus(); } });
 $('#c-fz-rounds').addEventListener('change', e => {
   const c = e.target.closest('[data-round]'), R = ROUNDS[compose.sel.reports[0]];
   if (!c || !R) return;
