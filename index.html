@@ -562,6 +562,40 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .camp-table .actions{white-space:nowrap;text-align:right}
 .camp-table .actions .btn{margin-left:4px}
 .st-draft{background:var(--bg);color:var(--text-muted);border-color:var(--border)}
+/* Kampaņu saraksts: augstākas rindas, klikšķināma rinda, statusu birkas, rezultāta josla, izvēlne "⋯" */
+.camp-table td{padding:16px 10px;vertical-align:middle}
+.camp-table th{padding-left:10px;padding-right:10px}
+.camp-table tbody tr.camp-row{cursor:pointer}
+.camp-table tbody tr.camp-row:hover td{background:var(--primary-50)}
+.camp-name{appearance:none;border:0;background:none;padding:0;font:inherit;font-size:16px;font-weight:700;color:var(--text);text-align:left;cursor:pointer;line-height:1.3}
+.camp-name:hover{color:var(--primary-dark);text-decoration:underline}
+.camp-name:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:3px}
+.camp-table .cell-sub{font-size:12.5px;margin-top:3px}
+.camp-table th:first-child{width:26%;min-width:220px}
+.pill.kind-pill{background:#fff;color:#3D4A4F;border-color:var(--border);font-weight:600}
+.pill.kind-pill .icon{color:var(--primary-dark)}
+.cs-draft{background:#F1F3F4;color:#4F5A5F;border-color:#D9DEE0}
+.cs-plan{background:var(--info-bg);color:var(--info);border-color:#C7D9EA}
+.cs-sign{background:var(--warning-bg);color:var(--warning);border-color:#F1D9A6}
+.cs-active{background:var(--primary-50);color:var(--primary-dark);border-color:var(--primary-200)}
+.cs-done{background:var(--success-bg);color:var(--success);border-color:#BFE0CC}
+.cs-part{background:#FFF0E0;color:#8F4300;border-color:#F3C98B}
+.cres{min-width:150px;max-width:200px}
+.cres-bar{display:flex;height:6px;border-radius:3px;background:var(--border-light);overflow:hidden;margin-bottom:5px}
+.cres-bar span{display:block;height:100%}
+.cres-bar .ok{background:var(--success)} .cres-bar .fail{background:#D9822B}
+.cres small{display:block;font-size:12.5px;color:var(--text-muted)}
+.camp-more{width:34px;height:34px}
+.camp-more[aria-expanded="true"]{background:var(--primary-50);color:var(--primary-dark)}
+.cm-menu{position:fixed;z-index:60;min-width:220px;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(16,40,48,.16);padding:5px;display:flex;flex-direction:column}
+.cm-menu[hidden]{display:none}
+.cm-menu button{appearance:none;border:0;background:none;font:inherit;font-size:14px;text-align:left;padding:8px 12px;border-radius:5px;color:var(--text);cursor:pointer;display:flex;gap:8px;align-items:center}
+.cm-menu button .icon{width:16px;height:16px;color:var(--text-muted)}
+.cm-menu button:hover,.cm-menu button:focus-visible{background:var(--primary-50);outline:none}
+.cm-menu button.danger{color:var(--danger)} .cm-menu button.danger .icon{color:var(--danger)}
+.cm-menu hr{border:0;border-top:1px solid var(--border-light);margin:4px 2px}
+.pl-sum{display:grid;grid-template-columns:max-content 1fr;gap:8px 18px;margin:0}
+.pl-sum dt{color:var(--text-muted)} .pl-sum dd{margin:0;font-weight:600}
 .back-link{margin:0 0 6px -8px}
 /* Vēsture – vēstules pa kampaņām */
 .hist-block{margin-bottom:12px;overflow:hidden}
@@ -1638,12 +1672,12 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       <div class="filters">
         <label class="search"><span class="sr-only">Meklēt kampaņas</span>
           <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="camp-search" placeholder="Meklēt pēc nosaukuma vai satura…">
+          <input type="search" id="camp-search" placeholder="Meklēt pēc kampaņas nosaukuma…">
         </label>
         <label><span class="sr-only">Kampaņas veids</span><select id="camp-kind"></select></label>
       </div>
       <div class="table-wrap"><table class="camp-table">
-        <thead><tr><th>Kampaņa</th><th>Veids</th><th>Satura avots</th><th class="num">Respondenti</th><th>Nosūtīšanas datums</th><th>Statuss</th><th>Rezultāts</th><th><span class="sr-only">Darbības</span></th></tr></thead>
+        <thead><tr><th>Kampaņa</th><th>Veids</th><th class="num">Respondenti</th><th>Nosūtīšana</th><th>Statuss</th><th>Rezultāts</th><th><span class="sr-only">Darbības</span></th></tr></thead>
         <tbody id="camp-tbody"></tbody></table></div>
       <div class="table-foot" id="camp-foot"></div>
     </div>
@@ -2226,6 +2260,9 @@ const ICON = {
   building:'<svg class="icon" viewBox="0 0 24 24"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16M15 9h4a1 1 0 0 1 1 1v11M3 21h18M8 8h3M8 12h3M8 16h3"/></svg>',
   chev:'<svg class="icon chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg>',
   clock:'<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  dots:'<svg class="icon" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>',
+  copy:'<svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+  open:'<svg class="icon" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
   calendar:'<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
 };
 
@@ -4137,6 +4174,7 @@ function showTab(name, opts = {}){
   if (name === 'kampanas'){
     if (ui.campView === 'edit' && !opts.edit) flushDraft();
     ui.campView = opts.edit ? 'edit' : 'list';
+    if (!opts.edit) ui.campSub = 'all';
     $('#camp-list').hidden = ui.campView === 'edit'; $('#camp-edit').hidden = ui.campView !== 'edit';
   }
   ui.tab = name;
@@ -6297,12 +6335,11 @@ async function send(){
     if (!ok) return;
     state.planned = state.planned || [];
     state.planned.unshift({id:'pl' + uid(), name:compose.name, kindKey:sessKindKey(), sendDate:compose.sel.sendDate, sendTime:compose.sendTime, target:remindTarget(),
-      contentName:contentName(t), contentLabel:contentLabel(), esign:compose.esign.required, prio:compose.prio.filter(Boolean), count:n, createdAt:new Date().toISOString(), snap:sessionSnapshot()});
+      contentName:contentName(t), contentLabel:contentLabel(), esign:compose.esign.required, prio:compose.prio.filter(Boolean), count:n, createdAt:new Date().toISOString(), createdBy:CURRENT_USER, snap:sessionSnapshot()});
     removeDraft(compose.draftId);
     newSession(false); save();
     renderCounts();
     toast(`Kampaņa ieplānota: ${whenLabel(state.planned[0].snap)}`);
-    ui.campSub = 'planned';
     showTab('kampanas');
     return;
   }
@@ -6317,7 +6354,7 @@ async function send(){
   if (signing){
     removeDraft(compose.draftId); newSession(false); save(); renderCounts();
     toast(`Kampaņa “${name}”: ${res.n} ${plural(res.n, 'vēstule nodota', 'vēstules nodotas')} parakstīšanai (DVS NAMEJS, simulācija).`);
-    ui.campSub = 'active'; showTab('kampanas');
+    showTab('kampanas');
     return;
   }
   // nākamā kampaņa sākas no jauna (apsekojuma dati, adrešu prioritāte un atlases iestatījumi saglabājas)
@@ -6356,6 +6393,8 @@ function doSend(meta = {}){
     return rec;
   });
   state.sent.unshift(...created);
+  // kampaņas iestatījumi (lai to var kopēt kā jaunu kampaņu)
+  state.campSnaps = state.campSnaps || {}; state.campSnaps[batch] = sessionSnapshot();
   save();
   if (!meta.final && !signing) queueFinalize(created);
   return {batch, n:created.length, signing};
@@ -6566,51 +6605,181 @@ function withSnap(snap, fn){
   applySnapshot(snap);
   try { return fn(); } finally { applySnapshot(keep); Object.assign(compose, {draftId:id, index:idx, open, search:q}); }
 }
-// Satura avots nosūtītai kampaņai
-const sentContentLabel = x => x.contentSource === 'tplmod' ? 'Veidne, pielāgota kampaņai' : x.contentSource === 'custom' ? 'Individuāls saturs' : `Veidne: ${x.templateName}`;
 const kindOpts = cur => optList(Object.entries(SESS_LABELS), cur, 'Visi kampaņu veidi');
-const statusPills = xs => Object.keys(STATUSES).map(k => { const n = xs.filter(x => x.status === k).length; return n ? stPill(k, `: ${n}`) : ''; }).join(' ');
-// Kampaņu saraksts: melnraksti, ieplānotās, izpildē esošās un pabeigtās kampaņas
-const CAMP_SUBS = [['draft', 'Melnraksti'], ['planned', 'Ieplānotās'], ['active', 'Izpildē'], ['done', 'Pabeigtās']];
+// Kampaņu saraksts: Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās
+const CAMP_SUBS = [['all', 'Visas'], ['draft', 'Melnraksti'], ['planned', 'Ieplānotās'], ['active', 'Izpildē'], ['done', 'Pabeigtās']];
+// kampaņas statuss: birka un filtra sadaļa
+const CAMP_ST = {
+  draft:  {label:'Melnraksts',          cls:'cs-draft',  sub:'draft'},
+  planned:{label:'Ieplānota',           cls:'cs-plan',   sub:'planned'},
+  sign:   {label:'Gaida parakstu',      cls:'cs-sign',   sub:'active'},
+  active: {label:'Izpildē',             cls:'cs-active', sub:'active'},
+  done:   {label:'Pabeigta',            cls:'cs-done',   sub:'done'},
+  part:   {label:'Daļēji neveiksmīga',  cls:'cs-part',   sub:'done'},
+};
+const KIND_IC = {uzaicinajums:'mail', atgadinajums:'clock', info:'info', cits:'doc'};
+const fmtWhen = (date, time) => `${fmtDate(date)}${time ? `, ${time}` : ''}`;
+const fmtStamp = iso => { const d = new Date(iso); return `${fmtDate(isoDate(d))}, ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const nbsp = t => String(t).replace(/ (?=\d)/g, '\u00a0');
+function campKindCell(k){
+  const base = k && k.startsWith('atg') ? 'atgadinajums' : k, l = SESS_KINDS[base] ? SESS_KINDS[base].label : '—';
+  return `<span class="pill kind-pill">${ICON[KIND_IC[base]] || ''}${esc(l)}</span>${k === 'atg-pirms' ? '<span class="cell-sub">pirms termiņa</span>' : k === 'atg-pec' ? '<span class="cell-sub">pēc termiņa</span>' : ''}`;
+}
+// visas kampaņas (melnraksti, ieplānotās, nosūtītās) vienotā formā
+function campRows(){
+  const rows = [
+    ...(state.drafts || []).map(d => ({key:'draft:' + d.id, type:'draft', id:d.id, name:d.name, kind:sessKindKey(d), ts:d.savedAt, st:'draft',
+      meta:`Saglabāta ${fmtStamp(d.savedAt)}`, when: d.when === 'plan' ? `Plānota ${fmtWhen(d.sel.sendDate, d.sendTime)}` : 'Tūlīt pēc apstiprināšanas',
+      n:withSnap(d, () => selectedResp().length), d})),
+    ...(state.planned || []).map(pl => ({key:'planned:' + pl.id, type:'planned', id:pl.id, name:pl.name, kind:pl.kindKey, ts:pl.createdAt || pl.sendDate, st:'planned',
+      meta:`Izveidoja: ${pl.createdBy || CURRENT_USER}${pl.createdAt ? `, ${fmtDate(isoDate(new Date(pl.createdAt)))}` : ''}`,
+      when:`Plānota ${fmtWhen(pl.sendDate, pl.sendTime)}`, n:pl.count ?? '—', pl})),
+    ...[...new Set(state.sent.map(x => x.batch))].map(b => {
+      const xs = state.sent.filter(x => x.batch === b), x0 = xs[0], sign = xs.some(x => x.status === 'paraksts');
+      const ok = xs.filter(x => x.status === 'piegadats').length, fail = xs.filter(x => ST_FAIL.includes(x.status)).length;
+      const st = sign ? 'sign' : xs.some(x => ST_PROC.includes(x.status)) ? 'active' : fail ? 'part' : 'done';
+      const signed = xs.map(x => x.signedAt).filter(Boolean).sort().pop();
+      return {key:'sent:' + b, type:'sent', id:b, name:x0.sessionName || `Kampaņa Nr. ${b}`, kind:x0.sessionKind || '', ts: signed && signed > x0.sentAt ? signed : x0.sentAt, st,
+        meta:`Izveidoja: ${x0.createdBy || '—'}, ${fmtDate(isoDate(new Date(x0.sentAt)))}`,
+        when: sign ? 'Tūlīt pēc apstiprināšanas' : `Nosūtīta ${fmtStamp(signed || x0.sentAt)}`, n:xs.length, xs, sign, ok, fail};
+    }),
+  ];
+  return rows.sort((a, b) => String(b.ts || '').localeCompare(String(a.ts || '')));
+}
+function campResult(x){
+  if (x.type !== 'sent' || x.sign) return '<span class="muted">—</span>';
+  const pc = v => (v / x.n * 100).toFixed(1) + '%';
+  return `<div class="cres"><div class="cres-bar" role="img" aria-label="Piegādātas ${x.ok} no ${x.n}, neveiksmīgas ${x.fail}"><span class="ok" style="width:${pc(x.ok)}"></span><span class="fail" style="width:${pc(x.fail)}"></span></div>
+    <small>${plural(x.ok, 'Piegādāta', 'Piegādātas')} ${x.ok} no ${x.n}${x.fail ? ` · ${x.fail} ${plural(x.fail, 'neveiksmīga', 'neveiksmīgas')}` : ''}</small></div>`;
+}
 function renderCampaigns(){
   refreshStatuses();
   if (ui.campView === 'edit') flushDraft();
+  const menuKey = campMenuBtn && campMenuBtn.dataset.id;
   $('#camp-kind').innerHTML = kindOpts(ui.camp.kind);
-  const rows = [
-    ...(state.drafts || []).map(d => ({type:'draft', id:d.id, name:d.name, kind:sessKindKey(d), date:d.savedAt, content:d.content ? contentLabel(d.content) : '—',
-      when: d.when === 'plan' ? `Ieplānot: ${whenLabel(d)}` : 'Tūlīt (pēc apstiprināšanas)', n:withSnap(d, () => selectedResp().length), d})),
-    ...(state.planned || []).map(pl => ({type:'planned', id:pl.id, name:pl.name, kind:pl.kindKey, date:pl.sendDate, content:pl.contentLabel || pl.contentName,
-      when:whenLabel(pl.snap), n:pl.count ?? '—', pl})),
-    ...[...new Set(state.sent.map(x => x.batch))].map(b => { const xs = state.sent.filter(x => x.batch === b), x0 = xs[0];
-      return {type:'sent', id:b, name:x0.sessionName || `Kampaņa Nr. ${b}`, kind:x0.sessionKind || '', date:x0.sentAt, content:sentContentLabel(x0),
-        when:fmtDateTime(x0.sentAt), n:xs.length, xs, sign: xs.some(x => x.status === 'paraksts'),
-        sub: xs.some(x => x.status === 'paraksts' || ST_PROC.includes(x.status)) ? 'active' : 'done'}; }),
-  ];
-  rows.forEach(x => { if (!x.sub) x.sub = x.type; });
-  // apakšsadaļa: Melnraksti · Ieplānotās · Izpildē · Pabeigtās (pirmajā reizē – pirmā, kurā ir kampaņas)
-  if (!ui.campSub) ui.campSub = (CAMP_SUBS.find(([k]) => rows.some(x => x.sub === k)) || CAMP_SUBS[0])[0];
+  const rows = campRows();
+  if (!CAMP_SUBS.some(([k]) => k === ui.campSub)) ui.campSub = 'all';
   $('#camp-sub').innerHTML = subnavHtml(CAMP_SUBS, ui.campSub, 'csub');
   const q = norm(ui.camp.q);
-  const list = rows.filter(x => x.sub === ui.campSub && (!ui.camp.kind || x.kind === ui.camp.kind) && (!q || norm(x.name + ' ' + x.content).includes(q)));
-  const ST = {draft:'<span class="pill st-draft">Melnraksts</span>', planned:'<span class="pill st-plan">Ieplānota</span>', active:'<span class="pill st-queue">Izpildē</span>', done:'<span class="pill st-sent">Pabeigta</span>'};
-  $('#camp-tbody').innerHTML = !rows.length ? `<tr><td colspan="8"><div class="empty">${ICON.send}<h3>Vēl nav nevienas kampaņas</h3>
+  const list = rows.filter(x => (ui.campSub === 'all' || CAMP_ST[x.st].sub === ui.campSub) && (!ui.camp.kind || x.kind === ui.camp.kind) && (!q || norm(x.name).includes(q)));
+  $('#camp-tbody').innerHTML = !rows.length ? `<tr><td colspan="7"><div class="empty">${ICON.send}<h3>Vēl nav nevienas kampaņas</h3>
       <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></td></tr>`
-    : !list.length ? `<tr><td colspan="8"><div class="empty"><h3>${ui.camp.q || ui.camp.kind ? 'Nekas netika atrasts' : `Nav kampaņu sadaļā “${esc((CAMP_SUBS.find(([k]) => k === ui.campSub) || [])[1])}”`}</h3>
+    : !list.length ? `<tr><td colspan="7"><div class="empty"><h3>${ui.camp.q || ui.camp.kind ? 'Nekas netika atrasts' : `Nav kampaņu sadaļā “${esc((CAMP_SUBS.find(([k]) => k === ui.campSub) || [])[1])}”`}</h3>
       <p>${ui.camp.q || ui.camp.kind ? 'Mainiet meklēšanas vai filtra nosacījumus.' : 'Izvēlieties citu sadaļu vai izveidojiet jaunu kampaņu.'}</p></div></td></tr>`
-    : list.map(x => `<tr>
-      <td>${x.type === 'draft' ? `<button type="button" class="link-btn" data-action="camp-open" data-id="${x.id}">${esc(x.name)}</button>` : `<b>${esc(x.name)}</b>`}${x.type === 'sent' ? `<span class="cell-sub">Nr. ${x.id}</span>` : ''}</td>
-      <td>${esc(SESS_LABELS[x.kind] || '—')}${x.type === 'planned' && x.kind === 'atg-pirms' ? `<span class="cell-sub">Termiņš: ${esc(fmtDate(x.pl.target))}</span>` : ''}</td>
-      <td>${esc(x.content)}</td>
+    : list.map(x => `<tr class="camp-row" data-action="camp-row" data-id="${esc(x.key)}">
+      <td><button type="button" class="camp-name" data-action="camp-row" data-id="${esc(x.key)}">${esc(x.name)}</button><span class="cell-sub">${esc(nbsp(x.meta))}</span></td>
+      <td>${campKindCell(x.kind)}</td>
       <td class="num"><b>${x.n}</b></td>
-      <td style="white-space:nowrap">${esc(x.when)}${x.type === 'draft' ? `<span class="cell-sub">saglabāts ${esc(fmtDateTime(x.date))}</span>` : ''}</td>
-      <td>${ST[x.sub]}${x.type === 'planned' && x.pl.esign ? '<span class="cell-sub">ar parakstu</span>' : ''}</td>
-      <td>${x.type === 'sent' ? statusPills(x.xs) : x.type === 'planned' ? `<span class="muted">${x.kind && x.kind.startsWith('atg') ? 'Atlase tiks pārrēķināta izpildes brīdī' : 'Gaida izpildi'}</span>` : '<span class="muted">—</span>'}</td>
-      <td class="actions">${x.type === 'draft' ? `<button class="btn btn-secondary btn-sm" data-action="camp-open" data-id="${x.id}">${ICON.edit}Turpināt</button>
-          <button class="icon-btn" data-action="camp-delete" data-id="${x.id}" aria-label="Dzēst melnrakstu: ${esc(x.name)}" title="Dzēst melnrakstu">${ICON.trash}</button>`
-        : x.type === 'planned' ? `<button class="btn btn-secondary btn-sm" data-action="pl-run" data-id="${x.id}">Izpildīt tagad</button>
-          <button class="icon-btn" data-action="pl-delete" data-id="${x.id}" aria-label="Dzēst ieplānoto kampaņu: ${esc(x.name)}" title="Dzēst">${ICON.trash}</button>`
-        : `${x.sign ? `<button class="btn btn-primary btn-sm" data-action="camp-sign" data-id="${x.id}">${ICON.edit}Parakstīt</button> ` : ''}<button class="btn btn-ghost btn-sm" data-action="camp-history" data-id="${x.id}">${ICON.eye}Skatīt vēsturē</button>`}</td></tr>`).join('');
+      <td style="white-space:nowrap">${esc(x.when)}</td>
+      <td><span class="pill ${CAMP_ST[x.st].cls}">${CAMP_ST[x.st].label}</span></td>
+      <td>${campResult(x)}</td>
+      <td class="actions"><button type="button" class="icon-btn camp-more" data-action="camp-menu" data-id="${esc(x.key)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.name)}" title="Darbības">${ICON.dots}</button></td></tr>`).join('');
   $('#camp-foot').textContent = list.length ? `${list.length} ${plural(list.length, 'kampaņa', 'kampaņas')}` : '';
+  // atvērtā izvēlne paliek atvērta arī pēc statusu atjaunošanas
+  if (menuKey){
+    const btn = $$('#camp-tbody [data-action="camp-menu"]').find(b => b.dataset.id === menuKey), x = btn && list.find(y => y.key === menuKey);
+    if (btn && x){ campMenuBtn = btn; btn.setAttribute('aria-expanded', 'true'); const m = $('#cm-menu'), f = document.activeElement && document.activeElement.closest('#cm-menu') ? document.activeElement.dataset.action : '';
+      m.innerHTML = campMenuItems(x); const it = f && $(`[data-action="${f}"]`, m); if (it) it.focus(); }
+    else closeCampMenu();
+  }
+}
+const campByKey = key => campRows().find(x => x.key === key);
+// Rindas izvēlne "⋯": Atvērt, Kopēt kā jaunu kampaņu, Dzēst (tikai melnrakstiem)
+function campMenuItems(x){
+  const it = (action, id, icon, label, cls = '') => `<button type="button" role="menuitem" tabindex="-1" class="${cls}" data-action="${action}" data-id="${esc(id)}">${ICON[icon]}${esc(label)}</button>`;
+  const out = [it('camp-row', x.key, 'open', 'Atvērt')];
+  if (x.type === 'planned') out.push(it('pl-run', x.id, 'send', 'Izpildīt tagad'));
+  if (x.type === 'sent' && x.sign) out.push(it('camp-sign', x.id, 'edit', 'Parakstīt'));
+  out.push(it('camp-copy', x.key, 'copy', 'Kopēt kā jaunu kampaņu'));
+  if (x.type === 'draft') out.push('<hr>', it('camp-delete', x.id, 'trash', 'Dzēst', 'danger'));
+  if (x.type === 'planned') out.push('<hr>', it('pl-delete', x.id, 'x', 'Atcelt kampaņu', 'danger'));
+  return out.join('');
+}
+let campMenuBtn = null;
+function closeCampMenu(focus){
+  const m = $('#cm-menu'); if (m) m.hidden = true;
+  if (campMenuBtn){ campMenuBtn.setAttribute('aria-expanded', 'false'); if (focus && campMenuBtn.isConnected) campMenuBtn.focus(); }
+  campMenuBtn = null;
+}
+function openCampMenu(btn){
+  const x = campByKey(btn.dataset.id); if (!x) return;
+  if (campMenuBtn === btn){ closeCampMenu(true); return; }
+  closeCampMenu();
+  let m = $('#cm-menu');
+  if (!m){ m = document.createElement('div'); m.id = 'cm-menu'; m.className = 'cm-menu'; m.setAttribute('role', 'menu'); document.body.appendChild(m);
+    m.addEventListener('click', e => { if (e.target.closest('[role="menuitem"]')) setTimeout(() => closeCampMenu(), 0); });
+    m.addEventListener('keydown', e => {
+      const items = $$('[role="menuitem"]', m), i = items.indexOf(document.activeElement);
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus(); }
+      else if (e.key === 'Home' || e.key === 'End'){ e.preventDefault(); items[e.key === 'Home' ? 0 : items.length - 1].focus(); }
+      else if (e.key === 'Escape' || e.key === 'Tab'){ e.preventDefault(); closeCampMenu(true); }
+    });
+  }
+  m.innerHTML = campMenuItems(x);
+  m.setAttribute('aria-label', `Darbības: ${x.name}`);
+  m.hidden = false;
+  campMenuBtn = btn; btn.setAttribute('aria-expanded', 'true');
+  placeCampMenu();
+  $('[role="menuitem"]', m).focus();
+}
+// izvēlne pie pogas (ritinot – pārvietojas līdzi; ja poga vairs nav redzama – aizveras)
+function placeCampMenu(){
+  const m = $('#cm-menu'); if (!m || !campMenuBtn) return;
+  const r = campMenuBtn.getBoundingClientRect(), w = m.offsetWidth, h = m.offsetHeight;
+  if (!campMenuBtn.isConnected || r.bottom < 0 || r.top > innerHeight){ closeCampMenu(); return; }
+  m.style.left = Math.max(8, Math.min(r.right - w, innerWidth - w - 8)) + 'px';
+  m.style.top = (r.bottom + 4 + h > innerHeight - 8 ? Math.max(8, r.top - h - 4) : r.bottom + 4) + 'px';
+}
+document.addEventListener('click', e => { if (campMenuBtn && !e.target.closest('#cm-menu') && e.target.closest('[data-action="camp-menu"]') !== campMenuBtn) closeCampMenu(); }, true);
+window.addEventListener('resize', () => placeCampMenu());
+window.addEventListener('scroll', () => placeCampMenu(), true);
+// Rindas atvēršana: melnraksts – rediģēšanai, ieplānotā – pārskats, nosūtītā – sūtīšanas vēsturē
+function openCampRow(key){
+  const x = campByKey(key); if (!x) return;
+  if (x.type === 'draft') openEditor(x.id);
+  else if (x.type === 'planned') openPlanned(x.pl);
+  else showHistoryOf(x.id);
+}
+function openPlanned(pl){
+  const sn = pl.snap || {}, es = sn.esign || {};
+  openModal({title:pl.name, content:`<dl class="pl-sum">
+      <dt>Statuss</dt><dd><span class="pill cs-plan">Ieplānota</span></dd>
+      <dt>Veids</dt><dd>${esc(SESS_LABELS[pl.kindKey] || '—')}</dd>
+      <dt>Nosūtīšana</dt><dd>Plānota ${esc(fmtWhen(pl.sendDate, pl.sendTime))}</dd>
+      ${pl.kindKey === 'atg-pirms' && pl.target ? `<dt>Termiņš</dt><dd>${esc(fmtDate(pl.target))}</dd>` : ''}
+      <dt>Respondenti</dt><dd>${esc(pl.count ?? '—')}${pl.kindKey && pl.kindKey.startsWith('atg') ? ' <span class="muted">(atlase tiks pārrēķināta izpildes brīdī)</span>' : ''}</dd>
+      <dt>Saturs</dt><dd>${esc(pl.contentLabel || pl.contentName || '—')}</dd>
+      <dt>Paraksts</dt><dd>${es.required ? `Jāparaksta (${esc((es.signers || []).map(id => (signerById(id) || {}).name).filter(Boolean).join(', ') || '—')})` : 'Nav jāparaksta'}</dd>
+      <dt>Adrešu prioritāte</dt><dd>${esc(prioLabel(pl.prio || sn.prio) || '—')}</dd>
+      <dt>Izveidoja</dt><dd>${esc(pl.createdBy || CURRENT_USER)}${pl.createdAt ? `, ${esc(fmtStamp(pl.createdAt))}` : ''}</dd></dl>`,
+    actions:[{label:'Aizvērt', cls:'btn-ghost'}, {label:'Kopēt kā jaunu kampaņu', cls:'btn-secondary', onClick: close => { close(); copyCampaign('planned:' + pl.id); }},
+      {label:'Izpildīt tagad', cls:'btn-primary', onClick: close => { close(); runPlanned(pl.id); }}]});
+}
+// Kampaņas iestatījumi kopēšanai (agrākām / arhīva kampaņām – no vēstuļu datiem)
+function campSnapOf(x){
+  if (x.type === 'draft') return x.d;
+  if (x.type === 'planned') return x.pl.snap;
+  const sn = (state.campSnaps || {})[x.id];
+  if (sn) return sn;
+  const x0 = x.xs[0], k = x0.sessionKind || 'cits', types = new Set(x.xs.map(y => { const r = state.respondents.find(z => z.id === y.respondentId); return r ? respType(r) : ''; }).filter(Boolean));
+  return {name:x.name, aud: types.size === 1 ? [...types][0] : 'visi', kind: k.startsWith('atg') ? 'atgadinajums' : k, remind: k === 'atg-pec' ? 'after' : 'before',
+    prio: x0.prio && x0.prio.length ? [...x0.prio, '', ''].slice(0, 3) : undefined,
+    content: x0.templateId && state.templates.some(t => t.id === x0.templateId) ? {source:'tpl', templateId:x0.templateId} : null};
+}
+function copyCampaign(key){
+  const x = campByKey(key), sn = x && campSnapOf(x);
+  if (!sn) return;
+  if (ui.campView === 'edit') flushDraft();
+  const c = clone(sn);
+  if (c.content && c.content.templateId && !state.templates.some(t => t.id === c.content.templateId)) c.content = null;
+  const today = todayIso();
+  c.sel = c.sel || {};
+  if (!c.sel.sendDate || c.sel.sendDate < today){ c.sel.sendDate = today; c.when = 'now'; }
+  newSession(true);
+  applySnapshot({...c, name:`${sn.name || x.name} (kopija)`, step:1});
+  flushDraft(true);
+  openEditor();
+  toast(`Izveidota kopija: “${compose.name}”.`);
 }
 // Sūtīšanas vēsture ar atlasītu kampaņu
 function showHistoryOf(batch){
@@ -7231,16 +7400,19 @@ const actions = {
       message:`Kampaņas <b>${esc(compose.name)}</b> melnraksts (respondentu atlase, saturs, paraksts un adreses) tiks dzēsts.`});
     if (!ok) return;
     removeDraft(compose.draftId); newSession(true); save(); renderCounts();
-    ui.campSub = 'draft'; showTab('kampanas'); toast('Melnraksts dzēsts.');
+    showTab('kampanas'); toast('Melnraksts dzēsts.');
   },
   'layout-edit': () => openLayoutEditor(),
   'resp-card': id => openRespCard(id),
   'camp-new': () => { if (ui.campView === 'edit') flushDraft(); newSession(true); openEditor(); },
   'camp-open': id => openEditor(id),
-  'camp-back': () => { ui.campSub = 'draft'; showTab('kampanas'); },
+  'camp-back': () => showTab('kampanas'),
   'sag-open': () => setTplView('sagataves'),
   'sag-back': () => setTplView('veidnes'),
   'camp-history': id => showHistoryOf(id),
+  'camp-row': id => openCampRow(id),
+  'camp-menu': (id, el) => openCampMenu(el),
+  'camp-copy': id => copyCampaign(id),
   'camp-delete': async id => {
     const d = state.drafts.find(x => x.id === id);
     if (!d || !(await confirmDialog({title:'Dzēst melnrakstu?', okLabel:'Dzēst', danger:true, message:`Kampaņas melnraksts <b>${esc(d.name)}</b> tiks dzēsts.`}))) return;

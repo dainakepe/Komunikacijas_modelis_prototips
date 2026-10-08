@@ -47,21 +47,23 @@ Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
 - **Noformējums.** Cilnēm nav skaita ciparu. Teksts ir lielāks (16,5 px), pustrekns, ar ikonu pirms nosaukuma. Aktīvajai cilnei ir tirkīzzaļš (#009999) teksts, bieza apakšlīnija un ļoti gaišs tirkīzzaļš fons. Neaktīvās ir tumši pelēkas un, uzbraucot ar peli, kļūst tirkīzzaļas.
 - **Navigācijas ceļš:** "DELTA › Respondentu pārvaldība › Komunikācija › [cilne]".
 - **Apakšsadaļas** ir filtru pogas zem virsraksta (bez skaitītājiem):
-  - Kampaņas: Melnraksti · Ieplānotās · Izpildē · Pabeigtās. Pirmajā reizē atveras pirmā sadaļa, kurā ir kampaņas;
+  - Kampaņas: Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās. Atverot cilni, vienmēr aktīva ir "Visas";
   - Veidnes: adresātu grupu kartītes (Fiziskām personām · Juridiskām personām · Cita komunikācija). "Sagataves" ir poga augšējā labajā stūrī pirms "Pastāvīgās daļas", un tā atver atsevišķu skatu ar pogu "← Atpakaļ uz veidnēm";
   - Sūtīšanas vēsture: Visas · Gaida parakstu · Procesā · Piegādātas · Neveiksmīgas · Manuāla pārbaude · Administratoram;
   - Atskaites: Nosūtīšanas kopsavilkums · Piegādes rezultāti · Neveiksmīgās ziņas · Atkārtotā nosūtīšana · Citi pārskati.
 
 Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA moduļiem. Tie ir redzami kampaņas solī "Respondenti" un respondenta kartītē. Vecās saites turpina darboties: `#sagatavot` atver kampaņas redaktoru, `#nosutitas` atver cilni "Sūtīšanas vēsture", bet `#respondenti` atver cilni "Kampaņas".
 
-**Kampaņu saraksts** (specifikācija F1). Kampaņas ir sadalītas sadaļās pēc statusa: Melnraksti, Ieplānotās, Izpildē (vēstules gaida parakstu vai vēl ir procesā – Nosūtīta, Pieņemts DIV, Notiek piegāde, Atkārtots mēģinājums) un Pabeigtās. Statusu ceļš: Melnraksts → Ieplānota → Izpildē → Pabeigta.
-- Kolonnas: nosaukums, veids, satura avots, respondentu skaits, nosūtīšanas datums, statuss un rezultātu kopsavilkums (piegādes statusi).
-- Darbības:
-  - melnrakstu var turpināt (atveras saglabātajā solī) vai dzēst;
-  - ieplānoto kampaņu var izpildīt uzreiz ("Izpildīt tagad") vai dzēst;
-  - kampaņai, kas gaida parakstu, ir poga "Parakstīt";
-  - nosūtītai kampaņai ir poga "Skatīt vēsturē".
-- Sarakstā var meklēt un filtrēt pēc kampaņas veida.
+**Kampaņu saraksts** (specifikācija F1). Virs saraksta – statusu filtru pogas **Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās** ("Visas" ir pirmā un, atverot cilni, vienmēr aktīva), meklēšana pēc kampaņas nosaukuma un izvēlne "Visi kampaņu veidi"; poga **"+ Jauna kampaņa"** – augšējā labajā stūrī. Kampaņas sakārtotas no jaunākās uz vecāko pēc pēdējo izmaiņu laika (melnrakstam – saglabāšana, ieplānotajai – izveide, nosūtītajai – nosūtīšana vai parakstīšana).
+- **Kolonnas:**
+  - **Kampaņa** – nosaukums pustreknā, lielākā fontā; zem tā mazā pelēkā tekstā "Saglabāta 08.10.2026., 13:50" (melnrakstiem) vai "Izveidoja: [vārds], 08.10.2026." (pārējām);
+  - **Veids** – birka ar ikonu (Uzaicinājums, Atgādinājums, Informatīvs ziņojums, Cits); atgādinājumam zem tās – "pirms termiņa" vai "pēc termiņa";
+  - **Respondenti** – skaits;
+  - **Nosūtīšana** – "Tūlīt pēc apstiprināšanas" (arī kampaņai, kas gaida parakstu), "Plānota 10.10.2026., 09:00" vai "Nosūtīta 07.10.2026., 10:15";
+  - **Statuss** – krāsaina birka: Melnraksts (pelēka), Ieplānota (zila), Gaida parakstu (dzeltena), Izpildē (tirkīzzaļa – vēstules vēl procesā: Nosūtīta, Pieņemts DIV, Notiek piegāde, Atkārtots mēģinājums), Pabeigta (zaļa), Daļēji neveiksmīga (oranža – pabeigta, bet ir neveiksmīgas vēstules). Filtrā "Izpildē" ir arī kampaņas, kas gaida parakstu, "Pabeigtās" – arī daļēji neveiksmīgās;
+  - **Rezultāts** – nosūtītām kampaņām plāna progresa josla (zaļa – piegādātas, oranža – neveiksmīgas) un teksts "Piegādātas 42 no 45 · 3 neveiksmīgas"; pārējām "—".
+- **Rindas** ir augstākas, ar plānu atdalītāju; uzbraucot ar peli, rinda tiek izcelta. Uzklikšķinot uz rindas (vai nosaukuma), kampaņa atveras: melnraksts – rediģēšanai (saglabātajā solī), ieplānotā – pārskata logā (veids, nosūtīšana, respondenti, saturs, paraksts, adrešu prioritāte; pogas "Kopēt kā jaunu kampaņu" un "Izpildīt tagad"), nosūtītā – sūtīšanas vēsturē ar atlasītu kampaņu.
+- **Izvēlne "⋯"** rindas labajā pusē (ar tastatūru – bultiņas, Escape): **Atvērt**, **Kopēt kā jaunu kampaņu** (jauns melnraksts ar tiem pašiem iestatījumiem un nosaukumu "… (kopija)"; pagājis nosūtīšanas datums tiek aizstāts ar šodienu), **Dzēst** (tikai melnrakstiem, ar apstiprinājumu). Ieplānotajai kampaņai izvēlnē ir arī "Izpildīt tagad" un "Atcelt kampaņu" (ar apstiprinājumu), kampaņai, kas gaida parakstu, – "Parakstīt".
 - Var būt vairāki melnraksti vienlaikus. Katrs tiek saglabāts automātiski.
 - Testa datos ir piecas agrāk nosūtītas kampaņas (pēdējo 75 dienu laikā, viena ar parakstu), lai sūtīšanas vēsturē, atskaitēs un respondenta kartītē būtu ko redzēt.
 - Papildus tam ir **arhīvs**: ikmēneša kampaņas par pēdējiem ~2 gadiem (pirmstermiņa un nokavēto pārskatu atgādinājumi, ceturkšņa uzaicinājumi, informatīvi ziņojumi u. c.) un trīs kampaņas, kas nosūtītas pirms vairāk nekā 2 gadiem (25–31 mēnesi atpakaļ). Arhīva ierakstiem glabājas tikai metadati un piegādes mēģinājumi, bez vēstules satura, lai dati ietilptu pārlūka krātuvē; atverot šādu vēstuli, redzams temats un piegādes informācija ar norādi, ka saturs arhīvā nav saglabāts. Kopā ~570 vēstuļu.
