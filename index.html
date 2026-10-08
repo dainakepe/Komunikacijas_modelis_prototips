@@ -2009,8 +2009,6 @@ const stPill = (k, suffix = '') => { const s = STATUSES[k] || {label:k, cls:''};
 const SURVEYS = [
   {survey:'Darbaspēka apsekojums', survey_en:'Labour Force Survey', survey_ru:'Обследование рабочей силы', tags:'#aptauja #darbatirgus', slogan:'Nav datu, nav rīcības!', link:'https://e-anketa.csp.example', email:'dsa@csp.example', web:'csp.example/dsa'},
   {survey:'Ceļotāju apsekojums', survey_en:'Travel Survey', survey_ru:'Обследование путешественников', tags:'#aptauja #tūrisms', slogan:'Pastāsti, kā Tu ceļo!', link:'https://e-anketa.csp.example', email:'turisms@csp.example', web:'csp.example/adb'},
-  {survey:'Informācijas un komunikāciju tehnoloģiju lietošana 2026. gadā', survey_en:'ICT Usage in Households 2026', survey_ru:'Использование информационно-коммуникационных технологий в 2026 году', tags:'#aptauja #ikt', slogan:'', link:'https://e-anketa.csp.example', email:'ikt@csp.example', web:'csp.example/ikt'},
-  {survey:'Uzņēmumu inovāciju apsekojums', survey_en:'Community Innovation Survey', survey_ru:'Обследование инноваций на предприятиях', tags:'#apsekojums #inovācijas', slogan:'', link:'https://e-anketa.csp.example', email:'inovacijas@csp.example', web:'csp.example/inovacijas'},
 ];
 // Simulācijā e-pasti uz šo domēnu "neizdodas" – lai varētu redzēt kļūdas statusu.
 // Veidņu grupēšana: adresāts un kategorija
@@ -2064,37 +2062,28 @@ const MONTHS = ['janvāris', 'februāris', 'marts', 'aprīlis', 'maijs', 'jūnij
 // rule: {type:'day', day:15, months:1} – 15. datums 1. mēnesī pēc perioda beigām; {type:'days', days:8} – 8. diena pēc perioda beigām.
 // dyn: N – testa datos noteikumu izvēlas tā, lai pēdējā perioda termiņš būtu tieši pēc N dienām no šodienas.
 const SEED_REPORTS = [
-  {id:'p-deg',  code:'1-DEG',  name:'Nedēļas degvielas cenu pārskats',          freq:'ned',  aud:'jur', dyn:3},
-  {id:'p-apgr', code:'1-APGR', name:'Mēneša apgrozījuma pārskats',            freq:'men',  aud:'jur', rule:{type:'day', day:15}},
-  {id:'p-rup',  code:'1-RŪP',  name:'Mēneša rūpniecības produkcijas pārskats', freq:'men',  aud:'jur', dyn:5},
-  {id:'p-ds',   code:'2-DS',   name:'Ceturkšņa darba samaksas pārskats',       freq:'cet',  aud:'jur', dyn:7},
-  {id:'p-vak',  code:'1-VAK',  name:'Ceturkšņa vakanču pārskats',              freq:'cet',  aud:'jur', rule:{type:'day', day:25}},
-  {id:'p-inv',  code:'1-INV',  name:'Pusgada investīciju pārskats',            freq:'pusg', aud:'jur', rule:{type:'day', day:30}},
-  {id:'p-gada', code:'1-GADA', name:'Gada darbības pārskats',                  freq:'gads', aud:'jur', rule:{type:'day', day:1, months:4}},
-  {id:'a-dsa',  code:'1-DSA',  name:'Darbaspēka apsekojums',                   freq:'cet',  aud:'fiz', rule:{type:'day', day:14}},
-  {id:'a-cel',  code:'1-C',    name:'Ceļotāju apsekojums',                     freq:'men',  aud:'fiz', rule:{type:'day', day:10}},
-  {id:'a-mba',  code:'MBA',    name:'Mājsaimniecību budžeta apsekojums',       freq:'gads', aud:'fiz', rule:{type:'day', day:20, months:3}},
-  {id:'p-ino',  code:'INO',    name:'Uzņēmumu inovāciju apsekojums',           freq:'int',  aud:'jur', rule:{type:'days', days:30}},
-  {id:'a-lai',  code:'LAI',    name:'Laika izlietojuma apsekojums',            freq:'ned',  aud:'fiz', rule:{type:'days', days:10}},
-  {id:'a-eus',  code:'EU-SILC', name:'Iedzīvotāju ienākumu un dzīves apstākļu apsekojums', freq:'pusg', aud:'fiz', rule:{type:'day', day:20}},
-  {id:'a-ikt',  code:'IKT',    name:'Informācijas un komunikāciju tehnoloģiju lietošana 2026. gadā', freq:'int', aud:'fiz', rule:{type:'days', days:21}},
+  // iedzīvotāju statistika
+  {id:'a-dsa',  code:'1-DSA',         name:'Darbaspēka apsekojums',             freq:'cet',  aud:'fiz', rule:{type:'day', day:14}},
+  {id:'a-cel',  code:'1-C',           name:'Ceļotāju apsekojums',               freq:'men',  aud:'fiz', rule:{type:'day', day:10}},
+  {id:'a-mba',  code:'1-MBA',         name:'Mājsaimniecību budžeta apsekojums', freq:'gads', aud:'fiz', rule:{type:'day', day:20, months:3}},
+  // uzņēmumu statistika
+  {id:'p-apgr', code:'1-apgrozījums', name:'Pārskats par apgrozījumu',          freq:'men',  aud:'jur', rule:{type:'day', day:15}},
+  {id:'p-rup',  code:'1-Rūpniecība',  name:'Pārskats par rūpniecību',           freq:'gads', aud:'jur', dyn:5},
+  {id:'p-ds',   code:'2-darbs',       name:'Pārskats par darbu',                freq:'cet',  aud:'jur', dyn:7},
 ];
+// Dzēstie agrākie testa apsekojumi / pārskati – pārsaistīti uz esošajiem (melnrakstos, ieplānotajās kampaņās, saglabātajos filtros)
+const OLD_REPORT_MAP = {'p-deg':'p-apgr', 'p-vak':'p-ds', 'p-inv':'p-ds', 'p-gada':'p-rup', 'p-ino':'p-rup', 'a-lai':'a-dsa', 'a-eus':'a-mba', 'a-ikt':'a-cel'};
+const mapReportId = id => OLD_REPORT_MAP[id] || id;
+// apsekojuma / pārskata apzīmējums visur vienādi: "1-DSA Darbaspēka apsekojums"
+const repTitle = p => p ? `${p.code} ${p.name}` : '';
 // Apsekojuma dati vēstules mainīgajiem (no Metadatu pārvaldības; prototipā – izdomāti testa dati)
 const SURVEY_META = {
-  'p-deg':  {survey_en:'Weekly Fuel Price Report', survey_ru:'Еженедельный отчёт о ценах на топливо', link:'https://e-anketa.csp.example/1-deg', email:'cenas@csp.example', web:'csp.example/degviela'},
-  'p-apgr': {survey_en:'Monthly Turnover Report', survey_ru:'Ежемесячный отчёт об обороте', link:'https://e-anketa.csp.example/1-apgr', email:'apgrozijums@csp.example', web:'csp.example/apgrozijums'},
-  'p-rup':  {survey_en:'Monthly Industrial Production Report', survey_ru:'Ежемесячный отчёт о промышленной продукции', link:'https://e-anketa.csp.example/1-rup', email:'rupnieciba@csp.example', web:'csp.example/rupnieciba'},
-  'p-ds':   {survey_en:'Quarterly Earnings Report', survey_ru:'Квартальный отчёт о заработной плате', link:'https://e-anketa.csp.example/2-ds', email:'darba-samaksa@csp.example', web:'csp.example/darba-samaksa'},
-  'p-vak':  {survey_en:'Quarterly Job Vacancy Report', survey_ru:'Квартальный отчёт о вакансиях', link:'https://e-anketa.csp.example/1-vak', email:'vakances@csp.example', web:'csp.example/vakances'},
-  'p-inv':  {survey_en:'Semi-annual Investment Report', survey_ru:'Полугодовой отчёт об инвестициях', link:'https://e-anketa.csp.example/1-inv', email:'investicijas@csp.example', web:'csp.example/investicijas'},
-  'p-gada': {survey_en:'Annual Activity Report', survey_ru:'Годовой отчёт о деятельности', link:'https://e-anketa.csp.example/1-gada', email:'gada-parskats@csp.example', web:'csp.example/gada-parskats'},
   'a-dsa':  {survey_en:'Labour Force Survey', survey_ru:'Обследование рабочей силы', link:'https://e-anketa.csp.example/dsa', email:'dsa@csp.example', web:'csp.example/dsa'},
   'a-cel':  {survey_en:'Travel Survey', survey_ru:'Обследование путешественников', link:'https://e-anketa.csp.example/cel', email:'turisms@csp.example', web:'csp.example/adb'},
   'a-mba':  {survey_en:'Household Budget Survey', survey_ru:'Обследование бюджетов домохозяйств', link:'https://e-anketa.csp.example/mba', email:'mba@csp.example', web:'csp.example/mba'},
-  'p-ino':  {survey_en:'Community Innovation Survey', survey_ru:'Обследование инноваций на предприятиях', link:'https://e-anketa.csp.example/ino', email:'inovacijas@csp.example', web:'csp.example/inovacijas'},
-  'a-lai':  {survey_en:'Time Use Survey', survey_ru:'Обследование использования времени', link:'https://e-anketa.csp.example/lai', email:'laiks@csp.example', web:'csp.example/laika-izlietojums'},
-  'a-eus':  {survey_en:'Survey on Income and Living Conditions', survey_ru:'Обследование доходов и условий жизни', link:'https://e-anketa.csp.example/eu-silc', email:'eu-silc@csp.example', web:'csp.example/eu-silc'},
-  'a-ikt':  {survey_en:'ICT Usage in Households 2026', survey_ru:'Использование информационно-коммуникационных технологий в 2026 году', link:'https://e-anketa.csp.example/ikt', email:'ikt@csp.example', web:'csp.example/ikt'},
+  'p-apgr': {survey_en:'Turnover Report', survey_ru:'Отчёт об обороте', link:'https://e-anketa.csp.example/1-apgrozijums', email:'apgrozijums@csp.example', web:'csp.example/apgrozijums'},
+  'p-rup':  {survey_en:'Industry Report', survey_ru:'Отчёт о промышленности', link:'https://e-anketa.csp.example/1-rupnieciba', email:'rupnieciba@csp.example', web:'csp.example/rupnieciba'},
+  'p-ds':   {survey_en:'Labour Report', survey_ru:'Отчёт о труде', link:'https://e-anketa.csp.example/2-darbs', email:'darbs@csp.example', web:'csp.example/darbs'},
 };
 const ruleLabel = r => !r ? '' : r.type === 'days' ? `${r.days}. diena pēc pārskata perioda beigām`
   : `${r.day}. datums ${(r.months || 1) > 1 ? `${r.months}. mēnesī ` : ''}pēc pārskata perioda beigām`;
@@ -2310,7 +2299,7 @@ function dutyTableHtml(cols, rows, ctx, mark){
     const p = (state.reports || []).find(x => x.id === d.reportId) || {name:d.reportId, code:''}, st = dutyStatus(d), late = st === 'kavets';
     // apvienotā vēstulē (pēc NMK) – arī vienība, kurai pienākums pieder
     const unit = ctx.__rid && d.respondentId !== ctx.__rid ? (state.respondents.find(x => x.id === d.respondentId) || {}).name : '';
-    if (c === 'report') return `<td>${esc(p.name)}${p.code ? ` (${esc(p.code)})` : ''}${unit ? `<br><small>${esc(unit)}</small>` : ''}</td>`;
+    if (c === 'report') return `<td>${esc(repTitle(p))}${unit ? `<br><small>${esc(unit)}</small>` : ''}</td>`;
     if (c === 'period') return `<td>${esc(periodLabel(d.period))}</td>`;
     if (c === 'deadline') return `<td class="dl${late ? ' late' : ''}">${esc(fmtDate(d.deadline))}</td>`;
     return `<td${late ? ' class="late"' : ''}>${esc(L.st[st])}</td>`;
@@ -2787,35 +2776,35 @@ function migrateTemplate(t){
 // [respondents, pārskats, periods (1 – pēdējais pabeigtais / testa "enkura" periods, 2 – iepriekšējais, 0 – pašreizējais),
 //  iesniegts: null – nav iesniegts; skaitlis – cik dienas pirms termiņa iesniegts (negatīvs – pēc termiņa)]
 const SEED_DUTIES = [
-  ['r6', 'p-deg', 1, null], ['r6', 'p-deg', 2, 1], ['r6', 'p-apgr', 1, null], ['r6', 'p-apgr', 2, 3], ['r6', 'p-ds', 1, null], ['r6', 'p-gada', 1, 10],
-  ['r7', 'p-rup', 1, null], ['r7', 'p-rup', 2, null], ['r7', 'p-ds', 2, 5], ['r7', 'p-vak', 1, null], ['r7', 'p-inv', 1, null],
-  ['r8', 'p-apgr', 1, null], ['r8', 'p-rup', 1, 4], ['r8', 'p-deg', 1, null],
-  ['r9', 'p-gada', 1, null], ['r9', 'p-deg', 1, 2], ['r9', 'p-deg', 2, null],
-  ['r10', 'p-apgr', 1, null], ['r10', 'p-apgr', 2, null], ['r10', 'p-ds', 1, null],
-  ['r11', 'p-apgr', 1, 5], ['r11', 'p-vak', 1, null], ['r11', 'p-gada', 1, -3],
-  ['r12', 'p-rup', 1, null], ['r12', 'p-rup', 2, 1], ['r12', 'p-ds', 2, 2], ['r12', 'p-inv', 1, null], ['r12', 'p-gada', 1, 8],
-  ['r13', 'p-apgr', 1, null], ['r13', 'p-ds', 2, null], ['r13', 'p-deg', 1, null],
-  ['r14', 'p-inv', 1, 4], ['r14', 'p-gada', 1, null], ['r14', 'p-ds', 1, null],
-  ['r15', 'p-apgr', 1, 6], ['r15', 'p-apgr', 2, 2], ['r15', 'p-rup', 1, null],
-  ['r16', 'p-vak', 1, null], ['r16', 'p-ds', 1, 3], ['r16', 'p-apgr', 1, null],
-  ['r17', 'p-apgr', 1, null], ['r17', 'p-vak', 2, -2], ['r17', 'p-gada', 1, 1],
-  ['r18', 'p-rup', 1, null], ['r18', 'p-rup', 2, null], ['r18', 'p-ds', 1, null], ['r18', 'p-inv', 1, null],
-  ['r19', 'p-inv', 1, 1], ['r19', 'p-gada', 1, 5], ['r19', 'p-ds', 1, 2], ['r19', 'p-deg', 1, null],
-  ['r20', 'p-apgr', 1, null], ['r20', 'p-deg', 2, null],
-  // fiziskās personas
-  ['r1', 'a-dsa', 1, 4], ['r3', 'a-dsa', 1, null], ['r5', 'a-dsa', 1, null], ['r21', 'a-dsa', 1, 2], ['r23', 'a-dsa', 1, null],
+  // Iedzīvotāju statistika (fiziskās personas): 1-DSA – 9, 1-C – 9, 1-MBA – 8 respondenti
+  ['r1', 'a-dsa', 1, 4], ['r2', 'a-dsa', 1, null], ['r3', 'a-dsa', 1, null], ['r4', 'a-dsa', 1, 2], ['r5', 'a-dsa', 1, null],
+  ['r21', 'a-dsa', 1, 2], ['r22', 'a-dsa', 1, null], ['r23', 'a-dsa', 1, null], ['r24', 'a-dsa', 1, -1],
+  ['r1', 'a-dsa', 2, 3], ['r3', 'a-dsa', 2, null], ['r22', 'a-dsa', 2, 1],
   ['r1', 'a-dsa', 0, null], ['r3', 'a-dsa', 0, null], ['r21', 'a-dsa', 0, null], ['r23', 'a-dsa', 0, null],
-  ['r2', 'a-cel', 1, null], ['r4', 'a-cel', 1, null], ['r22', 'a-cel', 1, 2], ['r5', 'a-cel', 2, null], ['r24', 'a-cel', 2, 1],
-  ['r2', 'a-mba', 1, null], ['r4', 'a-mba', 1, 5], ['r22', 'a-mba', 1, null], ['r24', 'a-mba', 1, 3], ['r25', 'a-mba', 1, null],
-  // apsekojumi ar periodiskumu "Intervija", "Nedēļa" un "Pusgads"
-  ['r7', 'p-ino', 1, null], ['r11', 'p-ino', 1, null], ['r14', 'p-ino', 1, 4], ['r16', 'p-ino', 0, null], ['r19', 'p-ino', 1, null],
-  ['r1', 'a-lai', 1, null], ['r3', 'a-lai', 1, 2], ['r24', 'a-lai', 1, null], ['r25', 'a-lai', 2, null], ['r1', 'a-lai', 0, null],
-  ['r2', 'a-eus', 1, null], ['r5', 'a-eus', 1, 3], ['r23', 'a-eus', 1, null], ['r25', 'a-eus', 1, null],
-  ['r3', 'a-ikt', 1, null], ['r4', 'a-ikt', 1, 2], ['r21', 'a-ikt', 1, null], ['r22', 'a-ikt', 0, null], ['r24', 'a-ikt', 0, null],
+  ['r1', 'a-cel', 1, null], ['r2', 'a-cel', 1, null], ['r4', 'a-cel', 1, 3], ['r5', 'a-cel', 1, null], ['r21', 'a-cel', 1, null],
+  ['r22', 'a-cel', 1, 2], ['r23', 'a-cel', 1, null], ['r24', 'a-cel', 1, null], ['r25', 'a-cel', 1, 1],
+  ['r2', 'a-cel', 2, null], ['r5', 'a-cel', 2, 2], ['r24', 'a-cel', 2, 1], ['r25', 'a-cel', 2, null],
+  ['r2', 'a-mba', 1, null], ['r3', 'a-mba', 1, 6], ['r4', 'a-mba', 1, 5], ['r5', 'a-mba', 1, null],
+  ['r22', 'a-mba', 1, null], ['r23', 'a-mba', 1, 2], ['r24', 'a-mba', 1, 3], ['r25', 'a-mba', 1, null],
+  ['r2', 'a-mba', 0, null], ['r25', 'a-mba', 0, null],
+  // Uzņēmumu statistika (juridiskās personas); daļai uzņēmumu vairāki pārskati (apkopota vēstule ar pārskatu tabulu)
+  ['r6', 'p-apgr', 1, null], ['r6', 'p-apgr', 2, 3], ['r6', 'p-ds', 1, null], ['r6', 'p-rup', 0, null],
+  ['r7', 'p-ds', 1, null], ['r7', 'p-ds', 2, 5], ['r7', 'p-rup', 1, null],
+  ['r8', 'p-apgr', 1, null], ['r8', 'p-rup', 1, 4],
+  ['r9', 'p-apgr', 2, null], ['r9', 'p-rup', 1, null],
+  ['r10', 'p-apgr', 1, null], ['r10', 'p-apgr', 2, null], ['r10', 'p-ds', 1, null],
+  ['r11', 'p-apgr', 1, 5], ['r11', 'p-rup', 1, -3],
+  ['r12', 'p-ds', 1, null], ['r12', 'p-ds', 2, 2], ['r12', 'p-rup', 1, null],
+  ['r13', 'p-apgr', 1, null], ['r13', 'p-ds', 2, null],
+  ['r14', 'p-ds', 1, null], ['r14', 'p-rup', 1, null], ['r14', 'p-rup', 0, null],
+  ['r15', 'p-apgr', 1, 6], ['r15', 'p-apgr', 2, 2], ['r15', 'p-rup', 1, null],
+  ['r16', 'p-apgr', 1, null], ['r16', 'p-ds', 1, 3],
+  ['r17', 'p-apgr', 1, null], ['r17', 'p-ds', 2, -2],
+  ['r18', 'p-ds', 1, null], ['r18', 'p-rup', 1, null],
+  ['r19', 'p-ds', 1, 2], ['r19', 'p-rup', 1, 5], ['r19', 'p-rup', 0, null],
+  ['r20', 'p-apgr', 1, null], ['r20', 'p-ds', 1, null],
   // vairākas vienības vienā NMK
   ['r26', 'p-apgr', 1, null], ['r26', 'p-ds', 1, null], ['r27', 'p-apgr', 1, null], ['r27', 'p-rup', 1, 2], ['r28', 'p-ds', 1, null], ['r28', 'p-apgr', 1, null],
-  // tekošā gada gada pārskati (termiņš nākamajā gadā)
-  ['r6', 'p-gada', 0, null], ['r14', 'p-gada', 0, null], ['r19', 'p-gada', 0, null], ['r2', 'a-mba', 0, null], ['r25', 'a-mba', 0, null],
 ];
 // Esošo uzņēmumu reģistrācijas numuri un otrie e-pasti
 // Respondentu identifikatori, pasta adrese, atbildīgais operators un statusa šifrs (Respondentu pārvaldība; izdomāti testa dati).
@@ -2959,11 +2948,18 @@ function loadState(){
       if (!Array.isArray(s.duties) || !Array.isArray(s.reports)) migrateRespData(s);
       // pārskatiem jābūt termiņa noteikumam (jaunais datu modelis)
       else if (!s.reports.every(p => p.rule) || SEED_REPORTS.some(p => !s.reports.some(x => x.id === p.id)) || !s.reports.every(p => p.meta)) seedDutyData(s);
+      // testa apsekojumu katalogs mainīts (6 pārskati): pārskati un pienākumi tiek izveidoti no jauna, testa vēsture – arī
+      else if (s.reports.length !== SEED_REPORTS.length || SEED_REPORTS.some(p => { const x = s.reports.find(y => y.id === p.id); return !x || x.name !== p.name || x.freq !== p.freq; })){ seedDutyData(s); s.histVer = 0; }
       if (!s.respondents.every(r => 'uuk' in r) || UNIT_IDS.some(id => !s.respondents.some(r => r.id === id))) migrateUnits(s);
       // jaunākie testa pienākumi (piem., tekošā gada gada pārskati)
       else if (s.duties.length < SEED_DUTIES.filter(([rid]) => s.respondents.some(r => r.id === rid)).length) seedDutyData(s);
       // apsekojumu kodi – no kataloga (piem., DSA → 1-DSA, CEL → 1-C)
       s.reports.forEach(p => { const sp = SEED_REPORTS.find(x => x.id === p.id); if (sp) p.code = sp.code; });
+      // melnrakstos / ieplānotajās kampaņās / filtros – dzēstie apsekojumi pārsaistīti
+      const remap = sel => { if (sel && Array.isArray(sel.reports)) sel.reports = [...new Set(sel.reports.map(mapReportId))]; };
+      (s.drafts || []).forEach(d => remap(d.sel)); if (s.draft) remap(s.draft.sel);
+      (s.planned || []).forEach(pl => remap(pl.snap && pl.snap.sel));
+      (s.savedFilters || []).forEach(f => remap(f.sel));
       s.planned = s.planned || [];
       s.savedFilters = s.savedFilters || [];
       if (!Array.isArray(s.mailSamples)) s.mailSamples = defaultMailSamples(s.templates);
@@ -3019,6 +3015,7 @@ const migrateSel = sel => {
   x.resp = {...defaultResp(), ...(raw.resp || {})};
   // iedzīvotāju statistika: gads ('' – visi), periods, atzīmētās reizes / cikli (null – visas)
   x.fz = {...defaultFz(), ...(raw.fz || {})};
+  x.reports = [...new Set((x.reports || []).map(mapReportId))];
   delete x.repPer;
   // agrākie filtri "Pasta adrese" un "Tsav" vairs netiek izmantoti
   delete x.resp.post; delete x.resp.tsav;
@@ -5161,7 +5158,7 @@ function dutyTable(ds, active){
   if (!ds.length) return `<p class="hint duty-empty">${active ? 'Nav pienākumu, kas atbilst atlasei.' : 'Respondentam nav reģistrētu pienākumu.'}</p>`;
   return `<table class="duty-table"><thead><tr><th>Pārskats</th><th>Periods</th><th>Termiņš</th><th>Statuss</th></tr></thead><tbody>${ds.map(d => {
     const p = repById(d.reportId), late = dutyStatus(d) === 'kavets';
-    return `<tr><td><b>${esc(p.name)}</b><span class="cell-sub">${esc(p.code)} · ${esc(FREQS[p.freq])} · termiņš: ${esc(ruleLabel(p.rule))}</span></td><td>${esc(periodLabel(d.period))}</td>
+    return `<tr><td><b>${esc(repTitle(p))}</b><span class="cell-sub">${esc(FREQS[p.freq])} · termiņš: ${esc(ruleLabel(p.rule))}</span></td><td>${esc(periodLabel(d.period))}</td>
       <td class="${late ? 'late' : ''}">${esc(fmtDate(d.deadline))}</td><td>${dutyPill(d)}${d.submitted ? `<span class="cell-sub">${esc(fmtDate(d.submitted))}</span>` : ''}</td></tr>`;
   }).join('')}</tbody></table><p class="dvp-src">Iesniegšanas statusi – dati no Datu vākšanas pārraudzības (tikai lasāmi).</p>`;
 }
@@ -5502,7 +5499,7 @@ function renderRepList(){
   const groups = [['fiz', AUDS.fiz.field], ['jur', AUDS.jur.field]].filter(([a]) => reps.some(p => p.aud === a));
   $('#c-rep-list').innerHTML = (!fizMode() && (!q || norm('visi apsekojumi').includes(q)) ? `<div class="ms-opt" role="option" id="c-rep-opt-all" data-rep-opt="*" aria-selected="${!!sel.allReports}"><span class="ms-chk" aria-hidden="true"></span><span><b>Visi apsekojumi</b><small>Bez ierobežojuma pēc apsekojuma</small></span></div>` : '') + (reps.length ? groups.map(([a, l]) => `${groups.length > 1 ? `<div class="chk-group" role="presentation">${l}</div>` : ''}${reps.filter(p => p.aud === a).map(p =>
     `<div class="ms-opt" role="option" id="c-rep-opt-${p.id}" data-rep-opt="${p.id}" aria-selected="${sel.reports.includes(p.id)}"><span class="ms-chk" aria-hidden="true"></span>
-      <span>${esc(p.name)}<small>${esc(p.code)} · Periodiskums: ${esc(FREQS[p.freq])} · termiņš: ${esc(ruleLabel(p.rule))}</small></span></div>`).join('')}`).join('')
+      <span>${esc(repTitle(p))}<small>Periodiskums: ${esc(FREQS[p.freq])} · termiņš: ${esc(ruleLabel(p.rule))}</small></span></div>`).join('')}`).join('')
     : '<div class="ms-empty">Nekas nav atrasts.</div>');
   msActive(null);
 }
@@ -5548,9 +5545,9 @@ function renderVars(){
     <tbody>${VAR_ROWS.map(rw => row(id, rw)).join('')}</tbody></table></div>`;
   const src = '<span class="pill pill-src">Dati no Metadatu pārvaldības</span>';
   const surveys = !sr.length ? '<p class="muted">Kampaņas tvērumā nav apsekojuma.</p>'
-    : sr.length === 1 ? `<h4 class="vars-h">${esc(repById(sr[0]).name)} ${src}</h4>${table(sr[0])}`
+    : sr.length === 1 ? `<h4 class="vars-h">${esc(repTitle(repById(sr[0])))} ${src}</h4>${table(sr[0])}`
     : `<div class="vars-src">${src}</div>` + sr.map(id => { const p = repById(id), n = Object.keys(ov[id] || {}).length;
-        return `<details class="vars-grp" data-var-grp="${id}" ${ui.varOpen.has(id) ? 'open' : ''}><summary><b>${esc(p.name)}</b><small>${esc(p.code)}</small>${n ? `<span class="pill pill-mod">Mainīts: ${n}</span>` : ''}</summary>${table(id)}</details>`; }).join('');
+        return `<details class="vars-grp" data-var-grp="${id}" ${ui.varOpen.has(id) ? 'open' : ''}><summary><b>${esc(repTitle(p))}</b>${n ? `<span class="pill pill-mod">Mainīts: ${n}</span>` : ''}</summary>${table(id)}</details>`; }).join('');
   box.innerHTML = surveys + `<h4 class="vars-h">Kampaņas noformējums</h4>
     <div class="form-grid">
       <div class="field"><label for="cf-tags">Tēmturi banerī</label><input type="text" id="cf-tags" data-fv="tags" value="${esc(compose.f.tags || '')}"></div>
@@ -5615,7 +5612,7 @@ function renderScope(){
   // b) Pēc apsekojuma
   // apsekojums, kas neatbilst izvēlētajam periodiskumam, netiek atlasīts – birka atzīmēta ar ⚠
   $('#c-rep-tags').innerHTML = (sel.allReports ? `<span class="ms-tag"><span>Visi apsekojumi</span><button type="button" data-rep-rm="*" aria-label="Noņemt: Visi apsekojumi">×</button></span>` : '') + sel.reports.map(id => { const p = repById(id), off = !periodReportIds().has(p.id), t = off ? `${p.name} – izvēlētajā periodā nav pienākumu, netiek atlasīts` : p.name;
-    return `<span class="ms-tag${off ? ' is-off' : ''}"><span title="${esc(t)}">${off ? ICON.warn : ''}${esc(p.code)} · ${esc(p.name)} <small>${esc(FREQS[p.freq])}</small></span><button type="button" data-rep-rm="${p.id}" aria-label="Noņemt: ${esc(p.name)}">×</button></span>`; }).join('');
+    return `<span class="ms-tag${off ? ' is-off' : ''}"><span title="${esc(t)}">${off ? ICON.warn : ''}${esc(repTitle(p))} <small>${esc(FREQS[p.freq])}</small></span><button type="button" data-rep-rm="${p.id}" aria-label="Noņemt: ${esc(p.name)}">×</button></span>`; }).join('');
   if (!$('#c-rep-list').hidden) renderRepList();
   // iedzīvotāju statistika: viena kartīte – Apsekojums → Gads → Periods → Reize / cikls
   const fm = fizMode();
@@ -5893,7 +5890,7 @@ function scopeCtxTags(){
   // periodiskums ar visiem periodiem – tikai nosaukums; ar konkrētu periodu – "Ceturksnis: 3. ceturksnis"
   else inc.forEach(k => { const v = sel.pf[k], o = v === 'all' ? null : perOpts(k, +sel.year).find(([n]) => String(n) === v);
     if (v === 'all') add('', PF_LABELS[k]); else add(PF_LABELS[k], o ? o[1].replace(/\s*\(.*\)$/, '') : v); });
-  if (sel.reports.length) sel.reports.forEach(id => { const p = repById(id), per = fizMode() && sel.fz.period ? sel.fz.period : ''; if (p) add('Apsekojums', p.code + (per ? ` · ${periodCode(per)}` : ''), '', p.name + (per ? ` – ${periodLabel(per)}` : '')); });
+  if (sel.reports.length) sel.reports.forEach(id => { const p = repById(id), per = fizMode() && sel.fz.period ? sel.fz.period : ''; if (p) add('Apsekojums', p.code + (per ? ` · ${periodCode(per)}` : ''), '', repTitle(p) + (per ? ` – ${periodLabel(per)}` : '')); });
   if (fizMode() && ROUNDS[sel.reports[0]]){ const R = ROUNDS[sel.reports[0]], rs = fzRounds(sel); add(R.label, rs.length === R.n ? 'visas' : rs.map(n => `${n}.`).join(', ')); }
   else add('', 'Visi apsekojumi');
   if (sel.operator){ const o = OPERATORS.find(x => x.id === sel.operator); add('Operators', o ? o.name : sel.operator); }
@@ -5919,7 +5916,7 @@ function renderRepFilter(){
   rs.forEach(r => new Set(selDutiesOf(r).map(d => d.reportId)).forEach(id => cnt.set(id, (cnt.get(id) || 0) + 1)));
   if (compose.repF && !cnt.has(compose.repF)) compose.repF = '';
   const reps = [...cnt.keys()].map(repById).filter(Boolean).sort((a, b) => a.name.localeCompare(b.name, 'lv'));
-  $('#c-rep-filter').innerHTML = `<option value="">Visi (${rs.length})</option>` + reps.map(p => `<option value="${p.id}" ${compose.repF === p.id ? 'selected' : ''}>${esc(p.name)} (${cnt.get(p.id)})</option>`).join('');
+  $('#c-rep-filter').innerHTML = `<option value="">Visi (${rs.length})</option>` + reps.map(p => `<option value="${p.id}" ${compose.repF === p.id ? 'selected' : ''}>${esc(repTitle(p))} (${cnt.get(p.id)})</option>`).join('');
   $('#c-rep-filter').value = compose.repF || '';
 }
 // tabulā redzamie respondenti (meklēšana un apsekojuma filtrs); uz tiem attiecas "Iekļaut visus" / "Izņemt visus"
@@ -5934,7 +5931,7 @@ function renderComposeList(){
   const repTags = ds => {
     const seen = new Map();
     ds.forEach(d => { const k = d.reportId + '|' + d.period; if (!seen.has(k)){ const p = repById(d.reportId) || {name:d.reportId, code:d.reportId}, rl = d.round ? roundLabel(d.reportId, d.round) : '';
-      seen.set(k, {txt:`${p.code} · ${periodShort(d.period)}${rl ? ` · ${rl}` : ''}`, full:`${p.name} – ${periodLabel(d.period)}${rl ? ` (${rl})` : ''}`}); } });
+      seen.set(k, {txt:`${p.code} · ${periodShort(d.period)}${rl ? ` · ${rl}` : ''}`, full:`${repTitle(p)} – ${periodLabel(d.period)}${rl ? ` (${rl})` : ''}`}); } });
     const xs = [...seen.values()], rest = xs.slice(2);
     return `<span class="rp-tags">${xs.slice(0, 2).map(x => `<span class="rp-tag" title="${esc(x.full)}">${esc(x.txt)}</span>`).join('')}${rest.length ? `<span class="rp-tag is-more" title="${esc(rest.map(x => x.full).join('\n'))}">+${rest.length}</span>` : ''}</span>`;
   };
@@ -5950,7 +5947,7 @@ function renderComposeList(){
         <td class="c-tg"><button type="button" class="icon-btn row-tg" data-action="c-row-toggle" data-id="${r.id}" aria-expanded="${op}" aria-label="Apsekojumi un periodi: ${esc(r.name)}">${ICON.chev}</button></td></tr>
         ${op ? `<tr class="sel-duties"><td colspan="7"><table><thead><tr><th>Apsekojums</th><th>Periods</th><th>Termiņš</th><th>Statuss</th></tr></thead><tbody>${ds.map(d => {
           const p = repById(d.reportId) || {name:d.reportId, code:''};
-          return `<tr><td>${esc(p.name)}</td><td>${esc(periodLabel(d.period))}</td><td class="${dutyStatus(d) === 'kavets' ? 'late' : ''}">${esc(fmtDate(d.deadline))}</td><td>${dutyPill(d)}${d.submitted ? ` <small>${esc(fmtDate(d.submitted))}</small>` : ''}</td></tr>`;
+          return `<tr><td>${esc(repTitle(p))}</td><td>${esc(periodCode(d.period))} <small>${esc(periodLabel(d.period))}</small></td><td class="${dutyStatus(d) === 'kavets' ? 'late' : ''}">${esc(fmtDate(d.deadline))}</td><td>${dutyPill(d)}${d.submitted ? ` <small>${esc(fmtDate(d.submitted))}</small>` : ''}</td></tr>`;
         }).join('')}</tbody></table></td></tr>` : ''}`;
     }).join('')}</tbody></table>`
     : `<div class="empty" style="padding:20px"><p>${!state.respondents.length ? 'Respondentu saraksts ir tukšs.' : compose.search || compose.repF ? 'Neviens respondents neatbilst meklēšanai vai filtram.'
@@ -6226,11 +6223,11 @@ function runPlanned(id){
 // Testa dati: agrāk nosūtītas kampaņas (vēsturei, atskaitēm un respondenta kartītei)
 const SEED_HIST = [
   {days:-75, h:10, snap:{name:'Rezultātu publicēšana – uzņēmumi', aud:'jur', kind:'info', sel:{pf:pfOnly({gads:'all', pusg:'all', cet:'all', men:'all'})}, prio:['email1', 'email2', 'eadrese'], content:{source:'tpl', templateId:'t10'}}},
-  {days:-40, h:9, snap:{name:'Darbaspēka apsekojums – uzaicinājums', aud:'fiz', kind:'uzaicinajums', sel:{year:periodYear(periodBack('cet', 0)), pf:pfOnly({cet:periodBack('cet', 0).split('-')[1]}), reports:['a-dsa']}, content:{source:'tpl', templateId:'t2'}}},
-  {days:-12, h:10, snap:{name:'Ceturkšņa darba samaksas pārskats – uzaicinājums', aud:'jur', kind:'uzaicinajums', sel:{pf:pfOnly({cet:'all'}), reports:['p-ds'], resp:{nmk:'40000000101, 40000000114, 40000000116'}}, content:{source:'tpl', templateId:'t8'}}},
-  {days:-21, h:11, snap:{name:'Kontaktinformācijas precizēšana', aud:'fiz', kind:'cits', sel:{reports:['a-dsa', 'a-cel', 'a-mba']}, prio:['email1', 'email2', 'eadrese'], content:{source:'tpl', templateId:'t7'}}},
+  {days:-40, h:9, snap:{name:'Darbaspēka apsekojums – uzaicinājums', aud:'fiz', kind:'uzaicinajums', sel:{reports:['a-dsa'], fz:{year:'', period:periodBack('cet', 1), rounds:null}}, content:{source:'tpl', templateId:'t2'}}},
+  {days:-12, h:10, snap:{name:'Pārskats par darbu – uzaicinājums', aud:'jur', kind:'uzaicinajums', sel:{pf:pfOnly({cet:'all'}), reports:['p-ds'], resp:{nmk:'40000000101, 40000000114, 40000000116'}}, content:{source:'tpl', templateId:'t8'}}},
+  {days:-21, h:11, snap:{name:'Kontaktinformācijas precizēšana', aud:'fiz', kind:'cits', sel:{reports:['a-mba'], fz:{year:'', period:periodBack('gads', 1), rounds:null}}, prio:['email1', 'email2', 'eadrese'], content:{source:'tpl', templateId:'t7'}}},
   {days:-6, h:9, snap:{name:'Nokavētie pārskati – atgādinājums', aud:'jur', kind:'atgadinajums', remind:'after', sel:{pf:pfOnly({gads:'all', pusg:'all', cet:'all', men:'all', ned:'all'})}, content:{source:'tpl', templateId:'t9'}}},
-  {days:-2, h:13, snap:{name:'Ceļotāju apsekojums – atgādinājums', aud:'fiz', kind:'atgadinajums', remind:'after', sel:{reports:['a-cel']}, prio:['email1', 'eadrese', 'email2'],
+  {days:-2, h:13, snap:{name:'Ceļotāju apsekojums – atgādinājums', aud:'fiz', kind:'atgadinajums', remind:'after', sel:{reports:['a-cel'], fz:{year:'', period:periodBack('men', 2), rounds:null}}, prio:['email1', 'eadrese', 'email2'],
     esign:{required:true, mode:'paralela', signers:['sg2']}, content:{source:'tpl', templateId:'t3'}}},
   // nesen nosūtīta kampaņa (pirms 1 min): procesā esošie statusi un dažādi klasifikācijas noteikumi (force – pirmās adreses iznākums)
   {minsAgo:1, snap:{name:'Informācija par datu iesniegšanas kalendāru', aud:'jur', kind:'info', sel:{pf:pfOnly({gads:'all', pusg:'all', cet:'all', men:'all'})}, prio:['email1', 'eadrese', 'email2'], content:{source:'tpl', templateId:'t10'}},
@@ -6274,7 +6271,7 @@ function seedArchive(){
     });
 }
 function seedHistory(){
-  state.histSeeded = true; state.histVer = 5;
+  state.histSeeded = true; state.histVer = 6;
   if (state.sent.length) return;
   seedArchive();
   const keep = sessionSnapshot(), keepId = compose.draftId, wasDefault = compose.name === defaultSessionName();
@@ -6298,7 +6295,7 @@ function seedHistory(){
   ui.newIds = new Set();
 }
 // Agrāk izveidotā testa vēsture tiek aizstāta ar jauno (ja tajā ir tikai testa ieraksti)
-if (state.histSeeded && state.histVer !== 5 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
+if (state.histSeeded && state.histVer !== 6 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
   state.sent = []; state.seq = 0; state.histSeeded = false; state.tasks = [];
   state.respondents.forEach(r => { delete r.invalidAddr; });
 }
