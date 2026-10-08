@@ -103,7 +103,7 @@ Veidnes var būt divu veidu:
 Veidne atveras centrētā modālajā logā, kura platums ir apmēram puse ekrāna (900–1100 px), bet augstums – līdz 90 % ekrāna. Logā ir iekšēja ritināšana, poga × aizvēršanai un fiksētas pogas "Atcelt" / "Saglabāt" apakšā.
 
 - **Izkārtojums.** Divas kolonnas: forma un priekšskatījums, kas, ritinot formu, paliek redzams. Ja ekrāns ir šaurāks par 900 px, kolonnas ir viena zem otras.
-- **Kompakta forma.** "Adresāts", "Kategorija" un "Valodas versija" ir vienā rindā. Paskaidrojumi ir paslēpti aiz mazas **"i"** ikonas un parādās, uzbraucot ar peli vai fokusējot to.
+- **Kompakta forma.** "Adresāts" un "Kategorija" ir vienā rindā. Paskaidrojumi ir paslēpti aiz mazas **"i"** ikonas un parādās, uzbraucot ar peli vai fokusējot to.
 
 **Vēstules veids** ir divas kompaktas pogas ar ikonu un nosaukumu. Zem izvēlētās pogas atveras apakšizvēlne; neizvēlētās pogas apakšizvēlne ir paslēpta.
 
@@ -172,7 +172,7 @@ Abās grupās sagataves ir sakārtotas pēc adresāta (fiziskās / juridiskās p
 
 Pielikumu sagatavju funkcijas:
 - **Iepriekš ielādētie paraugi.** Tie ir atzīmēti ar birku "Sagatave", un faili glabājas mapē `pielikumi/` (sīkbildes – `pielikumi/sikbildes/`). Paraugus nevar labot vai dzēst.
-- **Apraksts.** Katram pielikumam ir nosaukums, īss apraksts, kategorija, adresāti un valoda, ja tā ir zināma.
+- **Apraksts.** Katram pielikumam ir nosaukums, īss apraksts, kategorija un adresāti.
 - **Savi faili.** Var augšupielādēt savu PDF vai DOCX failu (ne lielāku par 1 MB). Tas tiek saglabāts pārlūkā, un to var labot vai dzēst.
 - **Versijas.** Aizstājot failu, iepriekšējais tiek saglabāts kā versija (pēdējās 3 versijas). Versijas redzamas labošanas logā, un tās var atvērt.
 - **Pievienošana veidnei.** Pielikumu var pievienot veidnei ar pogu "Pievienot veidnei" vai veidnes redaktorā: kā galveno vēstuli vai sadaļā "Papildu pielikumi".
@@ -197,7 +197,7 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
   - **respondents:** tips (juridiska / fiziska persona), nosaukums vai vārds, reģistrācijas Nr. (juridiskām personām), e-adrese, e-pasts 1, e-pasts 2;
   - **pārskats:** nosaukums, kods, periodiskums (Gads / Pusgads / Ceturksnis / Mēnesis / Nedēļa / Intervija; intervēšanas vilnis prototipā ir 2 mēneši) un termiņa noteikums, piem., "15. datums pēc pārskata perioda beigām". Termiņš tiek aprēķināts katram periodam, un tas ir vienāds visiem šī pārskata respondentiem;
   - **pienākums:** respondents × pārskats × periods (piem., "2026. g. oktobris", "2026. g. 4. ceturksnis", "2026. g. 39. nedēļa"), termiņš, iesniegšanas statuss ("Iesniegts" / "Nav iesniegts") un iesniegšanas datums. Ja pārskats nav iesniegts un termiņš ir pagājis, tas tiek rādīts kā "Nav iesniegts (kavēts)". Vienam respondentam var būt vairāki pienākumi.
-  - **apsekojuma dati vēstulei** (no Metadatu pārvaldības; prototipā – izdomāti testa dati): nosaukums angliski un krieviski, e-anketas saite, apsekojuma e-pasts un tīmekļvietne. Tie glabājas pie katra pārskata / apsekojuma un kampaņā tiek ņemti automātiski;
+  - **apsekojuma dati vēstulei** (no Metadatu pārvaldības; prototipā – izdomāti testa dati): e-anketas saite, apsekojuma e-pasts un tīmekļvietne. Tie glabājas pie katra pārskata / apsekojuma un kampaņā tiek ņemti automātiski;
   - **Iesniegšanas statusi** ir tikai lasāmi; prototipā tie ir testa dati.
   - **Testa apsekojumi / pārskati (6):**
 
@@ -333,7 +333,7 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
    - **Tvēruma josla** (viena rinda, ~40 px, gaišs fons, mazs fonts, tikai lasāma): "Iedzīvotāju statistika · 1-DSA · 2026C3 · Cikls: 1., 2., 4. reize" (uzņēmumiem – izvēlētie pārskati un periodi, piem., "1-apgrozījums, 2-darbs · 2026C3", periodi – jaunākie 3, pārējie "+N"; atgādinājumam – "Pirms termiņa, 5 dienas (termiņš …)"; aktīvie filtri, piem., "Operators: …", "NMK: …"); garš teksts saīsināts ar "…", pilnais – uzbraucot ar peli. Labajā pusē – "**8** respondenti (6 gatavi)" (gatavi – ar derīgu vai automātiski labotu adresi) un saite **"Mainīt tvērumu"** (atgriež uz 1. soli).
    - **Uzaicinājums, informatīvs ziņojums un cits** atlasa visus respondentus, kuriem ir pienākums kampaņas tvērumā. Termiņš un statuss netiek ņemti vērā.
    - **"Atgādinājums"** atlasa tikai neiesniegtos pienākumus: "Pirms termiņa" – ar termiņu tieši nosūtīšanas datums + N dienas; "Pēc termiņa" – ar pagājušu termiņu (neobligāti – kavēts vismaz N dienas). Ieplānotai atgādinājuma kampaņai atlase izpildes brīdī tiek pārrēķināta pēc aktuālajiem statusiem (prototipā – poga "Izpildīt tagad" kampaņu sarakstā).
-   - Atlase notiek **tikai pēc kampaņas tvēruma** un atgādinājumiem – pēc iesniegšanas statusa un termiņa. Papildu atlases pēc pazīmēm nav. Respondentu pazīmes (veids, dalības veids, iepriekšējā dalība, valoda) paliek datos, jo tās izmanto valodas versijas izvēlē un adresātu grupēšanā (fiziskās / juridiskās personas).
+   - Atlase notiek **tikai pēc kampaņas tvēruma** un atgādinājumiem – pēc iesniegšanas statusa un termiņa. Papildu atlases pēc pazīmēm nav. Respondentu pazīmes (veids, dalības veids, iepriekšējā dalība, valoda) paliek datos, jo tās izmanto adresātu grupēšanā (fiziskās / juridiskās personas).
    - **Tabula:** virs tās vienā rindā – meklēšana, izvēlne **"Apsekojums"** (Visi / katrs tvērumā esošais apsekojums ar respondentu skaitu, piem., "1-C Ceļotāju apsekojums (9)") un labajā pusē saites "Iekļaut visus" / "Izņemt visus" (attiecas uz pašlaik redzamajiem – meklētajiem un filtrētajiem – respondentiem; zem tabulas tad redzams arī "parādīti N").
      - Kolonnas: Respondents, **E-pasts 1**, **E-pasts 2**, **Apsekojumi / periodi**; uzņēmumu statistikai (un jomai "Visi", kurā ir arī uzņēmumi) pirms e-pastiem ir kolonna **eAdrese**.
      - Adrešu šūnās – pārbaudes rezultāts: labotajām adresēm tirkīzzaļa birka **"Labots"** (uzbraucot ar peli vai uzklikšķinot – sākotnējā vērtība, labojuma iemesls un poga "Atsaukt"); kļūdainajām – sarkans teksts ar īsu iemeslu, uzklikšķinot adresi var labot turpat šūnā; tukšajām – pelēks "—". Garas adreses saīsinātas ar "…".
@@ -358,7 +358,7 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
    - **Saglabāt arī kā veidni.** Prasa norādīt veidnes nosaukumu un kategoriju. Saturs tiek saglabāts kā jauna veidne, un kampaņa to izmanto.
    - **Kopsavilkums.** Kad saturs ir apstiprināts, solī redzams satura avots ("Veidne: [nosaukums]", "Veidne, pielāgota kampaņai" vai "Individuāls saturs"), temats un vēstules veids. Ir pogas "Labot saturu" un "Izvēlēties citu saturu".
    - **Mainīgo vērtības** – sakļaujama sadaļa zem satura izvēles (pēc noklusējuma sakļauta):
-     - ja kampaņā ir viens apsekojums – tabula: mainīgais (`{apsekojums}` EN / RU, `{e-anketa}`, `{apsekojuma_epasts}`, `{apsekojuma_vietne}`), vērtība un avots "No apsekojuma". Poga "Mainīt šai kampaņai" ļauj vērtību mainīt (Enter – saglabāt, Escape – atcelt); mainītā vērtība ir atzīmēta ar birku "Mainīts", un to var atjaunot ("Atjaunot");
+     - ja kampaņā ir viens apsekojums – tabula: mainīgais (`{e-anketa}`, `{apsekojuma_epasts}`, `{apsekojuma_vietne}`), vērtība un avots "No apsekojuma". Poga "Mainīt šai kampaņai" ļauj vērtību mainīt (Enter – saglabāt, Escape – atcelt); mainītā vērtība ir atzīmēta ar birku "Mainīts", un to var atjaunot ("Atjaunot");
      - ja kampaņā ir vairāki apsekojumi – vērtības sagrupētas izvēršamos blokos pa apsekojumiem (blokā redzams mainīto vērtību skaits), un vēstulē katram respondentam tiek izmantotas viņa apsekojuma vērtības;
      - "Tēmturi banerī" un "Sauklis zem banera" – kampaņas līmeņa lauki (sākotnēji no apsekojuma, ja tam tādi ir);
      - priekšskatījumā un nosūtītajās vēstulēs mainīgie tiek aizpildīti ar šīm vērtībām. Izmaiņas tiek saglabātas kampaņas melnrakstā.
@@ -461,20 +461,15 @@ Respondentiem ir pazīmes:
 - iepriekšējā dalība – izlasē pirmo reizi (pateicība par iepriekšējo dalību un aicinājums "ja iepriekš nepiedalījāties" izdzēsti);
 - respondenta veids – atbilstoši veidnes adresātam: fiziskām personām – teksts privātpersonai, juridiskām personām – teksts uzņēmumam, veidnēm visiem – teksts privātpersonai.
 
-Tas attiecas arī uz pārlūkā jau saglabātajām veidnēm un valodu versijām, e-pasta satura šabloniem, melnrakstiem, ieplānotajām kampaņām un pastāvīgajām daļām (pārvērš, ielādējot lapu), kā arī uz ielīmētu tekstu. Nosūtīto vēstuļu vēsture netiek mainīta.
+Tas attiecas arī uz pārlūkā jau saglabātajām veidnēm, e-pasta satura šabloniem, melnrakstiem, ieplānotajām kampaņām un pastāvīgajām daļām (pārvērš, ielādējot lapu), kā arī uz ielīmētu tekstu. Nosūtīto vēstuļu vēsture netiek mainīta.
 
 ## Valodas
 
-Katram respondentam ir norādīta **valoda**: latviešu, krievu vai angļu.
+Vēstules tiek veidotas un sūtītas **tikai latviešu valodā**.
 
-- **Valodu versijas.** Veidnes redaktorā ar pogām **LV / RU / EN** pārslēdz valodas versiju. Katrai versijai ir savs temats, teksts un PDF dokuments. Jaunu versiju var izveidot no latviešu teksta vai tukšu.
-- **Kopīgie iestatījumi.** Vēstules veids, pastāvīgo daļu izvēle un papildu pielikumi ir kopīgi visām valodām.
-- **Pastāvīgās daļas.** Tām ir tulkojumi: iestādes nosaukums, vieta, amats, noslēguma frāze, konfidencialitātes un plašākas informācijas sadaļas, e-paraksta atzīme un e-pasta kājene. Ja tulkojuma lauks ir tukšs, tiek lietots latviešu teksts.
-- **Apsekojuma nosaukums.** Tam var norādīt arī angļu un krievu nosaukumu. Lauks `{apsekojums}` tiek aizpildīts respondenta valodā.
-- **Sagatavošana.**
-  - Katrs respondents saņem vēstuli savā valodā.
-  - Ja veidnei tās valodas versijas nav, tiek sūtīta latviešu versija, un sistēma par to brīdina.
-  - Kopsavilkumā redzams, cik vēstuļu būs katrā valodā.
+- Veidņu redaktorā, kampaņas satura redaktorā ("Izmantot veidni" → "Pielāgot šai kampaņai" un "Noformēt saturu"), veidņu izvēlē, sagatavēs un "Pastāvīgajās daļās" nav valodas izvēles (LV / RU / EN), valodu birku un padomu par valodām; priekšskatījumā nav rindas "Valoda".
+- Datos glabājas tikai latviešu teksts: veidņu un pastāvīgo daļu krievu un angļu versijas, kā arī apsekojumu nosaukumi angliski / krieviski ir dzēsti (arī pārlūkā jau saglabātajos datos – ielādējot lapu).
+- Respondenta pazīme **valoda** paliek respondenta datos (sk. "Respondentu pazīmes"), bet vēstules valodu tā neietekmē.
 
 ## GitHub Pages
 

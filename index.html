@@ -1722,7 +1722,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         <select id="sag-aud" aria-label="Adresāts"></select>
         <select id="sag-cat" aria-label="Kategorija"></select>
         <select id="sag-kind" aria-label="Sagataves veids"></select>
-        <select id="sag-lang" aria-label="Valoda"></select>
         <button type="button" class="btn btn-primary" id="sag-add"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Pievienot sagatavi</button>
       </div>
       <div class="att-count" id="sag-count" aria-live="polite"></div>
@@ -2097,16 +2096,13 @@ const ATTRS = [
     piedalijas:   {label:'Piedalījās iepriekšējā aptaujā',   short:'Piedalījās',   syn:['ja', 'piedalijas']},
     nepiedalijas: {label:'Nepiedalījās iepriekšējā aptaujā', short:'Nepiedalījās', syn:['ne', 'nepiedalijas']},
     jauns:        {label:'Izlasē pirmo reizi',               short:'Pirmo reizi',  syn:['jauns', 'pirmoreizi']}}},
-  // Valoda nosaka, kuru veidnes valodas versiju respondents saņem
+  // Respondenta valoda (pazīme; vēstules tiek sūtītas latviešu valodā)
   {key:'valoda', label:'Valoda', def:'lv', values:{
     lv: {label:'Latviešu', short:'LV', syn:['lv', 'latviesu', 'latviski', 'latvian']},
     ru: {label:'Krievu',   short:'RU', syn:['ru', 'krievu', 'krieviski', 'russian']},
     en: {label:'Angļu',    short:'EN', syn:['en', 'anglu', 'angliski', 'english']}}},
 ];
 const ATTR_BY_KEY = Object.fromEntries(ATTRS.map(a => [a.key, a]));
-const LANGS = ATTR_BY_KEY.valoda.values, LANG_KEYS = Object.keys(LANGS);
-// Pastāvīgo daļu teksti, kuriem var būt tulkojums
-const LAYOUT_TR_KEYS = ['org', 'city', 'position', 'closing', 'confTitle', 'confHtml', 'infoTitle', 'infoHtml', 'esign', 'emailFooter'];
 const VAR_RE = /\{([^{}\s<>"]+)\}/g;
 const CHANNELS = {eadrese:'E-adrese', epasts:'E-pasts'};
 const KINDS = {epasts:'E-pasta saturs', pielikums:'Vēstule pielikumā (PDF)'};
@@ -2142,8 +2138,8 @@ const stIcon = k => { const s = STATUSES[k]; return s && s.ic ? `<svg class="ico
 const stPill = (k, suffix = '') => { const s = STATUSES[k] || {label:k, cls:''}; return `<span class="pill ${s.cls}">${stIcon(k)}${esc(s.label)}${suffix}</span>`; };
 // Apsekojumi (nosaukumi, tēmturi un saukļi – no provizoriskajiem šabloniem; kontakti – izdomāti)
 const SURVEYS = [
-  {survey:'Darbaspēka apsekojums', survey_en:'Labour Force Survey', survey_ru:'Обследование рабочей силы', tags:'#aptauja #darbatirgus', slogan:'Nav datu, nav rīcības!', link:'https://e-anketa.csp.example', email:'dsa@csp.example', web:'csp.example/dsa'},
-  {survey:'Ceļotāju apsekojums', survey_en:'Travel Survey', survey_ru:'Обследование путешественников', tags:'#aptauja #tūrisms', slogan:'Pastāsti, kā Tu ceļo!', link:'https://e-anketa.csp.example', email:'turisms@csp.example', web:'csp.example/adb'},
+  {survey:'Darbaspēka apsekojums', tags:'#aptauja #darbatirgus', slogan:'Nav datu, nav rīcības!', link:'https://e-anketa.csp.example', email:'dsa@csp.example', web:'csp.example/dsa'},
+  {survey:'Ceļotāju apsekojums', tags:'#aptauja #tūrisms', slogan:'Pastāsti, kā Tu ceļo!', link:'https://e-anketa.csp.example', email:'turisms@csp.example', web:'csp.example/adb'},
 ];
 // Simulācijā e-pasti uz šo domēnu "neizdodas" – lai varētu redzēt kļūdas statusu.
 // Veidņu grupēšana: adresāts un kategorija
@@ -2213,12 +2209,12 @@ const mapReportId = id => OLD_REPORT_MAP[id] || id;
 const repTitle = p => p ? `${p.code} ${p.name}` : '';
 // Apsekojuma dati vēstules mainīgajiem (no Metadatu pārvaldības; prototipā – izdomāti testa dati)
 const SURVEY_META = {
-  'a-dsa':  {survey_en:'Labour Force Survey', survey_ru:'Обследование рабочей силы', link:'https://e-anketa.csp.example/dsa', email:'dsa@csp.example', web:'csp.example/dsa'},
-  'a-cel':  {survey_en:'Travel Survey', survey_ru:'Обследование путешественников', link:'https://e-anketa.csp.example/cel', email:'turisms@csp.example', web:'csp.example/adb'},
-  'a-mba':  {survey_en:'Household Budget Survey', survey_ru:'Обследование бюджетов домохозяйств', link:'https://e-anketa.csp.example/mba', email:'mba@csp.example', web:'csp.example/mba'},
-  'p-apgr': {survey_en:'Turnover Report', survey_ru:'Отчёт об обороте', link:'https://e-anketa.csp.example/1-apgrozijums', email:'apgrozijums@csp.example', web:'csp.example/apgrozijums'},
-  'p-rup':  {survey_en:'Industry Report', survey_ru:'Отчёт о промышленности', link:'https://e-anketa.csp.example/1-rupnieciba', email:'rupnieciba@csp.example', web:'csp.example/rupnieciba'},
-  'p-ds':   {survey_en:'Labour Report', survey_ru:'Отчёт о труде', link:'https://e-anketa.csp.example/2-darbs', email:'darbs@csp.example', web:'csp.example/darbs'},
+  'a-dsa':  {link:'https://e-anketa.csp.example/dsa', email:'dsa@csp.example', web:'csp.example/dsa'},
+  'a-cel':  {link:'https://e-anketa.csp.example/cel', email:'turisms@csp.example', web:'csp.example/adb'},
+  'a-mba':  {link:'https://e-anketa.csp.example/mba', email:'mba@csp.example', web:'csp.example/mba'},
+  'p-apgr': {link:'https://e-anketa.csp.example/1-apgrozijums', email:'apgrozijums@csp.example', web:'csp.example/apgrozijums'},
+  'p-rup':  {link:'https://e-anketa.csp.example/1-rupnieciba', email:'rupnieciba@csp.example', web:'csp.example/rupnieciba'},
+  'p-ds':   {link:'https://e-anketa.csp.example/2-darbs', email:'darbs@csp.example', web:'csp.example/darbs'},
 };
 const ruleLabel = r => !r ? '' : r.type === 'days' ? `${r.days}. diena pēc pārskata perioda beigām`
   : `${r.day}. datums ${(r.months || 1) > 1 ? `${r.months}. mēnesī ` : ''}pēc pārskata perioda beigām`;
@@ -2228,10 +2224,6 @@ const RTAB_ROWS = {all:'Visi atlasītie pienākumi', open:'Tikai neiesniegtie'};
 const RTAB_TR = {
   lv:{report:'Pārskats', period:'Periods', deadline:'Termiņš', status:'Statuss', st:{iesniegts:'Iesniegts', nav:'Nav iesniegts', kavets:'Kavēts'},
       none:'Nav pienākumu, kas atbilst atlasei.', allDone:'Visi pārskati ir iesniegti – paldies!'},
-  en:{report:'Report', period:'Period', deadline:'Deadline', status:'Status', st:{iesniegts:'Submitted', nav:'Not submitted', kavets:'Overdue'},
-      none:'There are no reports matching the selection.', allDone:'All reports have been submitted – thank you!'},
-  ru:{report:'Отчёт', period:'Период', deadline:'Срок', status:'Статус', st:{iesniegts:'Представлен', nav:'Не представлен', kavets:'Просрочен'},
-      none:'Нет отчётов, соответствующих выбору.', allDone:'Все отчёты представлены – спасибо!'},
 };
 // Pielikumu bibliotēka: kategorijas un iepriekš ielādētās sagataves (faili – mapē pielikumi/)
 const ATT_CATS = Object.fromEntries(CATS.map(c => [c.key, c.one]));
@@ -2710,48 +2702,12 @@ const DEFAULT_LAYOUT = {
   infoHtml:`<ul><li>Jebkuru jautājumu, neskaidrību gadījumā aicinām zvanīt uz bezmaksas tālruni <strong>${F('tālrunis')}</strong> darbdienās no plkst. 10.00 līdz 18.00.</li><li>E-pasts: <a href="mailto:{apsekojuma_epasts}">${F('apsekojuma_epasts')}</a></li><li>Vairāk informācijas: <a href="https://{apsekojuma_vietne}">${F('apsekojuma_vietne')}</a></li></ul>`,
   esign:'DOKUMENTS PARAKSTĪTS AR DROŠU ELEKTRONISKO PARAKSTU UN SATUR LAIKA ZĪMOGU',
   emailFooter:'Centrālā statistikas pārvalde · Informatīvais tālrunis {tālrunis} · Lūdzam neatbildēt uz šo automātiski sūtīto vēstuli.',
-  tr:{
-    en:{
-      org:'Central Statistical Bureau of Latvia', city:'Riga', position:'Head of the Central Statistical Bureau', closing:'Looking forward to our cooperation,',
-      confTitle:'Your data are confidential and secure',
-      confHtml:'<p>We are a state institution and are subject to strict data protection requirements. In accordance with the applicable legislation of the European Union and the Republic of Latvia, the CSB has the right to collect and process personal data. It is our duty to ensure the protection and confidentiality of the data you provide. All data are published only in aggregated form, ensuring that no individual can be identified.</p>',
-      infoTitle:'More information',
-      infoHtml:`<ul><li>If you have any questions, please call the free information line <strong>${F('tālrunis')}</strong> on working days from 10.00 to 18.00.</li><li>E-mail: <a href="mailto:{apsekojuma_epasts}">${F('apsekojuma_epasts')}</a></li><li>More information: <a href="https://{apsekojuma_vietne}">${F('apsekojuma_vietne')}</a></li></ul>`,
-      esign:'THIS DOCUMENT HAS BEEN SIGNED WITH A SECURE ELECTRONIC SIGNATURE AND CONTAINS A TIME STAMP',
-      emailFooter:'Central Statistical Bureau of Latvia · Information line {tālrunis} · Please do not reply to this automatically generated message.'},
-    ru:{
-      org:'Центральное статистическое управление', city:'Рига', position:'Начальник Центрального статистического управления', closing:'Надеемся на успешное сотрудничество,',
-      confTitle:'Полученные данные конфиденциальны и защищены',
-      confHtml:'<p>Мы являемся государственным учреждением, и на нас распространяются строгие требования по защите данных. В соответствии с действующими нормативными актами Европейского союза и Латвийской Республики ЦСУ имеет право собирать и обрабатывать персональные данные. Наша обязанность – обеспечить защиту и конфиденциальность предоставленных Вами данных. Все данные публикуются только в обобщённом виде, так что ни одно лицо невозможно идентифицировать.</p>',
-      infoTitle:'Дополнительная информация',
-      infoHtml:`<ul><li>При возникновении вопросов звоните на бесплатный информационный телефон <strong>${F('tālrunis')}</strong> в рабочие дни с 10.00 до 18.00.</li><li>Э-почта: <a href="mailto:{apsekojuma_epasts}">${F('apsekojuma_epasts')}</a></li><li>Дополнительная информация: <a href="https://{apsekojuma_vietne}">${F('apsekojuma_vietne')}</a></li></ul>`,
-      esign:'ДОКУМЕНТ ПОДПИСАН БЕЗОПАСНОЙ ЭЛЕКТРОННОЙ ПОДПИСЬЮ И СОДЕРЖИТ ОТМЕТКУ ВРЕМЕНИ',
-      emailFooter:'Центральное статистическое управление · Информационный телефон {tālrunis} · Просим не отвечать на это автоматически отправленное письмо.'},
-  },
+  tr:{},
 };
 const clone = o => JSON.parse(JSON.stringify(o));
-function layoutFor(lang){
-  const L = {...state.layout, lang}, tr = (state.layout.tr || {})[lang];
-  if (lang !== 'lv' && tr) LAYOUT_TR_KEYS.forEach(k => { if (tr[k]) L[k] = tr[k]; });
-  return L;
-}
-// Testa veidņu valodu versijas (t1 – angļu; t2 – krievu un angļu; t3, t4 – tikai latviešu)
-const TR_SEED = {
-  t1:{en:{
-    subject:'Invitation to take part in the survey “{apsekojums}”',
-    body:`<p>Dear ${F('vārds')},</p><p>The Central Statistical Bureau of Latvia invites you to take part in the survey “${F('apsekojums')}”. The invitation letter with full information on how to take part is attached.</p>${C('dalibas_veids', 'eanketa', `<p>The e-questionnaire can be completed until <strong>${F('termiņš')}</strong> at <a href="{e-anketa}">${F('e-anketa')}</a>.</p>`)}${C('dalibas_veids', 'telefons,klatiene', '<p>One of our interviewers will contact you shortly to arrange an interview.</p>')}<p>Kind regards,<br>Central Statistical Bureau of Latvia</p>`,
-    docTitle:'Invitation to take part in the survey', fileName:'CSB_invitation_{dok_nr}.pdf',
-    docBody:`<p><strong>Dear Sir or Madam,</strong></p>${C('ieprieks', 'piedalijas', '<p>Thank you for taking part in our previous survey and for your answers!</p>')}<p>The Central Statistical Bureau of Latvia (hereinafter – CSB) is the state institution that compiles official statistics in Latvia and conducts several population surveys every year. This year we invite you to take part in the survey “${F('apsekojums')}”. The survey is carried out in all European Union countries using a common methodology, which makes it possible to follow changes in Latvia and compare the data with other countries.</p>${C('veids', 'privatpersona', '<p>Your household has been selected from the national address register using random sampling.</p>')}${C('veids', 'uznemums', `<p>${F('uzņēmums')} has been included in the survey sample using random sampling. Please forward this letter to the person responsible for providing data.</p>`)}<h3>Why is your participation important?</h3><p>Your response is very important so that the data objectively reflect how the people of our country live. Please take part even if you feel the questions do not apply to you – these answers also help to create a true picture.</p>${C('dalibas_veids', 'eanketa', `<h3>How to take part?</h3><ul><li>You can open the e-questionnaire at any time convenient for you from <strong>${F('sākums')}</strong> to <strong>${F('termiņš')}</strong> at <a href="{e-anketa}">${F('e-anketa')}</a>.</li><li>You can log in using online banking, Smart-ID, e-signature or an eID card.</li><li>The e-questionnaire may <u>only be completed by the person</u> to whom this letter is addressed.</li></ul><p>If you are unable to complete the e-questionnaire within the specified period, one of our interviewers will contact you to arrange a telephone interview.</p>`)}${C('dalibas_veids', 'telefons', `<h3>How to take part in the telephone survey?</h3><p>One of our interviewers will contact you to arrange a telephone interview. The interviewer may call you on weekday evenings (after 17.00) or at weekends. You can verify the interviewer’s identity by calling the free information line ${F('tālrunis')}.</p>`)}${C('dalibas_veids', 'klatiene', `<h3>We invite you to a face-to-face interview</h3><p>One of our interviewers will contact you to arrange a meeting. At the visit, the interviewer will present a CSB staff ID card with a photograph. You can verify the interviewer’s identity by calling the free information line ${F('tālrunis')}.</p>`)}${C('ieprieks', 'nepiedalijas', '<p>If you did not answer the survey questions previously, we invite you to take part this time to help provide data that are important for national decision-making.</p>')}`}},
-  t2:{
-    ru:{
-      subject:'Приглашение принять участие в опросе «{apsekojums}»',
-      body:`<h3>Приглашение принять участие в опросе</h3><p>Здравствуйте, ${F('vārds')}!</p>${C('ieprieks', 'piedalijas', '<p>Благодарим Вас за участие в предыдущем опросе!</p>')}<p>Центральное статистическое управление проводит опрос «${F('apsekojums')}». Ваши ответы помогут получить точную и надёжную информацию, которую используют государственные и муниципальные учреждения при принятии решений.</p>${C('veids', 'privatpersona', '<p>Ваше домохозяйство было выбрано случайным образом из общего списка адресов.</p>')}${C('veids', 'uznemums', `<p>Респондент ${F('uzņēmums')} включён в выборку обследования. Если письмо попало не к тому адресату, просим переслать его лицу, ответственному за предоставление данных.</p>`)}${C('dalibas_veids', 'eanketa', `<p><a class="cta" href="{e-anketa}">Перейти к анкете</a></p><h3>Как принять участие в опросе?</h3><p>Электронную анкету можно открыть в любое удобное для Вас время до <strong>${F('termiņš')}</strong> на сайте <a href="{e-anketa}">${F('e-anketa')}</a>. Заполнить анкету может только лицо, которому адресовано письмо.</p><p>Если Вы не успеете заполнить анкету в указанный срок, с Вами свяжется наш интервьюер и договорится о телефонном интервью.</p>`)}${C('dalibas_veids', 'telefons,klatiene', '<h3>Как принять участие в опросе?</h3><p>С Вами свяжется наш интервьюер и договорится об интервью. Сообщаем, что интервьюер может связаться с Вами в будние дни вечером (после 17.00) или в выходные дни.</p>')}<h3>Полученные данные конфиденциальны и защищены</h3><p>Все данные публикуются только в обобщённом виде, так что ни одно лицо невозможно идентифицировать.</p><h3>Дополнительная информация</h3><ul><li>бесплатный информационный телефон <strong>${F('tālrunis')}</strong> в рабочие дни с 10.00 до 18.00</li><li>э-почта: <a href="mailto:{apsekojuma_epasts}">${F('apsekojuma_epasts')}</a></li></ul><p>Надеемся на успешное сотрудничество,<br>${F('amats')}<br>${F('parakstītājs')}</p>`,
-      docTitle:'', docBody:'', fileName:''},
-    en:{
-      subject:'Invitation to take part in the survey “{apsekojums}”',
-      body:`<h3>Invitation to take part in the survey</h3><p>Dear ${F('vārds')},</p>${C('ieprieks', 'piedalijas', '<p>Thank you for taking part in our previous survey!</p>')}<p>The Central Statistical Bureau of Latvia is conducting the survey “${F('apsekojums')}”. Your answers will help us obtain accurate and reliable information used by national and local authorities when making decisions.</p>${C('veids', 'privatpersona', '<p>Your household has been selected at random from the national address register.</p>')}${C('veids', 'uznemums', `<p>${F('uzņēmums')} has been included in the survey sample. If this letter has reached the wrong person, please forward it to the person responsible for providing data.</p>`)}${C('dalibas_veids', 'eanketa', `<p><a class="cta" href="{e-anketa}">Go to the questionnaire</a></p><h3>How to take part?</h3><p>You can open the e-questionnaire at any time convenient for you until <strong>${F('termiņš')}</strong> at <a href="{e-anketa}">${F('e-anketa')}</a>. The e-questionnaire may only be completed by the person to whom this letter is addressed.</p><p>If you are unable to complete the questionnaire by the deadline, one of our interviewers will contact you to arrange a telephone interview.</p>`)}${C('dalibas_veids', 'telefons,klatiene', '<h3>How to take part?</h3><p>One of our interviewers will contact you to arrange an interview. Please note that the interviewer may contact you on weekday evenings (after 17.00) or at weekends.</p>')}<h3>Your data are confidential and secure</h3><p>All data are published only in aggregated form, ensuring that no individual can be identified.</p><h3>More information</h3><ul><li>free information line <strong>${F('tālrunis')}</strong> on working days from 10.00 to 18.00</li><li>e-mail: <a href="mailto:{apsekojuma_epasts}">${F('apsekojuma_epasts')}</a></li></ul><p>Looking forward to our cooperation,<br>${F('amats')}<br>${F('parakstītājs')}</p>`,
-      docTitle:'', docBody:'', fileName:''}},
-};
+function layoutFor(){ return {...state.layout, lang:'lv'}; }
+// Testa veidnēm – tikai latviešu teksts
+const TR_SEED = {};
 // Testa veidņu nosacījuma bloki kļūst par parastu tekstu (adresāta grupai paredzētais vai vispārīgais variants)
 const withTr = list => list.map(t => {
   const v = AUDS[t.aud].veids, fix = h => flattenConds(h, v);
@@ -2986,8 +2942,7 @@ const SEED_RESP_PATCH = {
   r8:{regNr:'40000000103', email2:'gramatvede@makonumaiznica.example'}, r9:{regNr:'40000000104', email2:''}, r10:{regNr:'40000000110', email2:''},
 };
 // Uzaicinājuma un atgādinājuma veidnēm juridiskām personām – pārskatu tabula
-const RT_LEAD = {all:{lv:'Jums jāiesniedz šādi pārskati:', en:'You are required to submit the following reports:', ru:'Вам необходимо представить следующие отчёты:'},
-  open:{lv:'Vēl nav saņemti šādi pārskati:', en:'The following reports have not yet been received:', ru:'Ещё не получены следующие отчёты:'}};
+const RT_LEAD = {all:{lv:'Jums jāiesniedz šādi pārskati:'}, open:{lv:'Vēl nav saņemti šādi pārskati:'}};
 function addDutyTables(t){
   const ins = (html, rows, cols, l = 'lv') => {
     if (!html || html.includes('rtab')) return html;
@@ -3104,6 +3059,19 @@ function migrateRespData(s){
   seed.respondents.forEach(r => { if (+r.id.slice(1) > 10 && !s.respondents.some(x => x.id === r.id)) s.respondents.push(r); });
   seedRespData(s);
 }
+// Tikai latviešu teksts: valodu versijas (tr) un apsekojumu nosaukumi angliski / krieviski tiek dzēsti
+function onlyLv(s){
+  const walk = o => {
+    if (Array.isArray(o)){ o.forEach(walk); return; }
+    if (!o || typeof o !== 'object') return;
+    Object.keys(o).forEach(k => {
+      if (k === 'tr' && o[k] && typeof o[k] === 'object' && !Array.isArray(o[k])) o[k] = {};
+      else if (k === 'survey_en' || k === 'survey_ru') delete o[k];
+      else walk(o[k]);
+    });
+  };
+  walk([s.templates, s.layout, s.drafts, s.draft, s.planned, s.mailSamples, s.reports]);
+}
 function loadState(){
   try {
     const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -3138,6 +3106,7 @@ function loadState(){
       // nosacījuma bloki -> parasts teksts (vispārīgais variants)
       s.templates.forEach(t => flattenCondsDeep(t, AUDS[t.aud].veids));
       flattenCondsDeep([s.mailSamples, s.drafts, s.draft, s.planned, s.layout]);
+      onlyLv(s);
       return s;
     }
   } catch (e) {}
@@ -3641,12 +3610,8 @@ function templateText(t, channel){
   return s;
 }
 // Veidnes versija respondenta valodā; ja tādas nav – latviešu (fallback = true)
-function versionOf(t, lang){
-  const v = lang !== 'lv' && t.tr && t.tr[lang];
-  if (v) return {lang, fallback:false, t:{...t, subject:v.subject, body:v.body,
-    doc: t.doc ? {...t.doc, title:v.docTitle || t.doc.title, body:v.docBody || t.doc.body, fileName:v.fileName || t.doc.fileName} : t.doc}};
-  return {lang:'lv', fallback: lang !== 'lv', t};
-}
+// vēstule – tikai latviešu valodā (valodu versiju nav)
+function versionOf(t){ return {lang:'lv', fallback:false, t}; }
 // PDF pielikuma dokuments (A4)
 function docHtml(t, ctx, mark, attrs, f = compose.f, L = state.layout){
   const d = t.doc;
@@ -3676,7 +3641,7 @@ function buildMessage(t0, r, mark, attrs = respAttrs(r)){
     subject: mark ? fillHtml(t.subject, ctx) : fillText(t.subject, ctx),
     bodyHtml: emailInline(fillRich(t.body, ctx, mark)),
     bodyText: mark ? fillHtml(plain, ctx) : fillText(plain, ctx),
-    lang: ver.lang, wantLang: attrs.valoda, fallback: ver.fallback, org: L.org,
+    lang: 'lv', wantLang: 'lv', fallback: false, org: L.org,
     footer: mark ? fillHtml(L.emailFooter, ctx) : fillText(L.emailFooter, ctx),
     attachments: [],
     files: t.files || [],
@@ -3708,7 +3673,6 @@ function mailView({toName, toAddr, channel, subjectHtml, bodyHtml, bodyTextHtml,
       <dt>No</dt><dd>${esc(org)}</dd>
       <dt>Kam</dt><dd><b>${esc(toName)}</b>${toAddr ? ` &lt;<span class="mono">${esc(toAddr)}</span>&gt;` : ''}</dd>
       <dt>Kanāls</dt><dd>${esc(CHANNELS[channel])}</dd>
-      ${lang ? `<dt>Valoda</dt><dd>${esc(LANGS[lang].label)}${fallback ? ` <span class="pill st-skip">nav ${esc(LANGS[wantLang].short)} versijas – sūta latviešu valodā</span>` : ''}</dd>` : ''}
       ${variant ? `<dt>Variants</dt><dd><span class="pill pill-attr">${esc(variant)}</span></dd>` : ''}
       ${extraMeta}
     </dl>
@@ -4325,7 +4289,6 @@ function tplCard(t){
       ${t.kind === 'pielikums' ? `<div class="tpl-subject">Pielikums: <b>${esc(mainNameOf(t))}</b></div>` : ''}
       <div class="tpl-excerpt">${esc(excerpt)}</div>
       <div>${vars.length ? vars.map(v => `<span class="var-chip">{${esc(v)}}</span>`).join('') : '<span class="hint">Lauki netiek lietoti</span>'}</div>
-      <div class="hint">Valodas: <span class="pills">${['lv', ...Object.keys(t.tr || {}).filter(l => LANGS[l])].map(l => `<span class="pill pill-ch">${LANGS[l].short}</span>`).join('')}</span></div>
       ${(t.files || []).length ? `<div class="hint">${ICON.clip} Papildu pielikumi: ${t.files.map(f => esc(f.name)).join(', ')}</div>` : ''}
       <div class="tpl-meta">Pēdējās izmaiņas: ${fmtDateTime(t.updated)}</div>
     </div>
@@ -4473,9 +4436,8 @@ function openTemplateEditor(id, preset = {}){
   if (!CAT_BY_KEY[t.cat]) t.cat = 'cits';
   t.doc = t.doc || defaultDoc();
   t.files = t.files || [];
-  // Valodu versijas: lv – pamata versija, pārējās – tulkojumi
+  // teksts – tikai latviešu valodā
   const versions = {lv:{subject:t.subject, body:t.body, docTitle:t.doc.title, docBody:t.doc.body, fileName:t.doc.fileName}};
-  Object.entries(t.tr || {}).forEach(([l, v]) => { if (LANGS[l] && l !== 'lv') versions[l] = {...v}; });
   let lang = 'lv';
   // parauga respondents – atbilstošs adresātam
   // jauktajai komunikācijai paraugu var pārslēgt starp privātpersonu un uzņēmumu
@@ -4507,12 +4469,6 @@ function openTemplateEditor(id, preset = {}){
             <select id="te-aud">${Object.entries(AUDS).map(([k, a]) => `<option value="${k}" ${t.aud === k ? 'selected' : ''}>${esc(a.label)}</option>`).join('')}</select></div>
           <div class="field"${sess ? ' hidden' : ''}><label for="te-cat">Kategorija</label>
             <select id="te-cat">${CATS.map(c => `<option value="${c.key}" ${t.cat === c.key ? 'selected' : ''}>${esc(c.one)}</option>`).join('')}</select></div>
-          <div class="field"><span class="label">Valodas versija ${tip('Respondents saņem vēstuli savā valodā. Ja veidnei tādas versijas nav, tiek sūtīta latviešu versija. Aizpildīts aplītis – versija ir.')}</span>
-            <div class="lang-row">
-              <div class="seg" id="te-lang" role="group" aria-label="Valodas versija">
-                ${LANG_KEYS.map(l => `<button type="button" data-lang="${l}" title="${esc(LANGS[l].label)}">${LANGS[l].short}<span class="dot" aria-hidden="true"></span></button>`).join('')}</div>
-              <button type="button" class="icon-btn" id="te-lang-del" hidden title="Dzēst šo valodas versiju" aria-label="Dzēst šo valodas versiju">${ICON.trash}</button>
-            </div></div>
         </div>
         <div class="field"><span class="label">Vēstules veids <span class="req">*</span></span>
           <div class="kind-grid" role="radiogroup" aria-label="Vēstules veids">
@@ -4535,9 +4491,6 @@ function openTemplateEditor(id, preset = {}){
           <span class="err" id="te-kind-err" hidden></span>
           <span class="hint" id="te-start-note" hidden></span><span class="err" id="te-start-err" hidden></span>
           <div id="te-main" hidden><div id="te-main-body"></div></div><span class="err" id="te-main-err" hidden></span></div>
-        <div class="alert alert-info" id="te-missing" hidden>${ICON.info}<div><span id="te-missing-text"></span>
-          <div class="toolbar" style="margin-top:8px"><button type="button" class="btn btn-primary btn-sm" id="te-lang-copy">Izveidot no latviešu versijas</button>
-          <button type="button" class="btn btn-secondary btn-sm" id="te-lang-empty">Izveidot tukšu</button></div></div></div>
         <div class="field te-lf"><div class="label-row"><label for="te-subject">Ziņojuma temats <span class="req">*</span></label>
           <select class="mini" id="te-subj-field" aria-label="Ievietot lauku tematā"><option value="">+ lauks</option>${fieldOptions()}</select></div>
           <input type="text" id="te-subject" maxlength="200"><span class="err" id="te-subject-err" hidden></span></div>
@@ -4550,7 +4503,7 @@ function openTemplateEditor(id, preset = {}){
             <legend>Dokuments ar laukiem (ģenerēts PDF)</legend>
             <div class="field te-lf"><label for="te-doc-file">Faila nosaukums ${tip('Var lietot laukus, piem., {dok_nr}. Dokumenta virsrakstu rakstiet tekstā ar stilu “Virsraksts 1”.')}</label><input type="text" id="te-doc-file"></div>
             <div class="field te-lf"><span class="label">Mainīgā daļa (vēstules teksts)</span><div id="te-doc-body"></div></div>
-            <div class="field"><span class="label">Pastāvīgās daļas ${tip('Veidlapas galva, datums un numurs, paraksts un kājene tiek pievienoti vienmēr. To saturu (arī tulkojumus) rediģē sadaļā “Pastāvīgās daļas”. Šie iestatījumi ir kopīgi visām valodām.')}</span>
+            <div class="field"><span class="label">Pastāvīgās daļas ${tip('Veidlapas galva, datums un numurs, paraksts un kājene tiek pievienoti vienmēr. To saturu rediģē sadaļā “Pastāvīgās daļas”.')}</span>
               <div class="checks">
                 <label><input type="checkbox" id="te-doc-banner" ${t.doc.banner ? 'checked' : ''}> Apsekojuma baneris</label>
                 <label><input type="checkbox" id="te-doc-conf" ${t.doc.conf ? 'checked' : ''}> Konfidencialitāte</label>
@@ -4573,7 +4526,7 @@ function openTemplateEditor(id, preset = {}){
             <button type="button" data-pv="epasts">E-pasts</button><button type="button" data-pv="eadrese">E-adrese</button><button type="button" data-pv="doc">Pielikums</button></div></div>
         <p class="hint">${sess && sessRecs.length ? `Kampaņas respondents: <span class="rec-nav"><button type="button" class="icon-btn" id="te-rprev" aria-label="Iepriekšējais respondents"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><span class="pos" id="te-rpos"></span><button type="button" class="icon-btn" id="te-rnext" aria-label="Nākamais respondents"><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button></span> `
           : sess ? 'Nav atzīmētu respondentu – parauga dati: ' : 'Ar parauga datiem: '}<span id="te-sample">${esc(sample.name)}</span>
-          <select class="mini" id="te-sample-sel" aria-label="Parauga respondents"><option value="privatpersona">Privātpersona</option><option value="uznemums">Uzņēmums</option></select> · ${esc(compose.f.survey)} · rediģējamā valodas versija</p>
+          <select class="mini" id="te-sample-sel" aria-label="Parauga respondents"><option value="privatpersona">Privātpersona</option><option value="uznemums">Uzņēmums</option></select> · ${esc(compose.f.survey)}</p>
         <div id="te-preview" class="hl"></div>
         <div id="te-docpv" class="te-docpv" hidden></div>
       </div>
@@ -4618,19 +4571,19 @@ function openTemplateEditor(id, preset = {}){
   const subj = $('#te-subject');
   const aud = () => $('#te-aud').value;
   function showErr(fid, msg){ const e = $('#' + fid); e.hidden = false; e.textContent = msg; }
-  // Satura pārbaude (vēstules veids, sākums, galvenā vēstule, temats un teksts katrā valodas versijā)
+  // Satura pārbaude (vēstules veids, sākums, galvenā vēstule, temats un teksts)
   function validContent(){
     const cur = current();
     if (!cur.kind){ showErr('te-kind-err', 'Izvēlieties vēstules veidu.'); $('input[name="te-kind"]', modal).focus(); return false; }
     if (cur.kind === 'epasts' && !started){ showErr('te-start-err', 'Izvēlieties, kā sākt: no sagataves vai tukšu.'); $('[data-start]', modal).focus(); return false; }
     if (cur.kind === 'pielikums' && !main){ showErr('te-main-err', 'Izvēlieties dokumentu no sagatavēm vai augšupielādējiet savu failu.'); $('#te-main-opts button').focus(); return false; }
-    // katrai valodas versijai jābūt tematam un tekstam
+    // jābūt tematam un tekstam
     for (const l of Object.keys(versions)){
       const v = versions[l];
       const bad = !v.subject ? ['te-subject', 'Norādiet ziņojuma tematu.'] : !htmlToText(v.body) ? ['te-body', 'Teksts nedrīkst būt tukšs.'] : null;
       if (bad){
         if (l !== lang){ lang = l; loadLang(); }
-        showErr(bad[0] + '-err', bad[1] + (l !== 'lv' ? ` (${LANGS[l].short} versija)` : ''));
+        showErr(bad[0] + '-err', bad[1]);
         (bad[0] === 'te-subject' ? subj : bodyEd.area).focus();
         return false;
       }
@@ -4661,7 +4614,7 @@ function openTemplateEditor(id, preset = {}){
 
   function kind(){ const r = $('input[name="te-kind"]:checked', modal); return r ? r.value : ''; }
   const ready = () => kind() === 'epasts' ? !!started : kind() === 'pielikums' ? !!main : false;
-  // Ieraksta redaktora saturu aktīvajā valodas versijā
+  // Ieraksta redaktora saturu
   function collect(){
     if (!versions[lang] || !bodyEd) return;
     versions[lang] = {subject: subj.value.trim(), body: bodyEd.getHTML(), docTitle: '',
@@ -4675,26 +4628,18 @@ function openTemplateEditor(id, preset = {}){
       main: k === 'pielikums' && main && main !== 'gen' ? {lib:main.lib, name:main.name, size:main.size} : null,
       doc: {title: lv.docTitle, fileName: lv.fileName || 'vestule.pdf', body: lv.docBody,
         banner: $('#te-doc-banner').checked, conf: $('#te-doc-conf').checked, info: $('#te-doc-info').checked},
-      tr: Object.fromEntries(Object.entries(versions).filter(([l]) => l !== 'lv')),
+      tr: {},
       fromSample,
     };
   }
   function loadLang(){
     const v = versions[lang];
-    $$('.te-lf', modal).forEach(el => el.hidden = !v);
-    $('#te-missing').hidden = !!v;
-    $('#te-lang-del').hidden = !v || lang === 'lv';
-    $$('#te-lang button').forEach(b => { b.setAttribute('aria-pressed', b.dataset.lang === lang); b.classList.toggle('has', !!versions[b.dataset.lang]); });
-    if (v){
-      subj.value = v.subject; $('#te-doc-file').value = v.fileName || '';
-      bodyEd = createEditor($('#te-body'), v.body, {onChange:update, media:true});
-      docEd = createEditor($('#te-doc-body'), v.docBody || '<p><br></p>', {onChange:update, cta:false});
-    } else {
-      $('#te-missing-text').textContent = `Šai veidnei nav ${LANGS[lang].label.toLowerCase()} valodas versijas. Respondenti ar šo valodu saņems latviešu versiju.`;
-    }
+    subj.value = v.subject; $('#te-doc-file').value = v.fileName || '';
+    bodyEd = createEditor($('#te-body'), v.body, {onChange:update, media:true});
+    docEd = createEditor($('#te-doc-body'), v.docBody || '<p><br></p>', {onChange:update, cta:false});
     update();
   }
-  // Ielādē tekstu redaktorā (aktīvajā valodas versijā)
+  // Ielādē tekstu redaktorā
   function setBody(html){
     collect();
     if (!versions[lang]) lang = 'lv';
@@ -4912,10 +4857,6 @@ function openTemplateEditor(id, preset = {}){
     $('#te-rnext').addEventListener('click', () => { si = Math.min(sessRecs.length - 1, si + 1); syncAud(); update(); });
   }
   syncAud();
-  $$('#te-lang button').forEach(b => b.addEventListener('click', () => { collect(); lang = b.dataset.lang; loadLang(); }));
-  $('#te-lang-copy').addEventListener('click', () => { versions[lang] = {...versions.lv}; loadLang(); });
-  $('#te-lang-empty').addEventListener('click', () => { versions[lang] = {subject:'', body:'<p><br></p>', docTitle:'', docBody:'<p><br></p>', fileName:versions.lv.fileName}; loadLang(); subj.focus(); });
-  $('#te-lang-del').addEventListener('click', () => { if (lang !== 'lv'){ delete versions[lang]; loadLang(); } });
   $('#te-subj-field').addEventListener('change', e => {
     if (!e.target.value) return;
     subj.setRangeText(`{${e.target.value}}`, subj.selectionStart ?? subj.value.length, subj.selectionEnd ?? subj.value.length, 'end');
@@ -4999,7 +4940,6 @@ function openLibPicker({title, onlySag = false, aud = '', back, onPick, intro = 
         <input type="search" id="lp-q" placeholder="Meklēt pēc nosaukuma, apraksta vai faila…"></label>
       <select id="lp-aud" aria-label="Adresāti">${opts(Object.keys(AUDS).map(k => [k, attAudLabel(k)]), f.aud, 'Jebkuri adresāti')}</select>
       <select id="lp-cat" aria-label="Kategorija">${opts(Object.entries(ATT_CATS), '', 'Visas kategorijas')}</select>
-      <select id="lp-lang" aria-label="Valoda">${opts([...LANG_KEYS.map(l => [l, LANGS[l].label]), ['-', 'Nav noteikta']], '', 'Visas valodas')}</select>
     </div>
     <div class="lp-grid"><div class="lp-list" id="lp-list" role="list"></div><div class="lp-pv" id="lp-pv"></div></div>`, actions});
   const okBtn = $('.modal-foot .btn-primary', submodal);
@@ -5018,7 +4958,7 @@ function openLibPicker({title, onlySag = false, aud = '', back, onPick, intro = 
     if (!list.some(a => a.id === sel)) sel = list[0] ? list[0].id : null;
     $('#lp-list').innerHTML = list.length ? list.map(a => `<button type="button" class="lp-item" role="listitem" data-id="${esc(a.id)}" aria-pressed="${a.id === sel}">
         <span class="att-thumb sm">${a.lib ? `<img src="${esc(ATT_DIR + a.thumb)}" alt="" loading="lazy">` : ICON.file}</span>
-        <span><b>${esc(a.name)}</b><small>${esc(attAudLabel(a.aud))} · ${esc(LANGS[a.lang] ? LANGS[a.lang].short : 'valoda nav noteikta')} · ${esc(attExt(a.fileName).toUpperCase())}, ${fmtSize(a.size)}${a.lib ? ' · Sagatave' : ''}</small></span></button>`).join('')
+        <span><b>${esc(a.name)}</b><small>${esc(attAudLabel(a.aud))} · ${esc(attExt(a.fileName).toUpperCase())}, ${fmtSize(a.size)}${a.lib ? ' · Sagatave' : ''}</small></span></button>`).join('')
       : `<div class="lp-noprev">${ICON.file}<p>Nav dokumentu, kas atbilst atlasei.${f.aud ? ' Mēģiniet izvēlēties “Jebkuri adresāti”.' : ''}</p></div>`;
     $$('.lp-item', submodal).forEach(b => b.addEventListener('click', () => {
       sel = b.dataset.id;
@@ -5028,7 +4968,7 @@ function openLibPicker({title, onlySag = false, aud = '', back, onPick, intro = 
     renderPv();
   }
   $('#lp-q').addEventListener('input', e => { f.q = e.target.value; renderList(); });
-  [['#lp-aud', 'aud'], ['#lp-cat', 'cat'], ['#lp-lang', 'lang']].forEach(([id, k]) => $(id).addEventListener('change', e => { f[k] = e.target.value; renderList(); }));
+  [['#lp-aud', 'aud'], ['#lp-cat', 'cat']].forEach(([id, k]) => $(id).addEventListener('change', e => { f[k] = e.target.value; renderList(); }));
   renderList();
   $('#lp-q').focus();
 }
@@ -5092,9 +5032,8 @@ function renderAttFilters(){
   const f = ui.sag, sel = (id, all, entries, cur) => { $(id).innerHTML = `<option value="">${all}</option>` + entries.map(([k, v]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${esc(v)}</option>`).join(''); };
   sel('#sag-aud', 'Visi adresāti', Object.keys(AUDS).map(k => [k, attAudLabel(k)]), f.aud);
   sel('#sag-cat', 'Visas kategorijas', CATS.map(c => [c.key, c.label]), f.cat);
-  sel('#sag-lang', 'Visas valodas', [...LANG_KEYS.map(l => [l, LANGS[l].label]), ['-', 'Nav noteikta']], f.lang);
   sel('#sag-kind', 'Visi veidi', Object.entries(ATT_KINDS), f.kind || '');
-  $('#sag-lang').hidden = $('#sag-kind').hidden = ui.sagGroup !== 'att';
+  $('#sag-kind').hidden = ui.sagGroup !== 'att';
   $('#sag-search').placeholder = ui.sagGroup === 'att' ? 'Meklēt pēc nosaukuma, apraksta vai faila…' : 'Meklēt pēc nosaukuma, temata vai teksta…';
   const nM = (state.mailSamples || []).length, nA = allAtts().length;
   $('#sag-group').innerHTML = [['mail', 'E-pasta satura šabloni', nM, 'mail'], ['att', 'Pielikumu sagataves', nA, 'doc']].map(([k, l, n, ic]) =>
@@ -5131,7 +5070,7 @@ function attCard(a){
     <div class="card-pad">
       <div class="att-top">${thumb}
         <div>
-          <div class="pills">${a.lib ? '<span class="pill pill-tag">Sagatave</span>' : ''}<span class="pill pill-doc">${esc(ATT_KINDS[attKindOf(a)])}</span><span class="pill pill-cat">${esc(ATT_CATS[a.cat] || ATT_CATS.cits)}</span>${AUDS[a.aud] ? `<span class="pill pill-aud">${ICON[AUDS[a.aud].icon]}${esc(attAudLabel(a.aud))}</span>` : ''}<span class="pill pill-ch">${esc(LANGS[a.lang] ? LANGS[a.lang].short : 'Valoda nav noteikta')}</span></div>
+          <div class="pills">${a.lib ? '<span class="pill pill-tag">Sagatave</span>' : ''}<span class="pill pill-doc">${esc(ATT_KINDS[attKindOf(a)])}</span><span class="pill pill-cat">${esc(ATT_CATS[a.cat] || ATT_CATS.cits)}</span>${AUDS[a.aud] ? `<span class="pill pill-aud">${ICON[AUDS[a.aud].icon]}${esc(attAudLabel(a.aud))}</span>` : ''}</div>
           <h2>${esc(a.name)}</h2>
         </div>
       </div>
@@ -5240,7 +5179,6 @@ function openAttForm(id){
       <div class="field"><label for="af-kind">Sagataves veids</label><select id="af-kind">${opts(Object.entries(ATT_KINDS), attKindOf(a))}</select></div>
       <div class="field"><label for="af-cat">Kategorija</label><select id="af-cat">${opts(Object.entries(ATT_CATS), a.cat)}</select></div>
       <div class="field"><label for="af-aud">Adresāti</label><select id="af-aud">${opts(Object.keys(AUDS).map(k => [k, attAudLabel(k)]), a.aud)}</select></div>
-      <div class="field"><label for="af-lang">Valoda</label><select id="af-lang">${opts([...LANG_KEYS.map(l => [l, LANGS[l].label]), ['', 'Nav noteikta']], a.lang || '')}</select></div>
     </div>`,
     actions:[
       {label:'Atcelt', cls:'btn-secondary'},
@@ -5251,7 +5189,7 @@ function openAttForm(id){
         err('file', fErr); err('name', name ? '' : 'Norādiet nosaukumu.');
         if (fErr){ $('#af-file').focus(); return; }
         if (!name){ $('#af-name').focus(); return; }
-        const d = {name, desc:$('#af-desc').value.trim(), kind:$('#af-kind').value, cat:$('#af-cat').value, aud:$('#af-aud').value, lang:$('#af-lang').value};
+        const d = {name, desc:$('#af-desc').value.trim(), kind:$('#af-kind').value, cat:$('#af-cat').value, aud:$('#af-aud').value};
         if (file) Object.assign(d, await readAttFile(file));
         if (existing){
           // aizstājot failu, iepriekšējo saglabā kā versiju (pēdējās 3)
@@ -5360,8 +5298,6 @@ function openLayoutEditor(){
       ${inp('emailFooter', 'E-pasta kājene', '', true)}
     </div></fieldset>`;
   openModal({title:'Pastāvīgās daļas', wide:true, info:'Šīs daļas parasti saglabājas visās vēstulēs. Izmaiņas attiecas uz visām veidnēm.', content:`
-    <div class="lang-row" style="margin-bottom:14px"><span class="label">Valoda ${tip('Tulkojumā tukšam laukam tiek lietots latviešu teksts (tas redzams pelēkā krāsā laukā). Rekvizīti, parakstītājs un tālrunis ir kopīgi visām valodām.')}</span>
-      <div class="seg" id="ly-lang" role="group" aria-label="Valoda">${LANG_KEYS.map(l => `<button type="button" data-lang="${l}">${LANGS[l].short}</button>`).join('')}</div></div>
     <div id="ly-form"></div>
     <div class="form-grid">
       <fieldset class="box"><legend>Sadaļa “Konfidencialitāte”</legend>
@@ -5393,9 +5329,7 @@ function openLayoutEditor(){
     ['confTitle', 'infoTitle'].forEach(k => { const el = $('#ly-' + k); el.value = val(k); el.placeholder = lang === 'lv' ? '' : (work[k] || ''); });
     confEd = createEditor($('#ly-conf'), val('confHtml') || '<p><br></p>', {compact:true, cta:false});
     infoEd = createEditor($('#ly-info'), val('infoHtml') || '<p><br></p>', {compact:true, cta:false});
-    $$('#ly-lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
   }
-  $$('#ly-lang button').forEach(b => b.addEventListener('click', () => { collect(); lang = b.dataset.lang; render(); }));
   render();
 }
 
@@ -5599,7 +5533,7 @@ function openTemplatePicker(){
       const g = items.filter(t => t.cat === c.key);
       return g.length ? `<section class="tp-group"><h3>${esc(c.label)} <span class="pill pill-cat">${g.length}</span></h3>
         ${g.map(t => `<button type="button" class="tp-item" data-tp="${esc(t.id)}" aria-pressed="${t.id === sel}"><b>${esc(t.name)}</b>
-          <small>${esc(KINDS[t.kind] || '')}${Object.keys(t.tr || {}).length ? ' · ' + ['lv', ...Object.keys(t.tr)].map(l => LANGS[l] ? LANGS[l].short : l).join(', ') : ''}</small></button>`).join('')}</section>` : '';
+          <small>${esc(KINDS[t.kind] || '')}</small></button>`).join('')}</section>` : '';
     }).join('') : `<div class="empty" style="padding:20px"><p>${list().length ? 'Neviena veidne neatbilst meklēšanai.' : 'Šim adresātam un kampaņas veidam veidņu vēl nav.'}</p></div>`;
   }
   function renderPv(){
@@ -5701,9 +5635,9 @@ function letterDataOf(p){
   return {survey:p.name, ...metaOf(p), tags:sv.tags || '', slogan:sv.slogan || ''};
 }
 // Mainīgo vērtības: apsekojuma dati (Metadatu pārvaldība) + izmaiņas šai kampaņai
-const VAR_ROWS = [['survey_en', 'Nosaukums angliski', '{apsekojums} EN'], ['survey_ru', 'Nosaukums krieviski', '{apsekojums} RU'],
+const VAR_ROWS = [
   ['link', 'E-anketas saite', '{e-anketa}'], ['email', 'Apsekojuma e-pasts', '{apsekojuma_epasts}'], ['web', 'Tīmekļvietne', '{apsekojuma_vietne}']];
-const metaOf = p => ({survey_en:'', survey_ru:'', link:'https://e-anketa.csp.example', email:'info@csp.example', web:'csp.example', ...(SURVEY_META[p.id] || {}), ...(p.meta || {})});
+const metaOf = p => ({link:'https://e-anketa.csp.example', email:'info@csp.example', web:'csp.example', ...(SURVEY_META[p.id] || {}), ...(p.meta || {})});
 function varsOf(id){ const p = repById(id); return p ? {...metaOf(p), ...((compose.varOvr || {})[id] || {})} : null; }
 // kampaņas apsekojumi un apsekojums, kura vērtības izmanto respondenta vēstulē
 const campReports = () => compose.sel.reports.length ? compose.sel.reports.filter(id => repById(id)) : [...new Set(baseDuties().map(d => d.reportId))];
@@ -6406,21 +6340,12 @@ function renderComposePreview(){
   // jauktajai komunikācijai – cik fizisko un juridisko personu
   const mixCount = t && !AUDS[t.aud].veids && recs.length
     ? Object.entries(ATTR_BY_KEY.veids.values).map(([k, v]) => [v.short, recs.filter(r => respAttrs(r).veids === k).length]).filter(([, c]) => c) : [];
-  const langs = {}, missingLangs = new Set();
-  let fallbacks = 0;
-  if (t) recs.forEach(r => {
-    const want = respAttrs(r).valoda, v = versionOf(t, want);
-    langs[v.lang] = (langs[v.lang] || 0) + 1;
-    if (v.fallback){ fallbacks++; missingLangs.add(LANGS[want].short); }
-  });
   const planned = isPlanned();
   $('#c-summary').innerHTML = `<div class="hint"><b>${esc(SESS_LABELS[sessKindKey()])}</b>${planned ? ` · <span class="pill st-plan">Ieplānota</span> ${esc(whenLabel())}` : ''}${compose.esign.required ? ' · ar parakstu' : ''}</div>` +
     `${planned ? 'Pēc pašreizējiem statusiem tiktu' : 'Tiks'} ${n === 1 ? 'nosūtīta' : 'nosūtītas'} <b>${n}</b> ${plural(n, 'vēstule', 'vēstules')} · adreses: <b>${esc(prioLabel(compose.prio))}</b>` +
     (t && t.kind === 'pielikums' ? (t.main ? ' · ar pielikumu' : ' · ar PDF pielikumu') : '') +
-    (Object.keys(langs).length > 1 || fallbacks ? `<div class="hint">Valodas: ${Object.entries(langs).map(([l, c]) => `<span class="pill pill-ch">${LANGS[l].short} – ${c}</span>`).join(' ')}</div>` : '') +
     (mixCount.length ? `<div class="hint">Adresāti: ${mixCount.map(([l, c]) => `<span class="pill pill-aud">${esc(l)} – ${c}</span>`).join(' ')}</div>` : '') +
     (mism ? `<div class="hint warn">Veidne paredzēta ${AUDS[t.aud].dat}, bet ${mism} ${plural(mism, 'adresāts ir', 'adresāti ir')} ${t.aud === 'fiz' ? plural(mism, 'uzņēmums', 'uzņēmumi') : plural(mism, 'privātpersona', 'privātpersonas')}.</div>` : '') +
-    (fallbacks ? `<div class="hint warn">${fallbacks} ${plural(fallbacks, 'vēstule tiks nosūtīta', 'vēstules tiks nosūtītas')} latviešu valodā – veidnei nav ${[...missingLangs].join(', ')} versijas.</div>` : '') +
     (skipped > 0 ? `<div class="hint">${skipped} ${plural(skipped, 'atzīmētais respondents', 'atzīmētie respondenti')} tiks ${plural(skipped, 'izlaists', 'izlaisti')} (${[st.noAddr ? 'nav adreses pēc izvēlētās prioritātes' : '', st.outFilt ? 'neatbilst atlasei' : ''].filter(Boolean).join('; ')}).</div>` : '') +
     (issues.length && compose.tried.has(6) ? `<ul class="send-errs">${issues.map(p => `<li>${esc(p)}</li>`).join('')}</ul>` : '');
   const btn = $('#c-send');
@@ -8202,7 +8127,7 @@ $('#sag-group').addEventListener('click', e => {
   ui.sagGroup = b.dataset.sgroup; renderSagataves();
 });
 $('#sag-search').addEventListener('input', e => { ui.sag.q = e.target.value; renderSagataves(); });
-[['#sag-aud', 'aud'], ['#sag-cat', 'cat'], ['#sag-lang', 'lang'], ['#sag-kind', 'kind']].forEach(([sel, k]) =>
+[['#sag-aud', 'aud'], ['#sag-cat', 'cat'], ['#sag-kind', 'kind']].forEach(([sel, k]) =>
   $(sel).addEventListener('change', e => { ui.sag[k] = e.target.value; renderSagataves(); }));
 $('#sag-add').addEventListener('click', () => ui.sagGroup === 'att' ? openAttForm() : openMailSampleForm());
 window.addEventListener('hashchange', route);
