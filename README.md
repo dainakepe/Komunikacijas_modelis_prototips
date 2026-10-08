@@ -74,7 +74,10 @@ Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA 
 
 ## Veidņu grupēšana
 
-Lapā "Veidnes" veidnes ir sagrupētas divos līmeņos:
+Lapā "Veidnes" veidnes ir sagrupētas divos līmeņos.
+
+**Izskats.** Augšējā labajā stūrī pogas secībā **[Pastāvīgās daļas] [Sagataves] [+ Jauna veidne]**: "Pastāvīgās daļas" – vienkārša pelēka teksta poga, "Sagataves" – izcelta otrā poga (gaiši tirkīzzaļš fons, tirkīzzaļš teksts un apmale, mapes ikona), "+ Jauna veidne" – galvenā poga CSP krāsā (#009999). Adresātu grupu kartītes ir kompaktas un neitrālas (baltas, ar plānu pelēku apmali, tumši pelēks teksts, ikona pelēkā aplī, mazāks skaitlis); aktīvajai kartītei – tirkīzzaļš teksts un ikona, 3 px tirkīzzaļa apakšlīnija un ļoti gaišs tirkīzzaļš fons.
+
 
 1. **Adresāts.** Trīs kartītes ar veidņu skaitu: "Komunikācija ar fiziskām personām" (atvērta pēc noklusējuma), "Komunikācija ar juridiskām personām" un "Cita komunikācija" (jaukta komunikācija, piem., viena ziņa visiem). Jauktās komunikācijas veidnēm adresāts ir "Visi (jaukta komunikācija)", un tajās lieto lauku `{adresāts}`: uzņēmumam tas ir nosaukums, fiziskai personai – vārds. Šādu veidni var sūtīt reizē gan fiziskām, gan juridiskām personām.
 2. **Kategorija.** Katrā cilnē ir četri bloki: "Uzaicinājumi", "Atgādinājumi", "Informatīvie ziņojumi" un "Citi". Katram blokam ir veidņu skaits un poga "+ Pievienot veidni".
@@ -95,7 +98,7 @@ Papildus:
 
 Veidnes var būt divu veidu:
 
-- **E-pasta saturs.** Vēstule ir pats ziņojuma teksts ar noformējumu: virsraksti, treknraksts, krāsas, līdzināšana, saraksti, saites, attēli un pogas. E-adresē tiek nosūtīta tā vienkārša teksta versija.
+- **E-pasta saturs.** Vēstule ir pats ziņojuma teksts ar noformējumu: virsraksti, treknraksts, krāsas, līdzināšana, saraksti, saites, attēli un pogas.
 - **Vēstule pielikumā.** Galvenā vēstule ir pielikumā, bet ziņojumā ir tikai īss pavadteksts. Pielikums var būt dokuments no pielikumu bibliotēkas (PDF vai DOCX) vai dokuments ar laukiem, kas katram adresātam tiek ģenerēts kā A4 PDF (to var izdrukāt vai saglabāt kā PDF).
 
 ### Veidnes izveide un rediģēšana
@@ -118,7 +121,15 @@ Veidne atveras centrētā modālajā logā, kura platums ir apmēram puse ekrān
 
 Ja pēc satura ievadīšanas nomaina vēstules veidu, sistēma brīdina: "Mainot vēstules veidu, ievadītais saturs var tikt zaudēts. Turpināt?".
 
-**Papildu pielikumi (neobligāti)** ir sakļaujama sadaļa formas apakšā (pēc noklusējuma sakļauta). Ar pogu "+ Pievienot pielikumu" var izvēlēties failu no sagatavēm vai no datora.
+**Atsevišķs saturs e-pastam un eAdresei.** Zem kopīgajiem laukiem (nosaukums, adresāts / statistikas joma, kategorija, vēstules veids) ir cilnes **"✉ E-pasts"** un **"🏛 eAdrese"**; pie katras – stāvokļa ikona ✓ (aizpildīts) / ⚠ (nav aizpildīts). Tas pats redaktors ir arī kampaņas solī "Saturs" ("Noformēt saturu", "Pielāgot šai kampaņai").
+- **E-pasts:** e-pasta temats un pilns satura redaktors (formatēšana, attēli, pogas, lauki, pārskatu tabula).
+- **eAdrese:** eAdreses ziņas temats un vienkārša teksta lauks (tikai teksts, rindkopas – atdala ar tukšu rindu, un lauki; bez krāsām, attēliem un pogām). Poga **"Pārņemt no e-pasta teksta"** nokopē e-pasta saturu bez noformējuma (saites – teksts ar adresi, pogas – "Teksts: saite", pārskatu tabula – lauks `{pārskatu_tabula}`, attēli netiek pārņemti; ja temats tukšs – arī e-pasta temats); ja eAdreses teksts jau ir, pirms pārrakstīšanas jautā apstiprinājumu.
+- Vēstules veidam "Vēstule pielikumā" pielikuma dokuments ir kopīgs, katrai cilnei – savs pavadteksts.
+- **Priekšskatījuma pārslēgs "E-pasts / eAdrese"** ir sinhronizēts ar aktīvo cilni (pārslēdzot vienu, mainās otrs); eAdreses priekšskatījums rāda vienkāršu tekstu, kā to redzēs saņēmējs.
+- **Saglabājot** jābūt aizpildītai vismaz vienai versijai (temats un teksts); daļēji aizpildīta versija – kļūda. Ja otras versijas nav, redzams brīdinājums "Nav eAdreses versijas – eAdresē tiks nosūtīts e-pasta teksts bez noformējuma" (vai "Nav e-pasta versijas – e-pastā tiks nosūtīts eAdreses teksts"), un veidnes kartītē un veidņu izvēlē – birka **"Tikai e-pasts"** / **"Tikai eAdrese"**.
+- **Testa dati:** testa veidnēm ir arī eAdreses versija (vienkāršs teksts no e-pasta satura); "Pateicība par dalību" (t4) un "Pateicība par datu iesniegšanu" (t11) – tikai e-pasta versija (brīdinājumu demonstrācijai).
+
+**Pielikumi (neobligāti)** ir sakļaujama sadaļa zem abām cilnēm (pēc noklusējuma sakļauta) – pielikumi ir kopīgi e-pastam un eAdresei. Ar pogu "+ Pievienot pielikumu" var izvēlēties failu no sagatavēm vai no datora.
 
 **Priekšskatījums:**
 - Zem ziņojuma teksta ar saspraudes ikonu redzami pielikumi.
@@ -366,7 +377,7 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
    - "Nav jāparaksta" vai "Jāparaksta" (DVS NAMEJS integrācija; prototipā – simulācija);
    - ja jāparaksta – parakstīšanas veids (Secīga / Paralēla / Paka) un parakstītāji. Secīgai parakstīšanai secība ir atzīmēšanas kārtībā;
    - "Paraksts vēstulē": lauki `{parakstītājs}` un `{amats}` (arī PDF vēstules parakstā). Pēc noklusējuma tos ņem no pirmā parakstītāja vai no "Pastāvīgajām daļām", un tos var mainīt tikai šai kampaņai.
-5. **Adreses** (F7). Trīs izvēlnes "1./2./3. prioritāte", kopsavilkums, cik respondentiem kura adrese tiks izmantota, un saraksts "Respondenti bez derīgas adreses" (var ievadīt E-pastu 3 vai izņemt respondentu).
+5. **Adreses** (F7). Trīs izvēlnes "1./2./3. prioritāte", kopsavilkums, cik respondentiem kura adrese tiks izmantota, un saraksts "Respondenti bez derīgas adreses" (var ievadīt E-pastu 3 vai izņemt respondentu). Ja adrešu prioritātē ir kanāls, kuram vēstules saturam nav versijas (piem., eAdrese, bet veidnei ir tikai e-pasta versija), redzams brīdinājums ar saiti **"Labot saturu"** (atver satura redaktoru 3. solī).
 6. **Pārbaude** (F3, F5, F6):
    - **kampaņas kopsavilkums** ar saitēm "Labot" uz attiecīgo soli;
    - **priekšskatījums:** viena vēstule katram respondentam ar `{pārskatu_tabula}` (atgādinājumā tikai neiesniegtie pienākumi), pārslēgšanās starp respondentiem un pārslēgs "E-pasts / eAdrese";
@@ -389,6 +400,7 @@ Cilnē **Sūtīšanas vēsture** (specifikācija F16, F17) ir visas nosūtītās
 - **Rādītāju kartītes** (kopā, procesā, piegādātas, neveiksmīgas, manuāla pārbaude) un statusa pogu skaiti tiek pārrēķināti pēc izvēlētajiem filtriem.
 - **Kampaņas veidotājs** tiek saglabāts katrai nosūtītajai vēstulei (jaunām kampaņām – pašreizējais lietotājs). Testa datos kampaņām piešķirti dažādi izdomāti veidotāji: Testa Darbinieks, Rūta Testa, Mārtiņš Paraudziņš, Elīna Izdomāta.
 - Tabulā sākotnēji redzami 50 jaunākie ieraksti; poga "Rādīt vēl" ielādē nākamos 50.
+- **Versija.** Sūtot katram respondentam tiek izmantota tā satura versija, uz kuras kanālu vēstule faktiski tiek nosūtīta – arī pēc pārejas uz nākamo adresi (piem., eAdrese bez publiskās atslēgas → e-pasts: vēsturē redzama e-pasta versija). Tabulas kanāla šūnā ir saite "E-pasta versija" / "eAdreses versija" (ja veidnei nebija attiecīgās versijas – "E-pasta teksts (bez noformējuma)"), kas atver tieši nosūtīto versiju; arī vēstules skatā ir rinda "Versija".
 - **Tabula:** katrai vēstulei redzams adresāts (uzklikšķinot atveras respondenta kartīte), kampaņa, statuss (birka ar krāsu un ikonu), kanāls, adrese un nosūtīšanas laiks. Statusa šūnā redzams arī turpmākais solis (piem., "→ Manuāla pārbaude"), birka "Prombūtne līdz DD.MM.", NDR/DIV iemesli un "Atkārtoti nosūtīta".
 - **Izvērstā rinda:** laika līnija ar katru soli un mēģinājumu – laiks, kanāls, adrese, statuss, NDR/DIV teksts (ar saņemšanas laiku), klasifikācija (iemesls, tips, "MI klasificēts" ar ticamību vai "DIV statuss"), automātiskā rīcība un novirzījums (sistēma, darbinieks, abi vai administrators). Nākamais plānotais mēģinājums (piem., pēc 24 h) redzams kā "Nākamais mēģinājums plānots". Laika līnijā ir arī manuālās darbības.
 - **Manuāla pārbaude / izskatīšana** (statuss "Neveiksmīga" vai "Neatpazīts"): darbības **"Ievadīt jaunu adresi un sūtīt"** (adrese tiek pārbaudīta un saglabāta kā respondenta E-pasts 3; jaunais mēģinājums tiek apstrādāts pēc tiem pašiem noteikumiem), **"Atzīmēt kā izskatītu"** un **"Nodot kontaktu aktualizēšanai"** (izveido uzdevumu "Kontaktu aktualizēšana").
