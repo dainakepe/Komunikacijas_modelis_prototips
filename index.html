@@ -580,10 +580,10 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .camp-table td{height:48px;vertical-align:middle}
 .camp-table tbody tr.camp-row{cursor:pointer}
 .camp-table tbody tr.camp-row:hover td{background:var(--primary-50)}
-.camp-name{appearance:none;border:0;background:none;padding:0;font:inherit;font-size:14.5px;font-weight:700;color:var(--text);text-align:left;cursor:pointer;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.camp-name{appearance:none;border:0;background:none;padding:0;font:inherit;font-size:14.5px;font-weight:700;color:var(--text);text-align:left;cursor:pointer;max-width:236px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
 .camp-name:hover{color:var(--primary-dark);text-decoration:underline}
 .camp-name:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:3px}
-.camp-table th:first-child{width:32%}
+.camp-table th:first-child{width:24%}
 .ck{display:inline-flex;align-items:center;gap:6px;color:var(--text)}
 .ck .icon{width:15px;height:15px;color:var(--primary-dark);flex:none}
 .ck-sub{color:var(--text-muted);margin-left:6px;font-size:13px}
@@ -602,13 +602,6 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .cres-bar .ok{background:var(--success)} .cres-bar .fail{background:#D9822B}
 .cres small{font-size:12.5px;color:var(--text-muted);font-variant-numeric:tabular-nums}
 .cres small .x{color:#B35C00;font-weight:600}
-.camp-table tr.cg-row th{position:static;background:#F6F8F9;padding:0;border-bottom:1px solid var(--border-light);box-shadow:none;text-align:left;height:auto}
-.cg-tg{appearance:none;border:0;background:none;font:inherit;width:100%;display:flex;align-items:center;gap:6px;padding:7px 10px;font-size:12.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#3D4A4F;cursor:pointer;text-align:left}
-.cg-tg .chev{width:14px;height:14px;transition:transform .15s}
-.cg-tg[aria-expanded="true"] .chev{transform:rotate(90deg)}
-.cg-tg .cg-n{font-weight:600;color:var(--text-muted);text-transform:none;letter-spacing:0}
-.cg-tg:hover{color:var(--primary-dark)}
-.cg-tg:focus-visible{outline:3px solid var(--focus-ring);outline-offset:-3px}
 .camp-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .c-tipbox{position:fixed;z-index:80;max-width:320px;background:#1F2933;color:#fff;font-size:12.5px;line-height:1.45;padding:6px 9px;border-radius:6px;box-shadow:var(--shadow-lg);pointer-events:none;white-space:pre-line}
 .c-tipbox[hidden]{display:none}
@@ -6820,15 +6813,9 @@ function campResult(x){
   return `<span class="cres" data-ctip="${esc(full)}" aria-label="${esc(full)}" role="img"><span class="cres-bar" aria-hidden="true"><span class="ok" style="width:${pc(x.ok)}"></span><span class="fail" style="width:${pc(x.fail)}"></span></span>
     <small aria-hidden="true">${x.ok}/${x.n}${x.fail ? ` · ${x.fail} <span class="x">✕</span>` : ''}</small></span>`;
 }
-// grupas pa laika posmiem: Melnraksti (vienmēr augšā), Šonedēļ, Šomēnes, Agrāk
-const CAMP_GROUPS = [['draft', 'Melnraksti'], ['week', 'Šonedēļ'], ['month', 'Šomēnes'], ['older', 'Agrāk']];
-function campGroupOf(x){
-  if (x.type === 'draft') return 'draft';
-  const t = new Date(), wk = new Date(t.getFullYear(), t.getMonth(), t.getDate() - ((t.getDay() + 6) % 7)), mo = new Date(t.getFullYear(), t.getMonth(), 1), d = new Date(x.ts || 0);
-  return d >= wk ? 'week' : d >= mo ? 'month' : 'older';
-}
+// viena nepārtraukta tabula (no jaunākās uz vecāko); rādīti pirmie ui.campLimit ieraksti
 const CAMP_PAGE = 20;
-ui.campCollapsed = new Set(['older']); ui.campLimit = CAMP_PAGE;
+ui.campLimit = CAMP_PAGE;
 function renderCampaigns(){
   refreshStatuses();
   if (ui.campView === 'edit') flushDraft();
@@ -6848,17 +6835,7 @@ function renderCampaigns(){
       <td><span class="cst ${CAMP_ST[x.st].cls}"><i aria-hidden="true"></i>${CAMP_ST[x.st].label}</span></td>
       <td>${campResult(x)}</td>
       <td class="actions"><button type="button" class="icon-btn camp-more" data-action="camp-menu" data-id="${esc(x.key)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.name)}" title="Darbības">${ICON.dots}</button></td></tr>`;
-  // grupas; meklējot – visas izvērstas; rādīti pirmie ui.campLimit ieraksti (sakļautās grupas netiek skaitītas)
-  let shown = 0, html = '';
-  CAMP_GROUPS.forEach(([g, label]) => {
-    const xs = list.filter(x => campGroupOf(x) === g);
-    if (!xs.length) return;
-    const open = !!q || !ui.campCollapsed.has(g);
-    html += `<tr class="cg-row"><th colspan="7" scope="colgroup"><button type="button" class="cg-tg" data-cg="${g}" aria-expanded="${open}">${ICON.chev}${esc(label)} <span class="cg-n">(${xs.length})</span></button></th></tr>`;
-    if (!open) return;
-    const take = xs.slice(0, Math.max(0, ui.campLimit - shown)); shown += take.length;
-    html += take.map(row).join('');
-  });
+  const page = list.slice(0, ui.campLimit), shown = page.length, html = page.map(row).join('');
   $('#camp-tbody').innerHTML = !rows.length ? `<tr><td colspan="7"><div class="empty">${ICON.send}<h3>Vēl nav nevienas kampaņas</h3>
       <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></td></tr>`
     : !list.length ? `<tr><td colspan="7"><div class="empty"><h3>${ui.camp.q || ui.camp.kind ? 'Nekas netika atrasts' : `Nav kampaņu sadaļā “${esc((CAMP_SUBS.find(([k]) => k === ui.campSub) || [])[1])}”`}</h3>
@@ -7605,10 +7582,6 @@ const actions = {
   'camp-more-rows': () => {
     const before = $$('#camp-tbody tr.camp-row').length;
     ui.campLimit += CAMP_PAGE; renderCampaigns();
-    if ($$('#camp-tbody tr.camp-row').length === before){
-      const g = CAMP_GROUPS.map(([k]) => k).find(k => ui.campCollapsed.has(k) && $(`#camp-tbody [data-cg="${k}"]`));
-      if (g){ ui.campCollapsed.delete(g); ui.campLimit = before + CAMP_PAGE; renderCampaigns(); }
-    }
     const rs = $$('#camp-tbody tr.camp-row'), nx = rs[before]; if (nx){ nx.querySelector('.camp-name').focus({preventScroll:true}); nx.scrollIntoView({block:'nearest'}); }
   },
   'camp-menu': (id, el) => openCampMenu(el),
@@ -7738,13 +7711,6 @@ modal.addEventListener('click', e => { if (e.target === modal) modal.close(); })
 $('#camp-search').addEventListener('input', e => { ui.camp.q = e.target.value; ui.campLimit = CAMP_PAGE; renderCampaigns(); });
 $('#camp-kind').addEventListener('change', e => { ui.camp.kind = e.target.value; ui.campLimit = CAMP_PAGE; renderCampaigns(); });
 $('#camp-sub').addEventListener('click', e => { const b = e.target.closest('[data-csub]'); if (!b) return; ui.campSub = b.dataset.csub; ui.campLimit = CAMP_PAGE; renderCampaigns(); $(`#camp-sub [data-csub="${ui.campSub}"]`).focus(); });
-// grupas sakļaušana / izvēršana
-$('#camp-tbody').addEventListener('click', e => {
-  const g = e.target.closest('[data-cg]'); if (!g) return;
-  const k = g.dataset.cg; ui.campCollapsed.has(k) ? ui.campCollapsed.delete(k) : ui.campCollapsed.add(k);
-  if (!ui.campCollapsed.has(k)) ui.campLimit = Math.max(ui.campLimit, $$('#camp-tbody tr.camp-row').length + CAMP_PAGE);
-  renderCampaigns(); const b = $(`#camp-tbody [data-cg="${k}"]`); if (b) b.focus();
-});
 // padoms sarakstā (nosaukums – saglabāšanas / izveides informācija; rezultāts – pilnais teksts)
 function hideCTip(){ const t = $('#c-tipbox'); if (t) t.hidden = true; }
 function showCTip(el){
