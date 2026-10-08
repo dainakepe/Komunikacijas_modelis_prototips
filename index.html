@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <title>CSP komunikācijas modulis – prototips</title>
 <meta name="description" content="CSP datu vākšanas sistēmas komunikācijas moduļa prototips: komunikācijas kampaņas, vēstuļu veidnes (e-pasta saturs vai PDF pielikums), komunikācijas vēsture un simulēta nosūtīšana.">
 <style>
@@ -891,7 +892,12 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .ac-card:hover{border-color:var(--primary-300)}
 .ac-card:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
 .ac-card.k-ok .ac-ic{background:var(--success-bg);color:var(--success)} .ac-card.k-ok b{color:var(--success)}
-.ac-card.k-auto .ac-ic{background:var(--primary-50);color:var(--primary-dark)} .ac-card.k-auto b{color:var(--primary-dark)}
+.ac-card.k-auto .ac-ic{background:#DDF3F3;color:#007A7A} .ac-card.k-auto b{color:#007A7A}
+.ac-card.is-zero{cursor:default;border-color:var(--border-light);background:#FAFBFB;color:var(--text-muted)}
+.ac-cards .ac-card.is-zero .ac-ic{background:#F1F3F4;color:#9AA5AA} .ac-cards .ac-card.is-zero b{color:#9AA5AA} .ac-card.is-zero .ac-l{font-weight:500}
+.ac-card.is-zero:hover{border-color:var(--border-light)}
+.ac-excl-btn{border-color:#E3A6A0;color:var(--danger)}
+.ac-excl-btn:hover{border-color:var(--danger);background:var(--danger-bg);color:var(--danger)}
 .ac-card.k-manual .ac-ic{background:#FFF0E0;color:#B35C00} .ac-card.k-manual b{color:#B35C00}
 .ac-card.k-none .ac-ic{background:#F1F3F4;color:#5E6A70} .ac-card.k-none b{color:#5E6A70}
 .ac-card[aria-pressed="true"].k-ok{border-color:var(--success);background:var(--success-bg)}
@@ -1864,7 +1870,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
               </div>
             </section>
           </div>
-          <div class="scope-opts" id="c-opts"><span class="label">Atlases opcijas</span>
+          <div class="scope-opts" id="c-opts" hidden><span class="label">Atlases opcijas</span>
             <label class="switch"><input type="checkbox" role="switch" id="c-opt-invited"><span class="sw" aria-hidden="true"></span>Izslēgt jau uzaicinātos</label><span class="tip" tabindex="0" role="note" aria-label="Neiekļauj respondentus (pienākumus), kuriem par izvēlēto periodu un apsekojumu jau nosūtīts uzaicinājums (neveiksmīgie netiek ņemti vērā)." data-tip="Neiekļauj respondentus (pienākumus), kuriem par izvēlēto periodu un apsekojumu jau nosūtīts uzaicinājums (neveiksmīgie netiek ņemti vērā).">i</span>
             <label class="switch"><input type="checkbox" role="switch" id="c-opt-merge"><span class="sw" aria-hidden="true"></span>Apvienot vēstules pēc NMK</label><span class="tip" tabindex="0" role="note" aria-label="Ja vienam NMK ir vairākas vienības, tās saņem vienu kopīgu vēstuli (adresāts – pirmā vienība; pārskatu tabulā – visu vienību pienākumi)." data-tip="Ja vienam NMK ir vairākas vienības, tās saņem vienu kopīgu vēstuli (adresāts – pirmā vienība; pārskatu tabulā – visu vienību pienākumi).">i</span>
           </div>
@@ -3356,7 +3362,8 @@ function dutyDates(r, f){
 // {apsekojums}: viens apsekojums – tā nosaukums (automātiski no apsekojuma datiem); vairāki – respondenta apsekojumu nosaukumi
 function surveyNameFor(r, f, lang){
   const sr = campReports(), v1 = sr.length === 1 ? varsOf(sr[0]) : null;
-  const one = (lang !== 'lv' && ((v1 || f)['survey_' + lang])) || f.survey || '';
+  // viens apsekojums – tā nosaukums (no apsekojuma datiem, nevis no kampaņas lauka)
+  const one = (lang !== 'lv' && ((v1 || f)['survey_' + lang])) || (v1 && (v1.survey || (repById(sr[0]) || {}).name)) || f.survey || '';
   if (sr.length <= 1) return one;
   const ids = r ? [...new Set(msgDuties(r).map(d => d.reportId))].filter(id => sr.includes(id)) : sr;
   return (ids.length ? ids : sr).map(id => { const p = repById(id); if (!p) return id; return (lang !== 'lv' && varsOf(id)['survey_' + lang]) || p.name; }).join(', ');
@@ -6207,7 +6214,7 @@ function renderScopeCtx(){
   if (fizMode()){
     const p = repById(sel.reports[0]), per = sel.fz.period, R = ROUNDS[sel.reports[0]], rn = fzRounds(sel);
     rows.push(item('Apsekojums', p ? p.code + (per ? ` · ${periodCode(per)}` : '') : '—', p ? repTitle(p) + (per ? ` – ${periodLabel(per)}` : '') : '') +
-      (R ? item(R.label, rn.length === R.n ? 'Visi' : rn.map(n => `${n}.`).join(', ')) : ''));
+      (R ? item(R.label, rn.length ? `${rn.map(n => `${n}.`).join(', ')} ${R.word}` : '—') : ''));
   } else {
     // pārskati un periodi no atlasītajiem pienākumiem
     const reps = [...new Set(ds.map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
@@ -6245,17 +6252,20 @@ function acEditor(r, k, c){
     <span class="ac-ed-acts"><button type="button" class="btn btn-primary btn-sm" data-ac-save="${r.id}|${k}">Saglabāt</button><button type="button" class="btn btn-ghost btn-sm" data-ac-cancel>Atcelt</button></span></div>`;
 }
 // Elektronisko adrešu pārbaude: stāvokļu kartītes (filtrē tabulu), gatavi / nepieciešama uzmanība, atkārtot pārbaudi, izņemt nederīgos
-const AC_IC = {ok:'check', auto:'check', manual:'warn', none:''};
+const AC_IC = {ok:'check', auto:'edit', manual:'warn', none:''};
 const acActive = () => state.respondents.filter(r => matchesFilt(r) && !compose.excluded.has(r.id));
 const acAttn = () => acActive().filter(r => ['manual', 'none'].includes(acState(r)));
 function renderAcBar(){
   const rs = acActive(), cnt = {ok:0, auto:0, manual:0, none:0};
   rs.forEach(r => cnt[acState(r)]++);
   const ready = cnt.ok + cnt.auto, attn = cnt.manual + cnt.none;
-  $('#c-ac').innerHTML = `<div class="ac-cards" role="group" aria-label="Adrešu pārbaudes rezultāts (filtrē tabulu)">${AC_STATES.map(([k, l]) => `<button type="button" class="ac-card k-${k}" data-acf="${k}" aria-pressed="${compose.acF === k}"><span class="ac-ic" aria-hidden="true">${AC_IC[k] ? ICON[AC_IC[k]] : '—'}</span><span class="ac-l">${esc(l)}</span><b>${cnt[k]}</b></button>`).join('')}</div>
+  // filtrs pēc stāvokļa, kuram vairs nav respondentu, tiek noņemts
+  if (compose.acF && !cnt[compose.acF]){ compose.acF = ''; setTimeout(() => renderComposeList(), 0); }
+  // kartīte ar 0 – blāva un nav klikšķināma
+  $('#c-ac').innerHTML = `<div class="ac-cards" role="group" aria-label="Adrešu pārbaudes rezultāts (filtrē tabulu)">${AC_STATES.map(([k, l]) => `<button type="button" class="ac-card k-${k}${cnt[k] ? '' : ' is-zero'}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${cnt[k] ? '' : 'disabled'}><span class="ac-ic" aria-hidden="true">${AC_IC[k] ? ICON[AC_IC[k]] : '—'}</span><span class="ac-l">${esc(l)}</span><b>${cnt[k]}</b></button>`).join('')}</div>
     <div class="ac-foot"><div class="ac-lines" aria-live="polite"><p class="ac-ready">${ICON.check}<span><b>${ready}</b> ${plural(ready, 'respondents ir gatavs', 'respondenti ir gatavi')} nosūtīšanai</span></p>
       ${attn ? `<p class="ac-attn">${ICON.warn}<span><b>${attn}</b> ${plural(attn, 'respondentam', 'respondentiem')} nepieciešama uzmanība</span></p>` : ''}</div>
-    <div class="ac-acts"><button type="button" class="btn btn-secondary btn-sm" data-ac-recheck><span aria-hidden="true">↻</span> Atkārtoti pārbaudīt</button><button type="button" class="btn btn-ghost btn-sm" data-ac-excl ${attn ? '' : 'disabled'}>Izņemt nederīgos${attn ? ` (${attn})` : ''}</button></div></div>`;
+    <div class="ac-acts"><button type="button" class="btn btn-secondary btn-sm" data-ac-recheck><span aria-hidden="true">↻</span> Atkārtoti pārbaudīt</button>${attn ? `<button type="button" class="btn btn-secondary btn-sm ac-excl-btn" data-ac-excl>Izņemt nederīgos (${attn})</button>` : ''}</div></div>`;
 }
 // rindas problēmas (oranža ikona pie respondenta vārda)
 function respProblems(r, addr){
@@ -7801,6 +7811,9 @@ $('#c-name').addEventListener('blur', e => { e.target.value = compose.name; });
 $('#c-aud').addEventListener('change', e => {
   const sel = compose.sel;
   compose.aud = e.target.value; compose.index = 0;
+  // atlases opcijas – tikai uzņēmumu statistikai (citām jomām – paslēptas un izslēgtas)
+  $('#c-opts').hidden = compose.aud !== 'jur';
+  if (compose.aud !== 'jur'){ sel.excludeInvited = false; sel.mergeNmk = false; $('#c-opt-invited').checked = false; $('#c-opt-merge').checked = false; }
   const valid = new Set(audReports().map(p => p.id));
   let cleared = false;
   const keep = sel.reports.filter(id => valid.has(id));
