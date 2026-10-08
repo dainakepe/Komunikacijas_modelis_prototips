@@ -193,6 +193,7 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
   - **Iesniegšanas statusi** ir dati no Datu vākšanas pārraudzības. Tie ir tikai lasāmi; prototipā tie ir testa dati.
   - Fiziskās personas ir piesaistītas apsekojumiem (Darbaspēka, Ceļotāju, Mājsaimniecību budžeta, Laika izlietojuma, Iedzīvotāju ienākumu un dzīves apstākļu, IKT lietošanas apsekojums).
   - **Apsekojumu kodi:** 1-DSA – Darbaspēka apsekojums (ceturksnis), 1-C – Ceļotāju apsekojums (mēnesis), MBA, LAI, EU-SILC, IKT; pārskatiem – 1-DEG, 1-APGR, 1-RŪP, 2-DS, 1-VAK, 1-INV, 1-GADA, INO. Kodi redzami apsekojumu izvēlnē un birkās, 2. soļa tabulā un joslā, sūtīšanas vēsturē (kampaņas šūnā – vēstules apsekojumu kodi) un atskaitēs (kampaņu tabulā). Agrāk pārlūkā saglabātajiem datiem kodi tiek atjaunināti.
+  - **Reize / cikls:** iedzīvotāju respondentiem katram periodam ir pazīme "reize" (Darbaspēka apsekojums, 1–4) vai "cikls" (Ceļotāju apsekojums, 1–3); testa datos piešķirtas pēc kārtas.
   - **Periodu kodi** (vienots formāts): ceturksnis 2026C1–2026C4, mēnesis 2026M01–2026M12, gads 2026; papildus – pusgads 2026P1, nedēļa 2026N40, intervēšanas vilnis 2026V4. Birkās un tabulās kods tiek rādīts kopā ar apsekojuma kodu, piem., "1-DSA · 2026C3", "1-C · 2026M09".
   - Katram apsekojumam / pārskatam ir statistikas joma: iedzīvotāju statistika (iepriekš minētie apsekojumi – to respondenti ir tikai fiziskās personas) vai uzņēmumu statistika (pārskati un Uzņēmumu inovāciju apsekojums – respondenti ir tikai juridiskās personas).
 - **Testa dati:**
@@ -273,12 +274,15 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
      - uz šauriem ekrāniem datuma un laika lauki pārceļas zem pārslēga;
    - **"Kampaņas tvērums"** – skaidrojums ir "i" ikonas padomā blakus virsrakstam; augšējā labajā stūrī izvēlne **"Mani filtri"**. Kartītes atkarīgas no statistikas jomas:
      - **Uzņēmumu statistika:** trīs vienāda platuma un augstuma kartītes vienā rindā (zem 1000 px – viena zem otras) – "Pēc perioda", "Pēc apsekojuma", "Pēc respondenta" (aprakstītas zemāk). Atlase ir visu kartīšu kritēriju krustpunkts;
-     - **Iedzīvotāju statistika:** tikai kartīte **"Pēc apsekojuma"** visā tvēruma bloka platumā; sarakstā tikai iedzīvotāju apsekojumi (1-DSA Darbaspēka, 1-C Ceļotāju, MBA Mājsaimniecību budžeta, LAI Laika izlietojuma, EU-SILC Iedzīvotāju ienākumu un dzīves apstākļu, IKT lietošanas apsekojums); varianta "Visi apsekojumi" šajā jomā nav – jāizvēlas vismaz viens apsekojums. Zem apsekojuma izvēles ir lauks **"Periods"** (ar norādi "Dati no Metadatu pārvaldības"):
-       - katram izvēlētajam apsekojumam sava rinda: kods un nosaukums, blakus – periodu vairākizvēle (izkrītošs saraksts ar izvēles rūtiņām) un izvēlēto periodu birkas ar ×;
-       - periodi sakārtoti dilstošā secībā (augšā jaunākais, piem., 2026C3, 2026C2, 2026C1, 2025C4…); prototipā – testa dati no 2024. gada līdz tekošajam (pēdējam noslēgtajam) periodam;
-       - noklusējumā, izvēloties apsekojumu, ir atzīmēts jaunākais aktīvais periods; ja periods nav izvēlēts, redzama norāde "Izvēlieties vismaz vienu periodu";
-       - kamēr apsekojums nav izvēlēts, perioda izvēlne ir neaktīva ("Vispirms izvēlieties apsekojumu");
-       - atlase ir izvēlēto apsekojumu un periodu kombinācija; kopsavilkuma rinda "Atlasīti X respondenti, Y pārskati/periodi" šajā jomā netiek rādīta (atlase redzama 2. solī);
+     - **Iedzīvotāju statistika:** tikai kartīte **"Pēc apsekojuma"** visā tvēruma bloka platumā ar laukiem (Gads un Periods – blakus):
+       1. **"Apsekojums"** (obligāts) – izkrītošā izvēlne ar iedzīvotāju apsekojumiem, piem., "1-DSA Darbaspēka apsekojums", "1-C Ceļotāju apsekojums";
+       2. **"Gads"** (neobligāts) – gadi, kuros apsekojumam ir periodi, dilstošā secībā; pirmā vērtība "Visi gadi";
+       3. **"Periods"** (obligāts; "Dati no Metadatu pārvaldības") – pakārtots gadam: bez gada – visi apsekojuma periodi, ar gadu – tikai šī gada periodi. Periodi dilstošā secībā (augšā jaunākais, piem., 2026C3, 2026C2… vai 2026M09, 2026M08…); prototipā – testa dati no 2024. gada līdz tekošajam (pēdējam noslēgtajam) periodam. Noklusējumā izvēlēts jaunākais periods;
+       4. **"Reize"** (1-DSA: 1.–4. reize) vai **"Cikls"** (1-C: 1.–3. cikls) – vairākizvēle ar izvēles rūtiņām, noklusējumā atzīmētas visas ("Dati no Respondentu pārvaldības"); apsekojumiem bez reizēm / cikliem lauks nav redzams.
+       - Kamēr apsekojums nav izvēlēts, pārējie lauki ir neaktīvi. Mainot apsekojumu, gads, periods un reize / cikls tiek aizpildīti no jauna ar noklusējumiem. Mainot gadu, ja periods tam neatbilst, tiek izvēlēts šī gada jaunākais periods.
+       - Bez apsekojuma vai perioda nevar pāriet uz nākamo soli: kļūda pie lauka parādās tikai pēc mēģinājuma iet tālāk.
+       - Atlase = apsekojums + periods + atzīmētās reizes / cikli. 2. solī birkās, piem., "1-DSA · 2026C3 · 1. reize", tvēruma joslā – "Reize: 1." (ja nav atzīmētas visas).
+       - Kopsavilkuma rinda "Atlasīti X respondenti, Y pārskati/periodi" šajā jomā netiek rādīta;
      - **Visi:** tikai kartīte "Pēc apsekojuma" ar visiem apsekojumiem, sagrupētiem divās grupās "Iedzīvotāju statistika" un "Uzņēmumu statistika" (bez perioda izvēles; ja apsekojums nav izvēlēts – visi);
      - **mainot statistikas jomu**, tvēruma vērtības, kas jaunajā jomā vairs neder (citas jomas apsekojumi un to periodi; pārejot uz iedzīvotāju statistiku vai "Visi" – arī perioda un respondenta filtri), tiek notīrītas, un uz brīdi parādās paziņojums "Kampaņas tvērums notīrīts, jo mainīta statistikas joma". Atlasīto respondentu kopsavilkums pārrēķinās uzreiz.
      Uzņēmumu statistikas kartītes:
