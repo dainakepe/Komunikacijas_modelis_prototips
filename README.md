@@ -28,6 +28,8 @@ Atverot prototipu, vispirms redzama DELTA sistēmas sākumlapa ar moduļu kartī
 
 ## Paskaidrojošie teksti un kļūdas
 
+Prototipā nav piezīmju par datu avotiem (piem., "Dati no Respondentu pārvaldības", "Dati no Metadatu pārvaldības", "Dati no Datu vākšanas pārraudzības") – ne pie laukiem, ne "i" padomos, tabulās vai respondenta kartītē.
+
 Ekrāni ir tīri: pastāvīgi redzamu paskaidrojošo tekstu un informatīvo paziņojumu nav.
 - **Padomi "i".** Svarīgā informācija ir mazā "i" ikonā blakus attiecīgajam virsrakstam vai laukam. Padoms parādās, uzbraucot ar peli vai fokusējot ar tastatūru (pie ekrāna malām tas tiek izlīdzināts, lai neiziet ārpus ekrāna). Tā ir arī lapu virsrakstiem (piem., "Komunikācijas kampaņas", "Sūtīšanas vēsture", "Atskaites", "Sagataves"), kampaņas soļiem, grafiku virsrakstiem atskaitēs un modālo logu virsrakstiem.
 - **Redzams paliek tikai būtiskais:** lauku un pogu nosaukumi, statusi, kopsavilkuma skaitļi un īsi stāvokļa paziņojumi (piem., "Nekas netika atrasts", "Nav pārskatu ar šo termiņu").
@@ -190,13 +192,13 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
   - **pārskats:** nosaukums, kods, periodiskums (Gads / Pusgads / Ceturksnis / Mēnesis / Nedēļa / Intervija; intervēšanas vilnis prototipā ir 2 mēneši) un termiņa noteikums, piem., "15. datums pēc pārskata perioda beigām". Termiņš tiek aprēķināts katram periodam, un tas ir vienāds visiem šī pārskata respondentiem;
   - **pienākums:** respondents × pārskats × periods (piem., "2026. g. oktobris", "2026. g. 4. ceturksnis", "2026. g. 39. nedēļa"), termiņš, iesniegšanas statuss ("Iesniegts" / "Nav iesniegts") un iesniegšanas datums. Ja pārskats nav iesniegts un termiņš ir pagājis, tas tiek rādīts kā "Nav iesniegts (kavēts)". Vienam respondentam var būt vairāki pienākumi.
   - **apsekojuma dati vēstulei** (no Metadatu pārvaldības; prototipā – izdomāti testa dati): nosaukums angliski un krieviski, e-anketas saite, apsekojuma e-pasts un tīmekļvietne. Tie glabājas pie katra pārskata / apsekojuma un kampaņā tiek ņemti automātiski;
-  - **Iesniegšanas statusi** ir dati no Datu vākšanas pārraudzības. Tie ir tikai lasāmi; prototipā tie ir testa dati.
+  - **Iesniegšanas statusi** ir tikai lasāmi; prototipā tie ir testa dati.
   - **Testa apsekojumi / pārskati (6):**
 
     | Kods | Nosaukums | Statistikas joma | Periodiskums | Testa respondenti |
     |---|---|---|---|---|
     | 1-DSA | Darbaspēka apsekojums | Iedzīvotāju statistika | Ceturksnis | 9 (fiziskās personas; reize 1.–4.) |
-    | 1-C | Ceļotāju apsekojums | Iedzīvotāju statistika | Mēnesis | 9 (fiziskās personas; cikls 1.–3.) |
+    | 1-C | Ceļotāju apsekojums | Iedzīvotāju statistika | Mēnesis | 9 (fiziskās personas; cikls 1.–2.) |
     | 1-MBA | Mājsaimniecību budžeta apsekojums | Iedzīvotāju statistika | Gads | 8 (fiziskās personas) |
     | 1-apgrozījums | Pārskats par apgrozījumu | Uzņēmumu statistika | Mēnesis | 13 (juridiskās personas) |
     | 1-Rūpniecība | Pārskats par rūpniecību | Uzņēmumu statistika | Gads | 11 (juridiskās personas) |
@@ -204,7 +206,7 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
 
     Visiem uzņēmumiem ir vismaz divi pārskati (piem., 1-apgrozījums un 2-darbs), lai var demonstrēt apkopotu vēstuli ar pārskatu tabulu. Agrākie testa apsekojumi (Laika izlietojuma, Iedzīvotāju ienākumu un dzīves apstākļu, IKT lietošanas, Uzņēmumu inovāciju apsekojums, degvielas cenu, vakanču, investīciju un gada darbības pārskati) ir dzēsti; melnrakstos, ieplānotajās kampaņās un saglabātajos filtros tie pārsaistīti uz esošajiem pārskatiem, bet pārskati, pienākumi un testa vēsture pārlūkā tiek izveidoti no jauna. Pielikumu sagataves (PDF vēstules, piem., par IKT apsekojumu) ir materiāli un netiek mainītas.
   - **Apsekojumu kodi un nosaukumi** visur rādīti vienādi – "1-DSA Darbaspēka apsekojums" (apsekojumu izvēlnēs, birkās, respondenta kartītē, pārskatu tabulā vēstulē, mainīgo vērtībās), bet birkās īsi ar perioda kodu – "1-DSA · 2026C3". Kodi redzami arī sūtīšanas vēsturē (kampaņas šūnā – vēstules apsekojumu kodi) un atskaitēs (kampaņu tabulā). Agrāk pārlūkā saglabātajiem datiem kodi tiek atjaunināti.
-  - **Reize / cikls:** iedzīvotāju respondentiem katram periodam ir pazīme "reize" (Darbaspēka apsekojums, 1–4) vai "cikls" (Ceļotāju apsekojums, 1–3); testa datos piešķirtas pēc kārtas.
+  - **Reize / cikls:** iedzīvotāju respondentiem katram periodam ir pazīme "reize" (Darbaspēka apsekojums, 1–4) vai "cikls" (Ceļotāju apsekojums, tikai 1. un 2. cikls); testa datos piešķirtas pēc kārtas.
   - **Periodu kodi** (vienots formāts): ceturksnis 2026C1–2026C4, mēnesis 2026M01–2026M12, gads 2026; papildus – pusgads 2026P1, nedēļa 2026N40, intervēšanas vilnis 2026V4. Birkās un tabulās kods tiek rādīts kopā ar apsekojuma kodu, piem., "1-DSA · 2026C3", "1-C · 2026M09".
   - Katram apsekojumam / pārskatam ir statistikas joma: iedzīvotāju statistika (respondenti – tikai fiziskās personas) vai uzņēmumu statistika (respondenti – tikai juridiskās personas). Kampaņas tvērumā jomai "Uzņēmumu statistika" tiek piedāvāti tikai uzņēmumu pārskati, "Iedzīvotāju statistika" – tikai iedzīvotāju apsekojumi, "Visi" – visi, sagrupēti pa jomām.
 - **Testa dati:**
@@ -219,7 +221,7 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
   - testa dati tiek aprēķināti attiecībā pret šodienu, kad tie tiek izveidoti vai atjaunoti ("Atjaunot sākotnējos testa datus").
 
 **Respondenta kartīte.** Uzklikšķinot uz respondenta nosaukuma kampaņā (atlases tabulā, adrešu solī) vai vēsturē, no labās puses atveras sānu panelis. Tajā ir:
-- pamatdati (nosaukums, tips, reģ. Nr., kontaktpersona, pazīmes) ar norādi "Dati no Respondentu pārvaldības";
+- pamatdati (nosaukums, tips, reģ. Nr., kontaktpersona, pazīmes);
 - adreses: eAdrese, E-pasts 1 un E-pasts 2 (sinhronizētas, tikai lasāmas, ar pogu "Sinhronizēt") un E-pasts 3 (manuāli, rediģējams, ar formāta pārbaudi);
 - pārskati un periodi (tikai lasāmi): pārskats, periods, termiņš un statuss;
 - komunikācijas vēsture: kampaņas, kurās respondents bijis, vēstules, datumi un piegādes statusi (ar pogu "Skatīt");
@@ -232,7 +234,7 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
 - **E-pasts 3 (manuāli)**, ko darbinieks var ievadīt vai labot komunikācijas modulī.
 
 **Respondenta kartītē** redzamas:
-- sinhronizētās adreses kā tikai lasāmas, ar birku "No Respondentu pārvaldības", datumu "Sinhronizēts: …" un pogu "Sinhronizēt" (simulācija);
+- sinhronizētās adreses kā tikai lasāmas, ar datumu "Sinhronizēts: …" (vai "Nav sinhronizēts") un pogu "Sinhronizēt" (simulācija);
 - lauku "E-pasts 3 (manuāli)" ar e-pasta formāta pārbaudi un pogu "Saglabāt", kā arī informāciju, kas un kad to ievadīja.
 
 **Testa dati** satur dažādus gadījumus:
@@ -285,14 +287,14 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
      - uz šauriem ekrāniem datuma un laika lauki pārceļas zem pārslēga;
    - **"Kampaņas tvērums"** – skaidrojums ir "i" ikonas padomā blakus virsrakstam; augšējā labajā stūrī izvēlne **"Mani filtri"**. Kartītes atkarīgas no statistikas jomas:
      - **Uzņēmumu statistika:** trīs vienāda platuma un augstuma kartītes vienā rindā (zem 1000 px – viena zem otras) – "Pēc perioda", "Pēc apsekojuma", "Pēc respondenta" (aprakstītas zemāk). Atlase ir visu kartīšu kritēriju krustpunkts;
-     - **Iedzīvotāju statistika:** tikai kartīte **"Pēc apsekojuma"** visā tvēruma bloka platumā ar laukiem (Gads un Periods – blakus):
+     - **Iedzīvotāju statistika:** tikai kartīte **"Pēc apsekojuma"** visā tvēruma bloka platumā. Lauks "Apsekojums" ir atsevišķā rindā, zem tā vienā rindā blakus, vienāda platuma – "Gads" → "Periods" → "Cikls" (zem 700 px – viens zem otra):
        1. **"Apsekojums"** (obligāts) – izkrītošā izvēlne ar iedzīvotāju apsekojumiem, piem., "1-DSA Darbaspēka apsekojums", "1-C Ceļotāju apsekojums";
        2. **"Gads"** (neobligāts) – gadi, kuros apsekojumam ir periodi, dilstošā secībā; pirmā vērtība "Visi gadi";
-       3. **"Periods"** (obligāts; "Dati no Metadatu pārvaldības") – pakārtots gadam: bez gada – visi apsekojuma periodi, ar gadu – tikai šī gada periodi. Periodi dilstošā secībā (augšā jaunākais, piem., 2026C3, 2026C2… vai 2026M09, 2026M08…); prototipā – testa dati no 2024. gada līdz tekošajam (pēdējam noslēgtajam) periodam. Noklusējumā izvēlēts jaunākais periods;
-       4. **"Reize"** (1-DSA: 1.–4. reize) vai **"Cikls"** (1-C: 1.–3. cikls) – vairākizvēle ar izvēles rūtiņām, noklusējumā atzīmētas visas ("Dati no Respondentu pārvaldības"); apsekojumiem bez reizēm / cikliem lauks nav redzams.
+       3. **"Periods"** (obligāts) – pakārtots gadam: bez gada – visi apsekojuma periodi, ar gadu – tikai šī gada periodi. Periodi dilstošā secībā (augšā jaunākais, piem., 2026C3, 2026C2… vai 2026M09, 2026M08…); prototipā – testa dati no 2024. gada līdz tekošajam (pēdējam noslēgtajam) periodam. Noklusējumā izvēlēts jaunākais periods;
+       4. **"Cikls"** (nosaukums vienmēr "Cikls") – izkrītošā izvēlne ar vairākizvēli: izvēles rūtiņas izvēlnes iekšpusē (izvēlne paliek atvērta, atzīmējot vairākas), izvēlētās vērtības redzamas laukā kā birkas. Vērtības atkarīgas no apsekojuma: 1-DSA – 1.–4. reize, 1-C – 1. un 2. cikls; 1-MBA (un bez apsekojuma) – izvēlne tukša un neaktīva. Noklusējumā izvēlētas visas pieejamās vērtības.
        - Kamēr apsekojums nav izvēlēts, pārējie lauki ir neaktīvi. Mainot apsekojumu, gads, periods un reize / cikls tiek aizpildīti no jauna ar noklusējumiem. Mainot gadu, ja periods tam neatbilst, tiek izvēlēts šī gada jaunākais periods.
        - Bez apsekojuma vai perioda nevar pāriet uz nākamo soli: kļūda pie lauka parādās tikai pēc mēģinājuma iet tālāk.
-       - Atlase = apsekojums + periods + atzīmētās reizes / cikli. 2. solī birkās, piem., "1-DSA · 2026C3 · 1. reize", tvēruma joslā – "Reize: 1." (ja nav atzīmētas visas).
+       - Atlase = apsekojums + periods + atzīmētās reizes / cikli. 2. solī birkās, piem., "1-DSA · 2026C3 · 1. reize", tvēruma joslā – "Cikls: 1." (ja nav atzīmētas visas).
        - Kopsavilkuma rinda "Atlasīti X respondenti, Y pārskati/periodi" šajā jomā netiek rādīta;
      - **Visi:** tikai kartīte "Pēc apsekojuma" ar visiem apsekojumiem, sagrupētiem divās grupās "Iedzīvotāju statistika" un "Uzņēmumu statistika" (bez perioda izvēles; ja apsekojums nav izvēlēts – visi);
      - **mainot statistikas jomu**, tvēruma vērtības, kas jaunajā jomā vairs neder (citas jomas apsekojumi un to periodi; pārejot uz iedzīvotāju statistiku vai "Visi" – arī perioda un respondenta filtri), tiek notīrītas, un uz brīdi parādās paziņojums "Kampaņas tvērums notīrīts, jo mainīta statistikas joma". Atlasīto respondentu kopsavilkums pārrēķinās uzreiz.
@@ -337,7 +339,7 @@ Jaunu kampaņu sagatavo sešos soļos (specifikācija F1–F11).
      - apakšā ir pogas "Atcelt", "Saglabāt arī kā veidni" un "Izmantot kampaņā".
    - **Saglabāt arī kā veidni.** Prasa norādīt veidnes nosaukumu un kategoriju. Saturs tiek saglabāts kā jauna veidne, un kampaņa to izmanto.
    - **Kopsavilkums.** Kad saturs ir apstiprināts, solī redzams satura avots ("Veidne: [nosaukums]", "Veidne, pielāgota kampaņai" vai "Individuāls saturs"), temats un vēstules veids. Ir pogas "Labot saturu" un "Izvēlēties citu saturu".
-   - **Mainīgo vērtības** – sakļaujama sadaļa zem satura izvēles (pēc noklusējuma sakļauta), ar norādi "Dati no Metadatu pārvaldības":
+   - **Mainīgo vērtības** – sakļaujama sadaļa zem satura izvēles (pēc noklusējuma sakļauta):
      - ja kampaņā ir viens apsekojums – tabula: mainīgais (`{apsekojums}` EN / RU, `{e-anketa}`, `{apsekojuma_epasts}`, `{apsekojuma_vietne}`), vērtība un avots "No apsekojuma". Poga "Mainīt šai kampaņai" ļauj vērtību mainīt (Enter – saglabāt, Escape – atcelt); mainītā vērtība ir atzīmēta ar birku "Mainīts", un to var atjaunot ("Atjaunot");
      - ja kampaņā ir vairāki apsekojumi – vērtības sagrupētas izvēršamos blokos pa apsekojumiem (blokā redzams mainīto vērtību skaits), un vēstulē katram respondentam tiek izmantotas viņa apsekojuma vērtības;
      - "Tēmturi banerī" un "Sauklis zem banera" – kampaņas līmeņa lauki (sākotnēji no apsekojuma, ja tam tādi ir);
