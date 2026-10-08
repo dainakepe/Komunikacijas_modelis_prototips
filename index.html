@@ -588,12 +588,31 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .camp-table .actions .btn{margin-left:4px}
 .st-draft{background:var(--bg);color:var(--text-muted);border-color:var(--border)}
 /* Kampaņu saraksts: kompaktas rindas (~48 px), grupas pa laika posmiem, ritināšana tabulas iekšpusē, izvēlne "⋯" */
-.camp-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin:-6px 0 14px}
-.camp-bar .subnav{margin:0}
-.camp-bar .search{flex:1 1 160px;min-width:150px}
-.camp-bar .camp-kind-l{flex:0 0 auto}
-.camp-bar .camp-kind-l select{width:190px;min-width:0}
-.camp-bar .camp-new-btn{margin-left:auto}
+/* kampaņu saraksts: statusa pogas, filtru josla (gaišs fons, viena rinda), tabula */
+.camp-sub{margin:-6px 0 10px}
+.cf-bar{display:flex;align-items:center;gap:8px 10px;padding:8px 10px;margin:0 0 12px;background:var(--bg);border:1px solid var(--border-light);border-radius:8px}
+.cf-bar .search{flex:1 1 180px;min-width:150px}
+.cf-f{flex:0 0 auto;min-width:0}
+.cf-kind select{width:160px}
+.cf-creator .dd{width:175px}
+.cf-creator .dd > summary{padding-top:8px;padding-bottom:8px}
+.cf-dd{min-width:220px;padding:6px}
+.cf-dd input[type="search"]{width:100%;box-sizing:border-box;margin:0 0 4px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font:inherit;font-size:13.5px}
+.cf-dd [role="option"]{appearance:none;display:block;width:100%;text-align:left;border:0;background:none;font:inherit;font-size:13.5px;padding:6px 8px;border-radius:5px;cursor:pointer;color:var(--text)}
+.cf-dd [role="option"]:hover,.cf-dd [role="option"]:focus-visible{background:var(--primary-50);outline:none}
+.cf-dd [role="option"][aria-selected="true"]{font-weight:700;color:var(--primary-dark)}
+.cf-dd .cf-none{padding:6px 8px;font-size:13px;color:var(--text-muted)}
+.cf-date{display:flex;align-items:center;gap:6px}
+.cf-l{font-size:13px;font-weight:600;color:var(--text-muted);white-space:nowrap}
+.cf-date select{width:auto}
+.cf-date .dt-field input[type="text"]{width:142px}
+.cf-clear{margin-left:auto;white-space:nowrap}
+.cf-err{display:block;margin:-6px 0 10px}
+.cf-toggle{display:none;margin:0 0 10px}
+.cf-toggle .cnt{background:var(--primary);color:#fff;border-radius:10px;padding:0 7px;font-size:12px;line-height:18px}
+@media (max-width:1240px){ .cf-bar{flex-wrap:wrap} .cf-bar .search{flex:1 1 180px} .cf-date{flex:1 1 calc(100% - 100px)} }
+@media (max-width:600px){ .cf-toggle{display:inline-flex} .cf-bar{display:none;flex-direction:column;align-items:stretch} .cf-bar.is-open{display:flex} .cf-bar > *, .cf-bar .search, .cf-date{flex:0 0 auto} .cf-date select{flex:1 1 60%} .cf-date .dt-field{flex:1 1 40%;min-width:120px} .cf-date .dt-field input[type="text"]{width:100%}
+  .cf-kind select,.cf-creator .dd{width:100%} .cf-date{flex-wrap:wrap} .cf-clear{margin-left:0} }
 .camp-scroll{max-height:60vh;overflow-y:scroll;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#9AA8AD #EEF2F3;scrollbar-gutter:stable}
 .camp-scroll::-webkit-scrollbar{width:10px;height:10px}
 .camp-scroll::-webkit-scrollbar-track{background:#EEF2F3}
@@ -629,7 +648,6 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .camp-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .c-tipbox{position:fixed;z-index:80;max-width:320px;background:#1F2933;color:#fff;font-size:12.5px;line-height:1.45;padding:6px 9px;border-radius:6px;box-shadow:var(--shadow-lg);pointer-events:none;white-space:pre-line}
 .c-tipbox[hidden]{display:none}
-@media (max-width:700px){ .camp-bar .camp-new-btn{margin-left:0} .camp-bar .search{flex-basis:100%} }
 .camp-more{width:30px;height:30px}
 .camp-more[aria-expanded="true"]{background:var(--primary-50);color:var(--primary-dark)}
 .cm-menu{position:fixed;z-index:60;min-width:220px;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(16,40,48,.16);padding:5px;display:flex;flex-direction:column}
@@ -1761,16 +1779,31 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       <div>
         <h1>Komunikācijas kampaņas <span class="tip" tabindex="0" role="note" aria-label="Kampaņa ir viena sūtīšana izvēlētiem respondentiem: uzaicinājums, atgādinājums vai cita informācija." data-tip="Kampaņa ir viena sūtīšana izvēlētiem respondentiem: uzaicinājums, atgādinājums vai cita informācija.">i</span></h1>
       </div>
+      <div class="toolbar"><button class="btn btn-primary camp-new-btn" data-action="camp-new"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Jauna kampaņa</button></div>
     </div>
-    <div class="camp-bar">
-      <div class="subnav" id="camp-sub" role="group" aria-label="Kampaņu statuss"></div>
-      <label class="search"><span class="sr-only">Meklēt kampaņas</span>
+    <div class="subnav camp-sub" id="camp-sub" role="group" aria-label="Kampaņu statuss"></div>
+    <button type="button" class="btn btn-secondary btn-sm cf-toggle" id="cf-toggle" aria-expanded="false" aria-controls="camp-filters"><svg class="icon" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>Filtri <span class="cnt" id="cf-cnt" hidden></span></button>
+    <div class="cf-bar" id="camp-filters" role="search" aria-label="Kampaņu filtri">
+      <label class="search"><span class="sr-only">Meklēt pēc kampaņas nosaukuma</span>
         <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input type="search" id="camp-search" placeholder="Meklēt pēc nosaukuma…">
       </label>
-      <label class="camp-kind-l"><span class="sr-only">Kampaņas veids</span><select id="camp-kind"></select></label>
-      <button class="btn btn-primary camp-new-btn" data-action="camp-new"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Jauna kampaņa</button>
+      <label class="cf-f cf-kind"><span class="sr-only">Kampaņas veids</span><select id="camp-kind"></select></label>
+      <div class="cf-f cf-creator"><details class="dd" id="cf-creator"><summary id="cf-creator-sum" aria-label="Veidotājs">Visi veidotāji</summary>
+        <div class="dd-list cf-dd"><input type="search" id="cf-creator-q" placeholder="Meklēt veidotāju…" aria-label="Meklēt veidotāju"><div id="cf-creator-list" role="listbox" aria-label="Veidotājs"></div></div></details></div>
+      <div class="cf-f cf-date" role="group" aria-labelledby="cf-date-l"><span class="cf-l" id="cf-date-l">Izveidota</span>
+        <select id="cf-quick" aria-label="Izveidota – ātrā izvēle"></select>
+        <div class="dt-field"><input type="text" id="cf-from" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-label="Izveidota no (DD.MM.GGGG)" aria-describedby="cf-err">
+          <button type="button" class="dt-btn" data-ccal="from" aria-label="Izveidota no – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+          <input type="date" id="cf-from-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div>
+        <span class="hf-dash" aria-hidden="true">–</span>
+        <div class="dt-field"><input type="text" id="cf-to" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-label="Izveidota līdz (DD.MM.GGGG)" aria-describedby="cf-err">
+          <button type="button" class="dt-btn" data-ccal="to" aria-label="Izveidota līdz – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+          <input type="date" id="cf-to-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div>
+      </div>
+      <button type="button" class="link-btn cf-clear" id="cf-clear" hidden>Notīrīt</button>
     </div>
+    <span class="err cf-err" id="cf-err" hidden></span>
     <div class="card">
       <div class="table-wrap camp-scroll" id="camp-scroll"><table class="camp-table">
         <thead><tr><th>Kampaņa</th><th>Veids</th><th class="num">Respondenti</th><th>Nosūtīšana</th><th>Statuss</th><th>Rezultāts</th><th><span class="sr-only">Darbības</span></th></tr></thead>
@@ -2068,7 +2101,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā.</span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 51</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -2106,7 +2139,7 @@ const FIELDS = [
   {key:'amats',             group:'Dokuments',   label:'Parakstītāja amats'},
 ];
 const FIELD_KEYS = new Set([...FIELDS.map(f => f.key), 'pārskatu_tabula']);
-// Respondentu pazīmes (respondenta veids, dalības veids, iepriekšējā dalība, valoda)
+// Respondentu pazīmes (respondenta veids, dalības veids, iepriekšējā dalība)
 const ATTRS = [
   {key:'veids', label:'Respondenta veids', def:'privatpersona',
    // ja nav norādīts – nosaka pēc e-adreses (_DEFAULT@ – uzņēmums, _PRIVATE@ – privātpersona) vai kontaktpersonas
@@ -2122,11 +2155,6 @@ const ATTRS = [
     piedalijas:   {label:'Piedalījās iepriekšējā aptaujā',   short:'Piedalījās',   syn:['ja', 'piedalijas']},
     nepiedalijas: {label:'Nepiedalījās iepriekšējā aptaujā', short:'Nepiedalījās', syn:['ne', 'nepiedalijas']},
     jauns:        {label:'Izlasē pirmo reizi',               short:'Pirmo reizi',  syn:['jauns', 'pirmoreizi']}}},
-  // Respondenta valoda (pazīme; vēstules tiek sūtītas latviešu valodā)
-  {key:'valoda', label:'Valoda', def:'lv', values:{
-    lv: {label:'Latviešu', short:'LV', syn:['lv', 'latviesu', 'latviski', 'latvian']},
-    ru: {label:'Krievu',   short:'RU', syn:['ru', 'krievu', 'krieviski', 'russian']},
-    en: {label:'Angļu',    short:'EN', syn:['en', 'anglu', 'angliski', 'english']}}},
 ];
 const ATTR_BY_KEY = Object.fromEntries(ATTRS.map(a => [a.key, a]));
 const VAR_RE = /\{([^{}\s<>"]+)\}/g;
@@ -2814,34 +2842,34 @@ function seedData(){
        body:`<p>Labdien, ${F('adresāts')}!</p><p>Centrālā statistikas pārvalde pateicas par sadarbību aizvadītajā gadā. Jūsu sniegtie dati palīdz veidot precīzu un uzticamu oficiālo statistiku par Latviju.</p><p><strong>Novēlam priecīgus svētkus un veiksmīgu jauno gadu!</strong></p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`},
     ]),
     respondents: [
-      {id:'r1',  name:'Laura Kalēja',                      contact:'',                 eaddress:'_PRIVATE@00000000201', email:'laura.kaleja@pasts.example',       attrs:{valoda:'lv', veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
-      {id:'r2',  name:'Sergejs Petrovs',                   contact:'',                 eaddress:'_PRIVATE@00000000202', email:'sergejs.petrovs@inbox.example',    attrs:{valoda:'ru', veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
-      {id:'r3',  name:'Olga Smirnova',                     contact:'',                 eaddress:'',                     email:'olga.smirnova@pasts.example',      attrs:{valoda:'ru', veids:'privatpersona', dalibas_veids:'telefons', ieprieks:'jauns'}},
-      {id:'r4',  name:'Edgars Liepa',                      contact:'',                 eaddress:'_PRIVATE@00000000204', email:'edgars.liepa@' + BOUNCE_DOMAIN,    attrs:{valoda:'en', veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
-      {id:'r5',  name:'Dace Vītola',                       contact:'',                 eaddress:'_PRIVATE@00000000205', email:'dace.vitola@pasts.example',        attrs:{valoda:'lv', veids:'privatpersona', dalibas_veids:'klatiene', ieprieks:'piedalijas'}},
-      {id:'r6',  name:'SIA “Ziemeļblāzmas Koks”',          contact:'Jānis Bērziņš',    eaddress:'_DEFAULT@00000000101', email:'j.berzins@ziemelblazma.example',   attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
-      {id:'r7',  name:'AS “Daugavkrasta Piens”',           contact:'Kristīne Kalniņa', eaddress:'_DEFAULT@00000000102', email:'k.kalnina@daugavkrasts.example',   attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
-      {id:'r8',  name:'SIA “Mākoņu Maiznīca”',             contact:'Pēteris Ozols',    eaddress:'_DEFAULT@00000000103', email:'info@makonumaiznica.example',      attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'telefons', ieprieks:'piedalijas'}},
-      {id:'r9',  name:'Zemnieku saimniecība “Lejasbirzes”', contact:'Anna Liepiņa',     eaddress:'_DEFAULT@00000000104', email:'',                                 attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'telefons', ieprieks:'jauns'}},
-      {id:'r10', name:'SIA “Latgales Keramika”',           contact:'Dace Pūce',        eaddress:'_DEFAULT@00000000110', email:'dace.puce@latgkeramika.example',   attrs:{valoda:'en', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
-      {id:'r11', name:'SIA “Rīgas Ritenis”',               contact:'Ilze Ozola',       regNr:'40000000111', eaddress:'_DEFAULT@00000000111', email:'ilze.ozola@rigasritenis.example',   email2:'gramatvediba@rigasritenis.example', attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
-      {id:'r12', name:'AS “Baltijas Stikls”',              contact:'Māris Kalns',      regNr:'40000000112', eaddress:'_DEFAULT@00000000112', email:'m.kalns@baltijasstikls.example',    email2:'statistika@baltijasstikls.example', attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
-      {id:'r13', name:'SIA “Kurzemes Zivis”',              contact:'Laila Zariņa',     regNr:'40000000113', eaddress:'_DEFAULT@00000000113', email:'laila@kurzemeszivis.example',       email2:'', attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
-      {id:'r14', name:'SIA “Vidzemes Mežsaimnieks”',       contact:'Artūrs Krūmiņš',   regNr:'40000000114', eaddress:'_DEFAULT@00000000114', email:'a.krumins@vidzemesmezs.example',    email2:'birojs@vidzemesmezs.example', attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
-      {id:'r15', name:'SIA “Zemgales Graudi”',             contact:'Inese Priede',     regNr:'40000000115', eaddress:'_DEFAULT@00000000115', email:'inese.priede@zemgalesgraudi.example', email2:'', attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
-      {id:'r16', name:'SIA “Datu Darbnīca”',               contact:'Roberts Liepiņš',  regNr:'40000000116', eaddress:'_DEFAULT@00000000116', email:'roberts@datudarbnica.example',      email2:'finance@datudarbnica.example', attrs:{valoda:'en', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
-      {id:'r17', name:'SIA “Jūrmalas Viesnīca”',           contact:'Sandra Bērza',     regNr:'40000000117', eaddress:'_DEFAULT@00000000117', email:'sandra.berza@jurmalasviesnica.example', email2:'', attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'telefons', ieprieks:'piedalijas'}},
-      {id:'r18', name:'SIA “Latvijas Tekstils”',           contact:'Gatis Ābols',      regNr:'40000000118', eaddress:'_DEFAULT@00000000118', email:'g.abols@lvtekstils.example',        email2:'gramatvede@lvtekstils.example', attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
-      {id:'r19', name:'AS “Gaujas Enerģija”',              contact:'Evija Kļava',      regNr:'40000000119', eaddress:'_DEFAULT@00000000119', email:'evija.klava@gaujasenergija.example', email2:'', attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
-      {id:'r20', name:'SIA “Ventspils Loģistika”',         contact:'Nikolajs Ivanovs', regNr:'40000000120', eaddress:'_DEFAULT@00000000120', email:'n.ivanovs@ventspilslog.example',    email2:'', attrs:{valoda:'ru', veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
-      {id:'r21', name:'Anna Bērziņa',                      contact:'',                 eaddress:'_PRIVATE@00000000221', email:'anna.berzina@pasts.example',       email2:'', attrs:{valoda:'lv', veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
-      {id:'r22', name:'Mārtiņš Kalniņš',                   contact:'',                 eaddress:'_PRIVATE@00000000222', email:'martins.kalnins@inbox.example',    email2:'m.kalnins@darbs.example', attrs:{valoda:'lv', veids:'privatpersona', dalibas_veids:'telefons', ieprieks:'jauns'}},
-      {id:'r23', name:'Ivans Kozlovs',                     contact:'',                 eaddress:'',                     email:'ivans.kozlovs@pasts.example',      email2:'', attrs:{valoda:'ru', veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
-      {id:'r24', name:'Elīna Zvaigzne',                    contact:'',                 eaddress:'_PRIVATE@00000000224', email:'elina.zvaigzne@pasts.example',     email2:'', attrs:{valoda:'lv', veids:'privatpersona', dalibas_veids:'klatiene', ieprieks:'piedalijas'}},
-      {id:'r26', name:'SIA “Ziemeļblāzmas Koks” – Valmieras ražotne', contact:'Juris Kalns',  eaddress:'', email:'valmiera@ziemelblazma.example', email2:'', attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa', ieprieks:'piedalijas'}},
-      {id:'r27', name:'SIA “Ziemeļblāzmas Koks” – Rēzeknes noliktava', contact:'Olga Lāce', eaddress:'', email:'rezekne@ziemelblazma.example', email2:'', attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa', ieprieks:'piedalijas'}},
-      {id:'r28', name:'AS “Baltijas Stikls” – Liepājas rūpnīca', contact:'Edgars Smilga',  eaddress:'', email:'liepaja@baltijasstikls.example', email2:'', attrs:{valoda:'lv', veids:'uznemums', dalibas_veids:'eanketa', ieprieks:'jauns'}},
-      {id:'r25', name:'Kārlis Lapsa',                      contact:'',                 eaddress:'_PRIVATE@00000000225', email:'karlis.lapsa@inbox.example',       email2:'', attrs:{valoda:'lv', veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
+      {id:'r1',  name:'Laura Kalēja',                      contact:'',                 eaddress:'_PRIVATE@00000000201', email:'laura.kaleja@pasts.example',       attrs:{veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
+      {id:'r2',  name:'Sergejs Petrovs',                   contact:'',                 eaddress:'_PRIVATE@00000000202', email:'sergejs.petrovs@inbox.example',    attrs:{veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
+      {id:'r3',  name:'Olga Smirnova',                     contact:'',                 eaddress:'',                     email:'olga.smirnova@pasts.example',      attrs:{veids:'privatpersona', dalibas_veids:'telefons', ieprieks:'jauns'}},
+      {id:'r4',  name:'Edgars Liepa',                      contact:'',                 eaddress:'_PRIVATE@00000000204', email:'edgars.liepa@' + BOUNCE_DOMAIN,    attrs:{veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
+      {id:'r5',  name:'Dace Vītola',                       contact:'',                 eaddress:'_PRIVATE@00000000205', email:'dace.vitola@pasts.example',        attrs:{veids:'privatpersona', dalibas_veids:'klatiene', ieprieks:'piedalijas'}},
+      {id:'r6',  name:'SIA “Ziemeļblāzmas Koks”',          contact:'Jānis Bērziņš',    eaddress:'_DEFAULT@00000000101', email:'j.berzins@ziemelblazma.example',   attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
+      {id:'r7',  name:'AS “Daugavkrasta Piens”',           contact:'Kristīne Kalniņa', eaddress:'_DEFAULT@00000000102', email:'k.kalnina@daugavkrasts.example',   attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
+      {id:'r8',  name:'SIA “Mākoņu Maiznīca”',             contact:'Pēteris Ozols',    eaddress:'_DEFAULT@00000000103', email:'info@makonumaiznica.example',      attrs:{veids:'uznemums', dalibas_veids:'telefons', ieprieks:'piedalijas'}},
+      {id:'r9',  name:'Zemnieku saimniecība “Lejasbirzes”', contact:'Anna Liepiņa',     eaddress:'_DEFAULT@00000000104', email:'',                                 attrs:{veids:'uznemums', dalibas_veids:'telefons', ieprieks:'jauns'}},
+      {id:'r10', name:'SIA “Latgales Keramika”',           contact:'Dace Pūce',        eaddress:'_DEFAULT@00000000110', email:'dace.puce@latgkeramika.example',   attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
+      {id:'r11', name:'SIA “Rīgas Ritenis”',               contact:'Ilze Ozola',       regNr:'40000000111', eaddress:'_DEFAULT@00000000111', email:'ilze.ozola@rigasritenis.example',   email2:'gramatvediba@rigasritenis.example', attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
+      {id:'r12', name:'AS “Baltijas Stikls”',              contact:'Māris Kalns',      regNr:'40000000112', eaddress:'_DEFAULT@00000000112', email:'m.kalns@baltijasstikls.example',    email2:'statistika@baltijasstikls.example', attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
+      {id:'r13', name:'SIA “Kurzemes Zivis”',              contact:'Laila Zariņa',     regNr:'40000000113', eaddress:'_DEFAULT@00000000113', email:'laila@kurzemeszivis.example',       email2:'', attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
+      {id:'r14', name:'SIA “Vidzemes Mežsaimnieks”',       contact:'Artūrs Krūmiņš',   regNr:'40000000114', eaddress:'_DEFAULT@00000000114', email:'a.krumins@vidzemesmezs.example',    email2:'birojs@vidzemesmezs.example', attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
+      {id:'r15', name:'SIA “Zemgales Graudi”',             contact:'Inese Priede',     regNr:'40000000115', eaddress:'_DEFAULT@00000000115', email:'inese.priede@zemgalesgraudi.example', email2:'', attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
+      {id:'r16', name:'SIA “Datu Darbnīca”',               contact:'Roberts Liepiņš',  regNr:'40000000116', eaddress:'_DEFAULT@00000000116', email:'roberts@datudarbnica.example',      email2:'finance@datudarbnica.example', attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
+      {id:'r17', name:'SIA “Jūrmalas Viesnīca”',           contact:'Sandra Bērza',     regNr:'40000000117', eaddress:'_DEFAULT@00000000117', email:'sandra.berza@jurmalasviesnica.example', email2:'', attrs:{veids:'uznemums', dalibas_veids:'telefons', ieprieks:'piedalijas'}},
+      {id:'r18', name:'SIA “Latvijas Tekstils”',           contact:'Gatis Ābols',      regNr:'40000000118', eaddress:'_DEFAULT@00000000118', email:'g.abols@lvtekstils.example',        email2:'gramatvede@lvtekstils.example', attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
+      {id:'r19', name:'AS “Gaujas Enerģija”',              contact:'Evija Kļava',      regNr:'40000000119', eaddress:'_DEFAULT@00000000119', email:'evija.klava@gaujasenergija.example', email2:'', attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
+      {id:'r20', name:'SIA “Ventspils Loģistika”',         contact:'Nikolajs Ivanovs', regNr:'40000000120', eaddress:'_DEFAULT@00000000120', email:'n.ivanovs@ventspilslog.example',    email2:'', attrs:{veids:'uznemums', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
+      {id:'r21', name:'Anna Bērziņa',                      contact:'',                 eaddress:'_PRIVATE@00000000221', email:'anna.berzina@pasts.example',       email2:'', attrs:{veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'piedalijas'}},
+      {id:'r22', name:'Mārtiņš Kalniņš',                   contact:'',                 eaddress:'_PRIVATE@00000000222', email:'martins.kalnins@inbox.example',    email2:'m.kalnins@darbs.example', attrs:{veids:'privatpersona', dalibas_veids:'telefons', ieprieks:'jauns'}},
+      {id:'r23', name:'Ivans Kozlovs',                     contact:'',                 eaddress:'',                     email:'ivans.kozlovs@pasts.example',      email2:'', attrs:{veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'nepiedalijas'}},
+      {id:'r24', name:'Elīna Zvaigzne',                    contact:'',                 eaddress:'_PRIVATE@00000000224', email:'elina.zvaigzne@pasts.example',     email2:'', attrs:{veids:'privatpersona', dalibas_veids:'klatiene', ieprieks:'piedalijas'}},
+      {id:'r26', name:'SIA “Ziemeļblāzmas Koks” – Valmieras ražotne', contact:'Juris Kalns',  eaddress:'', email:'valmiera@ziemelblazma.example', email2:'', attrs:{veids:'uznemums', dalibas_veids:'eanketa', ieprieks:'piedalijas'}},
+      {id:'r27', name:'SIA “Ziemeļblāzmas Koks” – Rēzeknes noliktava', contact:'Olga Lāce', eaddress:'', email:'rezekne@ziemelblazma.example', email2:'', attrs:{veids:'uznemums', dalibas_veids:'eanketa', ieprieks:'piedalijas'}},
+      {id:'r28', name:'AS “Baltijas Stikls” – Liepājas rūpnīca', contact:'Edgars Smilga',  eaddress:'', email:'liepaja@baltijasstikls.example', email2:'', attrs:{veids:'uznemums', dalibas_veids:'eanketa', ieprieks:'jauns'}},
+      {id:'r25', name:'Kārlis Lapsa',                      contact:'',                 eaddress:'_PRIVATE@00000000225', email:'karlis.lapsa@inbox.example',       email2:'', attrs:{veids:'privatpersona', dalibas_veids:'eanketa',  ieprieks:'jauns'}},
     ],
     sent: [],
     images: {},
@@ -3101,6 +3129,7 @@ function onlyLv(s){
     });
   };
   walk([s.templates, s.layout, s.drafts, s.draft, s.planned, s.mailSamples, s.reports]);
+  (s.respondents || []).forEach(r => { if (r.attrs) delete r.attrs.valoda; });
 }
 function loadState(){
   try {
@@ -3236,10 +3265,10 @@ const compose = {
 const sessionSnapshot = () => ({name:compose.name, aud:compose.aud, kind:compose.kind, remind:compose.remind, sel:clone(compose.sel),
   excluded:[...compose.excluded], surveyIdx:compose.surveyIdx, f:{...compose.f}, prio:[...compose.prio], filt:{...compose.filt}, sign:{...compose.sign},
   content: compose.content ? clone(compose.content) : null, when:compose.when, sendTime:compose.sendTime, esign:clone(compose.esign),
-  custom:clone(compose.custom), step:compose.step, varOvr:clone(compose.varOvr), addrFix:clone(compose.addrFix || {}), addrUndo:clone(compose.addrUndo || {}), nameAuto:!!compose.nameAuto});
+  custom:clone(compose.custom), step:compose.step, varOvr:clone(compose.varOvr), addrFix:clone(compose.addrFix || {}), addrUndo:clone(compose.addrUndo || {}), nameAuto:!!compose.nameAuto, createdAt:compose.createdAt || ''});
 function applySnapshot(d){
   Object.assign(compose, {
-    name: d.name || defaultSessionName(), nameAuto: !d.name || !!d.nameAuto, aud: AUDS[d.aud] ? d.aud : 'fiz',
+    name: d.name || defaultSessionName(), nameAuto: !d.name || !!d.nameAuto, createdAt: d.createdAt || d.savedAt || '', aud: AUDS[d.aud] ? d.aud : 'fiz',
     kind: SESS_KINDS[d.kind] ? d.kind : 'uzaicinajums', remind: d.remind === 'after' ? 'after' : 'before',
     sel: migrateSel(d.sel), excluded: new Set(d.excluded || []), surveyIdx: d.surveyIdx || 0,
     f: {...compose.f, ...(d.f || {})}, prio: Array.isArray(d.prio) && d.prio[0] ? [...d.prio] : [...DEFAULT_PRIO],
@@ -3307,7 +3336,7 @@ function renderDraftInfo(){
 }
 // Jauna kampaņa (pēc nosūtīšanas – saglabā apsekojuma datus un adrešu prioritāti)
 function newSession(full){
-  Object.assign(compose, {draftId:'k' + uid(), nameAuto:true, content:null, sign:{signer:'', position:''}, excluded:new Set(), open:new Set(), index:0, noneOpen:false});
+  Object.assign(compose, {draftId:'k' + uid(), nameAuto:true, createdAt:new Date().toISOString(), content:null, sign:{signer:'', position:''}, excluded:new Set(), open:new Set(), index:0, noneOpen:false});
   // jaunai kampaņai – noklusējuma veids un atlase; pēc nosūtīšanas saglabājas adresāts, apsekojuma dati un adrešu prioritāte
   Object.assign(compose, {kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', repF:'', when:'now', sendTime:'09:00', esign:defaultEsign(), custom:{}, step:1, pvCh:'', tried:new Set(), varOvr:{}, addrFix:{}, addrUndo:{}, acF:''});
   if (full) Object.assign(compose, {aud:'fiz', surveyIdx:0, prio:[...DEFAULT_PRIO], filt:{},
@@ -3316,7 +3345,7 @@ function newSession(full){
   compose.f.docNr = nextDocNr();
   clearTimeout(draftTimer); state.activeDraft = compose.draftId;
 }
-const ui = {campView:'list', camp:{q:'', kind:'', status:''}, hist:{q:'', kind:'', status:'', camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histRow:new Set(), histLimit:50, cardId:'',
+const ui = {campView:'list', camp:{q:'', kind:'', status:'', creator:'', quick:'', from:'', to:''}, campRaw:{}, hist:{q:'', kind:'', status:'', camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histRow:new Set(), histLimit:50, cardId:'',
   rep:{from:'', to:'', camp:'', kind:'', ch:'', sort:{key:'date', dir:'desc'}},
   tplView:'veidnes', sagGroup:'mail', sag:{q:'', aud:'', cat:'', lang:''}, newIds:new Set(), tplAud:'fiz', tplSearch:'', attSearch:'', attAud:'', attCat:'', attLang:''};
 // Sakļautie kategoriju bloki (tikai šajā kampaņā – pēc noklusējuma visi izvērsti)
@@ -3687,7 +3716,7 @@ function chMsg(msg, ch){
 }
 const verNote = (c, ch) => c.fb ? `<div class="alert alert-warn ver-fb">${ICON.warn}<span>${ch === 'eadrese' ? 'Nav eAdreses versijas – eAdresē tiks nosūtīts e-pasta teksts bez noformējuma.' : 'Nav e-pasta versijas – e-pastā tiks nosūtīts eAdreses teksts.'}</span></div>` : '';
 function buildMessage(t0, r, mark, attrs = respAttrs(r)){
-  const ver = versionOf(t0, attrs.valoda), t = ver.t, L = layoutFor(ver.lang);
+  const ver = versionOf(t0), t = ver.t, L = layoutFor();
   const ctx = ctxFor(r, compose.f, ver.lang);
   const plain = htmlToText(expandTables(t.body, ctx, false));
   const msg = {
@@ -4514,7 +4543,7 @@ function openTemplateEditor(id, preset = {}){
   let bodyEd, docEd, extraOpen = false, prevKind = t.kind || '', chTab = 'epasts';
 
   openModal({
-    title: sess ? `Vēstules saturs: ${compose.name}` : existing ? 'Rediģēt veidni' : 'Jauna veidne', editor:true, back: sess ? '← Atpakaļ uz kampaņu' : '← Atpakaļ uz veidnēm',
+    title: sess ? `Vēstules saturs: ${compose.name}` : existing ? 'Rediģēt veidni' : 'Jauna veidne', editor:true, back: sess ? '← Atpakaļ uz kampaņu' : '',
     content:`<div class="editor-grid">
       <div id="te-form">
         ${sess ? `<div class="sess-info">Statistikas joma: <b>${esc(AUDS[t.aud].field)}</b> (no kampaņas)${baseTpl ? ` · Veidne: <b>${esc(baseTpl.name)}</b> – izmaiņas attiecas tikai uz šo kampaņu, veidne netiek mainīta.` : ''}</div>` : ''}
@@ -4522,7 +4551,7 @@ function openTemplateEditor(id, preset = {}){
           <input type="text" id="te-name" value="${esc(t.name)}" maxlength="120"><span class="err" id="te-name-err" hidden></span></div>
         <div class="te-row3${sess ? ' sess' : ''}">
           <div class="field"${sess ? ' hidden' : ''}><label for="te-aud">Adresāts ${tip('Jauktajai komunikācijai lietojiet lauku {adresāts} – uzņēmumiem tas būs nosaukums, fiziskām personām – vārds.', 'te-aud-hint')}</label>
-            <select id="te-aud">${Object.entries(AUDS).map(([k, a]) => `<option value="${k}" ${t.aud === k ? 'selected' : ''}>${esc(a.label)}</option>`).join('')}</select></div>
+            <select id="te-aud">${Object.entries(AUDS).map(([k, a]) => `<option value="${k}" ${t.aud === k ? 'selected' : ''}>${esc(a.field)}</option>`).join('')}</select></div>
           <div class="field"${sess ? ' hidden' : ''}><label for="te-cat">Kategorija</label>
             <select id="te-cat">${CATS.map(c => `<option value="${c.key}" ${t.cat === c.key ? 'selected' : ''}>${esc(c.one)}</option>`).join('')}</select></div>
         </div>
@@ -4878,7 +4907,7 @@ function openTemplateEditor(id, preset = {}){
       return;
     }
     const cur = current();
-    const pvAttrs = {...respAttrs(sample), valoda: lang};
+    const pvAttrs = respAttrs(sample);
     const msg = buildMessage(cur, sample, true, pvAttrs);
     let html;
     if (pv === 'doc' && msg.attachments.length) html = `<div class="doc-inline-head"><span>${ICON.clip} ${esc(msg.attachments[0].name)}</span></div>${msg.attachments[0].html}`;
@@ -6332,9 +6361,9 @@ function respDetails(r, addrCell, tableKeys = []){
   const a = respAttrs(r), op = OPERATORS.find(o => o.id === r.operator), e3 = addrCheck(r, 'email3');
   const row = (l, v) => v ? `<dt>${esc(l)}</dt><dd>${esc(v)}</dd>` : '';
   const cell = k => addrCell(r, k).replace(/^<td class="c-addr">|<\/td>$/g, '');
-  const vals = k => { const d = ATTR_BY_KEY[k], v = d && a[k] ? d.values[a[k]] : null; return v ? (k === 'valoda' ? v.label : v.short || v.label) : a[k] || ''; };
+  const vals = k => { const d = ATTR_BY_KEY[k], v = d && a[k] ? d.values[a[k]] : null; return v ? v.short || v.label : a[k] || ''; };
   return `<div class="r-det">
-    <section><h4>Respondents</h4><dl>${row('Nosaukums', r.name)}${row('Kontaktpersona', r.contact)}${row('NMK', r.nmk)}${row('NMK/PS', r.nmkps)}${row('UUK', r.uuk)}${row('Veids', vals('veids'))}${row('Valoda', vals('valoda'))}${row('Dalības veids', vals('dalibas_veids'))}${row('Atbildīgais operators', op && op.name)}${r.statusCode ? row('Statusa šifrs', `${r.statusCode} – ${STATUS_CODES[r.statusCode] || ''}`) : ''}</dl></section>
+    <section><h4>Respondents</h4><dl>${row('Nosaukums', r.name)}${row('Kontaktpersona', r.contact)}${row('NMK', r.nmk)}${row('NMK/PS', r.nmkps)}${row('UUK', r.uuk)}${row('Veids', vals('veids'))}${''}${row('Dalības veids', vals('dalibas_veids'))}${row('Atbildīgais operators', op && op.name)}${r.statusCode ? row('Statusa šifrs', `${r.statusCode} – ${STATUS_CODES[r.statusCode] || ''}`) : ''}</dl></section>
     <section><h4>Elektroniskās adreses</h4><dl>${ADDR_KEYS.filter(k => k !== 'email3' || e3.status !== 'empty' || ui.acEdit === e3.key).map(k => `<dt>${esc(addrShort(k))}</dt><dd>${ui.acEdit === r.id + '|' + k && tableKeys.includes(k) ? esc(addrCheck(r, k).value || '—') : cell(k)}</dd>`).join('')}</dl>
       ${e3.status === 'empty' && ui.acEdit !== e3.key ? `<button type="button" class="btn btn-secondary btn-sm ac-add" data-ac-edit="${r.id}|email3">${ICON.plus}Pievienot e-pastu</button>` : ''}</section>
   </div>`;
@@ -6486,15 +6515,14 @@ function renderComposePreview(){
 function letterTpl(t, r){
   const c = compose.custom[r.id];
   if (!c) return t;
-  const want = respAttrs(r).valoda, tt = {...t, files:clone(c.files || []), tr:{...(t.tr || {})}};
-  if (want !== 'lv' && tt.tr[want]) tt.tr[want] = {...tt.tr[want], subject:c.subject, body:c.body};
-  else { tt.subject = c.subject; tt.body = c.body; }
+  const tt = {...t, files:clone(c.files || []), tr:{...(t.tr || {})}};
+  tt.subject = c.subject; tt.body = c.body;
   return tt;
 }
 function openLetterCustomizer(rid){
   const r = state.respondents.find(x => x.id === rid), t = currentTemplate();
   if (!r || !t) return;
-  const cur = compose.custom[rid], v = versionOf(t, respAttrs(r).valoda).t;
+  const cur = compose.custom[rid], v = versionOf(t).t;
   let files = clone(cur ? cur.files || [] : t.files || []), ed;
   const renderFiles = () => {
     $('#lc-files').innerHTML = files.length ? files.map((f, i) => `<div class="file-row">${ICON.file}<span class="name">${esc((f.lib && attById(f.lib) || {}).name || f.name)}</span><small class="muted">${fmtSize(f.size || 0)}</small>
@@ -6540,7 +6568,7 @@ async function send(){
     if (!ok) return;
     state.planned = state.planned || [];
     state.planned.unshift({id:'pl' + uid(), name:compose.name, kindKey:sessKindKey(), sendDate:compose.sel.sendDate, sendTime:compose.sendTime, target:remindTarget(),
-      contentName:contentName(t), contentLabel:contentLabel(), esign:compose.esign.required, prio:compose.prio.filter(Boolean), count:n, createdAt:new Date().toISOString(), createdBy:CURRENT_USER, snap:sessionSnapshot()});
+      contentName:contentName(t), contentLabel:contentLabel(), esign:compose.esign.required, prio:compose.prio.filter(Boolean), count:n, createdAt:compose.createdAt || new Date().toISOString(), createdBy:CURRENT_USER, snap:sessionSnapshot()});
     removeDraft(compose.draftId);
     newSession(false); save();
     renderCounts();
@@ -6584,7 +6612,7 @@ function doSend(meta = {}){
     const force = fq && first ? fq[ADDR_TYPES[first.type].ch].shift() : undefined;
     const attempts = deliveryAttempts(r, compose.prio, `${batch}|${r.id}|${now}`, force), fin = finalAttempt(attempts);
     if (!signing) stampAttempts(attempts, now);
-    const rec = {id:'s' + uid(), batch, seed:!!meta.seed, createdBy:meta.seed ? '' : CURRENT_USER, sessionName:compose.name, sessionKind:sessKindKey(), plannedFor:meta.plannedFor || '', contentSource:compose.content.source, sentAt:now,
+    const rec = {id:'s' + uid(), batch, seed:!!meta.seed, createdBy:meta.seed ? '' : CURRENT_USER, createdAt:meta.seed ? '' : (compose.createdAt || now), sessionName:compose.name, sessionKind:sessKindKey(), plannedFor:meta.plannedFor || '', contentSource:compose.content.source, sentAt:now,
       templateId:compose.content.templateId || '', templateName:contentName(t), kind:t.kind, respondentId:r.id,
       recipient:r.name, address:fin.address, addrType:fin.type, channel:ADDR_TYPES[fin.type].ch, prio:compose.prio.filter(Boolean), attempts, docNr:compose.f.docNr,
       duties:msgDuties(r).map(d => d.id),
@@ -6812,7 +6840,31 @@ function withSnap(snap, fn){
   applySnapshot(snap);
   try { return fn(); } finally { applySnapshot(keep); Object.assign(compose, {draftId:id, index:idx, open, search:q}); }
 }
-const kindOpts = cur => optList(Object.entries(SESS_LABELS), cur, 'Visi kampaņu veidi');
+const kindOpts = cur => optList(Object.entries(SESS_KINDS).map(([k, v]) => [k, v.label]), cur, 'Visi veidi');
+const baseKind = k => k && k.startsWith('atg') ? 'atgadinajums' : k;
+const CAMP_QUICK = [['', 'Jebkurā laikā'], ['today', 'Šodien'], ['7d', 'Pēdējās 7 dienas'], ['month', 'Šis mēnesis'], ['year', 'Šis gads']];
+const campFiltOn = () => !!(ui.camp.q.trim() || ui.camp.kind || ui.camp.creator || ui.camp.from || ui.camp.to);
+const campFiltCount = () => [ui.camp.q.trim(), ui.camp.kind, ui.camp.creator, ui.camp.from || ui.camp.to].filter(Boolean).length;
+const campCreated = x => x.created ? isoDate(new Date(x.created)) : '';
+// filtru joslas vērtības (meklēšana, veids, veidotājs, izveides periods)
+function renderCampFilters(rows){
+  const c = ui.camp;
+  if (c.kind && !SESS_KINDS[c.kind]) c.kind = '';
+  $('#camp-kind').innerHTML = kindOpts(c.kind);
+  if (document.activeElement !== $('#camp-search')) $('#camp-search').value = c.q;
+  const creators = [...new Set(rows.map(x => x.creator).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'lv'));
+  $('#cf-creator-sum').textContent = c.creator || 'Visi veidotāji';
+  $('#cf-creator-sum').classList.toggle('is-on', !!c.creator);
+  const qq = norm($('#cf-creator-q').value);
+  const opts = [['', 'Visi veidotāji'], ...creators.map(n => [n, n])].filter(([k, l]) => !qq || !k || norm(l).includes(qq));
+  $('#cf-creator-list').innerHTML = opts.map(([k, l]) => `<button type="button" role="option" data-cf-creator="${esc(k)}" aria-selected="${c.creator === k}">${esc(l)}</button>`).join('') + (opts.length <= 1 && qq ? '<div class="cf-none">Nav atrasts</div>' : '');
+  $('#cf-quick').innerHTML = CAMP_QUICK.map(([k, l]) => `<option value="${k}" ${c.quick === k ? 'selected' : ''}>${esc(l)}</option>`).join('') + (c.quick === 'custom' ? '<option value="custom" selected>Norādīts periods</option>' : '');
+  ['from', 'to'].forEach(k => { const el = $('#cf-' + k); if (document.activeElement !== el) el.value = ui.campRaw[k] ?? dmy(c[k]); el.setAttribute('aria-invalid', String(ui.campRaw[k] != null)); });
+  const bad = ui.campRaw.from != null || ui.campRaw.to != null ? 'Ievadiet datumu formātā DD.MM.GGGG.' : c.from && c.to && c.from > c.to ? 'Perioda sākums nevar būt vēlāks par beigām.' : '';
+  $('#cf-err').hidden = !bad; $('#cf-err').textContent = bad;
+  $('#cf-clear').hidden = !campFiltOn();
+  const n = campFiltCount(); $('#cf-cnt').hidden = !n; $('#cf-cnt').textContent = n;
+}
 // Kampaņu saraksts: Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās
 const CAMP_SUBS = [['all', 'Visas'], ['draft', 'Melnraksti'], ['planned', 'Ieplānotās'], ['active', 'Izpildē'], ['done', 'Pabeigtās']];
 // kampaņas statuss: birka un filtra sadaļa
@@ -6839,10 +6891,10 @@ function campKindCell(k){
 // visas kampaņas (melnraksti, ieplānotās, nosūtītās) vienotā formā
 function campRows(){
   const rows = [
-    ...(state.drafts || []).map(d => ({key:'draft:' + d.id, type:'draft', id:d.id, name:d.name, kind:sessKindKey(d), ts:d.savedAt, st:'draft',
+    ...(state.drafts || []).map(d => ({key:'draft:' + d.id, type:'draft', id:d.id, name:d.name, kind:sessKindKey(d), ts:d.savedAt, st:'draft', created:d.createdAt || d.savedAt, creator:d.createdBy || CURRENT_USER,
       meta:`Saglabāta ${fmtStamp(d.savedAt)}`, when: d.when === 'plan' ? `Plānota ${fmtShortDay(d.sel.sendDate, d.sendTime)}` : 'Tūlīt pēc apstiprināšanas',
       n:withSnap(d, () => selectedResp().length), d})),
-    ...(state.planned || []).map(pl => ({key:'planned:' + pl.id, type:'planned', id:pl.id, name:pl.name, kind:pl.kindKey, ts:pl.createdAt || pl.sendDate, st:'planned',
+    ...(state.planned || []).map(pl => ({key:'planned:' + pl.id, type:'planned', id:pl.id, name:pl.name, kind:pl.kindKey, ts:pl.createdAt || pl.sendDate, st:'planned', created:pl.createdAt || pl.sendDate, creator:pl.createdBy || CURRENT_USER,
       meta:`Izveidoja: ${pl.createdBy || CURRENT_USER}${pl.createdAt ? `, ${fmtDate(isoDate(new Date(pl.createdAt)))}` : ''}`,
       when:`Plānota ${fmtShortDay(pl.sendDate, pl.sendTime)}`, n:pl.count ?? '—', pl})),
     ...[...new Set(state.sent.map(x => x.batch))].map(b => {
@@ -6851,7 +6903,8 @@ function campRows(){
       const st = sign ? 'sign' : xs.some(x => ST_PROC.includes(x.status)) ? 'active' : fail ? 'part' : 'done';
       const signed = xs.map(x => x.signedAt).filter(Boolean).sort().pop();
       return {key:'sent:' + b, type:'sent', id:b, name:x0.sessionName || `Kampaņa Nr. ${b}`, kind:x0.sessionKind || '', ts: signed && signed > x0.sentAt ? signed : x0.sentAt, st,
-        meta:`Izveidoja: ${x0.createdBy || '—'}, ${fmtDate(isoDate(new Date(x0.sentAt)))}`,
+        created:x0.createdAt || x0.sentAt, creator:x0.createdBy || '',
+        meta:`Izveidoja: ${x0.createdBy || '—'}, ${fmtDate(isoDate(new Date(x0.createdAt || x0.sentAt)))}`,
         when: sign ? 'Tūlīt pēc apstiprināšanas' : `Nosūtīta ${fmtShortIso(signed || x0.sentAt)}`, n:xs.length, xs, sign, ok, fail};
     }),
   ];
@@ -6872,13 +6925,15 @@ function renderCampaigns(){
   refreshStatuses();
   if (ui.campView === 'edit') flushDraft();
   const menuKey = campMenuBtn && campMenuBtn.dataset.id;
-  $('#camp-kind').innerHTML = kindOpts(ui.camp.kind);
   const rows = campRows();
+  renderCampFilters(rows);
   if (!CAMP_SUBS.some(([k]) => k === ui.campSub)) ui.campSub = 'all';
   $('#camp-sub').innerHTML = subnavHtml(CAMP_SUBS, ui.campSub, 'csub');
   const q = norm(ui.camp.q);
   hideCTip();
-  const list = rows.filter(x => (ui.campSub === 'all' || CAMP_ST[x.st].sub === ui.campSub) && (!ui.camp.kind || x.kind === ui.camp.kind) && (!q || norm(x.name).includes(q)));
+  const c = ui.camp;
+  const list = rows.filter(x => (ui.campSub === 'all' || CAMP_ST[x.st].sub === ui.campSub) && (!c.kind || baseKind(x.kind) === c.kind) && (!q || norm(x.name).includes(q)) &&
+    (!c.creator || x.creator === c.creator) && (!c.from || campCreated(x) >= c.from) && (!c.to || campCreated(x) <= c.to));
   const row = x => `<tr class="camp-row" data-action="camp-row" data-id="${esc(x.key)}">
       <td><button type="button" class="camp-name" data-action="camp-row" data-id="${esc(x.key)}" data-ctip="${esc(x.name + '\n' + x.meta)}" aria-description="${esc(x.meta)}">${esc(x.name)}</button></td>
       <td>${campKindCell(x.kind)}</td>
@@ -6890,8 +6945,10 @@ function renderCampaigns(){
   const page = list.slice(0, ui.campLimit), shown = page.length, html = page.map(row).join('');
   $('#camp-tbody').innerHTML = !rows.length ? `<tr><td colspan="7"><div class="empty">${ICON.send}<h3>Vēl nav nevienas kampaņas</h3>
       <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></td></tr>`
-    : !list.length ? `<tr><td colspan="7"><div class="empty"><h3>${ui.camp.q || ui.camp.kind ? 'Nekas netika atrasts' : `Nav kampaņu sadaļā “${esc((CAMP_SUBS.find(([k]) => k === ui.campSub) || [])[1])}”`}</h3>
-      <p>${ui.camp.q || ui.camp.kind ? 'Mainiet meklēšanas vai filtra nosacījumus.' : 'Izvēlieties citu sadaļu vai izveidojiet jaunu kampaņu.'}</p></div></td></tr>`
+    : !list.length ? (campFiltOn() ? `<tr><td colspan="7"><div class="empty"><h3>Nav kampaņu, kas atbilst filtriem</h3>
+      <button type="button" class="btn btn-secondary" data-action="camp-filt-clear">Notīrīt filtrus</button></div></td></tr>`
+      : `<tr><td colspan="7"><div class="empty"><h3>Nav kampaņu sadaļā “${esc((CAMP_SUBS.find(([k]) => k === ui.campSub) || [])[1])}”</h3>
+      <p>Izvēlieties citu sadaļu vai izveidojiet jaunu kampaņu.</p></div></td></tr>`)
     : html;
   $('#camp-foot').innerHTML = list.length ? `<span>Rādītas <b>${shown}</b> no <b>${list.length}</b></span>${shown < list.length ? `<button type="button" class="btn btn-secondary btn-sm" data-action="camp-more-rows">Rādīt vairāk</button>` : ''}` : '';
   // atvērtā izvēlne paliek atvērta arī pēc statusu atjaunošanas
@@ -7021,7 +7078,11 @@ function histRange(q){
 }
 // kampaņu veidotāji (testa datos – dažādiem testa kampaņām dažādi)
 const CREATORS = [CURRENT_USER, 'Rūta Testa', 'Mārtiņš Paraudziņš', 'Elīna Izdomāta'];
-function assignCreators(){ (state.sent || []).forEach(x => { if (!x.createdBy) x.createdBy = x.seed ? CREATORS[x.batch % CREATORS.length] : CURRENT_USER; }); }
+function assignCreators(){ (state.sent || []).forEach(x => {
+  if (!x.createdBy) x.createdBy = x.seed ? CREATORS[x.batch % CREATORS.length] : CURRENT_USER;
+  // izveides datums (testa datos – 1–6 dienas pirms nosūtīšanas)
+  if (!x.createdAt) x.createdAt = x.seed ? new Date(Date.parse(x.sentAt) - ((x.batch % 6) + 1) * 864e5).toISOString() : x.sentAt;
+}); }
 const histNmks = h => splitVals(h.nmk);
 const respNmk = id => { const r = state.respondents.find(y => y.id === id); return r ? lc(r.nmk) : ''; };
 function histMatch(x, h){
@@ -7640,6 +7701,7 @@ const actions = {
   'sag-back': () => setTplView('veidnes'),
   'camp-history': id => showHistoryOf(id),
   'camp-row': id => openCampRow(id),
+  'camp-filt-clear': () => clearCampFilters(),
   'camp-more-rows': () => {
     const before = $$('#camp-tbody tr.camp-row').length;
     ui.campLimit += CAMP_PAGE; renderCampaigns();
@@ -7771,6 +7833,35 @@ modal.addEventListener('click', e => { if (e.target === modal) modal.close(); })
 
 $('#camp-search').addEventListener('input', e => { ui.camp.q = e.target.value; ui.campLimit = CAMP_PAGE; renderCampaigns(); });
 $('#camp-kind').addEventListener('change', e => { ui.camp.kind = e.target.value; ui.campLimit = CAMP_PAGE; renderCampaigns(); });
+// Veidotājs – izvēlne ar meklēšanu
+$('#cf-creator').addEventListener('toggle', e => { if (e.target.open){ $('#cf-creator-q').value = ''; renderCampaigns(); setTimeout(() => $('#cf-creator-q').focus(), 0); } });
+$('#cf-creator-q').addEventListener('input', () => { renderCampaigns(); $('#cf-creator-q').focus(); });
+$('#cf-creator-q').addEventListener('keydown', e => { if (e.key === 'ArrowDown'){ e.preventDefault(); const o = $('#cf-creator-list [role="option"]'); if (o) o.focus(); } if (e.key === 'Escape'){ $('#cf-creator').open = false; $('#cf-creator-sum').focus(); } });
+$('#cf-creator-list').addEventListener('keydown', e => { const os = $$('#cf-creator-list [role="option"]'), i = os.indexOf(document.activeElement);
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); const n = i + (e.key === 'ArrowDown' ? 1 : -1); if (n < 0) $('#cf-creator-q').focus(); else if (os[n]) os[n].focus(); }
+  if (e.key === 'Escape'){ $('#cf-creator').open = false; $('#cf-creator-sum').focus(); } });
+$('#cf-creator-list').addEventListener('click', e => { const o = e.target.closest('[data-cf-creator]'); if (!o) return; ui.camp.creator = o.dataset.cfCreator; ui.campLimit = CAMP_PAGE; $('#cf-creator').open = false; renderCampaigns(); $('#cf-creator-sum').focus(); });
+document.addEventListener('click', e => { const d = $('#cf-creator'); if (d && d.open && !d.contains(e.target)) d.open = false; });
+// Izveidota: ātrā izvēle un datumu diapazons (DD.MM.GGGG)
+$('#cf-quick').addEventListener('change', e => { const q = e.target.value; if (q === 'custom') return; Object.assign(ui.camp, {quick:q}, histRange(q)); ui.campRaw = {}; ui.campLimit = CAMP_PAGE; renderCampaigns(); });
+function campDateSet(k, v){
+  v = String(v || '').trim();
+  const iso = v ? parseDmy(v) : '';
+  if (v && !iso){ ui.campRaw[k] = v; renderCampaigns(); return; }
+  delete ui.campRaw[k]; ui.camp[k] = iso;
+  ui.camp.quick = ui.camp.from || ui.camp.to ? 'custom' : '';
+  ui.campLimit = CAMP_PAGE; renderCampaigns();
+}
+['from', 'to'].forEach(k => {
+  $(`#cf-${k}`).addEventListener('change', e => campDateSet(k, e.target.value));
+  $(`#cf-${k}`).addEventListener('keydown', e => { if (e.key === 'Enter') campDateSet(k, e.target.value); });
+  $(`#cf-${k}-pick`).addEventListener('change', e => { if (e.target.value){ campDateSet(k, e.target.value); $(`#cf-${k}`).focus(); } });
+});
+$('#camp-filters').addEventListener('click', e => { const cal = e.target.closest('[data-ccal]'); if (!cal) return; const k = cal.dataset.ccal, n = $(`#cf-${k}-pick`); n.value = ui.camp[k] || ''; try { n.showPicker(); } catch (err) { $(`#cf-${k}`).focus(); } });
+const clearCampFilters = () => { Object.assign(ui.camp, {q:'', kind:'', creator:'', quick:'', from:'', to:''}); ui.campRaw = {}; ui.campLimit = CAMP_PAGE; renderCampaigns(); $('#camp-search').focus(); };
+$('#cf-clear').addEventListener('click', clearCampFilters);
+// telefonā filtri – aiz pogas "Filtri"
+$('#cf-toggle').addEventListener('click', () => { const o = !$('#camp-filters').classList.contains('is-open'); $('#camp-filters').classList.toggle('is-open', o); $('#cf-toggle').setAttribute('aria-expanded', o); });
 $('#camp-sub').addEventListener('click', e => { const b = e.target.closest('[data-csub]'); if (!b) return; ui.campSub = b.dataset.csub; ui.campLimit = CAMP_PAGE; renderCampaigns(); $(`#camp-sub [data-csub="${ui.campSub}"]`).focus(); });
 // padoms sarakstā (nosaukums – saglabāšanas / izveides informācija; rezultāts – pilnais teksts)
 function hideCTip(){ const t = $('#c-tipbox'); if (t) t.hidden = true; }
