@@ -9,7 +9,7 @@ Prototips ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var a
 - Visi testa dati ir izdomāti. E-pasta adresēm ir rezervētais domēns `.example`, un e-adrešu numuri sākas ar `0000…`.
 - Dati glabājas tikai pārlūka `localStorage`. Kājenē ir poga, ar kuru var atjaunot sākotnējos testa datus.
 - Nosūtīšana ir simulācija. E-pasti uz domēnu `nepiegadajams.example` simulācijā "neizdodas", lai var redzēt kļūdas statusu.
-- Krāsas ir definētas kā CSS mainīgie `index.html` faila sākumā (`:root`).
+- Krāsas ir definētas kā CSS mainīgie `index.html` faila sākumā (`:root`). Saskarnes pamatkrāsa ir `#297785` (`--primary`). Lielajām tumšajām joslām (galvenei) ir maiga vertikāla krāsu pāreja – mainīgais `--header-gradient`: `linear-gradient(to bottom, #3D8C99 0%, #297785 60%, #297785 100%)`; teksts uz tām ir balts. Pogas, birkas, cilnes un citi mazi elementi ir vienā krāsā `#297785` (bez pārejas).
 
 ## Sākumlapa (DELTA)
 
@@ -44,7 +44,7 @@ Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
 3. **Sūtīšanas vēsture.** Nosūtītās vēstules, sagrupētas pa kampaņām.
 4. **Atskaites.** Rādītāji, grafiki un tabulas par sūtīšanas rezultātiem ar CSV eksportu un MI kopsavilkumu.
 
-- **Noformējums.** Cilnēm nav skaita ciparu. Teksts ir lielāks (16,5 px), pustrekns, ar ikonu pirms nosaukuma. Aktīvajai cilnei ir tirkīzzaļš (#009999) teksts, bieza apakšlīnija un ļoti gaišs tirkīzzaļš fons. Neaktīvās ir tumši pelēkas un, uzbraucot ar peli, kļūst tirkīzzaļas.
+- **Noformējums.** Cilnēm nav skaita ciparu. Teksts ir lielāks (16,5 px), pustrekns, ar ikonu pirms nosaukuma. Aktīvajai cilnei ir pamatkrāsas (#297785) teksts, bieza apakšlīnija un ļoti gaišs tirkīzzaļš fons. Neaktīvās ir tumši pelēkas un, uzbraucot ar peli, kļūst tirkīzzaļas.
 - **Navigācijas ceļš:** "DELTA › Respondentu pārvaldība › Komunikācija › [cilne]".
 - **Apakšsadaļas** ir filtru pogas zem virsraksta (bez skaitītājiem):
   - Kampaņas: Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās. Atverot cilni, vienmēr aktīva ir "Visas";
@@ -83,7 +83,7 @@ Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA 
 
 Lapā "Veidnes" veidnes ir sagrupētas divos līmeņos.
 
-**Izskats.** Augšējā labajā stūrī pogas secībā **[Pastāvīgās daļas] [Sagataves] [+ Jauna veidne]**: "Pastāvīgās daļas" – vienkārša pelēka teksta poga, "Sagataves" – izcelta otrā poga (gaiši tirkīzzaļš fons, tirkīzzaļš teksts un apmale, mapes ikona), "+ Jauna veidne" – galvenā poga CSP krāsā (#009999). Adresātu grupu kartītes ir kompaktas un neitrālas (baltas, ar plānu pelēku apmali, tumši pelēks teksts, ikona pelēkā aplī, mazāks skaitlis); aktīvajai kartītei – tirkīzzaļš teksts un ikona, 3 px tirkīzzaļa apakšlīnija un ļoti gaišs tirkīzzaļš fons.
+**Izskats.** Augšējā labajā stūrī pogas secībā **[Pastāvīgās daļas] [Sagataves] [+ Jauna veidne]**: "Pastāvīgās daļas" – vienkārša pelēka teksta poga, "Sagataves" – izcelta otrā poga (gaiši tirkīzzaļš fons, tirkīzzaļš teksts un apmale, mapes ikona), "+ Jauna veidne" – galvenā poga pamatkrāsā (#297785). Adresātu grupu kartītes ir kompaktas un neitrālas (baltas, ar plānu pelēku apmali, tumši pelēks teksts, ikona pelēkā aplī, mazāks skaitlis); aktīvajai kartītei – tirkīzzaļš teksts un ikona, 3 px tirkīzzaļa apakšlīnija un ļoti gaišs tirkīzzaļš fons.
 
 
 1. **Adresāts.** Trīs kartītes ar veidņu skaitu: "Komunikācija ar fiziskām personām" (atvērta pēc noklusējuma), "Komunikācija ar juridiskām personām" un "Cita komunikācija" (jaukta komunikācija, piem., viena ziņa visiem). Jauktās komunikācijas veidnēm adresāts ir "Visi (jaukta komunikācija)", un tajās lieto lauku `{adresāts}`: uzņēmumam tas ir nosaukums, fiziskai personai – vārds. Šādu veidni var sūtīt reizē gan fiziskām, gan juridiskām personām.
@@ -118,7 +118,7 @@ Veidne atveras centrētā modālajā logā, kura platums ir apmēram puse ekrān
 **Vēstules veids** ir divas kompaktas pogas ar ikonu un nosaukumu. Zem izvēlētās pogas atveras apakšizvēlne; neizvēlētās pogas apakšizvēlne ir paslēpta.
 
 - **E-pasta saturs:**
-  - **"No sagataves"** atver logu ar e-pasta satura šabloniem no sadaļas "Sagataves", sagrupētiem pēc kategorijas un atlasītiem pēc izvēlētā adresāta. Izvēlētā šablona teksts un formatējums ielādējas redaktorā, un to var brīvi labot. Ja temats vēl nav aizpildīts, tiek ielādēts arī temats.
+  - **"No sagataves"** atver logu ar e-pasta satura šabloniem no sadaļas "Sagataves", sagrupētiem pēc kategorijas un atlasītiem pēc izvēlētā adresāta. Izvēlētā šablona teksts un formatējums ielādējas redaktorā, un to var brīvi labot. Ja temats vēl nav aizpildīts, tiek ielādēts arī temats. Ja šablonam ir eAdreses versija, tā tiek ielādēta eAdreses cilnē.
   - **"Veidot jaunu"** atver redaktoru tikai ar uzrunu un parakstu.
 - **Vēstule pielikumā:**
   - **"No sagatavēm"** atver logu ar pielikumu sagatavēm (meklēšana, filtri, PDF priekšskatījums). Izvēlētais dokuments kļūst par veidnes galveno vēstuli.
@@ -184,6 +184,11 @@ Sagataves ir divās grupās:
 Papildinājumi atbilstoši specifikācijas 2.2. sadaļai (F13):
 - **Materiāla veids.** Pielikumu sagatavēm ir veids: Vēstules variants, Instrukcija, Informatīvais materiāls vai Pielikuma sagatave. Veids redzams kartītē kā birka, to var izvēlēties pievienošanas / labošanas logā, un sarakstu var filtrēt pēc veida. Iepriekš ielādētie vēstuļu paraugi ir "Vēstules variants". Testa datos ir arī trīs izdomāti materiāli (mazi ģenerēti PDF faili): "Instrukcija – e-anketas aizpildīšana", "Informatīvais materiāls – datu konfidencialitāte" un "Pielikums – pārskatu iesniegšanas termiņi 2026".
 - **E-pasta satura šablonu versijas.** Saglabājot šablonu ar mainītu tematu vai tekstu, iepriekšējais variants tiek saglabāts kā versija (pēdējās 5). Kartītē redzams versijas numurs un pēdējā labojuma datums; labošanas logā ir iepriekšējo versiju saraksts ar pogu "Ielādēt redaktorā".
+- **E-pasta un eAdreses versijas.** Katram e-pasta satura šablonam var būt divas satura versijas: **✉ E-pasts** (formatēts teksts) un **🏛 eAdrese** (vienkāršs teksts), tāpat kā veidnēm. Pielikumu sagatavēm versiju nav.
+  - Kartītē redzams stāvoklis: **"✓ E-pasts un eAdrese"**, ja ir abas versijas, vai birka **"Tikai e-pasts"** / **"Tikai eAdrese"**. Meklēšana ņem vērā arī eAdreses tekstu.
+  - Labošanas logā ir cilnes "✉ E-pasts" un "🏛 eAdrese" (ar aizpildījuma statusu), eAdreses cilnē – poga **"Pārņemt no e-pasta teksta"** (ja eAdreses teksts jau ir, vispirms prasa apstiprinājumu). Labajā pusē ir priekšskatījums ar pārslēgu E-pasts / eAdrese, kas ir sinhronizēts ar aktīvo cilni (abos virzienos). Saglabājot jābūt vismaz vienai pilnai versijai (temats un teksts); daļēji aizpildīta versija ir kļūda. Ja eAdreses versijas nav, pēc saglabāšanas parādās atgādinājums. Iepriekšējās versijas saglabā un ielādē abas satura versijas.
+  - Veidojot jaunu veidni no šablona ("Jauna veidne") vai ielādējot saturu ar "No sagataves" (veidnes redaktorā un kampaņas solī "Noformēt saturu"), tiek pārņemtas abas versijas.
+  - Testa datos visiem šabloniem ir eAdreses versija, izņemot "Pateicība par dalību" un "Atgādinājums par termiņu (visiem)" – tiem ir tikai e-pasta versija (demonstrācijai).
 - **Izmantojums.** Šablona kartītē redzams, kurās veidnēs tas izmantots ("Izmantots veidnēs: …"). Veidne atceras, no kura šablona tā izveidota; sākotnējie šabloni ir saistīti ar e-pasta veidnēm, no kurām ņemts to teksts. Šablona labojumi esošās veidnes nemaina.
 
 Abās grupās sagataves ir sakārtotas pēc adresāta (fiziskās / juridiskās personas / visi) un kategorijas (Uzaicinājumi, Atgādinājumi, Informatīvie ziņojumi, Citi). Ir meklēšana, filtri un poga **"+ Pievienot sagatavi"**.

@@ -8,13 +8,15 @@
 <meta name="description" content="CSP datu vākšanas sistēmas komunikācijas moduļa prototips: komunikācijas kampaņas, vēstuļu veidnes (e-pasta saturs vai PDF pielikums), komunikācijas vēsture un simulēta nosūtīšana.">
 <style>
 /* =====================================================================
-   KRĀSAS – visas krāsas definētas šeit. Pamatkrāsa: #009999 (tirkīzzaļa).
+   KRĀSAS – visas krāsas definētas šeit. Pamatkrāsa: #297785; galvenei – vertikāla krāsu pāreja (--header-gradient).
    ===================================================================== */
 :root{
   /* Pamatkrāsa un tās toņi */
-  --primary:#009999;          /* galvene, pogas, akcenti */
-  --primary-hover:#008585;    /* pogas virs kursora */
-  --primary-active:#007373;   /* nospiesta poga */
+  /* lielās tumšās joslas (galvene) – maiga vertikāla pāreja: augšmala gaišāka, apakšā pamatkrāsa */
+  --header-gradient:linear-gradient(to bottom, #3D8C99 0%, #297785 60%, #297785 100%);
+  --primary:#297785;          /* pogas, birkas, cilnes, akcenti (vienkrāsaini) */
+  --primary-hover:#22666F;    /* pogas virs kursora */
+  --primary-active:#1C5760;   /* nospiesta poga */
   --primary-dark:#006B6B;     /* teksts un saites uz gaiša fona (kontrasts ~6,3:1) */
   --primary-darker:#004D4D;   /* virsraksti uz gaiša fona (kontrasts ~9,7:1) */
   --primary-300:#80CCCC;      /* apmales akcentiem */
@@ -90,7 +92,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .icon{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
 
 /* ===== Galvene ===== */
-.app-header{background:var(--primary);color:var(--on-primary)}
+.app-header{background:var(--primary);background-image:var(--header-gradient);color:var(--on-primary)}
 .header-inner{display:flex;align-items:center;gap:16px;min-height:68px}
 .brand{display:flex;align-items:center;gap:14px;min-width:0}
 .brand > div{min-width:0}
@@ -106,14 +108,14 @@ button,input,select,textarea{font:inherit;color:inherit}
 .tabs-inner{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
 .tab{appearance:none;background:none;border:0;border-bottom:4px solid transparent;padding:15px 18px 12px;font:inherit;font-size:16.5px;font-weight:600;color:#3D4A4F;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:9px;transition:color .12s,background .12s}
 .tab .icon{width:20px;height:20px;flex:none}
-.tab:hover{color:#009999}
-.tab[aria-current="page"]{color:#009999;border-bottom-color:#009999;background:#EAF7F7}
+.tab:hover{color:var(--primary)}
+.tab[aria-current="page"]{color:var(--primary);border-bottom-color:var(--primary);background:#EAF7F7}
 .tab:focus-visible{outline:3px solid var(--focus-ring);outline-offset:-3px}
 /* Apakšsadaļas – filtru pogas zem virsraksta */
 .subnav{display:flex;flex-wrap:wrap;gap:8px;margin:-6px 0 16px}
 .subnav button{appearance:none;border:1.5px solid var(--border);background:#fff;border-radius:999px;padding:7px 16px;font:inherit;font-size:14.5px;font-weight:600;color:#3D4A4F;cursor:pointer}
-.subnav button:hover{border-color:var(--primary-300);color:#009999}
-.subnav button[aria-pressed="true"]{background:#009999;border-color:#009999;color:#fff}
+.subnav button:hover{border-color:var(--primary-300);color:var(--primary)}
+.subnav button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
 .subnav button:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
 .todo-card{text-align:center;padding:48px 20px;color:var(--text-muted)}
 .todo-card h2{font-size:19px;color:var(--primary-darker);margin:10px 0 6px}
@@ -136,7 +138,7 @@ main.container{padding-top:28px;padding-bottom:48px}
 .btn-secondary{background:var(--surface);color:var(--primary-dark);border-color:var(--primary-300)}
 .btn-secondary:hover{background:var(--primary-50);border-color:var(--primary)}
 .btn-ghost{background:transparent;color:var(--primary-dark)}
-.btn-soft{background:var(--primary-50);color:#007A7A;border-color:#009999}
+.btn-soft{background:var(--primary-50);color:#007A7A;border-color:var(--primary)}
 .btn-soft:hover{background:#DDF1F1}
 .btn-plain{background:transparent;border-color:transparent;color:#5E6A70}
 .btn-plain:hover{background:#F1F3F4;color:#3D4A4F}
@@ -144,7 +146,7 @@ main.container{padding-top:28px;padding-bottom:48px}
 .ch-tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:6px 0 12px}
 .ch-tab{appearance:none;font:inherit;font-size:14.5px;font-weight:600;display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;background:none;color:#5E6A70;cursor:pointer}
 .ch-tab .icon{width:17px;height:17px}
-.ch-tab[aria-selected="true"]{color:#007A7A;border-bottom-color:#009999;background:var(--primary-50)}
+.ch-tab[aria-selected="true"]{color:#007A7A;border-bottom-color:var(--primary);background:var(--primary-50)}
 .ch-tab:hover{color:#007A7A}
 .ch-tab:focus-visible{outline:3px solid var(--focus-ring);outline-offset:-3px}
 .ch-st{display:inline-flex;width:18px;height:18px;border-radius:50%;align-items:center;justify-content:center;flex:none}
@@ -158,6 +160,9 @@ main.container{padding-top:28px;padding-bottom:48px}
 .ver-fb{margin:0 0 10px}
 .ver-link{display:block;font-size:12.5px;margin-top:3px}
 .pill-veronly{background:#FFF0E0;color:#8F4300;border-color:#F3C98B}
+.pill-vers{background:var(--success-bg);color:var(--success);border-color:#BFE0CC}
+.pill-vers .icon{width:12px;height:12px}
+.ms-veronly{color:#8F4300;font-weight:600}
 .pill-veronly .icon{width:12px;height:12px}
 #c-prio-ver{margin:0 0 12px}
 .btn-ghost:hover{background:var(--primary-50)}
@@ -390,12 +395,12 @@ td.contacts{display:table-cell}
 .wiz-step{appearance:none;width:100%;display:flex;align-items:center;gap:8px;border:0;border-bottom:4px solid var(--border);background:transparent;padding:8px 6px 9px;font:inherit;font-weight:600;font-size:14px;color:var(--text-muted);cursor:pointer;text-align:left}
 .wiz-step .n{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--border);background:#fff;font-size:13px;font-weight:700;color:var(--text-muted)}
 .wiz-step .n .icon{width:15px;height:15px}
-.wiz-step:hover{color:#009999}
+.wiz-step:hover{color:var(--primary)}
 .wiz-step.is-done{border-bottom-color:var(--primary-300);color:var(--primary-darker)}
 .wiz-step.is-done .n{background:var(--primary-50);border-color:var(--primary-300);color:var(--primary-darker)}
 .wiz-step.is-warn .n{background:var(--warning-bg);border-color:var(--warning);color:var(--warning)}
-.wiz-step[aria-current="step"]{border-bottom-color:#009999;color:#009999}
-.wiz-step[aria-current="step"] .n{background:#009999;border-color:#009999;color:#fff}
+.wiz-step[aria-current="step"]{border-bottom-color:var(--primary);color:var(--primary)}
+.wiz-step[aria-current="step"] .n{background:var(--primary);border-color:var(--primary);color:#fff}
 .wiz-step:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
 .compose-grid.wiz{display:block}
 .compose-grid.wiz .wiz-card{max-width:1040px}
@@ -432,7 +437,7 @@ td.contacts{display:table-cell}
 .esign-mode b{display:block;color:var(--primary-darker)}
 .esign-mode small{display:block;color:var(--text-muted);font-size:12.5px;margin-top:2px}
 .esign-mode[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-50);box-shadow:inset 0 0 0 1px var(--primary)}
-.signer-ord{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#009999;color:#fff;font-size:11.5px;font-weight:700;margin-left:6px}
+.signer-ord{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--primary);color:#fff;font-size:11.5px;font-weight:700;margin-left:6px}
 .sub-h{font-size:14.5px;margin:18px 0 6px;color:var(--primary-darker)}
 .sum-dl{display:grid;grid-template-columns:120px 1fr;gap:8px 10px;font-size:13.5px;margin:0}
 .sum-dl dt{color:var(--text-muted)}
@@ -1129,7 +1134,7 @@ a.att:hover,button.att:hover{border-color:var(--primary)}
 /* adresātu grupu kartītes – neitrālas; aktīvā – tirkīzzaļš teksts, apakšlīnija un ļoti gaišs fons */
 .aud-card{appearance:none;text-align:left;display:flex;align-items:center;gap:12px;padding:10px 14px;min-height:0;border-radius:10px;border:1px solid var(--border);border-bottom-width:1px;background:#fff;color:#3D4A4F;cursor:pointer;transition:background .12s,border-color .12s}
 .aud-card:hover{border-color:#B8C3C7;background:#FAFBFB}
-.aud-card[aria-selected="true"]{background:var(--primary-50);color:#007A7A;border-color:var(--primary-200);box-shadow:inset 0 -3px 0 #009999}
+.aud-card[aria-selected="true"]{background:var(--primary-50);color:#007A7A;border-color:var(--primary-200);box-shadow:inset 0 -3px 0 var(--primary)}
 .aud-card[aria-selected="true"]:hover{background:var(--primary-50)}
 .aud-icon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#EEF1F2;color:#5E6A70;flex:none}
 .aud-icon .icon{width:20px;height:20px}
@@ -2101,7 +2106,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 51</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 52</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -2738,7 +2743,10 @@ const EMAIL_SAMPLES = [
 // E-pasta satura šabloni (sadaļa "Sagataves"): sākotnēji – esošo e-pasta veidņu teksti un papildu sagataves
 const defaultMailSamples = templates => [
   ...templates.filter(t => t.kind === 'epasts').map(t => ({id:'ms-' + t.id, name:t.name, aud:t.aud, cat:t.cat, subject:t.subject, body:t.body, builtin:true})),
-  ...EMAIL_SAMPLES.map(x => ({...x, builtin:true}))];
+  ...EMAIL_SAMPLES.map(x => ({...x, builtin:true}))].map(x => ({...x, ea:msSeedEa(x)}));
+// Testa sagatavju eAdreses versijas (vienkāršs teksts no e-pasta satura); dažām – tikai e-pasta versija (demonstrācijai)
+const MS_EA_SKIP = ['ms-t4', 'smp-visi-atg'];
+const msSeedEa = x => MS_EA_SKIP.includes(x.id) ? null : {subject:x.subject, body:emailToPlain(x.body)};
 // testa datu avots: agrākie nosacījuma bloki (ielādējot kļūst par parastu tekstu, sk. withTr)
 const C = (attr, vals, html) => `<div class="cond" data-attr="${attr}" data-val="${vals}">${html}</div>`;
 const DEFAULT_LAYOUT = {
@@ -2791,7 +2799,7 @@ function seedBanner(){
 function seedData(){
   const ago = n => addDays(-n).toISOString();
   const data = {
-    seq: 0, eaSeeded: true,
+    seq: 0, eaSeeded: true, msEaSeeded: true,
     layout: clone(DEFAULT_LAYOUT),
     templates: withTr([
       {id:'t1', aud:'fiz', cat:'uzaicinajums', kind:'pielikums', name:'Uzaicinājums piedalīties aptaujā (vēstule pielikumā)', updated:ago(14), files:[],
@@ -3156,6 +3164,8 @@ function loadState(){
       s.planned = s.planned || [];
       s.savedFilters = s.savedFilters || [];
       if (!Array.isArray(s.mailSamples)) s.mailSamples = defaultMailSamples(s.templates);
+      // testa sagatavēm – eAdreses versija (vienreiz)
+      if (!s.msEaSeeded){ s.mailSamples.forEach(x => { if (x.builtin && !x.ea) x.ea = msSeedEa(x); }); s.msEaSeeded = true; }
       if (s.respondents.some(r => r.syncedAt === undefined)) applyAddrData(s);
       if (!s.addrCheckSeeded) applyAddrCheckData(s);
       // testa veidnēm – eAdreses versija (vienreiz)
@@ -4496,7 +4506,7 @@ function openMailSamples(aud, onPick){
       const items = list.filter(s => s.cat === c.key);
       return `<section class="ms-group"><h3>${esc(c.label)} <span class="pill pill-cat">${items.length}</span></h3>
         ${items.length ? `<div class="ms-grid">${items.map(s => `<button type="button" class="ms-card" data-smp="${esc(s.id)}">
-          <b>${esc(s.name)}</b><small>Temats: ${esc(s.subject)}</small><span class="ms-excerpt">${esc(htmlToText(s.body).replace(/\[Attēls:[^\]]*\]/g, '').replace(/\s+/g, ' ').trim())}</span></button>`).join('')}</div>`
+          <b>${esc(s.name)}</b><small>Temats: ${esc(s.subject)}${verOnly(s) ? ` · <span class="ms-veronly">${esc(verOnly(s))}</span>` : ' · E-pasts un eAdrese'}</small><span class="ms-excerpt">${esc(htmlToText(s.body).replace(/\[Attēls:[^\]]*\]/g, '').replace(/\s+/g, ' ').trim())}</span></button>`).join('')}</div>`
           : '<p class="hint">Šajā kategorijā sagatavju nav.</p>'}</section>`;
     }).join('')}`, actions:[{label:'Atcelt', cls:'btn-secondary'}]});
   $$('[data-smp]', submodal).forEach(b => b.addEventListener('click', () => {
@@ -4516,7 +4526,7 @@ function openTemplateEditor(id, preset = {}){
   const t = base ? clone(base) : {aud:newAud, cat:CAT_BY_KEY[preset.cat] ? preset.cat : 'uzaicinajums', kind:'', name:'', subject:'',
     body:blankBody(newAud), doc:null, main:null, files:[], tr:{}, ea:{subject:'', body:''}};
   const presetSample = !existing && preset.sample ? (state.mailSamples || []).find(x => x.id === preset.sample) : null;
-  if (presetSample){ t.kind = 'epasts'; t.body = presetSample.body; t.subject = presetSample.subject; }
+  if (presetSample){ t.kind = 'epasts'; t.body = presetSample.body; t.subject = presetSample.subject; t.ea = clone(presetSample.ea || {subject:'', body:''}); }
   if (!AUDS[t.aud]) t.aud = 'fiz';
   if (!CAT_BY_KEY[t.cat]) t.cat = 'cits';
   t.doc = t.doc || defaultDoc();
@@ -4945,6 +4955,8 @@ function openTemplateEditor(id, preset = {}){
       started = 'sample'; fromSample = s.id; startNote = `Sagatave: ${s.name}`;
       setBody(s.body);
       if (!subj.value.trim()){ subj.value = s.subject; collect(); }
+      // sagatavei ir arī eAdreses versija – tiek pārņemta
+      if (s.ea && (s.ea.subject || s.ea.body)){ $('#te-ea-body').value = s.ea.body || ''; if (!$('#te-ea-subject').value.trim()) $('#te-ea-subject').value = s.ea.subject || ''; update(); }
       syncKind();
     });
   }));
@@ -5177,7 +5189,7 @@ function msMatches(x){
   const f = ui.sag;
   if (f.aud && x.aud !== f.aud) return false;
   if (f.cat && x.cat !== f.cat) return false;
-  return !f.q || norm([x.name, x.subject, htmlToText(x.body)].join(' ')).includes(norm(f.q));
+  return !f.q || norm([x.name, x.subject, htmlToText(x.body), (x.ea || {}).body || ''].join(' ')).includes(norm(f.q));
 }
 function renderAttFilters(){
   const f = ui.sag, sel = (id, all, entries, cur) => { $(id).innerHTML = `<option value="">${all}</option>` + entries.map(([k, v]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${esc(v)}</option>`).join(''); };
@@ -5198,7 +5210,9 @@ function msCard(x){
   const used = tplsFromSample(x.id), nv = (x.versions || []).length;
   return `<article class="card att-card ms-item ${x.builtin ? 'is-lib' : ''}">
     <div class="card-pad">
-      <div class="pills">${x.builtin ? '<span class="pill pill-tag">Sagatave</span>' : ''}${catPill(x.cat)}<span class="pill pill-aud">${ICON[AUDS[x.aud].icon]}${esc(attAudLabel(x.aud))}</span></div>
+      <div class="pills">${x.builtin ? '<span class="pill pill-tag">Sagatave</span>' : ''}${catPill(x.cat)}<span class="pill pill-aud">${ICON[AUDS[x.aud].icon]}${esc(attAudLabel(x.aud))}</span>${verOnly(x)
+        ? `<span class="pill pill-veronly" title="${esc(verOnly(x) === 'Tikai e-pasts' ? 'Nav eAdreses versijas' : 'Nav e-pasta versijas')}">${ICON.warn}${esc(verOnly(x))}</span>`
+        : '<span class="pill pill-vers" title="Ir e-pasta un eAdreses versija">' + ICON.check + 'E-pasts un eAdrese</span>'}</div>
       <h2 class="ms-name">${esc(x.name)}</h2>
       <div class="tpl-subject">Temats: <b>${esc(x.subject)}</b></div>
       <div class="tpl-excerpt">${esc(htmlToText(x.body).replace(/\[Attēls:[^\]]*\]/g, '').trim())}</div>
@@ -5255,48 +5269,118 @@ function renderSagataves(){
   $('#sag-body').innerHTML = groups || `<div class="empty">${ICON.file}<h3>Nav atrasta neviena sagatave</h3></div>`;
 }
 const renderAttachments = renderSagataves;
-// E-pasta satura šablona pievienošana un rediģēšana
+// E-pasta satura šablona pievienošana un rediģēšana: cilnes "E-pasts" / "eAdrese", priekšskatījums
 function openMailSampleForm(id){
   const ex = (state.mailSamples || []).find(x => x.id === id);
   const aud0 = ui.sag.aud || 'fiz';
   const x = ex ? {...ex} : {name:'', aud:aud0, cat:ui.sag.cat || 'uzaicinajums', subject:'', body:blankBody(aud0)};
+  const ea0 = x.ea || {subject:'', body:''};
   const opts = (entries, cur) => entries.map(([k, v]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${esc(v)}</option>`).join('');
-  let ed;
-  openModal({title: ex ? 'Rediģēt e-pasta satura šablonu' : 'Jauns e-pasta satura šablons', wide:true, content:`<div class="form-grid">
+  let ed, tab = 'epasts', pv = 'epasts';
+  openModal({title: ex ? 'Rediģēt e-pasta satura šablonu' : 'Jauns e-pasta satura šablons', editor:true, content:`<div class="editor-grid">
+    <div id="ms-form"><div class="form-grid">
       <div class="field full"><label for="ms-name">Nosaukums <span class="req">*</span></label><input type="text" id="ms-name" value="${esc(x.name)}" maxlength="120"><span class="err" id="ms-name-err" hidden></span></div>
       <div class="field"><label for="ms-aud">Adresāts</label><select id="ms-aud">${opts(Object.keys(AUDS).map(k => [k, attAudLabel(k)]), x.aud)}</select></div>
-      <div class="field"><label for="ms-cat">Kategorija</label><select id="ms-cat">${opts(CATS.map(c => [c.key, c.one]), x.cat)}</select></div>
-      <div class="field full"><label for="ms-subject">Ziņojuma temats <span class="req">*</span></label><input type="text" id="ms-subject" value="${esc(x.subject)}" maxlength="200"><span class="err" id="ms-subject-err" hidden></span></div>
-      <div class="field full"><span class="label">E-pasta saturs <span class="req">*</span></span><div id="ms-body"></div><span class="err" id="ms-body-err" hidden></span></div>
-      ${ex && (ex.versions || []).length ? `<div class="field full"><span class="label">Iepriekšējās versijas</span><ul class="ver-list">${ex.versions.map((v, i) =>
+      <div class="field"><label for="ms-cat">Kategorija</label><select id="ms-cat">${opts(CATS.map(c => [c.key, c.one]), x.cat)}</select></div></div>
+      <div class="ch-tabs" role="tablist" aria-label="Saturs pa kanāliem">
+        <button type="button" role="tab" class="ch-tab" id="ms-tab-ep" data-mstab="epasts" aria-selected="true" aria-controls="ms-pane-ep">${ICON.mail}E-pasts <span class="ch-st" id="ms-st-ep"></span></button>
+        <button type="button" role="tab" class="ch-tab" id="ms-tab-ea" data-mstab="eadrese" aria-selected="false" aria-controls="ms-pane-ea" tabindex="-1">${ICON.building}eAdrese <span class="ch-st" id="ms-st-ea"></span></button></div>
+      <div class="alert alert-warn ch-warn" id="ms-ch-warn" hidden></div>
+      <div class="ch-pane" id="ms-pane-ep" role="tabpanel" aria-labelledby="ms-tab-ep">
+        <div class="field"><label for="ms-subject">E-pasta temats <span class="req">*</span></label><input type="text" id="ms-subject" value="${esc(x.subject)}" maxlength="200"><span class="err" id="ms-subject-err" hidden></span></div>
+        <div class="field"><span class="label">E-pasta saturs <span class="req">*</span></span><div id="ms-body"></div><span class="err" id="ms-body-err" hidden></span></div></div>
+      <div class="ch-pane" id="ms-pane-ea" role="tabpanel" aria-labelledby="ms-tab-ea" hidden>
+        <div class="field"><div class="label-row"><label for="ms-ea-subject">eAdreses ziņas temats <span class="req">*</span></label>
+          <select class="mini" id="ms-ea-subj-field" aria-label="Ievietot lauku eAdreses tematā"><option value="">+ lauks</option>${fieldOptions()}</select></div>
+          <input type="text" id="ms-ea-subject" maxlength="200" value="${esc(ea0.subject || '')}"><span class="err" id="ms-ea-subject-err" hidden></span></div>
+        <div class="field"><div class="label-row"><label for="ms-ea-body">eAdreses ziņas teksts</label>
+          <select class="mini" id="ms-ea-body-field" aria-label="Ievietot lauku eAdreses tekstā"><option value="">+ lauks</option>${fieldOptions()}</select></div>
+          <div class="ea-tools"><button type="button" class="btn btn-secondary btn-sm" id="ms-ea-copy">Pārņemt no e-pasta teksta</button>
+            <span class="hint">Vienkāršs teksts: rindkopas (atdala ar tukšu rindu) un lauki, bez noformējuma, attēliem un pogām.</span></div>
+          <textarea id="ms-ea-body" class="ea-text" rows="12">${esc(ea0.body || '')}</textarea><span class="err" id="ms-ea-body-err" hidden></span></div></div>
+      ${ex && (ex.versions || []).length ? `<div class="field"><span class="label">Iepriekšējās versijas</span><ul class="ver-list">${ex.versions.map((v, i) =>
         `<li>Versija ${ex.versions.length - i} · ${esc(v.subject)} · aizstāta ${esc(fmtDateTime(v.replaced))}${v.by ? `, ${esc(v.by)}` : ''} <button type="button" class="link-btn" data-msver="${i}">Ielādēt redaktorā</button></li>`).join('')}</ul></div>` : ''}
-      ${ex ? `<div class="field full"><span class="hint">${tplsFromSample(ex.id).length ? `Izmantots veidnēs: ${tplsFromSample(ex.id).map(t => esc(t.name)).join(', ')}${tip('Šablona labojumi esošās veidnes nemaina.')}` : 'Vēl nav izmantots nevienā veidnē'}</span></div>` : ''}
+      ${ex ? `<div class="field"><span class="hint">${tplsFromSample(ex.id).length ? `Izmantots veidnēs: ${tplsFromSample(ex.id).map(t => esc(t.name)).join(', ')}${tip('Šablona labojumi esošās veidnes nemaina.')}` : 'Vēl nav izmantots nevienā veidnē'}</span></div>` : ''}
+    </div>
+    <div class="editor-preview">
+      <div class="pv-head"><h3>Priekšskatījums</h3>
+        <div class="seg" id="ms-pv" role="group" aria-label="Priekšskatījuma veids"><button type="button" data-mspv="epasts">E-pasts</button><button type="button" data-mspv="eadrese">eAdrese</button></div></div>
+      <p class="hint">Ar parauga datiem: <span id="ms-sample"></span></p>
+      <div id="ms-preview" class="hl"></div></div>
     </div>`,
     actions:[
       {label:'Atcelt', cls:'btn-secondary'},
       {label: ex ? 'Saglabāt' : 'Pievienot', cls:'btn-primary', onClick: close => {
-        const d = {name:$('#ms-name').value.trim(), aud:$('#ms-aud').value, cat:$('#ms-cat').value, subject:$('#ms-subject').value.trim(), body:ed.getHTML()};
+        const d = cur();
         const err = (k, msg) => { const e = $(`#ms-${k}-err`); e.hidden = !msg; e.textContent = msg || ''; };
-        err('name', d.name ? '' : 'Norādiet nosaukumu.'); err('subject', d.subject ? '' : 'Norādiet tematu.'); err('body', htmlToText(d.body) ? '' : 'Teksts nedrīkst būt tukšs.');
-        if (!d.name){ $('#ms-name').focus(); return; }
-        if (!d.subject){ $('#ms-subject').focus(); return; }
-        if (!htmlToText(d.body)) return;
+        ['name', 'subject', 'body', 'ea-subject', 'ea-body'].forEach(k => err(k, ''));
+        if (!d.name){ err('name', 'Norādiet nosaukumu.'); $('#ms-name').focus(); return; }
+        // jābūt vismaz vienai pilnai versijai; daļēji aizpildīta versija – kļūda
+        const epS = !!d.subject, epB = !!htmlToText(d.body).trim(), eaS = !!d.ea.subject, eaB = !!d.ea.body.trim();
+        const fail = (t, k, msg) => { setTab(t); err(k, msg); if (k === 'body') ed.area.focus(); else $('#ms-' + k).focus(); };
+        if (!epVer(d) && !eaVer(d)){ if (tab === 'eadrese' || ((eaS || eaB) && !epS)) return !eaS ? fail('eadrese', 'ea-subject', 'Norādiet eAdreses ziņas tematu (vai aizpildiet e-pasta versiju).') : fail('eadrese', 'ea-body', 'eAdreses teksts nedrīkst būt tukšs.');
+          return !epS ? fail('epasts', 'subject', 'Norādiet tematu (vai aizpildiet eAdreses versiju).') : fail('epasts', 'body', 'Teksts nedrīkst būt tukšs.'); }
+        if (epS && !epB) return fail('epasts', 'body', 'Teksts nedrīkst būt tukšs.');
+        if (eaS && !eaB) return fail('eadrese', 'ea-body', 'eAdreses teksts nedrīkst būt tukšs.');
+        if (eaB && !eaS) return fail('eadrese', 'ea-subject', 'Norādiet eAdreses ziņas tematu.');
         if (ex){
           // mainot tekstu vai tematu, iepriekšējo saglabā kā versiju (pēdējās 5)
-          if (ex.subject !== d.subject || !sameText(ex.body, d.body) || ex.body !== d.body)
-            ex.versions = [{subject:ex.subject, body:ex.body, replaced:new Date().toISOString(), by:CURRENT_USER}, ...(ex.versions || [])].slice(0, 5);
+          if (ex.subject !== d.subject || ex.body !== d.body || JSON.stringify(ex.ea || null) !== JSON.stringify(d.ea))
+            ex.versions = [{subject:ex.subject, body:ex.body, ea:clone(ex.ea || null), replaced:new Date().toISOString(), by:CURRENT_USER}, ...(ex.versions || [])].slice(0, 5);
           Object.assign(ex, d, {updated:new Date().toISOString(), updatedBy:CURRENT_USER});
         } else state.mailSamples.push({id:'ms-' + uid(), ...d});
         save(); renderSagataves(); close();
-        toast(ex ? 'Sagatave saglabāta.' : 'Sagatave pievienota.');
+        const w = !eaVer(d) ? ' Nav eAdreses versijas.' : !epVer(d) ? ' Nav e-pasta versijas.' : '';
+        toast((ex ? 'Sagatave saglabāta.' : 'Sagatave pievienota.') + w, !!w);
       }},
     ]});
-  ed = createEditor($('#ms-body'), x.body, {media:true});
+  const cur = () => ({name:$('#ms-name').value.trim(), aud:$('#ms-aud').value, cat:$('#ms-cat').value, subject:$('#ms-subject').value.trim(), body:ed.getHTML(),
+    ea:{subject:$('#ms-ea-subject').value.trim(), body:$('#ms-ea-body').value.replace(/[ \t]+$/gm, '').replace(/\s+$/, '')}});
+  const sampleOf = aud => state.respondents.find(r => respAttrs(r).veids === (AUDS[aud].veids || 'privatpersona')) || state.respondents[0] || {name:'Vārds Uzvārds', email:'vards@pasts.example', eaddress:'_PRIVATE@00000000000'};
+  function update(){
+    if (!ed) return;
+    const d = cur(), r = sampleOf(d.aud);
+    [['ep', epVer(d)], ['ea', eaVer(d)]].forEach(([k, ok]) => { const el = $('#ms-st-' + k); el.className = 'ch-st ' + (ok ? 'is-ok' : 'is-miss'); el.innerHTML = ok ? ICON.check : ICON.warn; el.setAttribute('role', 'img'); el.setAttribute('aria-label', ok ? 'aizpildīts' : 'nav aizpildīts'); el.title = ok ? 'Aizpildīts' : 'Nav aizpildīts'; });
+    const w = (epVer(d) || eaVer(d)) ? (!eaVer(d) ? 'Nav eAdreses versijas – eAdresē tiks nosūtīts e-pasta teksts bez noformējuma.' : !epVer(d) ? 'Nav e-pasta versijas – e-pastā tiks nosūtīts eAdreses teksts.' : '') : '';
+    $('#ms-ch-warn').hidden = !w; $('#ms-ch-warn').innerHTML = w ? `${ICON.warn}<span>${esc(w)}</span>` : '';
+    $$('#ms-pv button').forEach(b => b.setAttribute('aria-pressed', b.dataset.mspv === pv));
+    $('#ms-sample').textContent = r.name;
+    const msg = buildMessage({kind:'epasts', subject:d.subject, body:d.body, ea:d.ea, files:[], doc:null}, r, true), c = chMsg(msg, pv);
+    $('#ms-preview').innerHTML = verNote(c, pv) + mailView({toName:r.name, toAddr:addrFor(r, pv) || '', channel:pv, subjectHtml:c.subjectHtml || '<span class="none">bez temata</span>',
+      bodyHtml:c.bodyHtml, bodyTextHtml:c.bodyTextHtml, footerHtml:msg.footer, org:msg.org});
+  }
+  // cilnes ↔ priekšskatījuma pārslēgs
+  function setTab(ch, fromPv){
+    tab = ch;
+    [['epasts', 'ep'], ['eadrese', 'ea']].forEach(([c, k]) => { const on = c === ch; $('#ms-tab-' + k).setAttribute('aria-selected', on); $('#ms-tab-' + k).tabIndex = on ? 0 : -1; $('#ms-pane-' + k).hidden = !on; });
+    if (!fromPv) pv = ch;
+    update();
+  }
+  $$('[data-mstab]', modal).forEach(b => {
+    b.addEventListener('click', () => setTab(b.dataset.mstab));
+    b.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft'){ e.preventDefault(); const nx = b.dataset.mstab === 'epasts' ? 'eadrese' : 'epasts'; setTab(nx); $(`[data-mstab="${nx}"]`, modal).focus(); } });
+  });
+  $$('#ms-pv button').forEach(b => b.addEventListener('click', () => { pv = b.dataset.mspv; setTab(pv, true); }));
+  $('#ms-ea-copy').addEventListener('click', async () => {
+    const ta = $('#ms-ea-body');
+    if (ta.value.trim() && !(await subConfirm({title:'Pārrakstīt eAdreses tekstu?', message:'Esošais eAdreses teksts tiks aizstāts ar e-pasta tekstu bez noformējuma. Turpināt?', okLabel:'Pārrakstīt'}))) return;
+    ta.value = emailToPlain(ed.getHTML());
+    if (!$('#ms-ea-subject').value.trim()) $('#ms-ea-subject').value = $('#ms-subject').value.trim();
+    $('#ms-ea-body-err').hidden = true; update(); ta.focus();
+    toast('E-pasta teksts pārņemts bez noformējuma – to var brīvi labot.');
+  });
+  [['#ms-ea-subj-field', '#ms-ea-subject'], ['#ms-ea-body-field', '#ms-ea-body']].forEach(([sel, el]) => $(sel).addEventListener('change', e => {
+    if (!e.target.value) return; const f = $(el); f.setRangeText(`{${e.target.value}}`, f.selectionStart ?? f.value.length, f.selectionEnd ?? f.value.length, 'end'); e.target.value = ''; f.focus(); update(); }));
+  ['ms-subject', 'ms-ea-subject', 'ms-ea-body', 'ms-name'].forEach(fid => $('#' + fid).addEventListener('input', update));
+  $('#ms-aud').addEventListener('change', update);
+  ed = createEditor($('#ms-body'), x.body, {media:true, onChange:update});
   $$('[data-msver]', modal).forEach(b => b.addEventListener('click', () => {
     const v = ex.versions[+b.dataset.msver];
-    $('#ms-subject').value = v.subject; ed = createEditor($('#ms-body'), v.body, {media:true});
-    toast('Versija ielādēta redaktorā – saglabājiet, lai to atjaunotu.');
+    $('#ms-subject').value = v.subject; ed = createEditor($('#ms-body'), v.body, {media:true, onChange:update});
+    if (v.ea !== undefined){ $('#ms-ea-subject').value = (v.ea || {}).subject || ''; $('#ms-ea-body').value = (v.ea || {}).body || ''; }
+    update(); toast('Versija ielādēta redaktorā – saglabājiet, lai to atjaunotu.');
   }));
+  update();
 }
 async function deleteMailSample(id){
   const x = (state.mailSamples || []).find(m => m.id === id);
