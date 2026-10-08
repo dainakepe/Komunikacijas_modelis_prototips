@@ -941,7 +941,21 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .ac-pill.k-none[aria-pressed="true"]{background:#EEF1F2;border-color:#8A969B}
 .ac-pills .ac-pill.is-zero{color:#9AA5AA;border-color:var(--border-light);background:#FAFBFB;cursor:default}
 .ac-acts{display:flex;align-items:center;gap:6px;margin-left:auto}
-.ac-recheck{width:30px;height:30px;font-size:16px;line-height:1}
+.ac-recheck{height:34px;padding:0 14px;gap:6px;font-size:13.5px;background:#fff;border:1px solid var(--primary);color:var(--primary)}
+.ac-recheck:hover{background:var(--primary-50);border-color:var(--primary);color:var(--primary)}
+.ac-recheck:disabled{opacity:1;cursor:progress}
+.ac-recheck .ac-spin{display:inline-block;font-size:15px;line-height:1}
+.ac-recheck.is-busy .ac-spin{animation:ac-spin .9s linear infinite}
+@keyframes ac-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){ .ac-recheck.is-busy .ac-spin{animation-duration:2.4s} }
+.ac-lbl{display:inline-grid}
+.ac-lbl > span{grid-area:1/1;text-align:left}
+.ac-recheck:not(.is-busy) .ac-lbl > span:last-child,.ac-recheck.is-busy .ac-lbl > span:first-child{visibility:hidden}
+.ac-checked{font-size:12.5px;color:var(--text-muted);white-space:nowrap}
+/* josla pārnes pogas nākamajā rindā, ja vietas nepietiek (pogas teksts netiek saīsināts) */
+#c-ac.c-strip{flex-wrap:wrap}
+#c-ac .ac-acts{flex:0 1 auto;flex-wrap:wrap;justify-content:flex-end;max-width:100%}
+#c-ac .ac-acts .btn{white-space:nowrap;height:34px;flex:none;text-align:center}
 .ac-excl-btn{border-color:#E3A6A0;color:var(--danger)}
 .ac-excl-btn:hover{border-color:var(--danger);background:var(--danger-bg);color:var(--danger)}
 .c-table.sel-result{margin-top:10px;border-top:0;padding-top:0}
@@ -1283,6 +1297,16 @@ mark.v-miss,mark.v-unk{background:var(--danger-bg);color:var(--danger);border-ra
 .tp-pv .tp-meta{font-size:13px;color:var(--text-muted);margin-bottom:10px}
 .tp-text{background:#fff;border:1px solid var(--border-light);border-radius:8px;padding:14px 16px;white-space:pre-wrap;font-size:13.5px;line-height:1.55;max-height:calc(100vh - 430px);min-height:160px;overflow:auto}
 .tp-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:12px}
+/* "Izmantot veidni" – tāds pats logs kā veidnes redaktoram: saraksts kreisajā pusē, priekšskatījums labajā */
+.modal.editor .tp-grid{grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:18px}
+.modal.editor .tp-list{max-height:calc(90vh - 180px)}
+.modal.editor .tp-pv{min-height:0;padding:12px 14px}
+.tp-pv .pv-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.tp-pv .pv-head h3{margin:0;font-size:15px}
+.tp-pv .tp-name{font-size:16px;margin:6px 0 8px}
+/* "No sagataves": izvēlētā sagatave */
+.ms-card[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-50);box-shadow:inset 0 0 0 1px var(--primary)}
+@media (max-width:900px){ .modal.editor .tp-grid{grid-template-columns:minmax(0,1fr)} .modal.editor .tp-list{max-height:none} }
 /* Kampaņas satura redaktors */
 .sess-info{font-size:13.5px;background:var(--primary-50);border:1px solid var(--primary-100);border-radius:8px;padding:9px 12px;margin-bottom:14px}
 .te-row3.sess{grid-template-columns:auto}
@@ -2106,7 +2130,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 52</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 53</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4501,18 +4525,26 @@ function pickFile(onFile, host = modal){
 // E-pasta satura sagatavju logs (sagrupēts pēc kategorijas, filtrēts pēc adresāta)
 function openMailSamples(aud, onPick){
   const list = mailSamples(aud);
-  openSubModal({title:'No sagataves', size:'mid', info:`E-pasta satura šabloni no sadaļas “Veidnes › Sagataves” (adresāts: ${attAudLabel(aud)}). Izvēlētās sagataves teksts un formatējums tiks ielādēts redaktorā, un to varēsiet brīvi labot.`, content:`
+  let pick = '';
+  openSubModal({title:'No sagataves', size:'editor', info:`E-pasta satura šabloni no sadaļas “Veidnes › Sagataves” (adresāts: ${attAudLabel(aud)}). Izvēlētās sagataves teksts un formatējums tiks ielādēts redaktorā, un to varēsiet brīvi labot.`, content:`
     ${CATS.map(c => {
       const items = list.filter(s => s.cat === c.key);
       return `<section class="ms-group"><h3>${esc(c.label)} <span class="pill pill-cat">${items.length}</span></h3>
-        ${items.length ? `<div class="ms-grid">${items.map(s => `<button type="button" class="ms-card" data-smp="${esc(s.id)}">
+        ${items.length ? `<div class="ms-grid">${items.map(s => `<button type="button" class="ms-card" data-smp="${esc(s.id)}" aria-pressed="false">
           <b>${esc(s.name)}</b><small>Temats: ${esc(s.subject)}${verOnly(s) ? ` · <span class="ms-veronly">${esc(verOnly(s))}</span>` : ' · E-pasts un eAdrese'}</small><span class="ms-excerpt">${esc(htmlToText(s.body).replace(/\[Attēls:[^\]]*\]/g, '').replace(/\s+/g, ' ').trim())}</span></button>`).join('')}</div>`
           : '<p class="hint">Šajā kategorijā sagatavju nav.</p>'}</section>`;
-    }).join('')}`, actions:[{label:'Atcelt', cls:'btn-secondary'}]});
-  $$('[data-smp]', submodal).forEach(b => b.addEventListener('click', () => {
-    const s = list.find(x => x.id === b.dataset.smp);
-    submodal.close(); if (s) onPick(s);
-  }));
+    }).join('')}`, actions:[{label:'Atcelt', cls:'btn-secondary'}, {label:`${ICON.check}Izvēlēties`, cls:'btn-primary', onClick:close => {
+      const s = list.find(x => x.id === pick);
+      if (!s) return;
+      close(); onPick(s);
+    }}]});
+  // izvēle – uzklikšķinot (dubultklikšķis – uzreiz izvēlas), apstiprina ar "Izvēlēties"
+  const okBtn = $('.modal-foot .btn-primary', submodal);
+  okBtn.disabled = true;
+  $$('[data-smp]', submodal).forEach(b => {
+    b.addEventListener('click', () => { pick = b.dataset.smp; $$('[data-smp]', submodal).forEach(x => x.setAttribute('aria-pressed', x.dataset.smp === pick)); okBtn.disabled = false; });
+    b.addEventListener('dblclick', () => okBtn.click());
+  });
 }
 
 function openTemplateEditor(id, preset = {}){
@@ -5749,10 +5781,13 @@ function openSessionEditor(tpl, baseId){
 }
 // Veidnes izvēle kampaņai: filtrēta pēc kampaņas adresāta, sagrupēta pēc kategorijas, ar meklēšanu un teksta priekšskatījumu
 function openTemplatePicker(){
-  let sel = compose.content && compose.content.templateId || '', q = '';
+  // iepriekš izvēlētā (vēl neizmantotā) veidne šajā kampaņā – saglabājas, aizverot logu
+  const prev = ui.tpPick && ui.tpPick.id === compose.draftId ? ui.tpPick.sel : '';
+  let sel = prev || compose.content && compose.content.templateId || '', q = '', ch = ui.tpCh || 'epasts';
   const cats = SESS_KINDS[compose.kind].cats;
   const list = () => state.templates.filter(t => t.aud === compose.aud && cats.includes(t.cat));
-  const m = openModal({title:'Izmantot veidni', full:true, back:'← Atpakaļ uz kampaņu', info:`Tiek rādītas tikai kampaņas statistikas jomai (${AUDS[compose.aud].field}) un veidam (${SESS_KINDS[compose.kind].label}) atbilstošās veidnes: ${cats.map(c => CAT_BY_KEY[c].label).join(', ')}.`, content:`
+  const cur = () => state.templates.find(x => x.id === sel && x.aud === compose.aud && cats.includes(x.cat));
+  const m = openModal({title:'Izmantot veidni', editor:true, back:'← Atpakaļ uz kampaņu', info:`Tiek rādītas tikai kampaņas statistikas jomai (${AUDS[compose.aud].field}) un veidam (${SESS_KINDS[compose.kind].label}) atbilstošās veidnes: ${cats.map(c => CAT_BY_KEY[c].label).join(', ')}.`, content:`
     <div class="tp-grid">
       <div class="tp-list">
         <label class="search"><span class="sr-only">Meklēt veidnes</span>
@@ -5760,8 +5795,20 @@ function openTemplatePicker(){
           <input type="search" id="tp-search" placeholder="Meklēt veidni…"></label>
         <div id="tp-groups"></div>
       </div>
-      <div class="tp-pv" id="tp-pv" aria-live="polite"></div>
-    </div>`, actions:[{label:'Atcelt', cls:'btn-secondary'}]});
+      <div class="tp-pv editor-preview">
+        <div class="pv-head"><h3>Priekšskatījums</h3>
+          <div class="seg" id="tp-ch" role="group" aria-label="Priekšskatījuma veids"><button type="button" data-tpch="epasts">E-pasts</button><button type="button" data-tpch="eadrese">eAdrese</button></div></div>
+        <div id="tp-pv" aria-live="polite"></div>
+      </div>
+    </div>`, actions:[
+      {label:'Atcelt', cls:'btn-secondary'},
+      {label:`${ICON.edit}Pielāgot šai kampaņai`, cls:'btn-secondary', onClick:close => { const t = cur(); if (!t) return; close(); openSessionEditor(clone(t), t.id); }},
+      {label:`${ICON.check}Izmantot kampaņā`, cls:'btn-primary', onClick:close => {
+        const t = cur(); if (!t) return;
+        compose.content = {source:'tpl', templateId:t.id}; compose.index = 0;
+        close(); renderComposePreview(); toast(`Kampaņā tiks izmantota veidne “${t.name}”.`);
+      }}]});
+  const foot = [1, 2].map(i => $(`.modal-foot [data-act="${i}"]`, modal));
   function renderList(){
     const items = list().filter(t => tplMatches(t, q));
     $('#tp-groups').innerHTML = items.length ? CATS.map(c => {
@@ -5771,34 +5818,31 @@ function openTemplatePicker(){
           <small>${esc(KINDS[t.kind] || '')}${verOnly(t) ? ` · ${esc(verOnly(t))}` : ''}</small></button>`).join('')}</section>` : '';
     }).join('') : `<div class="empty" style="padding:20px"><p>${list().length ? 'Neviena veidne neatbilst meklēšanai.' : 'Šim adresātam un kampaņas veidam veidņu vēl nav.'}</p></div>`;
   }
+  // priekšskatījums ar pirmā kampaņas adresāta datiem; pārslēgs E-pasts / eAdrese
   function renderPv(){
-    const t = state.templates.find(x => x.id === sel && x.aud === compose.aud);
+    const t = cur();
+    foot.forEach(b => b.disabled = !t);
+    $$('#tp-ch button').forEach(b => b.setAttribute('aria-pressed', b.dataset.tpch === ch));
     if (!t){ $('#tp-pv').innerHTML = `<div class="empty">${ICON.file}<h3>Priekšskatījums</h3><p>Izvēlieties veidni sarakstā.</p></div>`; return; }
-    const isDoc = t.kind === 'pielikums' && !t.main;
-    const text = htmlToText(t.body).replace(/\[Attēls:[^\]]*\]/g, '').replace(/\n{3,}/g, '\n\n').trim();
-    const docText = isDoc ? htmlToText(t.doc.body).replace(/\n{3,}/g, '\n\n').trim() : '';
-    $('#tp-pv').innerHTML = `<div class="pills">${catPill(t.cat)}${kindPill(t.kind)}</div>
-      <h3>${esc(t.name)}</h3>
-      <div class="tp-meta">Temats: <b>${esc(t.subject)}</b>${mainNameOf(t) ? ` · ${ICON.clip} ${esc(mainNameOf(t))}` : ''}${(t.files || []).length ? ` · + ${t.files.length} ${plural(t.files.length, 'fails', 'faili')}` : ''}</div>
-      <div class="tp-text">${esc(text)}${docText ? `\n\n— Vēstule pielikumā (PDF) —\n\n${esc(docText)}` : ''}</div>
-      <div class="tp-actions">
-        <button type="button" class="btn btn-secondary" id="tp-adapt">${ICON.edit}Pielāgot šai kampaņai</button>
-        <button type="button" class="btn btn-primary" id="tp-use">${ICON.check}Izmantot veidni</button></div>`;
-    $('#tp-use').onclick = () => {
-      compose.content = {source:'tpl', templateId:t.id}; compose.index = 0;
-      m.close(); renderComposePreview(); toast(`Kampaņā tiks izmantota veidne “${t.name}”.`);
-    };
-    $('#tp-adapt').onclick = () => { m.close(); openSessionEditor(clone(t), t.id); };
+    const r = recipients()[0] || state.respondents.find(x => respAttrs(x).veids === AUDS[compose.aud].veids) || state.respondents[0];
+    const msg = buildMessage(t, r, true), c = chMsg(msg, ch);
+    $('#tp-pv').innerHTML = `<div class="pills">${catPill(t.cat)}${kindPill(t.kind)}${verOnly(t) ? `<span class="pill pill-veronly">${esc(verOnly(t))}</span>` : ''}</div>
+      <h3 class="tp-name">${esc(t.name)}</h3>` + verNote(c, ch) + mailView({toName:r.name, toAddr:addrFor(r, ch) || '', channel:ch, subjectHtml:c.subjectHtml || '<span class="none">bez temata</span>',
+      bodyHtml:c.bodyHtml, bodyTextHtml:c.bodyTextHtml, footerHtml:msg.footer, atts:msg.attachments.map(a => ({name:a.name})), main:msg.main, files:msg.files, org:msg.org,
+      extraMeta:`<dt>Versija</dt><dd><span class="pill pill-ch">${VER_LABEL[c.ver]}</span></dd>`});
   }
   $('#tp-groups').addEventListener('click', e => {
     const b = e.target.closest('[data-tp]');
     if (!b) return;
-    sel = b.dataset.tp;
+    sel = b.dataset.tp; ui.tpPick = {id:compose.draftId, sel};
     $$('[data-tp]', modal).forEach(x => x.setAttribute('aria-pressed', x.dataset.tp === sel));
     renderPv();
   });
+  $('#tp-groups').addEventListener('dblclick', e => { if (e.target.closest('[data-tp]')) foot[1].click(); });
+  $$('#tp-ch button').forEach(b => b.addEventListener('click', () => { ch = ui.tpCh = b.dataset.tpch; renderPv(); }));
   $('#tp-search').addEventListener('input', e => { q = e.target.value; renderList(); });
   renderList(); renderPv();
+  const on = $('#tp-groups [aria-pressed="true"]'); if (on) on.scrollIntoView({block:'nearest'});
 }
 // Respondentu atlase (2. solis): pārskati, periodiskums, periodi; atgādinājumam – tikai neiesniegtie pienākumi pēc termiņa
 const isReminder = () => compose.kind === 'atgadinajums';
@@ -6424,13 +6468,15 @@ function renderAcBar(){
   const rs = acActive(), cnt = {ok:0, auto:0, manual:0, none:0};
   rs.forEach(r => cnt[acState(r)]++);
   const attn = cnt.manual + cnt.none;
+  // pēdējās manuālās pārbaudes laiks (šai kampaņai) un pārbaudes norise
+  const busy = ui.acBusy === compose.draftId, acAt = ui.acAt && ui.acAt.id === compose.draftId ? new Date(ui.acAt.t).toLocaleTimeString('lv-LV', {hour:'2-digit', minute:'2-digit'}) : '';
   // filtrs pēc stāvokļa, kuram vairs nav respondentu, tiek noņemts
   if (compose.acF && !cnt[compose.acF]){ compose.acF = ''; setTimeout(() => renderComposeList(), 0); }
   // birkas: ikona, skaitlis, nosaukums (ar 0 – blāvas un nav klikšķināmas)
   const L = {ok:['derīga', 'derīgas'], auto:['labota', 'labotas'], manual:['jālabo', 'jālabo'], none:['bez adreses', 'bez adreses']};
   $('#c-ac').innerHTML = `<span class="ac-title">Adrešu pārbaude:</span>
     <span class="ac-pills">${AC_STATES.map(([k, l]) => `<button type="button" class="ac-pill k-${k}${cnt[k] ? '' : ' is-zero'}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${cnt[k] ? '' : 'disabled'} title="${esc(l)}: ${cnt[k]}${cnt[k] ? ' – filtrēt tabulu' : ''}">${AC_IC[k] ? ICON[AC_IC[k]] : '<span class="ac-dash" aria-hidden="true">—</span>'}<b>${cnt[k]}</b> ${plural(cnt[k], ...L[k])}</button>`).join('')}</span>
-    <span class="ac-acts"><button type="button" class="icon-btn ac-recheck" data-ac-recheck title="Atkārtoti pārbaudīt" aria-label="Atkārtoti pārbaudīt"><span aria-hidden="true">↻</span></button>${attn ? `<button type="button" class="btn btn-secondary btn-sm ac-excl-btn" data-ac-excl>Izņemt nederīgos (${attn})</button>` : ''}</span>`;
+    <span class="ac-acts">${acAt ? `<span class="ac-checked">Pārbaudīts ${acAt}</span>` : ''}<button type="button" class="btn btn-sm ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button>${attn ? `<button type="button" class="btn btn-secondary btn-sm ac-excl-btn" data-ac-excl>Izņemt nederīgos (${attn})</button>` : ''}</span>`;
 }
 // rindas problēmas (oranža ikona pie respondenta vārda)
 function respProblems(r, addr){
@@ -8097,9 +8143,18 @@ $('#c-ac').addEventListener('click', e => {
   const f = e.target.closest('[data-acf]');
   if (f){ compose.acF = compose.acF === f.dataset.acf ? '' : f.dataset.acf; renderComposeList(); const b = $(`#c-ac [data-acf="${f.dataset.acf}"]`); if (b) b.focus(); return; }
   if (e.target.closest('[data-ac-recheck]')){
-    renderComposeList();
-    const rs = state.respondents.filter(r => matchesFilt(r) && !compose.excluded.has(r.id)), c = {ok:0, auto:0, manual:0, none:0}; rs.forEach(r => c[acState(r)]++);
-    toast(`Pārbaude atkārtota: derīgas ${c.ok}, automātiski labotas ${c.auto}, jālabo ${c.manual}, bez adreses ${c.none}.`);
+    // ~1 s "Pārbauda…", pēc tam atjauno birkas un tabulu un parāda pārbaudes laiku
+    if (ui.acBusy) return;
+    const id = ui.acBusy = compose.draftId; renderAcBar();
+    setTimeout(() => {
+      ui.acBusy = '';
+      if (compose.draftId !== id) return;
+      ui.acAt = {id, t:Date.now()};
+      renderComposeList();
+      const b = $('#c-ac [data-ac-recheck]'); if (b) b.focus();
+      const rs = state.respondents.filter(r => matchesFilt(r) && !compose.excluded.has(r.id)), c = {ok:0, auto:0, manual:0, none:0}; rs.forEach(r => c[acState(r)]++);
+      toast(`Pārbaude atkārtota: derīgas ${c.ok}, automātiski labotas ${c.auto}, jālabo ${c.manual}, bez adreses ${c.none}.`);
+    }, 1000);
     return;
   }
   if (e.target.closest('[data-ac-excl]')) acExclude();
