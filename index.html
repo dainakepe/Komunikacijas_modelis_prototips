@@ -646,6 +646,14 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .camp-name:hover{color:var(--primary-dark);text-decoration:underline}
 .camp-name:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:3px}
 .camp-table th:first-child{width:24%}
+/* kārtošana pēc kolonnas */
+.th-sort{appearance:none;border:0;background:none;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;padding:4px 6px;margin:0 -6px;border-radius:5px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.th-sort:hover{background:rgba(41,119,133,.10);color:var(--primary-darker)}
+.th-sort:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px}
+.th-sort .sort-ic{font-size:12px;color:#A9B4B8;line-height:1}
+.th-sort.is-on{color:var(--primary-darker)}
+.th-sort.is-on .sort-ic{color:var(--primary);font-weight:700}
+.camp-table th.num .th-sort{margin:0 auto}
 .ck{display:inline-flex;align-items:center;gap:6px;color:var(--text)}
 .ck .icon{width:15px;height:15px;color:var(--primary-dark);flex:none}
 .ck-sub{color:var(--text-muted);margin-left:6px;font-size:13px}
@@ -2001,7 +2009,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     <span class="err cf-err" id="cf-err" hidden></span>
     <div class="card">
       <div class="table-wrap camp-scroll" id="camp-scroll"><table class="camp-table">
-        <thead><tr><th>Kampaņa</th><th>Veids</th><th class="num">Respondenti</th><th>Nosūtīšana</th><th>Statuss</th><th>Rezultāts</th><th><span class="sr-only">Darbības</span></th></tr></thead>
+        <thead><tr><th aria-sort="none"><button type="button" class="th-sort" data-csort="name">Kampaņa<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="kind">Veids<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="num" aria-sort="none"><button type="button" class="th-sort" data-csort="n">Respondenti<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="when">Nosūtīšana<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="st">Statuss<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="res">Rezultāts<span class="sort-ic" aria-hidden="true">↕</span></button></th><th><span class="sr-only">Darbības</span></th></tr></thead>
         <tbody id="camp-tbody"></tbody></table></div>
       <div class="table-foot camp-foot" id="camp-foot"></div>
     </div>
@@ -2302,7 +2310,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 64</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 65</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7362,6 +7370,38 @@ function campResult(x){
   return `<span class="cres" data-ctip="${esc(full)}" aria-label="${esc(full)}" role="img"><span class="cres-bar" aria-hidden="true"><span class="ok" style="width:${pc(x.ok)}"></span><span class="fail" style="width:${pc(x.fail)}"></span></span>
     <small aria-hidden="true">${x.ok}/${x.n}${x.fail ? ` · ${x.fail} <span class="x">✕</span>` : ''}</small></span>`;
 }
+// kārtošana pēc kolonnas: 1. klikšķis – augoši, 2. – dilstoši, 3. – noklusējums (jaunākās augšā); vērtības bez datiem (piem., melnraksts bez datuma) – vienmēr beigās
+ui.campSort = {k:'', dir:0};
+const campKindLabel = k => { const base = k && k.startsWith('atg') ? 'atgadinajums' : k; return (SESS_KINDS[base] ? SESS_KINDS[base].label : '') + (k === 'atg-pirms' ? ' pirms termiņa' : k === 'atg-pec' ? ' pēc termiņa' : ''); };
+function campSortVal(x, k){
+  if (k === 'name') return x.name || '';
+  if (k === 'kind') return campKindLabel(x.kind) || null;
+  if (k === 'n') return typeof x.n === 'number' ? x.n : null;
+  if (k === 'st') return CAMP_ST[x.st].label;
+  if (k === 'when'){
+    if (x.type === 'sent') return x.sign ? null : x.ts || null;
+    if (x.type === 'planned') return x.pl.sendDate ? `${x.pl.sendDate}T${x.pl.sendTime || '00:00'}` : null;
+    return x.d.when === 'plan' && x.d.sel && x.d.sel.sendDate ? `${x.d.sel.sendDate}T${x.d.sendTime || '00:00'}` : null;
+  }
+  if (k === 'res') return x.type === 'sent' && !x.sign && x.n ? x.ok / x.n : null;
+  return null;
+}
+function campSorted(list){
+  const {k, dir} = ui.campSort;
+  if (!k || !dir) return list;
+  return list.map((x, i) => ({x, i, v:campSortVal(x, k)})).sort((a, b) => {
+    if (a.v == null || b.v == null) return a.v == null && b.v == null ? a.i - b.i : a.v == null ? 1 : -1;
+    const c = typeof a.v === 'number' ? a.v - b.v : k === 'when' ? String(a.v).localeCompare(String(b.v)) : String(a.v).localeCompare(String(b.v), 'lv', {sensitivity:'base'});
+    return c ? c * dir : a.i - b.i;
+  }).map(o => o.x);
+}
+function renderCampSort(){
+  const {k, dir} = ui.campSort;
+  $$('.camp-table [data-csort]').forEach(b => { const on = b.dataset.csort === k && dir; b.classList.toggle('is-on', !!on);
+    b.closest('th').setAttribute('aria-sort', on ? (dir > 0 ? 'ascending' : 'descending') : 'none');
+    b.querySelector('.sort-ic').textContent = on ? (dir > 0 ? '↑' : '↓') : '↕';
+    b.title = on ? (dir > 0 ? 'Kārtots augoši – klikšķis: dilstoši' : 'Kārtots dilstoši – klikšķis: noklusējuma secība') : 'Kārtot augoši'; });
+}
 // viena nepārtraukta tabula (no jaunākās uz vecāko); rādīti pirmie ui.campLimit ieraksti
 const CAMP_PAGE = 20;
 ui.campLimit = CAMP_PAGE;
@@ -7376,8 +7416,9 @@ function renderCampaigns(){
   const q = norm(ui.camp.q);
   hideCTip();
   const c = ui.camp;
-  const list = rows.filter(x => (ui.campSub === 'all' || CAMP_ST[x.st].sub === ui.campSub) && (!c.kind || baseKind(x.kind) === c.kind) && (!q || norm(x.name).includes(q)) &&
-    (!c.creator || x.creator === c.creator) && (!c.from || campCreated(x) >= c.from) && (!c.to || campCreated(x) <= c.to));
+  const list = campSorted(rows.filter(x => (ui.campSub === 'all' || CAMP_ST[x.st].sub === ui.campSub) && (!c.kind || baseKind(x.kind) === c.kind) && (!q || norm(x.name).includes(q)) &&
+    (!c.creator || x.creator === c.creator) && (!c.from || campCreated(x) >= c.from) && (!c.to || campCreated(x) <= c.to)));
+  renderCampSort();
   const row = x => `<tr class="camp-row" data-action="camp-row" data-id="${esc(x.key)}">
       <td><button type="button" class="camp-name" data-action="camp-row" data-id="${esc(x.key)}" data-ctip="${esc(x.name + '\n' + x.meta)}" aria-description="${esc(x.meta)}">${esc(x.name)}</button></td>
       <td>${campKindCell(x.kind)}</td>
@@ -7404,6 +7445,12 @@ function renderCampaigns(){
   }
 }
 const campByKey = key => campRows().find(x => x.key === key);
+$('.camp-table thead').addEventListener('click', e => {
+  const b = e.target.closest('[data-csort]'); if (!b) return;
+  const k = b.dataset.csort, cur = ui.campSort;
+  ui.campSort = cur.k !== k ? {k, dir:1} : cur.dir === 1 ? {k, dir:-1} : {k:'', dir:0};
+  renderCampaigns(); const nb = $(`.camp-table [data-csort="${k}"]`); if (nb) nb.focus();
+});
 // Rindas izvēlne "⋯": Atvērt, Kopēt kā jaunu kampaņu, Dzēst (tikai melnrakstiem)
 function campMenuItems(x){
   const it = (action, id, icon, label, cls = '') => `<button type="button" role="menuitem" tabindex="-1" class="${cls}" data-action="${action}" data-id="${esc(id)}">${ICON[icon]}${esc(label)}</button>`;
