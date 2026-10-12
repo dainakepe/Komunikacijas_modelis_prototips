@@ -497,7 +497,6 @@ td.contacts{display:table-cell}
 .when-opts{display:flex;gap:8px;flex-wrap:wrap}
 /* Nosūtīšanas datums un laiks: kompakts pārslēgs un (ieplānojot) datuma un laika lauki tajā pašā rindā */
 .when-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}
-.when-now{font-size:var(--fs-md);color:var(--text-muted);margin:0 0 6px}
 .field .when-chk{display:inline-flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;min-height:38px;margin-right:8px}
 .when-chk input{width:16px;height:16px;accent-color:var(--primary)}
 .when-l{font-size:var(--fs-sm);font-weight:600;color:var(--text-muted)}
@@ -2203,7 +2202,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                 <input type="number" id="c-late" min="0" max="999" step="1" placeholder="—"><span>dienas</span><span class="rm-date" id="c-late-date" aria-live="polite"></span></div>
             </div></div>
           <div class="field" role="group" aria-labelledby="c-when-l"><span class="label" id="c-when-l">Nosūtīšanas laiks</span>
-            <div class="when-now" id="c-when-now">Pēc kampaņas apstiprināšanas <span class="tip" tabindex="0" role="note" aria-label="Vēstules tiks nosūtītas pēc pēdējā soļa apstiprināšanas (un saskaņojuma vai paraksta, ja tādi izvēlēti)." data-tip="Vēstules tiks nosūtītas pēc pēdējā soļa apstiprināšanas (un saskaņojuma vai paraksta, ja tādi izvēlēti).">i</span></div>
             <div class="when-row">
               <label class="when-chk"><input type="checkbox" id="c-when-chk"> Ieplānot nosūtīšanu noteiktā laikā</label>
               <div class="when-plan" id="c-when-plan" hidden>
@@ -2483,7 +2481,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 73</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 74</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -2769,6 +2767,11 @@ const DEFAULT_PRIO = ['eadrese', 'email1', 'email2'];
 // kampaņas adrešu prioritāte pēc noklusējuma: uzņēmumu statistikā (un "Visi") – eAdrese → E-pasts 1 → E-pasts 2; iedzīvotāju – E-pasts 1 → E-pasts 2
 const prioDefault = aud => aud === 'fiz' ? ['email1', 'email2', ''] : [...DEFAULT_PRIO];
 const CURRENT_USER = 'Testa Darbinieks';
+// prototipā pieejamie periodu gadi (visās gada un perioda izvēlnēs), dilstošā secībā; noklusējumā – tekošais gads
+const PER_YEARS = [2027, 2026];
+const perDefYear = () => { const y = new Date().getFullYear(); return Math.min(PER_YEARS[0], Math.max(PER_YEARS[PER_YEARS.length - 1], y)); };
+const perYearOk = y => PER_YEARS.includes(+y);
+const periodYear = k => +String(k).split(':')[1].split('-')[0];
 // Simulācija: e-adreses, kas nav aktivizētas (piegāde neizdodas)
 const INACTIVE_EADDR = new Set(['_DEFAULT@00000000112', '_PRIVATE@00000000222']);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -3626,20 +3629,23 @@ function seedReports(today = dOnly(new Date())){
   });
 }
 // Pienākumi: respondents × pārskats × periods; termiņš – pēc pārskata noteikuma; statuss – testa dati
-// testa vēsture uzņēmumu pārskatiem: no 2024. gada; cik periodu pēc pēdējā pabeigtā (1 – arī tekošais periods)
-const DUTY_HIST_FROM = 2024, DUTY_HIST = {'p-apgr':1, 'p-ds':0, 'p-rup':1}, DUTY_EXTRA_FROM = 2025;
+// testa pienākumi visos 2026. un 2027. gada periodos (PER_YEARS): uzņēmumu pārskatiem un iedzīvotāju apsekojumiem
+const DUTY_HIST_FROM = 2026, DUTY_HIST = {'p-apgr':1, 'p-ds':0, 'p-rup':1}, DUTY_EXTRA_FROM = 2026;
+const dutyLast = p => periodOf(p.freq, new Date(PER_YEARS[0], 11, 31));
 function seedDutyData(s){
   const today = dOnly(new Date()), reps = seedReports(today);
   s.reports = reps.map(x => x.p);
   s.duties = SEED_DUTIES.filter(([rid]) => s.respondents.some(r => r.id === rid)).map(([rid, rep, back, sub], i) => {
-    const {p, anchor} = reps.find(x => x.p.id === rep), period = periodShift(anchor, 1 - back), deadline = deadlineOf(p, period);
+    const {p, anchor} = reps.find(x => x.p.id === rep), p0 = periodShift(anchor, 1 - back);
+    // periods pirms prototipa gadiem (piem., iepriekšējā gada gada pārskats) – pārcelts uz pirmo pieejamo gadu
+    const lag = PER_YEARS[PER_YEARS.length - 1] - periodYear(p0), st = periodBounds(p0).start, period = lag > 0 ? periodOf(p.freq, new Date(st.getFullYear() + lag, st.getMonth(), st.getDate() + 3)) : p0, deadline = deadlineOf(p, period);
     const submitted = sub === null ? null : isoDate(new Date(Math.min(addDaysTo(parseIso(deadline), -sub), today)));
     return {id:'d' + (i + 1), respondentId:rid, reportId:rep, period, deadline, submitted};
-  });
+  }).filter((d, i, a) => perYearOk(periodYear(d.period)) && a.findIndex(x => x.respondentId === d.respondentId && x.reportId === d.reportId && x.period === d.period) === i);
   // uzņēmumu pārskatiem – pienākumi katrā periodā no 2024. gada līdz tekošajam (pa diviem respondentiem, kuriem ir šis pārskats)
   Object.entries(DUTY_HIST).forEach(([rep, after]) => {
     const {p, anchor} = reps.find(x => x.p.id === rep), have = new Set(s.duties.filter(d => d.reportId === rep).map(d => d.period));
-    const rids = [...new Set(s.duties.filter(d => d.reportId === rep).map(d => d.respondentId))], last = periodShift(anchor, after);
+    const rids = [...new Set(s.duties.filter(d => d.reportId === rep).map(d => d.respondentId))], last = dutyLast(p);
     if (!rids.length) return;
     let i = 0;
     for (let k = periodOf(p.freq, new Date(DUTY_HIST_FROM, 0, 1)); periodStart(k) <= periodStart(last); k = periodShift(k, 1)){
@@ -3655,12 +3661,24 @@ function seedDutyData(s){
   const jurRids = [...new Set(s.duties.filter(d => jurIds.has(d.reportId)).map(d => d.respondentId))];
   reps.filter(x => x.p.aud === 'jur' && !s.duties.some(d => d.reportId === x.p.id)).forEach(({p, anchor}, j) => {
     if (!jurRids.length) return;
-    const rids = [0, 1, 2].map(t => jurRids[(j * 3 + t) % jurRids.length]).filter((r, i, a) => a.indexOf(r) === i).slice(0, 2 + j % 2), last = periodShift(anchor, 1);
+    const rids = [0, 1, 2].map(t => jurRids[(j * 3 + t) % jurRids.length]).filter((r, i, a) => a.indexOf(r) === i).slice(0, 2 + j % 2), last = dutyLast(p);
     let i = 0;
     for (let k = periodOf(p.freq, new Date(DUTY_EXTRA_FROM, 0, 1)); periodStart(k) <= periodStart(last); k = periodShift(k, 1), i++){
       const deadline = deadlineOf(p, k), past = parseIso(deadline) < today;
       rids.forEach((rid, t) => s.duties.push({id:'dx' + (s.duties.length + 1), respondentId:rid, reportId:p.id, period:k, deadline,
         submitted: past && (i + t) % 7 ? isoDate(addDaysTo(parseIso(deadline), -(1 + (i + t) % 4))) : null}));
+    }
+  });
+  // iedzīvotāju apsekojumi (1-DSA, 1-MBA): katrā 2026.–2027. gada periodā, kurā vēl nav pienākumu – līdz 6 respondentiem (pēc kārtas)
+  reps.filter(x => x.p.aud === 'fiz' && x.p.id !== 'a-cel').forEach(({p}) => {
+    const rids = [...new Set(s.duties.filter(d => d.reportId === p.id).map(d => d.respondentId))], have = new Set(s.duties.filter(d => d.reportId === p.id).map(d => d.period));
+    if (!rids.length) return;
+    let i = 0;
+    for (let k = periodOf(p.freq, new Date(PER_YEARS[PER_YEARS.length - 1], 0, 1)); periodStart(k) <= periodStart(dutyLast(p)); k = periodShift(k, 1), i++){
+      if (have.has(k)) continue;
+      const deadline = deadlineOf(p, k), past = parseIso(deadline) < today;
+      Array.from({length:Math.min(6, rids.length)}, (_, t) => rids[(i * 2 + t) % rids.length]).forEach((rid, t) =>
+        s.duties.push({id:'df' + (s.duties.length + 1), respondentId:rid, reportId:p.id, period:k, deadline, submitted: past && (i + t) % 4 ? isoDate(addDaysTo(parseIso(deadline), -(1 + (i + t) % 5))) : null}));
     }
   });
   applyCelData(s);
@@ -3744,6 +3762,8 @@ function loadState(){
         seed.respondents.forEach(r => { if (CEL_IDS.includes(r.id) && !s.respondents.some(x => x.id === r.id)) s.respondents.push({...clone(r), syncedAt:r.syncedAt || synced}); });
         applyRespIds(s); applyCelData(s); s.celResp = 1;
       }
+      // pienākumi 2026. un 2027. gada periodos (prototipā pieejamie gadi) – tiek izveidoti no jauna (vienreiz)
+      if (!s.perYears2627){ seedDutyData(s); s.perYears2627 = 1; }
       // testa veidnēm – eAdreses versija (vienreiz)
       if (!s.eaSeeded){ s.templates.forEach(t => { if (/^t\d+$/.test(t.id) && !t.ea && +t.id.slice(1) <= 14) t.ea = seedEa(t); }); s.eaSeeded = true; }
       // pielikumu kategorijas – tās pašas, kas veidnēm
@@ -3787,7 +3807,7 @@ const PF_ROWS = ['gads', 'pusg', 'cet', 'men', 'ned'];
 const PF_ROWS_L = {gads:['Gada pārskati', ''], pusg:['Pusgada pārskati', 'Visi pusgadi'], cet:['Ceturkšņa pārskati', 'Visi ceturkšņi'], men:['Mēneša pārskati', 'Visi mēneši'], ned:['Nedēļas pārskati', 'Visas nedēļas']};
 // atlases opcija "Apvienot respondentus ar vienādiem NMK" – tikai uzņēmumu statistikai
 const selOpt = k => compose.aud === 'jur' && !!compose.sel[k];
-const defaultSel = () => ({year:new Date().getFullYear(), pf:defaultPf(), reports:[], fz:defaultFz(), allReports:false, operator:'', resp:defaultResp(), mergeNmk:false, nsExcl:[...NS_DEFAULT], sendDate:todayIso(), days:5, lateDays:''});
+const defaultSel = () => ({year:perDefYear(), pf:defaultPf(), reports:[], fz:defaultFz(), allReports:false, operator:'', resp:defaultResp(), mergeNmk:false, nsExcl:[...NS_DEFAULT], sendDate:todayIso(), days:5, lateDays:''});
 // testa vēsturei: periodiskumi, kas iekļauti (pārējie – "Neiekļaut")
 const pfOnly = map => Object.fromEntries(PF_KEYS.map(k => [k, map[k] || 'none']));
 // agrākiem melnrakstiem un ieplānotajām kampaņām: viens periodiskums (freq) -> saraksts (freqs);
@@ -6479,8 +6499,6 @@ const surveyMode = (aud = compose.aud) => aud !== 'jur';
 const hasScope = (sel = compose.sel) => fizMode() ? !!(sel.reports[0] && sel.fz && sel.fz.period) : surveyMode() || (!!sel.year && PF_KEYS.some(k => pfOf(sel)[k] !== 'none'));
 // Iedzīvotāju statistika: katram apsekojumam – periodu izvēle (vairākizvēle)
 const fizMode = (aud = compose.aud) => aud === 'fiz';
-// apsekojuma periodi (Metadatu pārvaldība; prototipā – no 2024. gada līdz tekošajam periodam), jaunākais – pirmais
-const PER_FROM_YEAR = 2024;
 // reizes / cikli (Respondentu pārvaldība): respondenta pazīme katram periodam
 const ROUNDS = {'a-dsa':{label:'Cikls', word:'reize', acc:'reizi', n:4}, 'a-cel':{label:'Cikls', word:'cikls', acc:'ciklu', n:2}};
 const roundLabel = (id, n) => ROUNDS[id] ? `${n}. ${ROUNDS[id].word}` : '';
@@ -6496,12 +6514,10 @@ const fzRounds = (sel = compose.sel) => { const R = ROUNDS[sel.reports[0]]; retu
 function repPeriodList(p){
   const out = [];
   if (!p) return out;
-  // nākotnes periodi – ja tiem jau ir pienākumi (piem., Ceļotāju apsekojuma 2027. gada mēneši)
-  const last = (state.duties || []).filter(d => d.reportId === p.id).map(d => d.period).reduce((a, k) => periodStart(k) > periodStart(a) ? k : a, periodBack(p.freq, 1));
-  for (let k = last; k && periodYear(k) >= PER_FROM_YEAR && out.length < 400; k = periodShift(k, -1)) out.push(k);
+  // apsekojuma periodi (Metadatu pārvaldība; prototipā – tikai 2026. un 2027. gada periodi), jaunākais – pirmais
+  for (let k = periodOf(p.freq, new Date(PER_YEARS[0], 11, 31)); k && perYearOk(periodYear(k)) && out.length < 400; k = periodShift(k, -1)) out.push(k);
   return out;
 }
-const periodYear = k => +String(k).split(':')[1].split('-')[0];
 // pienākuma periods atbilst gadam un periodiskuma izvēlei
 function pfMatch(sel, freq, k){
   // gads – vienmēr kā skaitlis; rinda ieslēgta un "Visi …" (arī tukša izvēle) – jebkurš šī gada periods; konkrēti periodi – tikai tie
@@ -6634,7 +6650,6 @@ function renderRepList(){
   msActive(null);
 }
 // Konkrēts periods: rindas ar izvēlnēm "Periodiskums" (ja izvēlēti vairāki), "Gads" un "Periods"
-const PER_YEAR0 = 2020;
 const weeksInYear = y => isoWeekOf(new Date(y, 11, 28))[1];
 function keyToRow(k){ const [, v = ''] = String(k).split(':'), [y, n] = v.split('-'); return {freq:freqOfPeriod(k) || '', year:+y, n:n ? +n : ''}; }
 function rowKey(r){
@@ -6719,8 +6734,8 @@ function renderScope(){
   sel.reports = sel.reports.filter(id => reps.some(p => p.id === id));
   $('#c-sc-per .scope-ic').innerHTML = ICON.calendar; $('#c-sc-rep .scope-ic').innerHTML = ICON.doc;
   // a) Pēc perioda: gads un izvēlne katram periodiskumam (bez datiem izvēlētajā gadā – neaktīva)
-  const thisY = new Date().getFullYear();
-  $('#c-year').innerHTML = Array.from({length:thisY + 2 - PER_YEAR0}, (_, i) => thisY + 1 - i).map(y => `<option value="${y}" ${+sel.year === y ? 'selected' : ''}>${y}</option>`).join('');
+  if (!perYearOk(sel.year)) sel.year = perDefYear();
+  $('#c-year').innerHTML = PER_YEARS.map(y => `<option value="${y}" ${+sel.year === y ? 'selected' : ''}>${y}</option>`).join('');
   const fr = new Map(reps.map(p => [p.id, p.freq])), yearDs = (state.duties || []).filter(d => fr.has(d.reportId) && periodYear(d.period) === +sel.year);
   // rindas pa periodiskumiem: slēdzis (iekļaut / neiekļaut), nosaukums, konkrētie periodi (vairākizvēle, dilstoši); bez pārskatiem gadā – neaktīva
   const y = +sel.year, focusEl = document.activeElement, fk = focusEl && focusEl.closest ? (focusEl.closest('[data-pfrow]') || {}).dataset : null;
@@ -6787,6 +6802,9 @@ function renderScope(){
 function renderFz(){
   const sel = compose.sel, id = sel.reports[0] || '', p = repById(id), fz = sel.fz = {...defaultFz(), ...(sel.fz || {})};
   const all = repPeriodList(p), years = [...new Set(all.map(periodYear))];
+  // agrāk saglabātā izvēle ārpus pieejamajiem gadiem – noklusējums
+  if (fz.year && !years.includes(+fz.year)) fz.year = p ? perDefYear() : '';
+  if (p && fz.period && !all.includes(fz.period)) fz.period = fzDefPeriod(p, fz.year);
   $('#c-fz-rep').innerHTML = `<option value="">Izvēlieties apsekojumu…</option>` + audReports().map(r => `<option value="${r.id}" ${r.id === id ? 'selected' : ''}>${esc(r.code)} ${esc(r.name)}</option>`).join('');
   $('#c-fz-year').innerHTML = `<option value="">Visi gadi</option>` + years.map(y => `<option value="${y}" ${String(y) === String(fz.year) ? 'selected' : ''}>${y}</option>`).join('');
   const pers = fz.year ? all.filter(k => periodYear(k) === +fz.year) : all;
@@ -6973,7 +6991,6 @@ function renderBasics(){
   $('#c-kind').innerHTML = Object.entries(SESS_KINDS).map(([k, v]) =>
     `<button type="button" class="skind-opt" data-skind="${k}" aria-pressed="${compose.kind === k}">${ICON[v.icon]}<span>${esc(v.label)}</span></button>`).join('');
   $('#c-when-chk').checked = compose.when === 'plan';
-  $('#c-when-now').hidden = compose.when === 'plan';
   $('#c-when-plan').hidden = compose.when !== 'plan';
   // nepabeigta (nederīga) ievade attiecas tikai uz atvērto kampaņu
   if (ui.planRawFor !== compose.draftId){ ui.planRawFor = compose.draftId; ui.planDateRaw = ui.planTimeRaw = null; }
@@ -9061,7 +9078,7 @@ function fzDefPeriod(p, y){
   const all = repPeriodList(p), def = p ? periodBack(p.freq, 1) : '', ys = y ? all.filter(k => periodYear(k) === +y) : all;
   return ys.includes(def) ? def : ys.find(k => periodStart(k) <= periodStart(def)) || ys[0] || '';
 }
-function fzDefaults(id){ compose.sel.fz = {year:'', period:fzDefPeriod(repById(id)), rounds:null}; ui.cycOpen = false; }
+function fzDefaults(id){ const y = perDefYear(); compose.sel.fz = {year:y, period:fzDefPeriod(repById(id), y), rounds:null}; ui.cycOpen = false; }
 $('#c-fz-rep').addEventListener('change', e => {
   const id = e.target.value;
   compose.sel.reports = id ? [id] : [];
