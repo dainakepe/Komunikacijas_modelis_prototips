@@ -76,7 +76,7 @@ Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA 
   - **Veids** – ikona un teksts (✉ Uzaicinājums, ◷ Atgādinājums, ⓘ Informatīvs ziņojums, Cits); atgādinājumam tajā pašā rindā pelēkā tekstā "pirms termiņa" / "pēc termiņa";
   - **Respondenti** – skaits (līdzināts pa labi);
   - **Nosūtīšana** – "Tūlīt pēc apstiprināšanas", "Plānota 10.10. 09:00" vai "Nosūtīta 06.10. 16:41"; datumi tekošajā gadā – "06.10. 16:41", citādi – "06.10.2025.";
-  - **Statuss** – krāsains aplītis un teksts: Melnraksts (pelēks), Ieplānota (zils), Gaida parakstu (dzeltens), Izpildē (tirkīzzaļš), Pabeigta (zaļš), Daļēji neveiksmīga (oranžs). Filtrā "Izpildē" ir arī kampaņas, kas gaida parakstu, "Pabeigtās" – arī daļēji neveiksmīgās;
+  - **Statuss** – krāsains aplītis un teksts: Melnraksts (pelēks), Atgriezta labošanai (oranžs; melnraksts, ko saskaņotājs atgrieza), Ieplānota (zils), Gaida saskaņojumu (violets), Gaida parakstu (dzeltens), Izpildē (tirkīzzaļš), Pabeigta (zaļš), Daļēji neveiksmīga (oranžs). Filtrā "Izpildē" ir arī kampaņas, kas gaida saskaņojumu vai parakstu, "Melnraksti" – arī atgrieztās labošanai, "Pabeigtās" – arī daļēji neveiksmīgās;
   - **Rezultāts** – nosūtītām kampaņām šaura progresa josla (zaļa – piegādātas, oranža – neveiksmīgas) un īss teksts "3/5 · 1 ✕"; pilnais teksts ("Piegādātas 3 no 5 · 1 neveiksmīga · 1 procesā") – padomā; pārējām "—".
 - **Viena nepārtraukta tabula** bez grupām: visas kampaņas (melnraksti, ieplānotās, nosūtītās) sakārtotas no jaunākās uz vecāko pēc pēdējo izmaiņu laika (melnrakstam – saglabāšana, ieplānotajai – izveide, nosūtītajai – nosūtīšana vai parakstīšana).
 - **Kārtošana pēc kolonnām:** katrai kolonnai (Kampaņa, Veids, Respondenti, Nosūtīšana, Statuss, Rezultāts) galvenē ir ikona ↕. Klikšķis uz galvenes: 1. – augoši (↑), 2. – dilstoši (↓), 3. – atpakaļ noklusējuma secībā (jaunākās augšā). Aktīvās kolonnas bultiņa ir primārajā krāsā, pārējās – pelēkas; uzbraucot ar peli, galvene tiek viegli izcelta un kursors kļūst par roku.
@@ -319,7 +319,7 @@ Priekšskatījumā redzama prioritāšu secība un paredzamais rezultāts (zinā
 
 ## Komunikācijas kampaņa
 
-Jaunu kampaņu sagatavo piecos soļos: Pamatdati, Respondenti, Saturs, Paraksts, Pārbaude (specifikācija F1–F11). Atsevišķa soļa "Adreses" vairs nav – adrešu prioritāte ir solī "Pamatdati"; agrāk saglabātajos melnrakstos solis "Adreses" atveras kā "Pamatdati", bet "Pārbaude" – kā 5. solis.
+Jaunu kampaņu sagatavo piecos soļos: **Pamatdati → Respondenti → Saturs → Pārbaude → Saskaņošana un paraksts** (specifikācija F1–F11; scenārijs: 2.3 Testēšana → 2.4 Saskaņošana – pārbaude notiek pirms saskaņošanas). Atsevišķa soļa "Adreses" vairs nav – adrešu prioritāte ir solī "Pamatdati". Agrāk saglabātajos melnrakstos soļi tiek pārnumurēti: agrākais "Paraksts" atveras kā 5. solis "Saskaņošana un paraksts", agrākā "Pārbaude" – kā 4. solis.
 - Augšā ir **progresa josla**: pabeigtie soļi ir atzīmēti ar ķeksīti, soļi ar trūkstošu informāciju – ar "!".
 - Starp soļiem var pārvietoties brīvi: ar progresa joslu vai pogām "← Atpakaļ" / "Tālāk →".
 - Pogu **"Saglabāt melnrakstu"** var izmantot jebkurā solī. Kampaņa tiek saglabāta arī automātiski.
@@ -417,15 +417,25 @@ Jaunu kampaņu sagatavo piecos soļos: Pamatdati, Respondenti, Saturs, Paraksts,
      - ja kampaņā ir vairāki apsekojumi – vērtības sagrupētas izvēršamos blokos pa apsekojumiem (blokā redzams mainīto vērtību skaits), un vēstulē katram respondentam tiek izmantotas viņa apsekojuma vērtības;
      - "Tēmturi banerī" un "Sauklis zem banera" – kampaņas līmeņa lauki (sākotnēji no apsekojuma, ja tam tādi ir);
      - priekšskatījumā un nosūtītajās vēstulēs mainīgie tiek aizpildīti ar šīm vērtībām. Izmaiņas tiek saglabātas kampaņas melnrakstā.
-4. **Paraksts** (F8):
-   - "Nav jāparaksta" vai "Jāparaksta" (DVS NAMEJS integrācija; prototipā – simulācija);
-   - ja jāparaksta – parakstīšanas veids (Secīga / Paralēla / Paka) un parakstītāji. Secīgai parakstīšanai secība ir atzīmēšanas kārtībā;
-   - "Paraksts vēstulē": lauki `{parakstītājs}` un `{amats}` (arī PDF vēstules parakstā). Pēc noklusējuma tos ņem no pirmā parakstītāja vai no "Pastāvīgajām daļām", un tos var mainīt tikai šai kampaņai.
-5. **Pārbaude** (F3, F5, F6):
-   - **kampaņas kopsavilkums** ar saitēm "Labot" uz attiecīgo soli;
-   - **priekšskatījums:** viena vēstule katram respondentam ar `{pārskatu_tabula}` (atgādinājumā tikai neiesniegtie pienākumi), pārslēgšanās starp respondentiem un pārslēgs "E-pasts / eAdrese";
+   - **"Paraksts vēstulē"** (šī soļa beigās): lauki `{parakstītājs}` un `{amats}` (arī PDF vēstules parakstā). Pēc noklusējuma tos ņem no pirmā parakstītāja vai no "Pastāvīgajām daļām", un tos var mainīt tikai šai kampaņai. Tie ir solī "Saturs", jo ir daļa no vēstules teksta – pārbaudē redzama galīgā vēstule.
+4. **Pārbaude** (F3, F5, F6; scenārijs 2.3 "Testēšana"):
+   - **kreisajā pusē – kampaņas kopsavilkums** ar saitēm "Labot" uz attiecīgo soli (nosaukums, veids, nosūtīšana, respondenti, saturs, adrešu prioritāte, pielāgotās vēstules); saskaņošana un paraksts šeit netiek rādīti;
+   - **labajā pusē – vēstuļu priekšskatījums:** viena vēstule katram respondentam ar `{pārskatu_tabula}` (atgādinājumā tikai neiesniegtie pienākumi), pārslēgs "E-pasts / eAdrese", "Pa vienai / Visas", "Iezīmēt laukus";
+   - **virs priekšskatījuma – automātisko pārbaužu rinda:** ✓/⚠ **Mainīgie aizpildīti** (neaizpildītie un nezināmie lauki), **Saites** (saitēm jābūt http(s):// vai mailto:, bez neaizpildītiem laukiem), **Pielikumi** (vēstulei pielikumā – vai ir pielikums; vai pievienotie bibliotēkas faili ir atrodami), **Adreses** (nederīgas adreses un respondenti bez adreses atlasē). Pie ⚠ – saite "Labot" uz attiecīgo soli (adreses – "Respondenti", pārējais – "Saturs");
+   - neobligāta poga **"Nosūtīt testa vēstuli sev"** – simulācija: pašreizējā priekšskatījuma vēstule (izvēlētajā kanāla versijā) tiek "nosūtīta" uz lietotāja adresi `testa.darbinieks@csp.example`; blakus redzams "Testa vēstule nosūtīta [datums, laiks]" (ieraksts saglabājas kampaņā);
    - **"Pielāgot šo vēstuli"** (F5): konkrētā respondenta vēstulei var labot tematu un tekstu, pievienot vai noņemt papildu pielikumus. Pielāgotā vēstule ir atzīmēta ar birku "Pielāgota vēstule" (arī atlases tabulā un vēsturē), un to var atjaunot uz sākotnējo;
-   - **galvenā poga** atkarībā no iestatījumiem: "Ieplānot" (ieplānota kampaņa), "Nodot parakstīšanai" (jāparaksta) vai "Nosūtīt".
+   - **galvenā poga "Turpināt →"**: ja ir ⚠, vispirms apstiprinājums "Turpināt ar brīdinājumiem?" ar brīdinājumu sarakstu. Pārbaudes rezultāts (laiks un brīdinājumi) tiek saglabāts. Ja pēc pārbaudes maina kampaņas datus, kas ietekmē vēstules (tvērumu, atlasi, saturu, mainīgos, parakstu vēstulē u. c.), pārbaude jāiziet vēlreiz.
+5. **Saskaņošana un paraksts** (F8; scenārijs 2.4 "Saskaņošana") – pēdējais solis:
+   - **Saskaņošana:** "Nav jāsaskaņo" / "Jāsaskaņo"; ja jāsaskaņo – **saskaņotājs** (noklusējumā apsekojuma vadītājs: Darbaspēka apsekojumam – Ilze Izdomāta, Ceļotāju – Kārlis Paraugs, Mājsaimniecību budžeta – Dace Testa, uzņēmumu pārskatiem – Juris Izdomāts; izdomāti testa dati) un neobligāts **komentārs saskaņotājam**;
+   - **Paraksts:** "Nav jāparaksta" vai "Jāparaksta" (DVS NAMEJS integrācija; prototipā – simulācija); ja jāparaksta – parakstīšanas veids (Secīga / Paralēla / Paka) un parakstītāji (secīgai parakstīšanai secība ir atzīmēšanas kārtībā);
+   - **īss kopsavilkums:** respondentu un vēstuļu skaits, kanāli (piem., "E-pasts 6 · eAdrese 3"), nosūtīšanas laiks, pārbaudes rezultāts ("✓ Pārbaudīts … – bez brīdinājumiem" / "⚠ … ar N brīdinājumiem" / "⚠ Nav pārbaudīts" ar saiti uz pārbaudi) un tālākais ceļš;
+   - **noslēdzošā poga** atkarībā no izvēlēm: **"Nodot saskaņošanai"** (jāsaskaņo) → **"Nodot parakstīšanai"** (jāparaksta) → **"Ieplānot"** (ieplānota) → **"Nosūtīt"**. Ja solis "Pārbaude" nav iziets (vai kampaņa mainīta pēc tā), nodot nevar – atveras solis "Pārbaude".
+
+**Saskaņošana (simulācija).** Pēc "Nodot saskaņošanai" kampaņai ir statuss **"Gaida saskaņojumu"** (kampaņu sarakstā sadaļā "Izpildē"; padomā – nodošanas laiks un saskaņotājs).
+- **Saskaņotāja skats:** atverot šādu kampaņu, redzams tas pats pārbaudes skats **tikai lasīšanai** (kopsavilkums bez saitēm "Labot", priekšskatījums, automātiskās pārbaudes; bez soļu pārslēgšanas, testa vēstules, pielāgošanas un melnraksta dzēšanas). Augšā – informācija (nodevējs, laiks, saskaņotājs, komentārs) un pogas **"Saskaņot"** un **"Atgriezt labošanai"**.
+- **"Atgriezt labošanai"** – logā obligāts komentārs sagatavotājam. Kampaņai ir statuss **"Atgriezta labošanai"** (sadaļā "Melnraksti"); atverot to, sagatavotājs redz saskaņotāja komentāru. Pirms atkārtotas nodošanas vēlreiz jāiziet solis "Pārbaude".
+- **"Saskaņot"** (ar apstiprinājumu) – automātiski: ja jāparaksta – vēstules nodotas parakstīšanai (**"Gaida parakstu"**), citādi – ieplānotai kampaņai **"Ieplānota"**, pārējām – nosūtīšana.
+- Saskaņošanas vēsture (nodots, atgriezts, saskaņots – laiks, persona, komentārs) tiek saglabāta kampaņas iestatījumos.
 
 **Parakstīšana (simulācija).** Pēc "Nodot parakstīšanai" kampaņa ir sadaļā "Izpildē", un tās vēstulēm ir statuss "Gaida parakstu" (redzams arī sūtīšanas vēsturē). Poga "Parakstīt" (kampaņu sarakstā vai vēstures blokā) paraksta vēstules, un tās tiek nosūtītas. Ieplānotai kampaņai ar parakstu vēstules tiek nodotas parakstīšanai izpildes brīdī.
 

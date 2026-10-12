@@ -465,9 +465,32 @@ td.contacts{display:table-cell}
 /* solis "Respondenti" – plašāks (kreisā kolonna + tabula) */
 .compose-grid.wiz[data-step="2"] .wiz-card{max-width:1280px}
 .compose-grid.wiz .preview-card{display:none}
-.compose-grid.wiz[data-step="5"]{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px;align-items:start}
-.compose-grid.wiz[data-step="5"] .wiz-nav{position:static}
-.compose-grid.wiz[data-step="5"] .preview-card{display:block}
+.compose-grid.wiz[data-step="4"]{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px;align-items:start}
+.compose-grid.wiz[data-step="4"] .wiz-nav{position:static}
+.compose-grid.wiz[data-step="4"] .preview-card{display:block}
+/* solī "Pārbaude" nosūtīšanas poga priekšskatījumā netiek rādīta – sūtīšana / nodošana notiek pēdējā solī */
+.compose-grid.wiz[data-step="4"] #c-send{display:none}
+/* automātiskās pārbaudes virs priekšskatījuma */
+.pv-checks{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 20px;border-bottom:1px solid var(--border-light);font-size:var(--fs-sm)}
+.pv-checks:empty{display:none}
+.ck-item{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.ck-item .ck-ic{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-size:var(--fs-2xs);font-weight:700;flex:none}
+.ck-item.is-ok .ck-ic{background:var(--success-bg);color:var(--success)}
+.ck-item.is-warn .ck-ic{background:var(--warning-bg);color:var(--warning)}
+.ck-item.is-warn{color:var(--warning)}
+.ck-item small{color:var(--text-muted)}
+.ck-item .link-btn{padding:2px 2px;font-size:var(--fs-sm)}
+.ck-test{margin-left:auto;display:inline-flex;align-items:center;gap:8px}
+.ck-test small{color:var(--text-muted)}
+/* saskaņotāja skats un atgriešanas paziņojums */
+.apv-ro{border:1px solid var(--plan-bg);background:var(--plan-bg);color:var(--text);border-radius:var(--radius);padding:12px 14px;margin:0 0 12px;font-size:var(--fs-sm)}
+.apv-ro b{color:var(--plan)}
+.apv-ro .apv-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.apv-ro .apv-cmt{margin-top:6px;font-style:italic}
+.apv-note{margin:0 0 12px}
+.apv-note .apv-cmt{font-style:italic}
+.send-sum .ck-ok{color:var(--success);font-weight:600}
+.send-sum .ck-warn{color:var(--warning);font-weight:600}
 .wiz-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--border-light);background:var(--bg);border-radius:0 0 var(--radius) var(--radius);position:sticky;bottom:0;z-index:2}
 .wiz-nav .spacer{flex:1}
 .wiz-issues{font-size:var(--fs-sm);color:var(--warning);font-weight:600}
@@ -735,6 +758,8 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .cs-draft{color:var(--text-muted)} .cs-draft i{background:var(--icon-muted)}
 .cs-plan{color:var(--info)} .cs-plan i{background:#3B78B5}
 .cs-sign{color:var(--warning)} .cs-sign i{background:#E0A800}
+.cs-appr{color:var(--plan)} .cs-appr i{background:#6C5BD0}
+.cs-ret{color:var(--orange-ink)} .cs-ret i{background:#E07B1F}
 .cs-active{color:var(--primary-dark)} .cs-active i{background:var(--primary)}
 .cs-done{color:var(--success)} .cs-done i{background:#2E9B5F}
 .cs-part{color:var(--orange-ink)} .cs-part i{background:#E07B1F}
@@ -1875,7 +1900,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   .rep-filters select{flex:1 1 140px}
   .rep-filters label,.filters label{flex:1 1 100%}
   .rep-filters label select,.filters label select{width:100%}
-  .compose-grid.wiz[data-step="5"]{grid-template-columns:minmax(0,1fr)}
+  .compose-grid.wiz[data-step="4"]{grid-template-columns:minmax(0,1fr)}
   .wiz-step .t{display:none}
   .wiz-steps li{min-width:0}
   .hist-head{flex-wrap:wrap}
@@ -2096,6 +2121,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         <div class="draft-info" id="c-draft" aria-live="polite" hidden></div>
       </div>
     </div>
+    <div class="alert alert-warn apv-note" id="c-apv-note" role="status" hidden></div>
     <ol class="wiz-steps" id="wiz-steps" aria-label="Kampaņas soļi"></ol>
     <div class="compose-grid wiz" id="wiz" data-step="1">
       <div class="card wiz-card">
@@ -2251,9 +2277,30 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
             <summary>Mainīgo vērtības <span class="tip" tabindex="0" role="note" aria-label="Apsekojuma dati vēstules mainīgajiem tiek ņemti automātiski. Vērtību var mainīt tikai šai kampaņai. Ja kampaņā ir vairāki apsekojumi, katram respondentam vēstulē tiek izmantotas viņa apsekojuma vērtības. Tēmturi un sauklis attiecas uz šo sūtījumu." data-tip="Apsekojuma dati vēstules mainīgajiem tiek ņemti automātiski. Vērtību var mainīt tikai šai kampaņai. Ja kampaņā ir vairāki apsekojumi, katram respondentam vēstulē tiek izmantotas viņa apsekojuma vērtības. Tēmturi un sauklis attiecas uz šo sūtījumu.">i</span></summary>
             <div id="c-vars-body"></div>
           </details>
+          <h3 class="sub-h">Paraksts vēstulē <span class="tip" tabindex="0" role="note" aria-label="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu." data-tip="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu.">i</span></h3>
+          <div class="form-grid">
+            <div class="field"><label for="cs-signer">Parakstītājs <span class="muted">{parakstītājs}</span></label><input type="text" id="cs-signer" data-sign="signer"></div>
+            <div class="field"><label for="cs-position">Amats <span class="muted">{amats}</span></label><input type="text" id="cs-position" data-sign="position"></div>
+          </div>
+          <button type="button" class="link-btn sign-reset" id="c-sign-reset" data-action="c-sign-reset" hidden>Atjaunot noklusējumu</button>
         </div>
         <div class="step" data-wstep="4" hidden>
-          <div class="step-title"><span class="step-num">4</span><h2>Paraksts</h2></div>
+          <div class="step-title"><span class="step-num">4</span><h2>Pārbaude</h2></div>
+          <div class="apv-ro" id="c-apv-ro" hidden></div>
+          <dl class="sum-dl" id="c-final-sum"></dl>
+        </div>
+        <div class="step" data-wstep="5" hidden>
+          <div class="step-title"><span class="step-num">5</span><h2>Saskaņošana un paraksts</h2></div>
+          <h3 class="sub-h">Saskaņošana <span class="tip" tabindex="0" role="note" aria-label="Ja jāsaskaņo, kampaņa tiek nodota saskaņotājam (statuss “Gaida saskaņojumu”). Saskaņotājs redz pārbaudes skatu tikai lasīšanai un kampaņu saskaņo vai atgriež labošanai. Pēc saskaņojuma – parakstīšana, ieplānošana vai nosūtīšana." data-tip="Ja jāsaskaņo, kampaņa tiek nodota saskaņotājam (statuss “Gaida saskaņojumu”). Saskaņotājs redz pārbaudes skatu tikai lasīšanai un kampaņu saskaņo vai atgriež labošanai. Pēc saskaņojuma – parakstīšana, ieplānošana vai nosūtīšana.">i</span></h3>
+          <div class="field"><div class="seg" id="c-apv" role="group" aria-label="Saskaņošana">
+            <button type="button" data-apv="0">Nav jāsaskaņo</button><button type="button" data-apv="1">Jāsaskaņo</button></div></div>
+          <div id="c-apv-box" hidden>
+            <div class="form-grid">
+              <div class="field"><label for="c-apv-who">Saskaņotājs <span class="req">*</span></label><select id="c-apv-who"></select><span class="hint" id="c-apv-def"></span></div>
+              <div class="field"><label for="c-apv-cmt">Komentārs saskaņotājam <span class="muted">(neobligāts)</span></label><textarea id="c-apv-cmt" rows="2" maxlength="500"></textarea></div>
+            </div>
+          </div>
+          <h3 class="sub-h">Paraksts</h3>
           <div class="field"><span class="label">Elektroniskais paraksts <span class="muted">(DVS NAMEJS)</span><span class="tip" tabindex="0" role="note" aria-label="Ja jāparaksta, vēstules tiek nodotas parakstīšanai (DVS NAMEJS integrācija; prototipā – simulācija ar pogu “Parakstīt”). Citādi tās tiek nosūtītas bez parakstīšanas posma." data-tip="Ja jāparaksta, vēstules tiek nodotas parakstīšanai (DVS NAMEJS integrācija; prototipā – simulācija ar pogu “Parakstīt”). Citādi tās tiek nosūtītas bez parakstīšanas posma.">i</span></span>
             <div class="seg" id="c-esign" role="group" aria-label="Elektroniskais paraksts">
               <button type="button" data-esign="0">Nav jāparaksta</button><button type="button" data-esign="1">Jāparaksta</button></div>
@@ -2262,16 +2309,8 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
             <div class="field"><span class="label">Parakstīšanas veids</span><div class="esign-modes" id="c-esign-mode" role="group" aria-label="Parakstīšanas veids"></div></div>
             <div class="field"><span class="label">Parakstītāji <span class="req">*</span><span class="tip" tabindex="0" role="note" aria-label="Secīgai parakstīšanai secība ir atzīmēšanas kārtībā." data-tip="Secīgai parakstīšanai secība ir atzīmēšanas kārtībā.">i</span></span><div class="chk-list" id="c-signers"></div><span class="err" id="c-signers-err" hidden></span></div>
           </div>
-          <h3 class="sub-h">Paraksts vēstulē <span class="tip" tabindex="0" role="note" aria-label="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu." data-tip="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu.">i</span></h3>
-          <div class="form-grid">
-            <div class="field"><label for="cs-signer">Parakstītājs <span class="muted">{parakstītājs}</span></label><input type="text" id="cs-signer" data-sign="signer"></div>
-            <div class="field"><label for="cs-position">Amats <span class="muted">{amats}</span></label><input type="text" id="cs-position" data-sign="position"></div>
-          </div>
-          <button type="button" class="link-btn sign-reset" id="c-sign-reset" data-action="c-sign-reset" hidden>Atjaunot noklusējumu</button>
-        </div>
-        <div class="step" data-wstep="5" hidden>
-          <div class="step-title"><span class="step-num">5</span><h2>Pārbaude</h2></div>
-          <dl class="sum-dl" id="c-final-sum"></dl>
+          <h3 class="sub-h">Kopsavilkums</h3>
+          <dl class="sum-dl send-sum" id="c-send-sum"></dl>
         </div>
         <div class="wiz-nav">
           <button type="button" class="btn btn-secondary" data-action="wiz-prev" id="wiz-prev">← Atpakaļ</button>
@@ -2301,6 +2340,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
             </div>
           </div>
         </div>
+        <div class="pv-checks" id="c-checks" aria-label="Automātiskās pārbaudes"></div>
         <div class="preview-body hl" id="c-preview"></div>
         <div class="send-bar">
           <div class="send-summary" id="c-summary"></div>
@@ -2380,7 +2420,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 68</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 69</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -2502,6 +2542,17 @@ const SIGNERS = [
   {id:'sg4', name:'L. Izdomāta', role:'Galvenā statistiķe'},
 ];
 const defaultEsign = () => ({required:false, mode:'seciga', signers:[]});
+// Saskaņošana: saskaņotāji (izdomāti) – noklusējumā apsekojuma vadītājs
+const APPROVERS = [
+  {id:'ap-dsa', name:'Ilze Izdomāta',  role:'Darbaspēka apsekojuma vadītāja'},
+  {id:'ap-cel', name:'Kārlis Paraugs', role:'Ceļotāju apsekojuma vadītājs'},
+  {id:'ap-mba', name:'Dace Testa',     role:'Mājsaimniecību budžeta apsekojuma vadītāja'},
+  {id:'ap-jur', name:'Juris Izdomāts', role:'Uzņēmumu statistikas apsekojumu vadītājs'},
+];
+const REPORT_MGR = {'a-dsa':'ap-dsa', 'a-cel':'ap-cel', 'a-mba':'ap-mba'};
+const approverById = id => APPROVERS.find(x => x.id === id);
+// apv.status: '' (nav nodota) · 'pending' (gaida saskaņojumu) · 'returned' (atgriezta labošanai) · 'approved'
+const defaultApv = () => ({required:false, approver:'', comment:'', status:'', history:[]});
 const signerById = id => SIGNERS.find(x => x.id === id);
 const sessKindKey = (c = compose) => c.kind === 'atgadinajums' ? (c.remind === 'after' ? 'atg-pec' : 'atg-pirms') : c.kind;
 const CATS = [
@@ -3611,6 +3662,8 @@ const compose = {
   when: 'now',
   sendTime: '09:00',
   esign: defaultEsign(),
+  // saskaņošana, pēdējās pārbaudes rezultāts un testa vēstules
+  apv: defaultApv(), review: null, tests: [],
   custom: {},
   step: 1,
   pvCh: '',
@@ -3633,7 +3686,7 @@ const compose = {
 const sessionSnapshot = () => ({name:compose.name, aud:compose.aud, kind:compose.kind, remind:compose.remind, sel:clone(compose.sel),
   excluded:[...compose.excluded], surveyIdx:compose.surveyIdx, f:{...compose.f}, prio:[...compose.prio], filt:{...compose.filt}, sign:{...compose.sign},
   content: compose.content ? clone(compose.content) : null, when:compose.when, sendTime:compose.sendTime, esign:clone(compose.esign),
-  custom:clone(compose.custom), step:compose.step, wiz:2, prioManual:!!compose.prioManual, varOvr:clone(compose.varOvr), addrFix:clone(compose.addrFix || {}), addrUndo:clone(compose.addrUndo || {}), exc:clone(compose.exc || {}), dupKeep:clone(compose.dupKeep || {}), shared:clone(compose.shared || {}), miRej:clone(compose.miRej || {}), addrMi:clone(compose.addrMi || {}), nameAuto:!!compose.nameAuto, createdAt:compose.createdAt || ''});
+  custom:clone(compose.custom), step:compose.step, wiz:3, apv:clone(compose.apv || defaultApv()), review:compose.review ? clone(compose.review) : null, tests:clone(compose.tests || []), prioManual:!!compose.prioManual, varOvr:clone(compose.varOvr), addrFix:clone(compose.addrFix || {}), addrUndo:clone(compose.addrUndo || {}), exc:clone(compose.exc || {}), dupKeep:clone(compose.dupKeep || {}), shared:clone(compose.shared || {}), miRej:clone(compose.miRej || {}), addrMi:clone(compose.addrMi || {}), nameAuto:!!compose.nameAuto, createdAt:compose.createdAt || ''});
 function applySnapshot(d){
   Object.assign(compose, {
     name: d.name || defaultSessionName(), nameAuto: !d.name || !!d.nameAuto, createdAt: d.createdAt || d.savedAt || '', aud: AUDS[d.aud] ? d.aud : 'fiz',
@@ -3643,7 +3696,8 @@ function applySnapshot(d){
     filt: {...(d.filt || {})}, sign: {signer:'', position:'', ...(d.sign || {})}, content: d.content ? clone(d.content) : null, index: 0,
     // agrākiem melnrakstiem: sūtīšanas datums nākotnē = ieplānota
     when: d.when || (d.sel && d.sel.sendDate > todayIso() ? 'plan' : 'now'), sendTime: d.sendTime || '09:00',
-    esign: {...defaultEsign(), ...(d.esign || {})}, custom: clone(d.custom || {}), step: d.wiz === 2 ? d.step || 1 : ({5:1, 6:5}[d.step] || d.step || 1), prioManual: d.wiz === 2 ? !!d.prioManual : true, pvCh: '', tried: new Set(), varOvr: clone(d.varOvr || {}),
+    esign: {...defaultEsign(), ...(d.esign || {})}, custom: clone(d.custom || {}), step: d.wiz === 3 ? d.step || 1 : d.wiz === 2 ? ({4:5, 5:4}[d.step] || d.step || 1) : ({5:1, 6:4}[d.step] || d.step || 1), prioManual: d.wiz >= 2 ? !!d.prioManual : true,
+    apv: {...defaultApv(), ...clone(d.apv || {})}, review: d.review ? clone(d.review) : null, tests: clone(d.tests || []), pvCh: '', tried: new Set(), varOvr: clone(d.varOvr || {}),
     addrFix: clone(d.addrFix || {}), addrUndo: clone(d.addrUndo || {}), exc: clone(d.exc || {}), dupKeep: clone(d.dupKeep || {}), shared: clone(d.shared || {}), miRej: clone(d.miRej || {}), addrMi: clone(d.addrMi || {}), acF: '',
   });
 }
@@ -3676,7 +3730,7 @@ function restoreDraft(){
 restoreDraft();
 const sessionDirty = () => !!compose.content || compose.excluded.size > 0 || !compose.nameAuto || compose.aud !== 'fiz' || compose.step > 1 || !!(compose.sign.signer || compose.sign.position) ||
   compose.kind !== 'uzaicinajums' || compose.sel.reports.length > 0 || compose.sel.allReports || PF_KEYS.some(k => compose.sel.pf[k] !== 'all') || compose.sel.year !== new Date().getFullYear() ||
-  compose.when === 'plan' || compose.esign.required || Object.keys(compose.custom).length > 0 ||
+  compose.when === 'plan' || compose.esign.required || !!(compose.apv && compose.apv.required) || Object.keys(compose.custom).length > 0 ||
   Object.values(compose.addrFix || {}).some(x => Object.keys(x).length) || Object.keys(compose.addrUndo || {}).length > 0;
 let draftTimer = null;
 // Saglabā pašreizējo kampaņu melnrakstu sarakstā (ja tajā kaut kas ir mainīts)
@@ -3698,7 +3752,8 @@ function saveDraft(){
 const removeDraft = id => { state.drafts = state.drafts.filter(x => x.id !== id); };
 function renderDraftInfo(){
   const box = $('#c-draft'), d = state.drafts.find(x => x.id === compose.draftId);
-  box.hidden = !d;
+  // kampaņa, kas gaida saskaņojumu, nav rediģējama un dzēšama saskaņotāja skatā
+  box.hidden = !d || apvLocked();
   box.innerHTML = d ? `${ICON.check}<span>Melnraksts saglabāts ${esc(fmtDateTime(d.savedAt))}</span>
     <button type="button" class="btn btn-ghost btn-sm" data-action="c-restart">Dzēst melnrakstu</button>` : '';
 }
@@ -3706,7 +3761,7 @@ function renderDraftInfo(){
 function newSession(full){
   Object.assign(compose, {draftId:'k' + uid(), nameAuto:true, createdAt:new Date().toISOString(), content:null, sign:{signer:'', position:''}, excluded:new Set(), open:new Set(), index:0, noneOpen:false});
   // jaunai kampaņai – noklusējuma veids un atlase; pēc nosūtīšanas saglabājas adresāts, apsekojuma dati un adrešu prioritāte
-  Object.assign(compose, {kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', repF:'', when:'now', sendTime:'09:00', esign:defaultEsign(), custom:{}, step:1, pvCh:'', tried:new Set(), varOvr:{}, addrFix:{}, addrUndo:{}, exc:{}, dupKeep:{}, shared:{}, miRej:{}, addrMi:{}, acF:''});
+  Object.assign(compose, {kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', repF:'', when:'now', sendTime:'09:00', esign:defaultEsign(), apv:defaultApv(), review:null, tests:[], custom:{}, step:1, pvCh:'', tried:new Set(), varOvr:{}, addrFix:{}, addrUndo:{}, exc:{}, dupKeep:{}, shared:{}, miRej:{}, addrMi:{}, acF:''});
   if (full) Object.assign(compose, {aud:'fiz', surveyIdx:0, prio:prioDefault('fiz'), prioManual:false, filt:{},
     f:{...SURVEYS[0], start:isoDate(addDays(3)), deadline:isoDate(addDays(30)), date:isoDate(new Date())}});
   compose.name = defaultSessionName();
@@ -4756,7 +4811,7 @@ function showTab(name, opts = {}){
 function openEditor(draftId){
   if (draftId && draftId !== compose.draftId){
     const d = (state.drafts || []).find(x => x.id === draftId);
-    if (d){ flushDraft(); applySnapshot(d); compose.draftId = d.id; compose.open = new Set(); compose.search = ''; compose.repF = ''; compose.acF = ''; }
+    if (d){ flushDraft(); applySnapshot(d); compose.draftId = d.id; if (apvLocked()) compose.step = 4; compose.open = new Set(); compose.search = ''; compose.repF = ''; compose.acF = ''; }
   }
   state.activeDraft = compose.draftId;
   showTab('kampanas', {edit:true});
@@ -6618,14 +6673,14 @@ function renderCompose(){
   renderComposePreview();
 }
 // Kampaņas soļi (vednis): progresa josla, pārvietošanās, pārbaude
-const WIZ_STEPS = ['Pamatdati', 'Respondenti', 'Saturs', 'Paraksts', 'Pārbaude'];
+const WIZ_STEPS = ['Pamatdati', 'Respondenti', 'Saturs', 'Pārbaude', 'Saskaņošana un paraksts'];
 function stepIssues(n){
   switch (n){
     case 1: return [compose.name.trim() ? '' : 'Norādiet nosaukumu.', hasScope() ? '' : fizMode() ? (compose.sel.reports[0] ? 'Kampaņas tvērumā nav izvēlēts periods.' : 'Kampaņas tvērumā nav izvēlēts apsekojums.') : 'Kampaņas tvērumā nav iekļauts neviens periodiskums.',
       compose.when === 'plan' && planError() ? planError() : ''].filter(Boolean);
     case 2: return selectedResp().length ? (recipients().length ? [] : ['Nevienam atlasītajam respondentam nav derīgas adreses pēc adrešu prioritātes.']) : ['Nav atlasīts neviens respondents.'];
     case 3: return currentTemplate() ? [] : ['Nav izvēlēts saturs.'];
-    case 4: return compose.esign.required && !compose.esign.signers.length ? ['Norādiet vismaz vienu parakstītāju.'] : [];
+    case 5: return compose.esign.required && !compose.esign.signers.length ? ['Norādiet vismaz vienu parakstītāju.'] : [];
     default: return [];
   }
 }
@@ -6639,7 +6694,7 @@ function stepFieldErrors(){
     '#c-when-err': [1, compose.when === 'plan' ? planError() : ''],
     '#c-resp-err': [2, selectedResp().length ? (recipients().length ? '' : 'Nevienam atlasītajam respondentam nav derīgas adreses pēc adrešu prioritātes.') : 'Nav atlasīts neviens respondents.'],
     '#c-content-err': [3, currentTemplate() ? '' : 'Izvēlieties saturu.'],
-    '#c-signers-err': [4, compose.esign.required && !compose.esign.signers.length ? 'Norādiet vismaz vienu parakstītāju.' : ''],
+    '#c-signers-err': [5, compose.esign.required && !compose.esign.signers.length ? 'Norādiet vismaz vienu parakstītāju.' : ''],
   };
 }
 function renderStepErrors(){
@@ -6653,22 +6708,28 @@ function renderStepErrors(){
 // atzīmē soli kā "mēģināts" (Tālāk, pāreja uz vēlāku soli, Saglabāt melnrakstu)
 const markTried = n => { compose.tried.add(n); };
 function renderWizard(){
+  // saskaņotāja skats: kampaņa gaida saskaņojumu – redzams tikai solis "Pārbaude" (tikai lasīšanai)
+  const locked = apvLocked();
+  if (locked) compose.step = 4;
   const cur = compose.step;
   $('#wiz').dataset.step = cur;
   // solis "Adreses": brīdinājums par satura versijām atbilst pašreizējam saturam
   if (cur === 1 || cur === 3) renderPrio();
   $$('#wiz [data-wstep]').forEach(el => { el.hidden = +el.dataset.wstep !== cur; });
   $('#wiz-steps').innerHTML = WIZ_STEPS.map((l, i) => {
-    const n = i + 1, iss = n < 5 ? stepIssues(n) : [], st = n < cur ? (iss.length ? (compose.tried.has(n) ? 'is-warn' : '') : 'is-done') : '';
-    return `<li><button type="button" class="wiz-step ${st}" data-action="wiz-go" data-id="${n}" ${n === cur ? 'aria-current="step"' : ''} title="${st === 'is-warn' ? esc(iss.join(' ')) : ''}">
+    const n = i + 1, iss = stepIssues(n), st = n < cur ? (iss.length ? (compose.tried.has(n) ? 'is-warn' : '') : 'is-done') : '';
+    return `<li><button type="button" class="wiz-step ${st}" data-action="wiz-go" data-id="${n}" ${n === cur ? 'aria-current="step"' : ''} ${locked ? 'disabled' : ''} title="${st === 'is-warn' ? esc(iss.join(' ')) : ''}">
       <span class="n">${st === 'is-done' ? ICON.check : st === 'is-warn' ? '!' : n}</span><span class="t">${esc(l)}</span></button></li>`;
   }).join('');
   $('#wiz-prev').disabled = cur <= 1;
-  $('#wiz-next').hidden = cur >= 5 || cur === 2;
-  if (cur < 5) $('#wiz-next').textContent = cur === 2 ? 'Apstiprināt atlasi un turpināt' : `Tālāk: ${WIZ_STEPS[cur]} →`;
+  $('#wiz-next').hidden = cur === 2;
+  $('#wiz-next').innerHTML = cur === 2 ? 'Apstiprināt atlasi un turpināt' : cur === 4 ? 'Turpināt →' : cur === 5 ? finalLabel() : `Tālāk: ${WIZ_STEPS[cur]} →`;
+  $('.wiz-nav').hidden = locked;
   $('#wiz-issues').textContent = '';
   renderStepErrors();
-  if (cur === 5) renderFinalSummary();
+  renderApvNote();
+  if (cur === 4){ renderFinalSummary(); renderChecks(); }
+  if (cur === 5) renderApproval();
 }
 // iedzīvotāju statistika: bez apsekojuma un perioda nevar pāriet tālāk par 1. soli (kļūda pie lauka)
 function fzBlocks(){
@@ -6694,18 +6755,16 @@ function setStep(n){
   window.scrollTo({top:0});
   const h = $(`#wiz [data-wstep="${compose.step}"] h2`); if (h){ h.setAttribute('tabindex', '-1'); h.focus({preventScroll:true}); }
 }
-// 5. solis: kampaņas kopsavilkums
+// 4. solis "Pārbaude": kampaņas kopsavilkums (bez saskaņošanas un paraksta – tie ir 5. solī)
 function renderFinalSummary(){
   const t = currentTemplate(), st = selStats(), recs = recipients(), nCust = recs.filter(r => compose.custom[r.id]).length;
-  const go = n => `<button type="button" class="link-btn" data-action="wiz-go" data-id="${n}">Labot</button>`;
-  const es = compose.esign;
+  const go = n => apvLocked() ? '' : `<button type="button" class="link-btn" data-action="wiz-go" data-id="${n}">Labot</button>`;
   $('#c-final-sum').innerHTML = `
     <dt>Nosaukums</dt><dd><b>${esc(compose.name)}</b>${go(1)}</dd>
     <dt>Veids</dt><dd>${esc(SESS_LABELS[sessKindKey()])}${go(1)}</dd>
     <dt>Nosūtīšana</dt><dd>${compose.when === 'plan' ? `<span class="pill st-plan">Ieplānota</span> ${esc(whenLabel())}` : 'Tūlīt'}${go(1)}</dd>
     <dt>Respondenti</dt><dd><b>${st.sel}</b> atlasīti · <b>${recs.length}</b> ${plural(recs.length, 'vēstule', 'vēstules')}${st.noAddr ? ` · bez adreses: ${st.noAddr}` : ''}${go(2)}</dd>
     <dt>Saturs</dt><dd>${t ? esc(contentLabel()) : '<span class="muted">nav izvēlēts</span>'}${go(3)}</dd>
-    <dt>Paraksts</dt><dd>${es.required ? `${esc(ESIGN_MODES[es.mode].label)}: ${esc(es.signers.map(id => (signerById(id) || {}).name).filter(Boolean).join(es.mode === 'seciga' ? ' → ' : ', ') || '—')}` : 'Nav jāparaksta'}${go(4)}</dd>
     <dt>Adrešu prioritāte</dt><dd>${esc(prioLabel(compose.prio))}${go(1)}</dd>
     <dt>Pielāgotas</dt><dd>${nCust ? `${nCust} ${plural(nCust, 'vēstule', 'vēstules')} <span class="pill pill-custom">Pielāgota</span>` : '<span class="muted">nav</span>'}</dd>`;
 }
@@ -6986,17 +7045,11 @@ function composeIssues(t, recs){
   const issues = [];
   stepIssues(1).forEach(x => issues.push(x + ' (1. solis)'));
   if (!t){ issues.push('Nav izvēlēts vēstules saturs (3. solis “Saturs”).'); return issues; }
-  stepIssues(4).forEach(x => issues.push(x + ' (4. solis)'));
+  stepIssues(5).forEach(x => issues.push(x + ' (5. solis)'));
   if (!recs.length) issues.push(isReminder() && compose.remind === 'before' && !selectedDuties().length
     ? 'Nav neiesniegtu pienākumu ar aprēķināto termiņu.' : 'Nav neviena adresāta ar adresi pēc izvēlētās prioritātes.');
-  const keys = usedVars(templateText(t, 'epasts'));
-  const unknown = keys.filter(k => !FIELD_KEYS.has(k));
-  const missing = new Set();
-  (recs.length ? recs : [null]).forEach(r => {
-    const ctx = ctxFor(r);
-    keys.forEach(k => { if (FIELD_KEYS.has(k) && !ctx[k] && (r || !['vārds', 'uzņēmums', 'pārskatu_tabula'].includes(k))) missing.add(k); });
-  });
-  if (missing.size) issues.push(`Nav aizpildīti lauki: ${[...missing].map(k => '{' + k + '}').join(', ')}.`);
+  const {missing, unknown} = varIssues(t, recs);
+  if (missing.length) issues.push(`Nav aizpildīti lauki: ${missing.map(k => '{' + k + '}').join(', ')}.`);
   if (unknown.length) issues.push(`Veidnē ir nezināmi lauki: ${unknown.map(k => '{' + k + '}').join(', ')}.`);
   return issues;
 }
@@ -7034,7 +7087,7 @@ function renderComposePreview(){
       // pārslēgs "E-pasts / eAdrese" – ziņas variants pārbaudei
       const ch = compose.pvCh || ADDR_TYPES[fin.type].ch;
       const toAddr = ch === ADDR_TYPES[fin.type].ch ? fin.address : ch === 'eadrese' ? (r.eaddress || '—') : (r.email || r.email2 || r.email3 || '—');
-      let html = (inlineDoc ? `<div class="custom-bar">${compose.custom[r.id] ? `<span class="pill pill-custom">${ICON.edit}Pielāgota vēstule</span>
+      let html = (inlineDoc && !apvLocked() ? `<div class="custom-bar">${compose.custom[r.id] ? `<span class="pill pill-custom">${ICON.edit}Pielāgota vēstule</span>
           <button type="button" class="btn btn-ghost btn-sm" data-action="c-customize" data-id="${r.id}">Labot pielāgojumu</button>
           <button type="button" class="btn btn-ghost btn-sm" data-action="c-uncustom" data-id="${r.id}">Atjaunot sākotnējo</button>`
         : `<button type="button" class="btn btn-secondary btn-sm" data-action="c-customize" data-id="${r.id}">${ICON.edit}Pielāgot šo vēstuli</button>`}</div>` : (compose.custom[r.id] ? '<div class="custom-bar"><span class="pill pill-custom">Pielāgota vēstule</span></div>' : '')) +
@@ -7065,7 +7118,7 @@ function renderComposePreview(){
     (mixCount.length ? `<div class="hint">Adresāti: ${mixCount.map(([l, c]) => `<span class="pill pill-aud">${esc(l)} – ${c}</span>`).join(' ')}</div>` : '') +
     (mism ? `<div class="hint warn">Veidne paredzēta ${AUDS[t.aud].dat}, bet ${mism} ${plural(mism, 'adresāts ir', 'adresāti ir')} ${t.aud === 'fiz' ? plural(mism, 'uzņēmums', 'uzņēmumi') : plural(mism, 'privātpersona', 'privātpersonas')}.</div>` : '') +
     (skipped > 0 ? `<div class="hint">${skipped} ${plural(skipped, 'atzīmētais respondents', 'atzīmētie respondenti')} tiks ${plural(skipped, 'izlaists', 'izlaisti')} (${[st.noAddr ? 'nav adreses pēc izvēlētās prioritātes' : '', st.outFilt ? 'neatbilst atlasei' : ''].filter(Boolean).join('; ')}).</div>` : '') +
-    (issues.length && compose.tried.has(5) ? `<ul class="send-errs">${issues.map(p => `<li>${esc(p)}</li>`).join('')}</ul>` : '');
+    (issues.length && compose.tried.has(5) && compose.step === 5 ? `<ul class="send-errs">${issues.map(p => `<li>${esc(p)}</li>`).join('')}</ul>` : '');
   const btn = $('#c-send');
   btn.disabled = false;
   btn.innerHTML = planned ? `${ICON.calendar}Ieplānot${n ? ` (${n})` : ''}` : compose.esign.required ? `${ICON.edit}Nodot parakstīšanai${n ? ` (${n})` : ''}` : `${ICON.send}Nosūtīt${n ? ` (${n})` : ''}`;
@@ -7111,18 +7164,161 @@ function openLetterCustomizer(rid){
   }});
 }
 
-async function send(){
+// ---------- 4. solis "Pārbaude": automātiskās pārbaudes ----------
+// mainīgie: neaizpildītie un nezināmie lauki
+function varIssues(t, recs){
+  const keys = usedVars(templateText(t, 'epasts')), unknown = keys.filter(k => !FIELD_KEYS.has(k)), missing = new Set();
+  (recs.length ? recs : [null]).forEach(r => {
+    const ctx = ctxFor(r);
+    keys.forEach(k => { if (FIELD_KEYS.has(k) && !ctx[k] && (r || !['vārds', 'uzņēmums', 'pārskatu_tabula'].includes(k))) missing.add(k); });
+  });
+  return {missing:[...missing], unknown};
+}
+function autoChecks(){
+  const t = currentTemplate(), recs = recipients(), out = [];
+  if (!t) return [{key:'content', label:'Saturs', ok:false, detail:'nav izvēlēts', step:3}];
+  const vi = varIssues(t, recs), vBad = [...vi.missing, ...vi.unknown];
+  out.push({key:'vars', label:'Mainīgie aizpildīti', ok:!vBad.length, detail:vBad.length ? `nav aizpildīti: ${vBad.map(k => '{' + k + '}').join(', ')}` : '', step:3});
+  // saites un pielikumi – pēc vēstulēm (pirmie 20 adresāti)
+  const msgs = recs.slice(0, 20).map(r => buildMessage(letterTpl(t, r), r, true));
+  const hrefs = [...new Set(msgs.flatMap(m => [...String(m.bodyHtml || '').matchAll(/href="([^"]*)"/g)].map(x => x[1])))];
+  const badL = hrefs.filter(h => !/^(https?:\/\/[^\s{}]+|mailto:[^\s{}]+)$/i.test(h.trim()));
+  out.push({key:'links', label:'Saites', ok:!badL.length, detail:badL.length ? `${badL.length} ${plural(badL.length, 'nederīga saite', 'nederīgas saites')}` : hrefs.length ? `${hrefs.length}` : 'nav', step:3});
+  const missLib = (t.files || []).filter(f => f.lib && !attById(f.lib)).length, needMain = t.kind === 'pielikums' && msgs.some(m => !m.attachments.length);
+  const nAtt = msgs.length ? Math.max(...msgs.map(m => m.attachments.length)) : 0;
+  out.push({key:'atts', label:'Pielikumi', ok:!missLib && !needMain, detail:needMain ? 'nav vēstules pielikuma' : missLib ? `${missLib} ${plural(missLib, 'pielikums nav atrasts', 'pielikumi nav atrasti')}` : nAtt ? `${nAtt}` : 'nav', step:3});
+  const st = selStats(), bad = acActive().filter(r => acState(r) === 'bad').length, nA = st.noAddr + bad;
+  out.push({key:'addr', label:'Adreses', ok:!nA, detail:nA ? [bad ? `${bad} ${plural(bad, 'nederīga', 'nederīgas')}` : '', st.noAddr ? `${st.noAddr} bez adreses` : ''].filter(Boolean).join(', ') : '', step:2});
+  return out;
+}
+// pārbaudes "paraksts": kampaņas dati, kas ietekmē vēstules (bez saskaņošanas, paraksta un soļa); mainot tos, pārbaude jāiziet vēlreiz
+const reviewSig = () => { const {step, apv, review, tests, esign, savedAt, ...rest} = sessionSnapshot(); return JSON.stringify(rest); };
+const reviewValid = () => !!(compose.review && compose.review.sig === reviewSig());
+const apvLocked = () => !!(compose.apv && compose.apv.status === 'pending');
+const TEST_ADDR = 'testa.darbinieks@csp.example';
+function renderChecks(){
+  const box = $('#c-checks'), cks = autoChecks(), lk = apvLocked(), last = (compose.tests || [])[0];
+  box.innerHTML = cks.map(c => `<span class="ck-item ${c.ok ? 'is-ok' : 'is-warn'}"><span class="ck-ic" aria-hidden="true">${c.ok ? '✓' : '⚠'}</span><span>${esc(c.label)}${c.detail ? ` <small>(${esc(c.detail)})</small>` : ''}</span>${!c.ok && !lk ? `<button type="button" class="link-btn" data-action="wiz-go" data-id="${c.step}">Labot</button>` : ''}<span class="sr-only">${c.ok ? 'kārtībā' : 'brīdinājums'}</span></span>`).join('')
+    + (lk ? '' : `<span class="ck-test">${last ? `<small>Testa vēstule nosūtīta ${esc(fmtStamp(last.at))}</small>` : ''}<button type="button" class="btn btn-secondary btn-sm" data-action="c-test-send" ${currentTemplate() && recipients().length ? '' : 'disabled'}>${ICON.send}Nosūtīt testa vēstuli sev</button></span>`);
+}
+// testa vēstule sev (simulācija): pašreizējā priekšskatījuma vēstule uz lietotāja adresi
+function testSend(){
+  const r = recipients()[compose.index]; if (!r || !currentTemplate()) return;
+  const ch = compose.pvCh || ADDR_TYPES[finalAttempt(deliveryAttempts(r)).type].ch;
+  compose.tests = [{at:new Date().toISOString(), to:TEST_ADDR, ch, resp:r.name}, ...(compose.tests || [])].slice(0, 10);
+  saveDraft(); renderChecks();
+  toast(`Testa vēstule (${ch === 'eadrese' ? 'eAdreses' : 'e-pasta'} versija, respondents ${r.name}) nosūtīta uz ${TEST_ADDR} – simulācija.`);
+}
+// "Turpināt": ja ir brīdinājumi – apstiprinājums; pārbaudes rezultāts tiek saglabāts
+async function reviewContinue(){
+  const warn = autoChecks().filter(c => !c.ok);
+  if (warn.length && !(await confirmDialog({title:'Turpināt ar brīdinājumiem?', okLabel:'Turpināt',
+    message:`Automātiskajās pārbaudēs ir ${warn.length} ${plural(warn.length, 'brīdinājums', 'brīdinājumi')}:<br>${warn.map(c => `⚠ <b>${esc(c.label)}</b>${c.detail ? ` – ${esc(c.detail)}` : ''}`).join('<br>')}<br><br>Vai turpināt bez labošanas?`}))) return;
+  compose.review = {at:new Date().toISOString(), sig:reviewSig(), warn:warn.map(c => c.label + (c.detail ? ` (${c.detail})` : ''))};
+  setStep(5);
+}
+// ---------- 5. solis "Saskaņošana un paraksts" ----------
+function defaultApprover(){
+  const reps = compose.sel.reports.length ? compose.sel.reports.map(repById).filter(Boolean) : scopeReports(), p = reps[0];
+  return (p && (REPORT_MGR[p.id] || (p.aud === 'jur' ? 'ap-jur' : ''))) || (compose.aud === 'jur' ? 'ap-jur' : 'ap-dsa');
+}
+const curApprover = () => approverById(compose.apv.approver) || approverById(defaultApprover());
+const finalKind = () => compose.apv.required ? 'apv' : compose.esign.required ? 'sign' : isPlanned() ? 'plan' : 'send';
+function finalLabel(){
+  const n = recipients().length, c = n ? ` (${n})` : '';
+  return {apv:`${ICON.users}Nodot saskaņošanai`, sign:`${ICON.edit}Nodot parakstīšanai${c}`, plan:`${ICON.calendar}Ieplānot${c}`, send:`${ICON.send}Nosūtīt${c}`}[finalKind()];
+}
+function reviewLine(){
+  const rv = compose.review;
+  if (!rv || !reviewValid()) return `<span class="ck-warn">⚠ ${rv ? 'Kampaņa mainīta pēc pārbaudes' : 'Nav pārbaudīts'}</span> <button type="button" class="link-btn" data-action="wiz-go" data-id="4">Atvērt pārbaudi</button>`;
+  return rv.warn.length ? `<span class="ck-warn">⚠ Pārbaudīts ${esc(fmtStamp(rv.at))} ar ${rv.warn.length} ${plural(rv.warn.length, 'brīdinājumu', 'brīdinājumiem')}</span><br><small class="muted">${esc(rv.warn.join('; '))}</small>`
+    : `<span class="ck-ok">✓ Pārbaudīts ${esc(fmtStamp(rv.at))} – bez brīdinājumiem</span>`;
+}
+function renderApproval(){
+  const a = compose.apv, ap = curApprover(), def = approverById(defaultApprover());
+  $$('#c-apv button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.apv === +!!a.required)));
+  $('#c-apv-box').hidden = !a.required;
+  $('#c-apv-who').innerHTML = APPROVERS.map(x => `<option value="${x.id}" ${ap && ap.id === x.id ? 'selected' : ''}>${esc(x.name)} – ${esc(x.role)}${def && def.id === x.id ? ' (apsekojuma vadītājs)' : ''}</option>`).join('');
+  $('#c-apv-def').textContent = def ? `Noklusējumā – apsekojuma vadītājs: ${def.name}` : '';
+  if (document.activeElement !== $('#c-apv-cmt')) $('#c-apv-cmt').value = a.comment || '';
+  renderSign();
+  // īss kopsavilkums
+  const recs = recipients(), byCh = {};
+  recs.forEach(r => { const ch = ADDR_TYPES[finalAttempt(deliveryAttempts(r)).type].ch; byCh[ch] = (byCh[ch] || 0) + 1; });
+  const es = compose.esign, next = {apv:`Nodošana saskaņošanai: ${ap ? ap.name : '—'}${es.required ? ' → parakstīšana' : ''} → ${isPlanned() ? 'ieplānošana' : 'nosūtīšana'}`, sign:'Nodošana parakstīšanai → nosūtīšana', plan:`Ieplānošana (${whenLabel()})`, send:'Nosūtīšana tūlīt'}[finalKind()];
+  $('#c-send-sum').innerHTML = `
+    <dt>Respondenti</dt><dd><b>${selectedResp().length}</b> atlasīti · <b>${recs.length}</b> ${plural(recs.length, 'vēstule', 'vēstules')}</dd>
+    <dt>Kanāli</dt><dd>${Object.keys(byCh).length ? Object.entries(byCh).map(([ch, c]) => `${esc(CHANNELS[ch] || ch)} <b>${c}</b>`).join(' · ') : '—'}</dd>
+    <dt>Nosūtīšana</dt><dd>${compose.when === 'plan' ? `<span class="pill st-plan">Ieplānota</span> ${esc(whenLabel())}` : 'Tūlīt'}</dd>
+    <dt>Pārbaude</dt><dd>${reviewLine()}</dd>
+    <dt>Tālāk</dt><dd>${esc(next)}</dd>`;
+}
+// noslēdzošā poga: nodot saskaņošanai / nodot parakstīšanai / ieplānot / nosūtīt
+async function finalSubmit(){
+  markTried(5);
+  const t = currentTemplate(), recs = recipients();
+  if (composeIssues(t, recs).length){ [1, 2, 3, 4, 5].forEach(markTried); renderComposePreview(); toast('Kampaņu nevar nodot – novērsiet kļūdas.', true); return; }
+  if (!reviewValid()){ toast('Pirms nodošanas jāiziet solis “Pārbaude”.', true); setStep(4); return; }
+  if (finalKind() !== 'apv'){ await send(); return; }
+  const ap = curApprover(), es = compose.esign;
+  if (!(await confirmDialog({title:'Nodot saskaņošanai?', okLabel:'Nodot saskaņošanai',
+    message:`Kampaņa <b>${esc(compose.name)}</b> (${esc(SESS_LABELS[sessKindKey()])}, ${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}) tiks nodota saskaņotājam <b>${esc(ap.name)}</b> (${esc(ap.role)}).
+      <br>Pēc saskaņojuma: ${es.required ? 'parakstīšana, tad ' : ''}${isPlanned() ? `ieplānošana (${esc(whenLabel())})` : 'nosūtīšana'}.${compose.apv.comment ? `<br>Komentārs: “${esc(compose.apv.comment)}”` : ''}`}))) return;
+  const now = new Date().toISOString(), name = compose.name;
+  compose.apv = {...compose.apv, approver:ap.id, status:'pending', at:now, by:CURRENT_USER, returnComment:'', history:[...(compose.apv.history || []), {act:'submit', at:now, by:CURRENT_USER, comment:compose.apv.comment || ''}]};
+  flushDraft(true);
+  newSession(false); save(); renderCounts();
+  toast(`Kampaņa “${name}” nodota saskaņošanai: ${ap.name}.`);
+  showTab('kampanas');
+}
+// ---------- Saskaņotāja skats ----------
+function renderApvNote(){
+  const a = compose.apv || {}, box = $('#c-apv-note'), ro = $('#c-apv-ro'), ap = curApprover();
+  const ret = a.status === 'returned' && !apvLocked();
+  box.hidden = !ret;
+  box.innerHTML = ret ? `${ICON.warn}<span>Saskaņotājs <b>${esc(a.returnedBy || (ap && ap.name) || '')}</b> atgrieza kampaņu labošanai ${esc(fmtStamp(a.returnedAt))}: <span class="apv-cmt">“${esc(a.returnComment || '')}”</span><br>Pēc labošanas vēlreiz izejiet soli “Pārbaude” un nododiet saskaņošanai.</span>` : '';
+  ro.hidden = !apvLocked();
+  ro.innerHTML = apvLocked() ? `<div><b>Gaida saskaņojumu</b> – skats tikai lasīšanai. Nodeva: ${esc(a.by || '—')}, ${esc(fmtStamp(a.at))} · saskaņotājs: <b>${esc(ap ? ap.name : '—')}</b></div>
+    ${a.comment ? `<div class="apv-cmt">Komentārs: “${esc(a.comment)}”</div>` : ''}
+    <div class="apv-acts"><button type="button" class="btn btn-primary" data-action="apv-approve">${ICON.check}Saskaņot</button><button type="button" class="btn btn-secondary" data-action="apv-return">Atgriezt labošanai</button></div>` : '';
+}
+async function apvApprove(){
+  if (!apvLocked()) return;
+  const ap = curApprover(), es = compose.esign, nxt = es.required ? 'nodota parakstīšanai (statuss “Gaida parakstu”)' : isPlanned() ? `ieplānota (${whenLabel()})` : 'nosūtīta';
+  if (isPlanned() && planError()){ toast(`Nevar saskaņot: ${planError()} Atgrieziet kampaņu labošanai.`, true); return; }
+  if (!(await confirmDialog({title:'Saskaņot kampaņu?', okLabel:'Saskaņot', message:`Kampaņa <b>${esc(compose.name)}</b> tiks saskaņota un automātiski ${esc(nxt)}.<br><br><span class="muted">Šī ir simulācija – vēstules reāli netiek sūtītas.</span>`}))) return;
+  const now = new Date().toISOString();
+  compose.apv = {...compose.apv, status:'approved', approvedAt:now, approvedBy:ap.name, history:[...(compose.apv.history || []), {act:'approve', at:now, by:ap.name}]};
+  await send({skipConfirm:true, approved:true});
+}
+function apvReturn(){
+  if (!apvLocked()) return;
+  const ap = curApprover();
+  openModal({title:'Atgriezt labošanai', content:`<div class="field"><label for="apv-ret-cmt">Komentārs sagatavotājam <span class="req">*</span></label><textarea id="apv-ret-cmt" rows="4" maxlength="500" aria-describedby="apv-ret-err"></textarea><span class="err" id="apv-ret-err" hidden></span></div>`,
+    actions:[{label:'Atcelt', cls:'btn-secondary'}, {label:'Atgriezt labošanai', cls:'btn-primary', onClick: close => {
+      const cmt = $('#apv-ret-cmt').value.trim();
+      if (!cmt){ $('#apv-ret-err').hidden = false; $('#apv-ret-err').textContent = 'Komentārs ir obligāts.'; $('#apv-ret-cmt').setAttribute('aria-invalid', 'true'); $('#apv-ret-cmt').focus(); return; }
+      const now = new Date().toISOString(), name = compose.name;
+      compose.apv = {...compose.apv, status:'returned', returnComment:cmt, returnedAt:now, returnedBy:ap.name, history:[...(compose.apv.history || []), {act:'return', at:now, by:ap.name, comment:cmt}]};
+      compose.review = null; compose.step = 4;
+      close(); flushDraft(true); newSession(false); save(); renderCounts();
+      toast(`Kampaņa “${name}” atgriezta labošanai.`);
+      showTab('kampanas');
+    }}]});
+  setTimeout(() => { const el = $('#apv-ret-cmt'); if (el) el.focus(); }, 30);
+}
+async function send({skipConfirm = false, approved = false} = {}){
   const t = currentTemplate(), recs = recipients();
   // mēģinājums nosūtīt: parāda visu soļu kļūdas
   if (composeIssues(t, recs).length){
-    [1, 2, 3, 4, 5, 6].forEach(markTried);
+    [1, 2, 3, 4, 5].forEach(markTried);
     renderComposePreview();
     toast('Kampaņu nevar nosūtīt – novērsiet kļūdas.', true);
     return;
   }
   const n = recs.length;
   if (isPlanned()){
-    const ok = await confirmDialog({title:'Ieplānot kampaņu?', okLabel:'Ieplānot',
+    const ok = skipConfirm || await confirmDialog({title:'Ieplānot kampaņu?', okLabel:'Ieplānot',
       message:`Kampaņa <b>${esc(compose.name)}</b> (${esc(SESS_LABELS[sessKindKey()])}) tiks izpildīta <b>${esc(whenLabel())}</b>${compose.esign.required ? ' un nodota parakstīšanai' : ''}.
         ${isReminder() ? `<br>Izpildes brīdī atlase tiks pārrēķināta pēc aktuālajiem iesniegšanas statusiem: atgādinājumu saņems tie, kuri līdz tam nebūs iesnieguši ${compose.remind === 'before' ? `pārskatus ar termiņu <b>${esc(fmtDate(remindTarget()))}</b>` : 'nokavētos pārskatus'} (pēc pašreizējiem statusiem – ${n} ${plural(n, 'adresāts', 'adresāti')}).` : `<br>Pēc pašreizējās atlases – ${n} ${plural(n, 'adresāts', 'adresāti')}.`}`});
     if (!ok) return;
@@ -7132,12 +7328,12 @@ async function send(){
     removeDraft(compose.draftId);
     newSession(false); save();
     renderCounts();
-    toast(`Kampaņa ieplānota: ${whenLabel(state.planned[0].snap)}`);
+    toast(`${approved ? 'Kampaņa saskaņota un ieplānota' : 'Kampaņa ieplānota'}: ${whenLabel(state.planned[0].snap)}`);
     showTab('kampanas');
     return;
   }
   const signing = compose.esign.required;
-  const ok = await confirmDialog({title: signing ? 'Nodot parakstīšanai?' : 'Nosūtīt vēstules?', okLabel: signing ? `Nodot parakstīšanai (${n})` : `Nosūtīt ${n} ${plural(n, 'vēstuli', 'vēstules')}`,
+  const ok = skipConfirm || await confirmDialog({title: signing ? 'Nodot parakstīšanai?' : 'Nosūtīt vēstules?', okLabel: signing ? `Nodot parakstīšanai (${n})` : `Nosūtīt ${n} ${plural(n, 'vēstuli', 'vēstules')}`,
     message:`Kampaņa <b>${esc(compose.name)}</b> (${esc(SESS_LABELS[sessKindKey()])}): ${esc(compose.content.source === 'tpl' ? 'veidne' : 'saturs')} <b>${esc(contentName(t))}</b> tiks ${signing ? 'nodots parakstīšanai un pēc tam nosūtīts' : 'nosūtīts'} <b>${n}</b> ${plural(n, 'adresātam', 'adresātiem')} pēc adrešu prioritātes <b>${esc(prioLabel(compose.prio))}</b>${t.kind === 'pielikums' ? (t.main ? ` ar pielikumu “${esc(mainNameOf(t))}”` : ' ar ģenerētu PDF pielikumu') : ''}.
       <br>Dokumenta Nr.: <b>${esc(compose.f.docNr)}</b>
       ${signing ? `<br>Paraksts: <b>${esc(ESIGN_MODES[compose.esign.mode].label)}</b> – ${esc(compose.esign.signers.map(id => signerById(id).name).join(compose.esign.mode === 'seciga' ? ' → ' : ', '))}. Pēc parakstīšanas vēstules tiks nosūtītas automātiski.` : ''}
@@ -7146,7 +7342,7 @@ async function send(){
   const name = compose.name, res = doSend();
   if (signing){
     removeDraft(compose.draftId); newSession(false); save(); renderCounts();
-    toast(`Kampaņa “${name}”: ${res.n} ${plural(res.n, 'vēstule nodota', 'vēstules nodotas')} parakstīšanai (DVS NAMEJS, simulācija).`);
+    toast(`Kampaņa “${name}”${approved ? ' saskaņota' : ''}: ${res.n} ${plural(res.n, 'vēstule nodota', 'vēstules nodotas')} parakstīšanai (DVS NAMEJS, simulācija).`);
     showTab('kampanas');
     return;
   }
@@ -7154,7 +7350,7 @@ async function send(){
   removeDraft(compose.draftId);
   newSession(false); save();
   renderCounts();
-  toast(`Kampaņa “${name}”: ${res.n} ${plural(res.n, 'vēstule', 'vēstules')} nodotas nosūtīšanai.`);
+  toast(`Kampaņa “${name}”${approved ? ' saskaņota' : ''}: ${res.n} ${plural(res.n, 'vēstule', 'vēstules')} nodotas nosūtīšanai.`);
   showHistoryOf(res.batch);
 }
 // Izveido nosūtīto vēstuļu ierakstus pēc pašreizējās kampaņas (compose)
@@ -7443,6 +7639,8 @@ const CAMP_SUBS = [['all', 'Visas'], ['draft', 'Melnraksti'], ['planned', 'Iepl�
 const CAMP_ST = {
   draft:  {label:'Melnraksts',          cls:'cs-draft',  sub:'draft'},
   planned:{label:'Ieplānota',           cls:'cs-plan',   sub:'planned'},
+  appr:   {label:'Gaida saskaņojumu',   cls:'cs-appr',   sub:'active'},
+  ret:    {label:'Atgriezta labošanai', cls:'cs-ret',    sub:'draft'},
   sign:   {label:'Gaida parakstu',      cls:'cs-sign',   sub:'active'},
   active: {label:'Izpildē',             cls:'cs-active', sub:'active'},
   done:   {label:'Pabeigta',            cls:'cs-done',   sub:'done'},
@@ -7463,9 +7661,10 @@ function campKindCell(k){
 // visas kampaņas (melnraksti, ieplānotās, nosūtītās) vienotā formā
 function campRows(){
   const rows = [
-    ...(state.drafts || []).map(d => ({key:'draft:' + d.id, type:'draft', id:d.id, name:d.name, kind:sessKindKey(d), ts:d.savedAt, st:'draft', created:d.createdAt || d.savedAt, creator:d.createdBy || CURRENT_USER,
-      meta:`Saglabāta ${fmtStamp(d.savedAt)}`, when: d.when === 'plan' ? `Plānota ${fmtShortDay(d.sel.sendDate, d.sendTime)}` : 'Tūlīt pēc apstiprināšanas',
-      n:withSnap(d, () => selectedResp().length), d})),
+    ...(state.drafts || []).map(d => { const as = (d.apv || {}).status, ap = approverById((d.apv || {}).approver);
+      return {key:'draft:' + d.id, type:'draft', id:d.id, name:d.name, kind:sessKindKey(d), ts:as === 'pending' ? d.apv.at : d.savedAt, st:as === 'pending' ? 'appr' : as === 'returned' ? 'ret' : 'draft', created:d.createdAt || d.savedAt, creator:d.createdBy || CURRENT_USER,
+      meta:as === 'pending' ? `Nodota saskaņošanai ${fmtStamp(d.apv.at)} · saskaņotājs: ${ap ? ap.name : '—'}` : as === 'returned' ? `Atgriezta labošanai ${fmtStamp(d.apv.returnedAt)} · ${d.apv.returnComment || ''}` : `Saglabāta ${fmtStamp(d.savedAt)}`, when: d.when === 'plan' ? `Plānota ${fmtShortDay(d.sel.sendDate, d.sendTime)}` : 'Tūlīt pēc apstiprināšanas',
+      n:withSnap(d, () => selectedResp().length), d}; }),
     ...(state.planned || []).map(pl => ({key:'planned:' + pl.id, type:'planned', id:pl.id, name:pl.name, kind:pl.kindKey, ts:pl.createdAt || pl.sendDate, st:'planned', created:pl.createdAt || pl.sendDate, creator:pl.createdBy || CURRENT_USER,
       meta:`Izveidoja: ${pl.createdBy || CURRENT_USER}${pl.createdAt ? `, ${fmtDate(isoDate(new Date(pl.createdAt)))}` : ''}`,
       when:`Plānota ${fmtShortDay(pl.sendDate, pl.sendTime)}`, n:pl.count ?? '—', pl})),
@@ -8294,9 +8493,9 @@ const actions = {
   },
   'c-pick-tpl': () => openTemplatePicker(),
   'c-fix-content': () => { setStep(3); if (compose.content) actions['c-edit-content'](); },
-  'wiz-go': id => { if (+id > compose.step){ markTried(compose.step); if (fzBlocks() || acBlocks(+id)) return; } setStep(+id); },
+  'wiz-go': id => { if (apvLocked()) return; if (+id > compose.step){ markTried(compose.step); if (fzBlocks() || acBlocks(+id)) return; } setStep(+id); },
   'wiz-prev': () => setStep(compose.step - 1),
-  'wiz-next': () => { markTried(compose.step); if (fzBlocks() || acBlocks(compose.step + 1)) return; setStep(compose.step + 1); },
+  'wiz-next': () => { if (compose.step === 4) return reviewContinue(); if (compose.step === 5) return finalSubmit(); markTried(compose.step); if (fzBlocks() || acBlocks(compose.step + 1)) return; setStep(compose.step + 1); },
   'wiz-save': () => { markTried(compose.step); flushDraft(true); renderWizard(); toast(`Melnraksts “${compose.name}” saglabāts.`); },
   'c-customize': id => openLetterCustomizer(id),
   'c-uncustom': id => { delete compose.custom[id]; renderComposeList(); renderComposePreview(); toast('Vēstule atjaunota atbilstoši kampaņas saturam.'); },
@@ -8424,6 +8623,9 @@ const actions = {
   'next': () => { compose.index++; renderComposePreview(); },
   'mode': (id, el) => { compose.mode = el.dataset.mode; renderComposePreview(); },
   'send': () => send(),
+  'c-test-send': () => testSend(),
+  'apv-approve': () => apvApprove(),
+  'apv-return': () => apvReturn(),
   'open-doc': (id, el) => openDocSrc(el.dataset.src),
   'sent-view': id => viewSent(id),
   'go': (id, el) => showTab(el.dataset.tab === 'sagatavot' ? 'kampanas' : el.dataset.tab === 'nosutitas' ? 'vesture' : el.dataset.tab),
@@ -9045,6 +9247,12 @@ $('#c-plan-pick').addEventListener('change', e => {
   renderBasics(); selChanged(); renderWizard();
   $('#c-plan-date').focus();
 });
+$('#c-apv').addEventListener('click', e => {
+  const b = e.target.closest('[data-apv]'); if (!b) return;
+  compose.apv.required = b.dataset.apv === '1'; renderWizard(); saveDraft();
+});
+$('#c-apv-who').addEventListener('change', e => { compose.apv.approver = e.target.value; renderWizard(); saveDraft(); });
+$('#c-apv-cmt').addEventListener('input', e => { compose.apv.comment = e.target.value; saveDraft(); });
 $('#c-esign').addEventListener('click', e => {
   const b = e.target.closest('[data-esign]');
   if (!b) return;
