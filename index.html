@@ -1027,6 +1027,19 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .file-load{display:flex;gap:8px;align-items:center}
 .file-res{font-size:var(--fs-sm);margin-top:6px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
 .file-res:empty{display:none}
+/* "Pēc apsekojuma" – papildu iestatījumi apakšā (uzņēmumu statistika) */
+.rep-extra{display:flex;flex-direction:column;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-light)}
+.rep-extra-row{display:flex;align-items:center;gap:4px;font-size:var(--fs-md)}
+.rep-extra .switch{font-weight:500}
+.ns-fld{margin:0}
+.ns-box{display:flex;align-items:center;gap:6px;min-height:38px;padding:4px 4px 4px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface)}
+.ns-tags{flex:1;display:flex;flex-wrap:wrap;gap:4px;min-width:0;font-size:var(--fs-sm)}
+.ns-tag{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;border-radius:var(--radius-xs);background:var(--primary-50);border:1px solid var(--primary-200);color:var(--primary-darker);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:var(--fs-sm);font-weight:600;cursor:help}
+.ns-btn{flex:none;padding:4px 10px;font-weight:700;letter-spacing:1px}
+.ns-table td,.ns-table th{padding:7px 10px;vertical-align:middle}
+.ns-table td label{font-weight:400;cursor:pointer}
+.ns-table .ns-c{text-align:center;width:80px}
+.ns-table input{width:18px;height:18px;accent-color:var(--primary)}
 .scope-opts{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;margin-top:12px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface)}
 .scope-opts > .label{margin-right:4px}
 .switch{display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-md);cursor:pointer;user-select:none}
@@ -2187,6 +2200,11 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                 </div>
                 <div class="ms-tags" id="c-rep-tags"></div>
               </div>
+              <div class="rep-extra">
+                <div class="rep-extra-row"><label class="switch"><input type="checkbox" role="switch" id="c-opt-merge"><span class="sw" aria-hidden="true"></span>Apvienot respondentus ar vienādiem NMK</label><span class="tip" tabindex="0" role="note" aria-label="Vienam NMK ar vairākām vienībām tiek sūtīta viena kopīga vēstule" data-tip="Vienam NMK ar vairākām vienībām tiek sūtīta viena kopīga vēstule">i</span></div>
+                <div class="field ns-fld"><span class="label" id="c-ns-l">Izslēgt pēc neiesniegšanas koda</span>
+                  <div class="ns-box"><div class="ns-tags" id="c-ns-tags" role="list" aria-labelledby="c-ns-l"></div><button type="button" class="btn btn-secondary btn-sm ns-btn" id="c-ns-btn" aria-haspopup="dialog" aria-label="Izvēlēties izslēdzamos neiesniegšanas kodus" title="Izvēlēties kodus">…</button></div></div>
+              </div>
               </div>
               <!-- Iedzīvotāju statistika: apsekojums → gads → periods → reize / cikls -->
               <div class="fz-form" id="c-fz" hidden>
@@ -2204,16 +2222,13 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
             <section class="scope-card scope-resp" id="c-resp-card" aria-labelledby="c-sc-resp">
               <h4 id="c-sc-resp"><span class="scope-ic" aria-hidden="true"></span>Pēc respondenta <span class="pill pill-mod" id="c-resp-count" hidden></span></h4>
               <div class="field"><label for="cr-name">Nosaukums</label><input type="text" id="cr-name" data-rf="name" placeholder="Daļa no nosaukuma"></div>
-              <div class="field"><label for="cr-nmk">NMK <span class="tip" tabindex="0" role="note" aria-label="Var ievadīt vairākas vērtības, atdalot ar komatu." data-tip="Var ievadīt vairākas vērtības, atdalot ar komatu.">i</span></label><input type="text" id="cr-nmk" data-rf="nmk" placeholder="40000000101, …"></div>
+              <div class="field"><label for="cr-nmkps">NMK/PS <span class="tip" tabindex="0" role="note" aria-label="Var ievadīt vienu vai vairākas vērtības, atdalot ar komatu." data-tip="Var ievadīt vienu vai vairākas vērtības, atdalot ar komatu.">i</span></label><input type="text" id="cr-nmkps" data-rf="nmkps" placeholder="40000000101/002, …"></div>
               <div class="field"><label for="c-operator">Atbildīgais operators</label><select id="c-operator"></select></div>
               <button type="button" class="link-btn more-btn" id="cr-more" aria-expanded="false" aria-controls="cr-more-box">+ Vairāk filtru</button>
               <div class="resp-more" id="cr-more-box" hidden>
-                <div class="field"><label for="cr-nmkps">NMK/PS</label><input type="text" id="cr-nmkps" data-rf="nmkps" placeholder="40000000101/002, …"></div>
                 <div class="field"><label for="cr-uuk">UUK</label><input type="text" id="cr-uuk" data-rf="uuk" placeholder="U30006, …"></div>
                 <div class="field"><label for="cr-email">E-pasts</label><input type="text" id="cr-email" data-rf="email" placeholder="Daļa no e-pasta"></div>
                 <div class="field"><label for="cr-eaddr">eAdrese</label><input type="text" id="cr-eaddr" data-rf="eaddr" placeholder="Daļa no e-adreses"></div>
-                <div class="field"><span class="label" id="cr-st-l">Izslēgt pēc statusa šifra</span>
-                  <details class="dd" id="cr-st"><summary id="cr-st-sum" aria-labelledby="cr-st-l cr-st-sum">Nav izslēgts neviens</summary><div class="dd-list" id="cr-st-list" role="group" aria-labelledby="cr-st-l"></div></details></div>
                 <div class="field"><span class="label">Ielādēt sarakstu no faila <span class="tip" tabindex="0" role="note" aria-label="CSV vai TXT fails ar NMK vai UUK sarakstu (atdalīti ar komatu, semikolu vai jaunu rindu). Atlasē paliek tikai sarakstā esošie respondenti." data-tip="CSV vai TXT fails ar NMK vai UUK sarakstu (atdalīti ar komatu, semikolu vai jaunu rindu). Atlasē paliek tikai sarakstā esošie respondenti.">i</span></span>
                   <div class="file-load"><button type="button" class="btn btn-secondary btn-sm" id="cr-file-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>Izvēlēties failu</button>
                     <input type="file" id="cr-file" accept=".csv,.txt,text/csv,text/plain" hidden></div>
@@ -2231,7 +2246,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           </div>
           <div class="scope-opts" id="c-opts" hidden><span class="label">Atlases opcijas</span>
             <label class="switch"><input type="checkbox" role="switch" id="c-opt-invited"><span class="sw" aria-hidden="true"></span>Izslēgt jau uzaicinātos</label><span class="tip" tabindex="0" role="note" aria-label="Neiekļauj respondentus (pienākumus), kuriem par izvēlēto periodu un apsekojumu jau nosūtīts uzaicinājums (neveiksmīgie netiek ņemti vērā)." data-tip="Neiekļauj respondentus (pienākumus), kuriem par izvēlēto periodu un apsekojumu jau nosūtīts uzaicinājums (neveiksmīgie netiek ņemti vērā).">i</span>
-            <label class="switch"><input type="checkbox" role="switch" id="c-opt-merge"><span class="sw" aria-hidden="true"></span>Apvienot vēstules pēc NMK</label><span class="tip" tabindex="0" role="note" aria-label="Ja vienam NMK ir vairākas vienības, tās saņem vienu kopīgu vēstuli (adresāts – pirmā vienība; pārskatu tabulā – visu vienību pienākumi)." data-tip="Ja vienam NMK ir vairākas vienības, tās saņem vienu kopīgu vēstuli (adresāts – pirmā vienība; pārskatu tabulā – visu vienību pienākumi).">i</span>
           </div>
           <span class="err" id="c-scope-err" hidden></span>
           <div class="dvp-note" id="c-dvp"></div>
@@ -2424,7 +2438,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 70</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 71</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -3161,7 +3175,7 @@ function seedBanner(){
 function seedData(){
   const ago = n => addDays(-n).toISOString();
   const data = {
-    seq: 0, eaSeeded: true, msEaSeeded: true, msNoSubj: true, dutyHist: 1,
+    seq: 0, eaSeeded: true, msEaSeeded: true, msNoSubj: true, dutyHist: 1, nsSeeded: 1,
     layout: clone(DEFAULT_LAYOUT),
     templates: withTr([
       {id:'t1', aud:'fiz', cat:'uzaicinajums', kind:'pielikums', name:'Uzaicinājums piedalīties aptaujā (vēstule pielikumā)', updated:ago(14), files:[],
@@ -3364,6 +3378,27 @@ const RESP_IDS = {
 const OPERATORS = [{id:'op1', name:'Inga Testere'}, {id:'op2', name:'Jānis Paraugs'}, {id:'op3', name:'Līga Piemēra'}];
 const STATUS_CODES = {'1':'Aktīva vienība', '2':'Darbība uz laiku pārtraukta', '5':'Likvidācijas procesā', '8':'Atteicies sniegt datus', 'q':'Datu kvalitātes pārbaude', 'a':'Adrese nav aktuāla', 'v':'Vienība apvienota ar citu'};
 const UNIT_IDS = ['r26', 'r27', 'r28'];
+// Neiesniegšanas kodi (pienākumam – pārskatam konkrētā periodā; Datu vākšanas modulis; prototipā – izdomāti testa dati)
+const NS_CODES = {
+  '1':'Uzņēmums nedarbojās pārskata periodā, bet turpinās to darīt',
+  '2':'Uzņēmums vairs nedarbojas un neplāno darbību atsākt',
+  '3':'Ar uzņēmumu nav kontakta',
+  '4':'Uzņēmums ignorē vai atsakās iesniegt pārskatu',
+  '5':'Uzņēmumam vairs nav attiecīgās nozares (darbības veida), vai nav derīgs apsekojumam',
+  '8':'Uzņēmumi, kas atzīti par absolūti pārtraukušiem darbību (kodu liek pārskata vadītājs)',
+  'a':'Pārskats iesniegts alternatīviem iesniegšanas veidiem',
+  'q':'Dati no respondenta netiks vākti, tos imputēs vai importēs',
+  'v':'Iestāžu dati no Vienotā pakalpojumu centra',
+};
+// noklusējumā izslēgtie kodi (3 un 4 – netiek izslēgti)
+const NS_DEFAULT = ['1', '2', '5', '8', 'a', 'q', 'v'];
+// testa dati: respondents → kods (visiem pienākumiem vai konkrētam pārskatam) no 2025. gada
+const NS_SEED = {r14:{code:'2', rep:'*'}, r9:{code:'1', rep:'p-apgr'}, r17:{code:'5', rep:'p-ds'}, r20:{code:'8', rep:'p-apgr'},
+  r15:{code:'q', rep:'p-apgr'}, r18:{code:'a', rep:'p-ds'}, r19:{code:'v', rep:'p-rup'}, r13:{code:'3', rep:'p-apgr'}, r11:{code:'4', rep:'p-apgr'}};
+function applyNsCodes(s){
+  (s.duties || []).forEach(d => { const c = NS_SEED[d.respondentId], y = +String(d.period).split(':')[1].split('-')[0];
+    if (c && (c.rep === '*' || c.rep === d.reportId) && y >= 2025) d.ns = c.code; });
+}
 function applyRespIds(s){ s.respondents.forEach(r => { if (RESP_IDS[r.id]) Object.assign(r, RESP_IDS[r.id]); }); }
 const SEED_RESP_PATCH = {
   r6:{regNr:'40000000101', email2:'gramatvediba@ziemelblazma.example'}, r7:{regNr:'40000000102', email2:''},
@@ -3512,6 +3547,7 @@ function seedDutyData(s){
         submitted: past && (i + t) % 7 ? isoDate(addDaysTo(parseIso(deadline), -(1 + (i + t) % 4))) : null}));
     }
   });
+  applyNsCodes(s);
   s.statusSyncedAt = new Date(Date.now() - 2 * 3600e3).toISOString();
 }
 function seedRespData(s){
@@ -3580,6 +3616,8 @@ function loadState(){
       if (!s.msNoSubj){ msDropSubj(s.mailSamples); s.msNoSubj = true; }
       // uzņēmumu pārskatu pienākumi 2024. gads – tekošais (pienākumi tiek izveidoti no jauna attiecībā pret šodienu)
       if (!s.dutyHist){ seedDutyData(s); s.dutyHist = 1; }
+      // pienākumiem – neiesniegšanas kodi (testa dati, vienreiz)
+      if (!s.nsSeeded){ applyNsCodes(s); s.nsSeeded = 1; }
       if (s.respondents.some(r => r.syncedAt === undefined)) applyAddrData(s);
       if (!s.addrCheckSeeded) applyAddrCheckData(s);
       if (!s.addrQualSeeded) applyAddrQualData(s);
@@ -3615,7 +3653,7 @@ const defaultSessionName = () => {
   return `Kampaņa Nr. ${Math.max(state.seq || 0, ...used) + 1}`;
 };
 // atlase (1. solis "Ko attiecina kampaņa"): periodiskumi un periodi un/vai apsekojumi (pārskati)
-const defaultResp = () => ({name:'', nmk:'', nmkps:'', uuk:'', email:'', eaddr:'', exclSt:[], list:null, listName:'', listMissing:[]});
+const defaultResp = () => ({name:'', nmk:'', nmkps:'', uuk:'', email:'', eaddr:'', list:null, listName:'', listMissing:[]});
 const defaultFz = () => ({year:'', period:'', rounds:null});
 // "Pēc perioda": gads (obligāts) un izvēle katram periodiskumam: 'all' – visi, 'none' – neiekļaut, 'N' – konkrēts periods
 const PF_KEYS = ['gads', 'pusg', 'cet', 'men', 'ned', 'int'];
@@ -3626,7 +3664,7 @@ const PF_ROWS = ['gads', 'pusg', 'cet', 'men', 'ned'];
 const PF_ROWS_L = {gads:['Gada pārskati', ''], pusg:['Pusgada pārskati', 'Visi pusgadi'], cet:['Ceturkšņa pārskati', 'Visi ceturkšņi'], men:['Mēneša pārskati', 'Visi mēneši'], ned:['Nedēļas pārskati', 'Visas nedēļas']};
 // atlases opcijas ("Izslēgt jau uzaicinātos", "Apvienot vēstules pēc NMK") – tikai uzņēmumu statistikai
 const selOpt = k => compose.aud === 'jur' && !!compose.sel[k];
-const defaultSel = () => ({year:new Date().getFullYear(), pf:defaultPf(), reports:[], fz:defaultFz(), allReports:false, operator:'', resp:defaultResp(), excludeInvited:false, mergeNmk:false, sendDate:todayIso(), days:5, lateDays:''});
+const defaultSel = () => ({year:new Date().getFullYear(), pf:defaultPf(), reports:[], fz:defaultFz(), allReports:false, operator:'', resp:defaultResp(), excludeInvited:false, mergeNmk:false, nsExcl:[...NS_DEFAULT], sendDate:todayIso(), days:5, lateDays:''});
 // testa vēsturei: periodiskumi, kas iekļauti (pārējie – "Neiekļaut")
 const pfOnly = map => Object.fromEntries(PF_KEYS.map(k => [k, map[k] || 'none']));
 // agrākiem melnrakstiem un ieplānotajām kampaņām: viens periodiskums (freq) -> saraksts (freqs);
@@ -6417,15 +6455,17 @@ function matchesAttrs(r){
   const sel = compose.sel, f = sel.resp || defaultResp();
   if (sel.operator && r.operator !== sel.operator) return false;
   if (f.name && !norm(r.name).includes(norm(f.name))) return false;
-  for (const k of ['nmk', 'nmkps', 'uuk']){ const vs = splitVals(f[k]); if (vs.length && !vs.includes(lc(r[k]))) return false; }
+  for (const k of ['nmkps', 'uuk']){ const vs = splitVals(f[k]); if (vs.length && !vs.includes(lc(r[k]))) return false; }
   if (f.email && ![r.email, r.email2, r.email3].some(x => norm(x).includes(norm(f.email)))) return false;
   if (f.eaddr && !norm(r.eaddress).includes(norm(f.eaddr))) return false;
-  if ((f.exclSt || []).includes(r.statusCode)) return false;
   if (f.list && !f.list.includes(lc(r.nmk)) && !f.list.includes(lc(r.uuk))) return false;
   return true;
 }
-const respFilterCount = (f = compose.sel.resp || defaultResp()) => ['name', 'nmk', 'nmkps', 'uuk', 'email', 'eaddr'].filter(k => String(f[k] || '').trim()).length + ((f.exclSt || []).length ? 1 : 0) + (f.list ? 1 : 0) + (compose.sel.operator ? 1 : 0);
-const baseMatch = r => matchesAttrs(r) && ownDuties(r).length > 0;
+const respFilterCount = (f = compose.sel.resp || defaultResp()) => ['name', 'nmkps', 'uuk', 'email', 'eaddr'].filter(k => String(f[k] || '').trim()).length + (f.list ? 1 : 0) + (compose.sel.operator ? 1 : 0);
+// neiesniegšanas kodi (uzņēmumu statistika): respondents netiek iekļauts, ja kādam viņa atlasītajam pienākumam ir izslēgts kods
+const nsExclSet = () => new Set(compose.aud === 'jur' ? compose.sel.nsExcl || [] : []);
+const nsHit = (ds, ex = nsExclSet()) => ex.size > 0 && ds.some(d => d.ns && ex.has(d.ns));
+const baseMatch = r => { if (!matchesAttrs(r)) return false; const ds = ownDuties(r); return ds.length > 0 && !nsHit(ds); };
 // "Apvienot vēstules pēc NMK": vienības ar vienu NMK saņem vienu kopīgu vēstuli (adresāts – pirmā vienība)
 const nmkGroup = r => selOpt('mergeNmk') && r.nmk ? state.respondents.filter(x => x.nmk === r.nmk && baseMatch(x)) : [r];
 const selDutiesOf = r => { const g = nmkGroup(r); return g.length > 1 && g[0] === r ? g.flatMap(ownDuties).sort(dutySort) : ownDuties(r); };
@@ -6518,23 +6558,23 @@ function renderVars(){
 function syncScopeInputs(){
   const f = compose.sel.resp || defaultResp();
   $$('[data-rf]').forEach(inp => { inp.value = f[inp.dataset.rf] || ''; });
-  $('#cr-st-list').innerHTML = Object.entries(STATUS_CODES).map(([k, l]) => { const n = state.respondents.filter(r => r.statusCode === k).length;
-    return `<label><input type="checkbox" data-st="${k}" ${(f.exclSt || []).includes(k) ? 'checked' : ''}><span class="code">${esc(k)}</span><span>${esc(l)} <small class="muted">(${n})</small></span></label>`; }).join('');
   $('#c-operator').innerHTML = `<option value="">Visi</option>` + OPERATORS.map(o => `<option value="${o.id}" ${compose.sel.operator === o.id ? 'selected' : ''}>${esc(o.name)}</option>`).join('');
   $('#c-opt-invited').checked = !!compose.sel.excludeInvited;
   $('#c-opt-merge').checked = !!compose.sel.mergeNmk;
-  if (['nmkps', 'uuk', 'email', 'eaddr'].some(k => String(f[k] || '').trim()) || (f.exclSt || []).length || f.list) ui.respMore = true;
+  if (['uuk', 'email', 'eaddr'].some(k => String(f[k] || '').trim()) || f.list) ui.respMore = true;
 }
 function renderScope(){
   const sel = compose.sel, reps = audReports();
   // "Pēc respondenta": aktīvo filtru skaits, statusa šifri, saraksts no faila
   const rf = sel.resp || (sel.resp = defaultResp()), nrf = respFilterCount(rf);
   $('#c-resp-count').hidden = !nrf; $('#c-resp-count').textContent = `${nrf} ${plural(nrf, 'filtrs', 'filtri')}`;
-  $('#cr-st-sum').textContent = (rf.exclSt || []).length ? `Izslēgti: ${rf.exclSt.join(', ')}` : 'Nav izslēgts neviens';
+  // neiesniegšanas kodi – birkas (padomā – apraksts)
+  const nsx = (sel.nsExcl || []).filter(k => NS_CODES[k]);
+  $('#c-ns-tags').innerHTML = nsx.length ? Object.keys(NS_CODES).filter(k => nsx.includes(k)).map(k => `<span class="ns-tag" role="listitem" title="${esc(k + ' – ' + NS_CODES[k])}" aria-label="${esc(k + ' – ' + NS_CODES[k])}">${esc(k)}</span>`).join('') : '<span class="muted">Nav izslēgts neviens</span>';
   $('#cr-file-res').innerHTML = rf.list ? `<span>${ICON.file} <b>${esc(rf.listName)}</b>: atrasti <b>${rf.list.length - rf.listMissing.length}</b>, nav atrasti <b>${rf.listMissing.length}</b></span>
     ${rf.listMissing.length ? '<button type="button" class="link-btn" id="cr-file-miss">Skatīt neatrastos</button>' : ''}<button type="button" class="link-btn" id="cr-file-rm">Noņemt</button>` : '';
   $('#c-sc-resp .scope-ic').innerHTML = ICON.users;
-  const hidN = ['nmkps', 'uuk', 'email', 'eaddr'].filter(k => String(rf[k] || '').trim()).length + ((rf.exclSt || []).length ? 1 : 0) + (rf.list ? 1 : 0);
+  const hidN = ['uuk', 'email', 'eaddr'].filter(k => String(rf[k] || '').trim()).length + (rf.list ? 1 : 0);
   $('#cr-more').textContent = `${ui.respMore ? '− Mazāk filtru' : '+ Vairāk filtru'}${hidN ? ` (${hidN} ${plural(hidN, 'aktīvs', 'aktīvi')})` : ''}`;
   $('#cr-more').setAttribute('aria-expanded', String(!!ui.respMore));
   $('#cr-more-box').hidden = !ui.respMore;
@@ -6873,11 +6913,11 @@ function scopeCtxTags(){
   if (fizMode() && ROUNDS[sel.reports[0]]){ const R = ROUNDS[sel.reports[0]], rs = fzRounds(sel); add(R.label, rs.length === R.n ? 'visas' : rs.map(n => `${n}.`).join(', ')); }
   else add('', 'Visi apsekojumi');
   if (sel.operator){ const o = OPERATORS.find(x => x.id === sel.operator); add('Operators', o ? o.name : sel.operator); }
-  [['name', 'Nosaukums'], ['nmk', 'NMK'], ['nmkps', 'NMK/PS'], ['uuk', 'UUK'], ['email', 'E-pasts'], ['eaddr', 'eAdrese']].forEach(([k, l]) => { if (String(f[k] || '').trim()) add(l, f[k].trim()); });
-  if ((f.exclSt || []).length) add('Izslēgti statusa šifri', f.exclSt.join(', '));
+  [['name', 'Nosaukums'], ['nmkps', 'NMK/PS'], ['uuk', 'UUK'], ['email', 'E-pasts'], ['eaddr', 'eAdrese']].forEach(([k, l]) => { if (String(f[k] || '').trim()) add(l, f[k].trim()); });
+  if (compose.aud === 'jur' && [...(sel.nsExcl || [])].sort().join() !== [...NS_DEFAULT].sort().join()) add('Izslēgti neiesniegšanas kodi', (sel.nsExcl || []).length ? sel.nsExcl.join(', ') : 'neviens');
   if (f.list) add('Saraksts no faila', f.listName || 'fails');
   if (selOpt('excludeInvited')) add('', 'Bez jau uzaicinātajiem');
-  if (selOpt('mergeNmk')) add('', 'Apvienots pēc NMK');
+  if (selOpt('mergeNmk')) add('', 'Apvienoti respondenti ar vienādiem NMK');
   return tags;
 }
 // Tvēruma kopsavilkums (2. solis): statistikas joma; apsekojums / pārskati un periodi; aktīvie filtri; respondentu skaits
@@ -9184,15 +9224,18 @@ $('#c-resp-card').addEventListener('input', e => {
   if (!k) return;
   compose.sel.resp[k] = e.target.value; selChanged();
 });
-$('#cr-st-list').addEventListener('change', e => {
-  const k = e.target.dataset.st;
-  if (!k) return;
-  const f = compose.sel.resp;
-  f.exclSt = e.target.checked ? [...new Set([...(f.exclSt || []), k])] : (f.exclSt || []).filter(x => x !== k);
-  selChanged();
-});
-document.addEventListener('click', e => { const dd = $('#cr-st'); if (dd && dd.open && !dd.contains(e.target)) dd.open = false; });
-$('#cr-st').addEventListener('keydown', e => { if (e.key === 'Escape' && e.currentTarget.open){ e.preventDefault(); e.stopPropagation(); e.currentTarget.open = false; $('#cr-st-sum').focus(); } });
+// "Izslēgt pēc neiesniegšanas koda": logs ar kodu sarakstu
+function openNsCodes(){
+  const cur = new Set(compose.sel.nsExcl || []);
+  const m = openModal({title:'Izslēgt pēc neiesniegšanas koda', info:'Respondenti, kuru pienākumam izvēlētajā periodā ir kāds no atzīmētajiem kodiem, netiek iekļauti kampaņā.',
+    content:`<table class="ns-table"><thead><tr><th>Kods</th><th>Apraksts</th><th class="ns-c">Izslēgt</th></tr></thead><tbody>${Object.entries(NS_CODES).map(([k, l]) =>
+      `<tr><td><span class="ns-tag">${esc(k)}</span></td><td><label for="ns-${k}">${esc(l)}</label></td><td class="ns-c"><input type="checkbox" id="ns-${k}" data-ns="${k}" ${cur.has(k) ? 'checked' : ''}></td></tr>`).join('')}</tbody></table>`,
+    actions:[{label:'Atjaunot noklusējumu', cls:'btn-ghost left', onClick: () => { $$('[data-ns]', modal).forEach(c => { c.checked = NS_DEFAULT.includes(c.dataset.ns); }); }},
+      {label:'Atcelt', cls:'btn-secondary'},
+      {label:'Saglabāt', cls:'btn-primary', onClick: close => { compose.sel.nsExcl = $$('[data-ns]', modal).filter(c => c.checked).map(c => c.dataset.ns); close(); selChanged(); $('#c-ns-btn').focus(); }}]});
+  const f = $('[data-ns]', m.el); if (f) f.focus();
+}
+$('#c-ns-btn').addEventListener('click', openNsCodes);
 $('#cr-file-btn').addEventListener('click', () => $('#cr-file').click());
 $('#cr-file').addEventListener('change', async e => {
   const file = e.target.files[0];
