@@ -10,6 +10,12 @@ Prototips ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var a
 - Dati glabājas tikai pārlūka `localStorage`. Kājenē ir poga, ar kuru var atjaunot sākotnējos testa datus.
 - Nosūtīšana ir simulācija. E-pasti uz domēnu `nepiegadajams.example` simulācijā "neizdodas", lai var redzēt kļūdas statusu.
 - Krāsas ir definētas kā CSS mainīgie `index.html` faila sākumā (`:root`). Saskarnes pamatkrāsa ir `#297785` (`--primary`). Lielajām tumšajām joslām (galvenei) ir maiga vertikāla krāsu pāreja – mainīgais `--header-gradient`: `linear-gradient(to bottom, #3D8C99 0%, #297785 60%, #297785 100%)`; teksts uz tām ir balts. Pogas, birkas, cilnes un citi mazi elementi ir vienā krāsā `#297785` (bez pārejas).
+- **Dizaina sistēma** (`:root` faila sākumā): krāsas (pamatkrāsa un tās toņi, neitrālie pelēkie, statusu krāsas), fontu izmēru skala (`--fs-2xs` 11 px … `--fs-base` 15 px pamatteksts … `--fs-2xl` 22 px virsraksts, `--fs-display` lieliem skaitļiem), atstarpes (`--sp-1`…`--sp-8`, 4 px solis), rādiusi (`--radius-xs` … `--radius-pill`) un ēna. Stilos izmanto šos mainīgos, nevis cietkodētas vērtības (izņēmums – vēstules/dokumenta noformējums, kas atdarina izdruku).
+  - **Viena galvenā poga skatā** (pamatkrāsā, piem., "+ Jauna kampaņa", "+ Jauna veidne", "Tālāk"). Pārējās darbības – sekundāras (apmaļotas) vai teksta pogas; kartīšu darbības (piem., "Izmantot", "Jauna veidne" sagatavei) ir sekundāras.
+  - **Filtru pogas un pārslēgi** (statusa pogas, segmentu pārslēgi, piem., "Nosūtīt tūlīt / Ieplānot"): aktīvā izvēle – gaišs pamatkrāsas tonis ar tumšu tekstu (pārslēgiem arī apakšlīnija), lai tā nekonkurē ar galveno pogu.
+  - **Teksta pogas un saites darbībām** (piem., "Iekļaut visus", "Labot", respondenta vārds tabulā) nav pasvītrotas; pasvītrojums parādās, uzbraucot ar peli.
+  - **Tabulas:** neitrāla pelēka galvene (mazi lielie burti), vienots rindu augstums, skaitļi līdzināti pa labi; garās tabulas galvene paliek redzama, ritinot.
+  - **Kartītes** ar plānu apmali un tikko jaušamu ēnu; bez dekoratīvām krāsainām malām (veidņu bloki, sagatavju kartītes, rādītāju kartītes, modālo logu galvenes) – krāsa paliek tikai statusiem un skaitļiem.
 
 ## Sākumlapa (DELTA)
 
@@ -44,7 +50,7 @@ Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
 3. **Sūtīšanas vēsture.** Nosūtītās vēstules, sagrupētas pa kampaņām.
 4. **Atskaites.** Rādītāji, grafiki un tabulas par sūtīšanas rezultātiem ar CSV eksportu un MI kopsavilkumu.
 
-- **Noformējums.** Cilnēm nav skaita ciparu. Teksts ir lielāks (16,5 px), pustrekns, ar ikonu pirms nosaukuma. Aktīvajai cilnei ir pamatkrāsas (#297785) teksts, bieza apakšlīnija un ļoti gaišs tirkīzzaļš fons. Neaktīvās ir tumši pelēkas un, uzbraucot ar peli, kļūst tirkīzzaļas.
+- **Noformējums.** Cilnēm nav skaita ciparu. Teksts 15 px, pustrekns, ar ikonu pirms nosaukuma. Aktīvajai cilnei ir tumši tirkīzzaļš teksts un 3 px pamatkrāsas (#297785) apakšlīnija (bez fona). Neaktīvās ir tumši pelēkas un, uzbraucot ar peli, kļūst tirkīzzaļas.
 - **Navigācijas ceļš:** "DELTA › Respondentu pārvaldība › Komunikācija › [cilne]".
 - **Apakšsadaļas** ir filtru pogas zem virsraksta (bez skaitītājiem):
   - Kampaņas: Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās. Atverot cilni, vienmēr aktīva ir "Visas";
@@ -66,7 +72,7 @@ Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA 
 - **Rindas** ~48 px augstas, viena teksta rinda; uzbraucot ar peli, rinda tiek izcelta:
   - **Kampaņa** – nosaukums pustreknā (garš – saīsināts ar "…"); uzbraucot ar peli vai fokusējot – padoms ar pilnu nosaukumu un "Saglabāta 08.10.2026., 13:50" (melnrakstiem) vai "Izveidoja: [vārds], 08.10.2026." (pārējām);
   - **Veids** – ikona un teksts (✉ Uzaicinājums, ◷ Atgādinājums, ⓘ Informatīvs ziņojums, Cits); atgādinājumam tajā pašā rindā pelēkā tekstā "pirms termiņa" / "pēc termiņa";
-  - **Respondenti** – skaits;
+  - **Respondenti** – skaits (līdzināts pa labi);
   - **Nosūtīšana** – "Tūlīt pēc apstiprināšanas", "Plānota 10.10. 09:00" vai "Nosūtīta 06.10. 16:41"; datumi tekošajā gadā – "06.10. 16:41", citādi – "06.10.2025.";
   - **Statuss** – krāsains aplītis un teksts: Melnraksts (pelēks), Ieplānota (zils), Gaida parakstu (dzeltens), Izpildē (tirkīzzaļš), Pabeigta (zaļš), Daļēji neveiksmīga (oranžs). Filtrā "Izpildē" ir arī kampaņas, kas gaida parakstu, "Pabeigtās" – arī daļēji neveiksmīgās;
   - **Rezultāts** – nosūtītām kampaņām šaura progresa josla (zaļa – piegādātas, oranža – neveiksmīgas) un īss teksts "3/5 · 1 ✕"; pilnais teksts ("Piegādātas 3 no 5 · 1 neveiksmīga · 1 procesā") – padomā; pārējām "—".
@@ -90,7 +96,7 @@ Lapā "Veidnes" veidnes ir sagrupētas divos līmeņos.
 
 
 1. **Adresāts.** Trīs kartītes ar veidņu skaitu: "Fiziskām personām" (atvērta pēc noklusējuma), "Juridiskām personām" un "Cita komunikācija" (jaukta komunikācija, piem., viena ziņa visiem). Jauktās komunikācijas veidnēm adresāts ir "Visi (jaukta komunikācija)", un tajās lieto lauku `{adresāts}`: uzņēmumam tas ir nosaukums, fiziskai personai – vārds. Šādu veidni var sūtīt reizē gan fiziskām, gan juridiskām personām.
-2. **Kategorija.** Katrā cilnē ir četri bloki: "Uzaicinājumi", "Atgādinājumi", "Informatīvie ziņojumi" un "Citi". Katram blokam ir veidņu skaits un poga "+ Pievienot veidni".
+2. **Kategorija.** Katrā cilnē ir četri bloki: "Uzaicinājumi", "Atgādinājumi", "Informatīvie ziņojumi" un "Citi". Katram blokam ir veidņu skaits un teksta poga "+ Pievienot veidni" (bloku galvenēm nav krāsainas malas).
 
 Bloku sakļaušana:
 - **Pēc noklusējuma visi bloki ir sakļauti**, atverot lapu "Veidnes" vai pārslēdzot adresātu grupu. Redzams tikai virsraksts, veidņu skaits un poga "+ Pievienot veidni".
@@ -194,6 +200,8 @@ Papildinājumi atbilstoši specifikācijas 2.2. sadaļai (F13):
   - Veidojot jaunu veidni no šablona ("Jauna veidne") vai ielādējot saturu ar "No sagataves" (veidnes redaktorā un kampaņas solī "Noformēt saturu"), tiek pārņemtas abas versijas; temata lauks paliek tukšs, un tas jāaizpilda veidnē / kampaņā.
   - Testa datos visiem šabloniem ir eAdreses versija, izņemot "Pateicība par dalību" un "Atgādinājums par termiņu (visiem)" – tiem ir tikai e-pasta versija (demonstrācijai).
 - **Izmantojums.** Šablona kartītē redzams, kurās veidnēs tas izmantots ("Izmantots veidnēs: …"). Veidne atceras, no kura šablona tā izveidota; sākotnējie šabloni ir saistīti ar e-pasta veidnēm, no kurām ņemts to teksts. Šablona labojumi esošās veidnes nemaina.
+
+Kategorijas katrā adresāta grupā izkārtotas režģī blakus (platā ekrānā – 3 kolonnās, šaurā – vienā zem otras), lai garais saraksts būtu pārskatāms bez liekas ritināšanas.
 
 Abās grupās sagataves ir sakārtotas pēc adresāta (fiziskās / juridiskās personas / visi) un kategorijas (Uzaicinājumi, Atgādinājumi, Informatīvie ziņojumi, Citi). Ir meklēšana, filtri un poga **"+ Pievienot sagatavi"**.
 
@@ -419,13 +427,14 @@ Jaunu kampaņu sagatavo piecos soļos: Pamatdati, Respondenti, Saturs, Paraksts,
 Cilnē **Sūtīšanas vēsture** (specifikācija F16, F17) ir visas nosūtītās un nosūtīšanas procesā esošās vēstules.
 - **Statusu pogas:** Visas · Gaida parakstu · Procesā (Rindā, Nosūtīta, Pieņemts DIV, Notiek piegāde, Atkārtots mēģinājums) · Piegādātas · Neveiksmīgas (Neveiksmīga, Sūtītāja puses kļūda, Neatpazīts) · Manuāla pārbaude (neveiksmīgās un neatpazītās, kas vēl nav izskatītas) · Administratoram (neatrisinātas sūtītāja puses kļūdas). Pie katras pogas iekavās redzams vēstuļu skaits pēc izvēlētajiem filtriem.
 - Augšā poga **"Klasifikācijas noteikumi"** atver abas specifikācijas tabulas (E-pasts un E-adrese: iemesls / pašreizējais statuss → tips → automātiskā rīcība) tikai lasīšanai.
-- **Filtri** (divās rindās):
-  - 1. rinda: **meklēšana** (respondents vai adrese), **NMK** (viens vai vairāki, atdalot ar komatu – atlasa vēstules respondentiem ar šiem NMK), **Nosūtīšanas periods** – datuma diapazons "no – līdz" (DD.MM.GGGG, ar kalendāra pogu) un ātrās izvēles: Šodien, Pēdējās 7 dienas, Šis mēnesis, Iepriekšējais mēnesis, Šis gads, Jebkurā laikā. Ātrā izvēle aizpilda datumus; ja datumus maina manuāli, izvēlnē redzams "Norādīts periods". Nederīgam datumam vai ja "no" ir vēlāks par "līdz", zem lauka redzama kļūda;
-  - 2. rinda: **Kampaņa**, **Kampaņas veids**, **Kanāls** (eAdrese / e-pasts), **Kampaņas veidotājs** (darbinieki, kuri izveidojuši kampaņas; noklusējumā "Visi"). Labajā pusē – saite **"Notīrīt filtrus"**, kas redzama tikai tad, ja kāds filtrs ir aktīvs (statusa izvēle paliek);
+- **Filtri:**
+  - 1. rinda (biežāk lietotie): **meklēšana** (respondents vai adrese), **Kampaņa**, **Nosūtīšanas periods** – datuma diapazons "no – līdz" (DD.MM.GGGG, ar kalendāra pogu) un ātrās izvēles: Šodien, Pēdējās 7 dienas, Šis mēnesis, Iepriekšējais mēnesis, Šis gads, Jebkurā laikā. Ātrā izvēle aizpilda datumus; ja datumus maina manuāli, izvēlnē redzams "Norādīts periods". Nederīgam datumam vai ja "no" ir vēlāks par "līdz", zem lauka redzama kļūda;
+  - 1. rindas beigās – poga **"Vairāk filtru"** (ar aktīvo paslēpto filtru skaitu, piem., "Vairāk filtru (1)") un saite **"Notīrīt filtrus"**, kas redzama tikai tad, ja kāds filtrs ir aktīvs (statusa izvēle paliek);
+  - "Vairāk filtru" izver 2. rindu: **NMK** (viens vai vairāki, atdalot ar komatu – atlasa vēstules respondentiem ar šiem NMK), **Kampaņas veids**, **Kanāls** (eAdrese / e-pasts), **Kampaņas veidotājs** (darbinieki, kuri izveidojuši kampaņas; noklusējumā "Visi"). Aizverot rindu, filtri paliek spēkā (redzami kā birkas);
   - zem filtru bloka aktīvie filtri redzami kā birkas ar × katram (noņem attiecīgo filtru).
 - **Rādītāju kartītes** (kopā, procesā, piegādātas, neveiksmīgas, manuāla pārbaude) un statusa pogu skaiti tiek pārrēķināti pēc izvēlētajiem filtriem.
 - **Kampaņas veidotājs** tiek saglabāts katrai nosūtītajai vēstulei (jaunām kampaņām – pašreizējais lietotājs). Testa datos kampaņām piešķirti dažādi izdomāti veidotāji: Testa Darbinieks, Rūta Testa, Mārtiņš Paraudziņš, Elīna Izdomāta.
-- Tabulā sākotnēji redzami 50 jaunākie ieraksti; poga "Rādīt vēl" ielādē nākamos 50.
+- Tabulā sākotnēji redzami 50 jaunākie ieraksti; poga "Rādīt vēl" ielādē nākamos 50. Platā ekrānā (no 1280 px) tabulas galvene, ritinot lapu, paliek redzama zem moduļa cilnēm.
 - **Versija.** Sūtot katram respondentam tiek izmantota tā satura versija, uz kuras kanālu vēstule faktiski tiek nosūtīta – arī pēc pārejas uz nākamo adresi (piem., eAdrese bez publiskās atslēgas → e-pasts: vēsturē redzama e-pasta versija). Tabulas kanāla šūnā ir saite "E-pasta versija" / "eAdreses versija" (ja veidnei nebija attiecīgās versijas – "E-pasta teksts (bez noformējuma)"), kas atver tieši nosūtīto versiju; arī vēstules skatā ir rinda "Versija".
 - **Tabula:** katrai vēstulei redzams adresāts (uzklikšķinot atveras respondenta kartīte), kampaņa, statuss (birka ar krāsu un ikonu), kanāls, adrese un nosūtīšanas laiks. Statusa šūnā redzams arī turpmākais solis (piem., "→ Manuāla pārbaude"), birka "Prombūtne līdz DD.MM.", NDR/DIV iemesli un "Atkārtoti nosūtīta".
 - **Izvērstā rinda:** laika līnija ar katru soli un mēģinājumu – laiks, kanāls, adrese, statuss, NDR/DIV teksts (ar saņemšanas laiku), klasifikācija (iemesls, tips, "MI klasificēts" ar ticamību vai "DIV statuss"), automātiskā rīcība un novirzījums (sistēma, darbinieks, abi vai administrators). Nākamais plānotais mēģinājums (piem., pēc 24 h) redzams kā "Nākamais mēģinājums plānots". Laika līnijā ir arī manuālās darbības.
@@ -461,8 +470,8 @@ Statusi ir vienoti visā prototipā (sūtīšanas vēsture, kampaņu saraksts, a
 ## Atskaites
 
 Cilnē **Atskaites** (specifikācija F18) katrai apakšsadaļai ir savs skats. Visos skatos ir:
-- filtri vienā rindā augšā: periods (datums no–līdz ar ātrajām izvēlēm "Šis mēnesis", "Pēdējie 3 mēneši", "Šis gads", "Pēdējie 12 mēneši"), kampaņas veids, kanāls (eAdrese / e-pasts) un kampaņa (sarakstā tikai atlasītā perioda kampaņas). Pirmajā atvēršanā atlasīti pēdējie 12 mēneši;
-- poga **"Eksportēt CSV"** (atdalītājs – semikols, UTF-8 ar BOM, lai fails pareizi atveras Excel);
+- filtri augšā divās rindās: 1. – periods (datums no–līdz ar ātrajām izvēlēm "Šis mēnesis", "Pēdējie 3 mēneši", "Šis gads", "Pēdējie 12 mēneši"); 2. – kampaņas veids, kanāls (eAdrese / e-pasts) un kampaņa (sarakstā tikai atlasītā perioda kampaņas). Pirmajā atvēršanā atlasīti pēdējie 12 mēneši;
+- poga **"Eksportēt CSV"** lapas galvenē labajā pusē (atdalītājs – semikols, UTF-8 ar BOM, lai fails pareizi atveras Excel);
 - bloks **"MI kopsavilkums"** ar simulētām galvenajām atziņām par atlasītajiem datiem: piegādes īpatsvars, neveiksmīgo ziņu īpatsvara izmaiņas e-pastā salīdzinājumā ar iepriekšējo tāda paša garuma periodu, biežākais NDR iemesls, atkārtotā nosūtīšana, manuāla pārbaude un paraksti.
 
 Skati:
