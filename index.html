@@ -379,12 +379,6 @@ td.contacts{display:table-cell}
 .prio-sel select{width:auto;min-width:150px;padding:6px 8px;font-size:14px}
 .prio-arr{color:var(--text-muted);font-size:16px}
 /* 2. solis: sūtīšanas secība, kolonnu numuri, primārā adrese, citas adreses */
-.rt-order{font-size:12.5px;color:var(--text-muted);line-height:1.35}
-.rt-order b{color:var(--text);font-weight:600}
-.rt-order .nw{white-space:nowrap}
-#c-ctx.r-card{gap:3px;padding:8px 12px}
-.rt-order .link-btn{font-size:12.5px;margin-left:4px;padding:0}
-.rt-links .link-btn{padding:0}
 .col-n{display:inline-grid;place-items:center;min-width:16px;height:16px;border-radius:50%;background:#EEF5F6;color:#1F5E69;font-size:10.5px;font-weight:700;margin-left:3px;vertical-align:1px}
 .ac-tag.t-prim{color:#1F5E69;border-color:#BFD6DA;background:#EEF5F6}
 .sel-table td.c-other{max-width:170px}
@@ -422,6 +416,8 @@ td.contacts{display:table-cell}
 .wiz-step:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
 .compose-grid.wiz{display:block}
 .compose-grid.wiz .wiz-card{max-width:1040px}
+/* solis "Respondenti" – plašāks (kreisā kolonna + tabula) */
+.compose-grid.wiz[data-step="2"] .wiz-card{max-width:1280px}
 .compose-grid.wiz .preview-card{display:none}
 .compose-grid.wiz[data-step="5"]{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px;align-items:start}
 .compose-grid.wiz[data-step="5"] .wiz-nav{position:static}
@@ -1001,40 +997,54 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .ac-pend{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:#A35300;white-space:nowrap}
 .ac-pend .icon{width:14px;height:14px}
 /* Solis "Respondenti": divas kartītes – "Mērķa grupa" (~35%) un "Kontaktinformācijas kvalitāte" (~65%), vienāda augstuma */
-.r-cards{display:grid;grid-template-columns:minmax(0,33fr) minmax(0,67fr);gap:12px;align-items:stretch}
-.r-card{padding:10px 12px;gap:5px;font-size:13.5px}
-.r-card h4{margin:0;font-size:14px}
+/* Solis "Respondenti": kreisā kolonna (~260 px, kartītes viena zem otras, ritinot paliek redzama) + kartīte "Respondenti" ar tabulu */
+.r-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:14px;align-items:start}
+.r-side{display:flex;flex-direction:column;gap:12px;position:sticky;top:12px}
+.r-card{padding:12px 14px;gap:6px;font-size:13.5px}
+.r-card h4{margin:0 0 2px;font-size:14px}
 .r-card .scope-ic .icon{width:17px;height:17px}
-.rt-scope{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.rt-scope{color:var(--text);font-size:13px;line-height:1.4}
 .rt-scope .cs-l{color:var(--text-muted)}
 .rt-scope .is-rem{color:var(--primary-darker);font-weight:600}
-.rt-num{display:flex;flex-direction:column;gap:1px;font-size:13px;color:var(--text-muted)}
+.rt-n{font-size:13.5px;color:var(--text-muted);margin-top:4px}
+.rt-big{display:block;font-size:30px;line-height:1.1;font-weight:700;color:var(--text)}
+.rt-num{font-size:13px;color:var(--text-muted)}
 .rt-num b{color:var(--text)}
-.rt-head{position:relative}
-.rt-head .rt-n{order:2;margin-left:auto;font-size:13px;font-weight:400;color:var(--text-muted);white-space:nowrap}
-.rt-head .rt-n b{color:var(--text)}
-.rt-links{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:auto;font-size:13px}
-.rq-head{display:flex;align-items:center;justify-content:space-between;gap:6px 10px;flex-wrap:wrap}
-.rq-head .ac-acts{display:flex;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap}
-.r-quality .ac-pills{display:flex;flex-wrap:wrap;gap:4px}
-.r-quality .ac-pill{font-size:12.5px;height:26px;padding:0 8px;gap:4px}
-.r-quality .ac-pill .icon{width:13px;height:13px}
-.r-quality .ac-pill.is-auto{font-size:12px;height:23px;padding:0 7px;background:#F6F8F9;border-color:var(--border-light);color:#4F5A5F}
-.r-quality .ac-pill.is-auto.has-pend{color:#8F4300;border-color:#F3C98B;background:#FFF5E8}
-.r-quality .ac-pill.is-auto[aria-pressed="true"]{background:#EEF5F6;border-color:#297785;color:#1F5E69}
-.rq-row{display:flex;align-items:center;gap:4px 6px;flex-wrap:wrap}
-.rq-row .ac-excl-btn{margin-left:auto}
-.rq-row .ac-pills{flex:0 1 auto;gap:2px}
-.r-quality .rq-status .ac-pill{font-size:12px;padding:0 5px;gap:3px}
-#c-ac .rq-excl{margin-left:auto;font-size:12px;color:var(--danger);white-space:nowrap;padding:0}
-#c-ac .rq-excl:hover{color:#8E1B12}
-.rq-auto{display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap}
-#c-ac .ac-acts .btn,#c-ac .ac-excl-btn{height:30px;padding:0 9px;font-size:12.5px;gap:5px}
-#c-ac .ac-acts .btn .icon{width:14px;height:14px}
-#c-ac .ac-recheck .ac-spin{font-size:14px}
-.rq-none{font-size:12.5px;color:var(--text-muted)}
-#c-ac .btn-sm .icon{width:15px;height:15px}
-@media (max-width:900px){ .r-cards{grid-template-columns:minmax(0,1fr)} }
+.rt-order{font-size:12.5px;color:var(--text-muted);line-height:1.4}
+.rt-order b{color:var(--text);font-weight:600}
+.rt-order .nw{white-space:nowrap}
+.rt-links{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;margin-top:4px}
+.rt-links .link-btn{padding:0}
+.q-list{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:2px}
+.q-item{appearance:none;font:inherit;width:100%;display:flex;align-items:center;gap:8px;padding:5px 8px;border:1px solid transparent;border-radius:7px;background:none;cursor:pointer;color:var(--text);font-size:13.5px;text-align:left}
+.q-item:hover:not(:disabled){background:var(--bg)}
+.q-item:disabled{cursor:default;opacity:.55}
+.q-item[aria-pressed="true"]{background:#EEF5F6;border-color:#297785}
+.q-item .q-l{flex:1;min-width:0}
+.q-item b{font-variant-numeric:tabular-nums}
+.q-item:focus-visible,.q-sub:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px}
+.q-auto{display:flex;flex-wrap:wrap;align-items:center;gap:2px 4px;border-top:1px solid var(--border-light);padding-top:8px;margin-top:4px;font-size:12.5px}
+.q-sub{appearance:none;font:inherit;font-size:12.5px;background:none;border:1px solid transparent;border-radius:6px;padding:2px 5px;color:#4F5A5F;cursor:pointer;display:inline-flex;align-items:center;gap:3px}
+.q-sub:hover:not(:disabled){background:var(--bg)}
+.q-sub:disabled{cursor:default;opacity:.55}
+.q-sub[aria-pressed="true"]{background:#EEF5F6;border-color:#297785;color:#1F5E69}
+.q-sub.has-pend{color:#8F4300}
+.q-sub .pend-ic .icon{width:13px;height:13px}
+.q-sep{color:var(--text-muted)}
+.q-acts{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.q-acts .btn{width:100%;justify-content:center;height:34px;font-size:13px}
+.q-acts .btn .icon{width:15px;height:15px}
+.q-acts .ac-checked{text-align:center}
+.r-main{min-width:0;border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:#fff}
+.r-main-h{margin:0 0 8px;font-size:15px;color:var(--primary-darker)}
+#c-list{max-height:65vh}
+.r-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light)}
+.r-foot #c-resp-next{margin-left:auto}
+#c-ready{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:14px}
+#c-ready > span{display:inline-flex;align-items:center;gap:5px}
+#c-ready .icon{width:16px;height:16px}
+.rr-sep{color:var(--text-muted)}
+@media (max-width:1000px){ .r-layout{grid-template-columns:minmax(0,1fr)} .r-side{position:static} }
 .ac-pill.k-shared.has-pend{background:#FFF5E8}
 .ac-pill .pend-ic{display:inline-flex;color:#A35300}
 .cs-scope{min-width:110px}
@@ -2124,29 +2134,33 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         </div>
         <div class="step" data-wstep="2" hidden>
           <div class="step-title"><span class="step-num">2</span><h2>Respondenti</h2><span class="tip" tabindex="0" role="note" aria-label="Uzaicinājums, informatīvs ziņojums un cits – tiek atlasīti visi respondenti ar pienākumu kampaņas tvērumā. Atgādinājums – tikai neiesniegtie pienākumi." data-tip="Uzaicinājums, informatīvs ziņojums un cits – tiek atlasīti visi respondenti ar pienākumu kampaņas tvērumā. Atgādinājums – tikai neiesniegtie pienākumi.">i</span></div>
-          <div class="r-cards">
-            <section class="scope-card r-card r-target" id="c-ctx" aria-labelledby="c-tg-h">
-              <h4 id="c-tg-h" class="rt-head"><span class="rt-n" id="c-ctx-n"></span><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.7"/></svg></span>Mērķa grupa</h4>
-              <div class="rt-scope" id="c-ctx-tags"></div>
-              <div class="rt-order" id="c-ctx-order"></div>
-              <div class="rt-num" id="c-ctx-sum"></div>
-              <div class="rt-links"><button type="button" class="link-btn" id="c-exc-open" aria-haspopup="dialog">Izņēmumi (0)</button><button type="button" class="link-btn" data-action="wiz-go" data-id="1">Mainīt tvērumu</button></div>
+          <div class="r-layout">
+            <aside class="r-side" aria-label="Mērķa grupa un kontaktu kvalitāte">
+              <section class="scope-card r-card r-target" id="c-ctx" aria-labelledby="c-tg-h">
+                <h4 id="c-tg-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.7"/></svg></span>Mērķa grupa</h4>
+                <div class="rt-scope" id="c-ctx-tags"></div>
+                <div class="rt-n" id="c-ctx-n"></div>
+                <div class="rt-num" id="c-ctx-sum"></div>
+                <div class="rt-order" id="c-ctx-order"></div>
+                <div class="rt-links"><button type="button" class="link-btn" id="c-exc-open" aria-haspopup="dialog">Izņēmumi (0)</button><button type="button" class="link-btn" data-action="wiz-go" data-id="1">Mainīt tvērumu</button></div>
+              </section>
+              <section class="scope-card r-card r-quality" id="c-ac" aria-labelledby="c-q-h"></section>
+            </aside>
+            <section class="r-main" aria-labelledby="c-rm-h">
+              <h3 class="r-main-h" id="c-rm-h">Respondenti</h3>
+              <span class="err" id="c-resp-err" hidden></span>
+              <div class="r-tools">
+                <label class="search"><span class="sr-only">Meklēt respondentus</span>
+                  <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                  <input type="search" id="c-search" placeholder="Meklēt…">
+                </label>
+                <label class="rep-filter"><span>Apsekojums</span><select id="c-rep-filter"></select></label>
+                <span class="r-links"><button type="button" class="link-btn" data-action="c-all">Iekļaut visus</button><button type="button" class="link-btn" data-action="c-none">Izņemt visus</button></span>
+              </div>
+              <div class="r-list" id="c-list"></div>
+              <div class="r-count" id="c-count" aria-live="polite"></div>
+              <div class="r-foot"><span id="c-ready" aria-live="polite"></span><button type="button" class="btn btn-primary" data-action="wiz-next" id="c-resp-next">Apstiprināt atlasi un turpināt</button></div>
             </section>
-            <section class="scope-card r-card r-quality" id="c-ac" aria-labelledby="c-q-h"></section>
-          </div>
-          <div class="sel-result c-table">
-            <span class="err" id="c-resp-err" hidden></span>
-          <div class="r-tools">
-            <label class="search"><span class="sr-only">Meklēt respondentus</span>
-              <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              <input type="search" id="c-search" placeholder="Meklēt…">
-            </label>
-            <label class="rep-filter"><span>Apsekojums</span><select id="c-rep-filter"></select></label>
-            <span class="r-links"><button type="button" class="link-btn" data-action="c-all">Iekļaut visus</button><button type="button" class="link-btn" data-action="c-none">Izņemt visus</button></span>
-          </div>
-          <div class="r-list" id="c-list"></div>
-          <div class="r-count" id="c-count" aria-live="polite"></div>
-          <div class="r-ready"><span id="c-ready" aria-live="polite"></span></div>
           </div>
         </div>
         <div class="step" id="c-step-content" data-wstep="3" hidden>
@@ -2288,7 +2302,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 63</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 64</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -6534,7 +6548,7 @@ function renderWizard(){
       <span class="n">${st === 'is-done' ? ICON.check : st === 'is-warn' ? '!' : n}</span><span class="t">${esc(l)}</span></button></li>`;
   }).join('');
   $('#wiz-prev').disabled = cur <= 1;
-  $('#wiz-next').hidden = cur >= 5;
+  $('#wiz-next').hidden = cur >= 5 || cur === 2;
   if (cur < 5) $('#wiz-next').textContent = cur === 2 ? 'Apstiprināt atlasi un turpināt' : `Tālāk: ${WIZ_STEPS[cur]} →`;
   $('#wiz-issues').textContent = '';
   renderStepErrors();
@@ -6708,8 +6722,8 @@ function renderScopeCtx(){
   // respondentu skaits un skaits pa kanāliem (pēc primārās adreses – pirmā pieejamā pēc adrešu prioritātes; kampaņā iekļautie)
   const ch = {eadrese:0, epasts:0, none:0};
   acActive().forEach(r => { const f = addrPlan(r)[0]; ch[f ? ADDR_TYPES[f.type].ch : 'none']++; });
-  $('#c-ctx-n').innerHTML = `<b>${rs.length}</b> ${plural(rs.length, 'respondents', 'respondenti')}`;
-  $('#c-ctx-order').innerHTML = `Sūtīšanas secība: <b>${compose.prio.filter(Boolean).map(k => `<span class="nw">${esc(addrShort(k))}</span>`).join(' → ')}</b> <button type="button" class="link-btn" data-action="wiz-go" data-id="1">Mainīt</button>`;
+  $('#c-ctx-n').innerHTML = `<b class="rt-big">${rs.length}</b> ${plural(rs.length, 'respondents', 'respondenti')}`;
+  $('#c-ctx-order').innerHTML = `Sūtīšanas secība: <b>${compose.prio.filter(Boolean).map(k => `<span class="nw">${esc(addrShort(k))}</span>`).join(' → ')}</b>`;
   $('#c-ctx-sum').innerHTML = `<span class="rt-ch">eAdrese <b>${ch.eadrese}</b> <span class="cs-l">·</span> E-pasts <b>${ch.epasts}</b> <span class="cs-l">·</span> Bez adreses <b>${ch.none}</b></span>`;
   const nx = Object.keys(compose.exc || {}).filter(id => rs.some(r => r.id === id)).length;
   $('#c-exc-open').textContent = `Izņēmumi (${nx})`;
@@ -6746,22 +6760,15 @@ function renderAcBar(){
   const busy = ui.acBusy === compose.draftId, acAt = ui.acAt && ui.acAt.id === compose.draftId ? new Date(ui.acAt.t).toLocaleTimeString('lv-LV', {hour:'2-digit', minute:'2-digit'}) : '';
   // filtrs, kuram vairs nav respondentu, tiek noņemts
   if (compose.acF && !rs.some(r => acMatch(r, compose.acF, sm))){ compose.acF = ''; setTimeout(() => renderComposeList(), 0); }
-  // 1. rinda – statusa birkas (ar 0 – blāvas un nav klikšķināmas); filtrē tabulu
-  const IC = {ok:ICON.check, pot:ICON.warn, bad:'<span class="ac-dash" aria-hidden="true">✕</span>', none:'<span class="ac-dash" aria-hidden="true">—</span>'};
-  const pill = (k, n, ic, txt, title, cls = '') => `<button type="button" class="ac-pill k-${k}${cls}${n ? '' : ' is-zero'}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${n ? '' : 'disabled'} title="${esc(title)}: ${n}${n ? ' – filtrēt tabulu' : ''}">${ic}${txt} <b>${n}</b></button>`;
-  // 2. rinda – automātiski konstatētais (mazākas, pelēcīgas birkas; ar 0 – nerāda)
+  // automātiski konstatētais
   const ks = acKeys(), nDup = rs.reduce((a, r) => a + ks.filter(k => addrCheck(r, k).status === 'dup').length, 0);
   const nShared = [...sm].filter(([, ids]) => ids.some(id => rs.some(r => r.id === id))).length, nPend = sharedPending(sm).length;
-  const nRisk = rs.reduce((a, r) => a + ks.filter(k => { const c = addrCheck(r, k); return c.status === 'pot' && c.risk; }).length, 0);
   const nMi = rs.reduce((a, r) => a + ks.filter(k => { const c = addrCheck(r, k); return c.status === 'pot' && c.mi; }).length, 0);
-  const auto = [pill('dup', nDup, '', 'Dublikāti noņemti', 'Vienam respondentam vienāda adrese vairākos e-pasta laukos – dublikāts noņemts', ' is-auto'),
-    pill('shared', nShared, nPend ? `<span class="pend-ic" aria-hidden="true">${ICON.warn}</span>` : '', 'Koplietojamas adreses', `Viena e-pasta adrese vairākiem respondentiem${nPend ? ` – neizvērtētas: ${nPend}` : ''}`, ' is-auto' + (nPend ? ' has-pend' : '')),
-    pill('risk', nRisk, '', 'Riskantas adreses', 'Lomas adreses (info@, office@, noreply@) un vienreizējo e-pastu domēni', ' is-auto'),
-    pill('mi', nMi, '<span class="ac-dash" aria-hidden="true">✨</span>', 'MI ieteikumi', 'MI ieteikumi pārrakstīšanās kļūdām', ' is-auto')].filter((x, i) => [nDup, nShared, nRisk, nMi][i]);
-  $('#c-ac').innerHTML = `<div class="rq-head"><h4 id="c-q-h"><span class="scope-ic" aria-hidden="true">${ICON.shieldOk}</span>Kontaktinformācijas kvalitāte</h4>
-      <span class="ac-acts">${acAt ? `<span class="ac-checked">Pārbaudīts ${acAt}</span>` : ''}<button type="button" class="btn btn-sm ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button><button type="button" class="btn btn-secondary btn-sm rq-export" data-ci-export>${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Eksportēt kontaktus</button></span></div>
-    <div class="rq-row"><span class="ac-pills rq-status" role="group" aria-label="Adrešu kvalitāte">${AC_STATES.map(([k, l]) => pill(k, cnt[k], IC[k], l, l)).join('')}</span>${attn ? `<button type="button" class="link-btn rq-excl" data-ac-excl>Izņemt nederīgos (${attn})</button>` : ''}</div>
-    <div class="rq-auto">${auto.length ? `<span class="ac-pills" role="group" aria-label="Automātiski konstatētais">${auto.join('')}</span>` : '<span class="rq-none">Automātiski konstatētu problēmu nav</span>'}</div>`;
+  const sub = (k, n, txt, title) => `<button type="button" class="q-sub${k === 'shared' && nPend ? ' has-pend' : ''}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${n ? '' : 'disabled'} title="${esc(title)}${n ? ' – filtrēt tabulu' : ''}">${k === 'shared' && nPend ? `<span class="pend-ic" aria-hidden="true">${ICON.warn}</span>` : ''}${txt} <b>${n}</b></button>`;
+  $('#c-ac').innerHTML = `<h4 id="c-q-h"><span class="scope-ic" aria-hidden="true">${ICON.shieldOk}</span>Kontaktu kvalitāte</h4>
+    <ul class="q-list" role="group" aria-label="Adrešu kvalitāte (filtrē tabulu)">${AC_STATES.map(([k, l]) => `<li><button type="button" class="q-item q-${k}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${cnt[k] ? '' : 'disabled'} title="${esc(l)}: ${cnt[k]}${cnt[k] ? ' – filtrēt tabulu' : ''}"><span class="q-dot" aria-hidden="true"></span><span class="q-l">${esc(l)}</span><b>${cnt[k]}</b></button></li>`).join('')}</ul>
+    <div class="q-auto" role="group" aria-label="Automātiski konstatētais (filtrē tabulu)">${sub('shared', nShared, 'Koplietojamas', `Viena e-pasta adrese vairākiem respondentiem${nPend ? ` – neizvērtētas: ${nPend}` : ''}`)}<span class="q-sep" aria-hidden="true">·</span>${sub('dup', nDup, 'Dublikāti', 'Vienam respondentam vienāda adrese vairākos e-pasta laukos – dublikāts noņemts')}<span class="q-sep" aria-hidden="true">·</span>${sub('mi', nMi, 'MI ieteikumi', 'MI ieteikumi pārrakstīšanās kļūdām')}</div>
+    <div class="q-acts"><button type="button" class="btn btn-sm ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button>${acAt ? `<span class="ac-checked">Pārbaudīts ${acAt}</span>` : ''}${attn ? `<button type="button" class="btn btn-secondary btn-sm ac-excl-btn" data-ac-excl>Izņemt nederīgos (${attn})</button>` : ''}<button type="button" class="btn btn-secondary btn-sm" data-ci-export>${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Eksportēt kontaktus</button></div>`;
 }
 // rindas problēmas (oranža ikona pie respondenta vārda)
 function respProblems(r, addr){
@@ -6857,7 +6864,7 @@ function renderComposeCount(){
     (st.noAddr ? ` · ${st.noAddr} bez atbilstošas adreses – netiks nosūtīti` : '');
   // kopsavilkums: gatavi nosūtīšanai / nepieciešama uzmanība (kampaņā iekļautie)
   const sm = sharedMap(), act = acActive(), attn = act.filter(r => needsAttn(r, sm)).length, ready = act.length - attn;
-  $('#c-ready').innerHTML = `<span class="rr-ok">${ICON.check}<b>${ready}</b> ${plural(ready, 'respondents gatavs', 'respondenti gatavi')} nosūtīšanai</span>${attn ? `<span class="rr-attn">${ICON.warn}<b>${attn}</b> nepieciešama uzmanība</span>` : ''}`;
+  $('#c-ready').innerHTML = `<span class="rr-ok">${ICON.check}<b>${ready}</b> ${plural(ready, 'gatavs', 'gatavi')}</span><span class="rr-sep" aria-hidden="true">·</span><span class="${attn ? 'rr-attn' : 'rr-ok'}">${attn ? ICON.warn : ''}<b>${attn}</b> jāpārskata</span>`;
 }
 function composeIssues(t, recs){
   const issues = [];
