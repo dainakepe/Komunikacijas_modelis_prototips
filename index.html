@@ -830,6 +830,7 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .ms-opt[aria-selected="true"] .ms-chk{background:var(--primary);border-color:var(--primary)}
 .ms-opt[aria-selected="true"] .ms-chk::after{content:'';width:8px;height:4px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
 .ms-empty{padding:10px;color:var(--text-muted);font-size:13px}
+.ms-list.is-inline{position:static;margin-top:6px;box-shadow:none;max-height:300px}
 .scope-sum{margin-top:10px;padding:9px 12px;border-radius:8px;background:var(--primary-50);border:1px solid var(--primary-100, #cfeaea);font-size:14px}
 .scope-sum.is-empty{background:var(--bg);border-color:var(--border);color:var(--text-muted)}
 .scope-sum.is-warn{background:#FFF7E6;border-color:#F2D49B}
@@ -2166,7 +2167,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 56</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 57</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -2863,7 +2864,7 @@ function seedBanner(){
 function seedData(){
   const ago = n => addDays(-n).toISOString();
   const data = {
-    seq: 0, eaSeeded: true, msEaSeeded: true, msNoSubj: true,
+    seq: 0, eaSeeded: true, msEaSeeded: true, msNoSubj: true, dutyHist: 1,
     layout: clone(DEFAULT_LAYOUT),
     templates: withTr([
       {id:'t1', aud:'fiz', cat:'uzaicinajums', kind:'pielikums', name:'Uzaicinājums piedalīties aptaujā (vēstule pielikumā)', updated:ago(14), files:[],
@@ -3159,6 +3160,8 @@ function seedReports(today = dOnly(new Date())){
   });
 }
 // Pienākumi: respondents × pārskats × periods; termiņš – pēc pārskata noteikuma; statuss – testa dati
+// testa vēsture uzņēmumu pārskatiem: no 2024. gada; cik periodu pēc pēdējā pabeigtā (1 – arī tekošais periods)
+const DUTY_HIST_FROM = 2024, DUTY_HIST = {'p-apgr':1, 'p-ds':0, 'p-rup':1};
 function seedDutyData(s){
   const today = dOnly(new Date()), reps = seedReports(today);
   s.reports = reps.map(x => x.p);
@@ -3166,6 +3169,20 @@ function seedDutyData(s){
     const {p, anchor} = reps.find(x => x.p.id === rep), period = periodShift(anchor, 1 - back), deadline = deadlineOf(p, period);
     const submitted = sub === null ? null : isoDate(new Date(Math.min(addDaysTo(parseIso(deadline), -sub), today)));
     return {id:'d' + (i + 1), respondentId:rid, reportId:rep, period, deadline, submitted};
+  });
+  // uzņēmumu pārskatiem – pienākumi katrā periodā no 2024. gada līdz tekošajam (pa diviem respondentiem, kuriem ir šis pārskats)
+  Object.entries(DUTY_HIST).forEach(([rep, after]) => {
+    const {p, anchor} = reps.find(x => x.p.id === rep), have = new Set(s.duties.filter(d => d.reportId === rep).map(d => d.period));
+    const rids = [...new Set(s.duties.filter(d => d.reportId === rep).map(d => d.respondentId))], last = periodShift(anchor, after);
+    if (!rids.length) return;
+    let i = 0;
+    for (let k = periodOf(p.freq, new Date(DUTY_HIST_FROM, 0, 1)); periodStart(k) <= periodStart(last); k = periodShift(k, 1)){
+      if (have.has(k)) continue;
+      const deadline = deadlineOf(p, k), past = parseIso(deadline) < today;
+      [rids[(2 * i) % rids.length], rids[(2 * i + 1) % rids.length]].filter((r, j, a) => a.indexOf(r) === j).forEach(rid =>
+        s.duties.push({id:'dh' + (s.duties.length + 1), respondentId:rid, reportId:rep, period:k, deadline, submitted: past ? isoDate(addDaysTo(parseIso(deadline), -(1 + i % 5))) : null}));
+      i++;
+    }
   });
   s.statusSyncedAt = new Date(Date.now() - 2 * 3600e3).toISOString();
 }
@@ -3232,6 +3249,8 @@ function loadState(){
       if (!s.msEaSeeded){ s.mailSamples.forEach(x => { if (x.builtin && !x.ea) x.ea = msSeedEa(x); }); s.msEaSeeded = true; }
       // sagatavēm vairs nav temata (vienreiz)
       if (!s.msNoSubj){ msDropSubj(s.mailSamples); s.msNoSubj = true; }
+      // uzņēmumu pārskatu pienākumi 2024. gads – tekošais (pienākumi tiek izveidoti no jauna attiecībā pret šodienu)
+      if (!s.dutyHist){ seedDutyData(s); s.dutyHist = 1; }
       if (s.respondents.some(r => r.syncedAt === undefined)) applyAddrData(s);
       if (!s.addrCheckSeeded) applyAddrCheckData(s);
       // testa veidnēm – eAdreses versija (vienreiz)
@@ -5921,9 +5940,10 @@ function repPeriodList(p){
 const periodYear = k => +String(k).split(':')[1].split('-')[0];
 // pienākuma periods atbilst gadam un periodiskuma izvēlei
 function pfMatch(sel, freq, k){
-  const v = (sel.pf || {})[freq];
-  if (!v || v === 'none' || periodYear(k) !== +sel.year) return false;
-  return v === 'all' || pfVals(v).includes(+String(k).split('-')[1]);
+  // gads – vienmēr kā skaitlis; rinda ieslēgta un "Visi …" (arī tukša izvēle) – jebkurš šī gada periods; konkrēti periodi – tikai tie
+  const v = (sel.pf || {})[freq], ns = pfVals(v);
+  if (v === 'none' || periodYear(k) !== +sel.year) return false;
+  return !ns.length || ns.includes(+String(k).split('-')[1]);
 }
 // konkrētie periodi: '3' vai '3,9' -> [3, 9]
 const pfVals = v => v && v !== 'all' && v !== 'none' ? String(v).split(',').map(Number).filter(n => n > 0) : [];
@@ -6030,14 +6050,18 @@ const periodReportIds = () => { const sel = compose.sel, fr = new Map(audReports
   // atgādinājumam – tikai neiesniegtie pārskati ar atbilstošo termiņu
   if (fizMode()) return new Set(fr.keys());
   return new Set((state.duties || []).filter(d => fr.has(d.reportId) && (surveyMode() || pfMatch(sel, fr.get(d.reportId), d.period)) && remindMatch(d)).map(d => d.reportId)); };
+// uzņēmumu pārskati, kuriem izvēlētajā gadā ir pienākumi (jebkurš periodiskums)
+const repYearIds = () => { const ids = new Set(audReports().map(p => p.id)); return new Set((state.duties || []).filter(d => ids.has(d.reportId) && periodYear(d.period) === +compose.sel.year).map(d => d.reportId)); };
+// uzņēmumu statistikā apsekojumu saraksts kartītē redzams uzreiz (nav jāklikšķina meklēšanas laukā)
+const repInline = () => !surveyMode();
 function renderRepList(){
   // apsekojumi atkarīgi no perioda izvēles (periodiskuma)
   const sel = compose.sel, q = norm($('#c-rep-search').value.trim()), inPer = periodReportIds(), reps = audReports().filter(p => (inPer.has(p.id) || (surveyMode() && sel.reports.includes(p.id))) && (!q || norm(`${p.name} ${p.code} ${FREQS[p.freq]}`).includes(q)));
   const groups = [['fiz', AUDS.fiz.field], ['jur', AUDS.jur.field]].filter(([a]) => reps.some(p => p.aud === a));
-  $('#c-rep-list').innerHTML = (!fizMode() && (!q || norm('visi apsekojumi').includes(q)) ? `<div class="ms-opt" role="option" id="c-rep-opt-all" data-rep-opt="*" aria-selected="${!!sel.allReports}"><span class="ms-chk" aria-hidden="true"></span><span><b>Visi apsekojumi</b><small>Bez ierobežojuma pēc apsekojuma</small></span></div>` : '') + (reps.length ? groups.map(([a, l]) => `${groups.length > 1 ? `<div class="chk-group" role="presentation">${l}</div>` : ''}${reps.filter(p => p.aud === a).map(p =>
+  $('#c-rep-list').innerHTML = (!fizMode() && (!q || norm('visi apsekojumi').includes(q)) && (surveyMode() || reps.length) ? `<div class="ms-opt" role="option" id="c-rep-opt-all" data-rep-opt="*" aria-selected="${!!sel.allReports}"><span class="ms-chk" aria-hidden="true"></span><span><b>Visi apsekojumi</b><small>Bez ierobežojuma pēc apsekojuma</small></span></div>` : '') + (reps.length ? groups.map(([a, l]) => `${groups.length > 1 ? `<div class="chk-group" role="presentation">${l}</div>` : ''}${reps.filter(p => p.aud === a).map(p =>
     `<div class="ms-opt" role="option" id="c-rep-opt-${p.id}" data-rep-opt="${p.id}" aria-selected="${sel.reports.includes(p.id)}"><span class="ms-chk" aria-hidden="true"></span>
       <span>${esc(repTitle(p))}<small>Periodiskums: ${esc(FREQS[p.freq])} · termiņš: ${esc(ruleLabel(p.rule))}</small></span></div>`).join('')}`).join('')
-    : '<div class="ms-empty">Nekas nav atrasts.</div>');
+    : `<div class="ms-empty">${q ? 'Nekas nav atrasts.' : surveyMode() ? 'Nekas nav atrasts.' : repYearIds().size ? 'Izvēlētajos periodos nav pārskatu.' : 'Šajā gadā nav pārskatu.'}</div>`);
   msActive(null);
 }
 // Konkrēts periods: rindas ar izvēlnēm "Periodiskums" (ja izvēlēti vairāki), "Gads" un "Periods"
@@ -6168,6 +6192,8 @@ function renderScope(){
   // apsekojums, kas neatbilst izvēlētajam periodiskumam, netiek atlasīts – birka atzīmēta ar ⚠
   $('#c-rep-tags').innerHTML = (sel.allReports ? `<span class="ms-tag"><span>Visi apsekojumi</span><button type="button" data-rep-rm="*" aria-label="Noņemt: Visi apsekojumi">×</button></span>` : '') + sel.reports.map(id => { const p = repById(id), off = !periodReportIds().has(p.id), t = off ? `${p.name} – izvēlētajā periodā nav pienākumu, netiek atlasīts` : p.name;
     return `<span class="ms-tag${off ? ' is-off' : ''}"><span title="${esc(t)}">${off ? ICON.warn : ''}${esc(repTitle(p))} <small>${esc(FREQS[p.freq])}</small></span><button type="button" data-rep-rm="${p.id}" aria-label="Noņemt: ${esc(p.name)}">×</button></span>`; }).join('');
+  $('#c-rep-list').classList.toggle('is-inline', repInline());
+  if (repInline()){ $('#c-rep-list').hidden = false; $('#c-rep-search').setAttribute('aria-expanded', 'true'); }
   if (!$('#c-rep-list').hidden) renderRepList();
   // iedzīvotāju statistika: viena kartīte – Apsekojums → Gads → Periods → Reize / cikls
   const fm = fizMode();
@@ -8379,7 +8405,7 @@ function msActive(i){
   if (cur){ $('#c-rep-search').setAttribute('aria-activedescendant', cur.id); cur.scrollIntoView({block:'nearest'}); }
   else $('#c-rep-search').removeAttribute('aria-activedescendant');
 }
-const msOpen = open => { $('#c-rep-list').hidden = !open; $('#c-rep-search').setAttribute('aria-expanded', String(open)); if (open) renderRepList(); };
+const msOpen = open => { open = open || repInline(); $('#c-rep-list').hidden = !open; $('#c-rep-search').setAttribute('aria-expanded', String(open)); if (open) renderRepList(); };
 $('#c-rep-search').addEventListener('focus', () => msOpen(true));
 $('#c-rep-search').addEventListener('click', () => msOpen(true));
 $('#c-rep-search').addEventListener('input', () => msOpen(true));
