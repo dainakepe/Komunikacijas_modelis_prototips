@@ -892,9 +892,6 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 }
 .scope-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 16px;margin:18px 0 6px}
 .scope-head .sub-h{margin:0}
-.scope-saved{display:flex;align-items:center;gap:6px;font-size:13.5px}
-.scope-saved label{font-weight:600;color:var(--text-muted);white-space:nowrap}
-.scope-saved select{min-width:170px;padding:5px 8px;font-size:13.5px}
 .scope-resp > summary{cursor:pointer;list-style:none}
 .scope-resp > summary::-webkit-details-marker{display:none}
 .scope-resp > summary h4{margin:0}
@@ -928,7 +925,6 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .switch input:checked + .sw::after{transform:translateX(14px)}
 .switch input:focus-visible + .sw{outline:3px solid var(--focus-ring);outline-offset:2px}
 .scope-opts .tip{margin-left:-8px;margin-right:6px}
-.scope-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
 .miss-list{margin:0;padding-left:18px;columns:2;font-size:13.5px}
 .merge-note{display:block;color:var(--primary-dark);font-size:12px}
 .remind-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;margin-top:10px}
@@ -2049,8 +2045,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
             <span class="err" id="c-when-err" hidden></span></div>
           <div class="scope-head">
             <h3 class="sub-h scope-h">Kampaņas tvērums <span class="req">*</span><span class="tip" tabindex="0" role="note" aria-label="Atlase ir visu kartīšu kritēriju krustpunkts. Noklusējumā tiek atlasīti visi izvēlētā gada respondenti neatkarīgi no periodiskuma; izvēlnes un filtri atlasi sašaurina." data-tip="Atlase ir visu kartīšu kritēriju krustpunkts. Noklusējumā tiek atlasīti visi izvēlētā gada respondenti neatkarīgi no periodiskuma; izvēlnes un filtri atlasi sašaurina.">i</span></h3>
-            <div class="scope-saved"><label for="c-saved">Mani filtri</label><select id="c-saved"></select>
-              <button type="button" class="icon-btn" id="c-saved-del" hidden aria-label="Dzēst saglabāto filtru" title="Dzēst saglabāto filtru"><svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div>
           </div>
           <div class="scope-grid">
             <section class="scope-card" id="c-per-card" aria-labelledby="c-sc-per">
@@ -2122,7 +2116,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <span class="err" id="c-scope-err" hidden></span>
           <div class="scope-sum" id="c-scope-sum" aria-live="polite"></div>
           <div class="dvp-note" id="c-dvp"></div>
-          <div class="scope-actions"><button type="button" class="btn btn-ghost btn-sm" id="c-scope-clear">Notīrīt filtrus</button><button type="button" class="btn btn-secondary btn-sm" id="c-scope-save">Saglabāt filtru</button></div>
           <h3 class="sub-h">Vēstules dati <span class="tip" tabindex="0" role="note" aria-label="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). {apsekojums} tiek aizpildīts automātiski no izvēlētā apsekojuma." data-tip="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). {apsekojums} tiek aizpildīts automātiski no izvēlētā apsekojuma.">i</span></h3>
           <div class="form-grid">
             <div class="field"><label for="cf-date">Vēstules datums <span class="muted">{datums}</span></label><input type="date" id="cf-date" data-f="date"></div>
@@ -2295,7 +2288,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 62</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 63</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -3391,9 +3384,9 @@ function loadState(){
       const remap = sel => { if (sel && Array.isArray(sel.reports)) sel.reports = [...new Set(sel.reports.map(mapReportId))]; };
       (s.drafts || []).forEach(d => remap(d.sel)); if (s.draft) remap(s.draft.sel);
       (s.planned || []).forEach(pl => remap(pl.snap && pl.snap.sel));
-      (s.savedFilters || []).forEach(f => remap(f.sel));
       s.planned = s.planned || [];
-      s.savedFilters = s.savedFilters || [];
+      // saglabātie tvēruma filtri ("Mani filtri") vairs netiek izmantoti
+      delete s.savedFilters;
       if (!Array.isArray(s.mailSamples)) s.mailSamples = defaultMailSamples(s.templates);
       // testa sagatavēm – eAdreses versija (vienreiz)
       if (!s.msEaSeeded){ s.mailSamples.forEach(x => { if (x.builtin && !x.ea) x.ea = msSeedEa(x); }); s.msEaSeeded = true; }
@@ -3448,8 +3441,6 @@ const selOpt = k => compose.aud === 'jur' && !!compose.sel[k];
 const defaultSel = () => ({year:new Date().getFullYear(), pf:defaultPf(), reports:[], fz:defaultFz(), allReports:false, operator:'', resp:defaultResp(), excludeInvited:false, mergeNmk:false, sendDate:todayIso(), days:5, lateDays:''});
 // testa vēsturei: periodiskumi, kas iekļauti (pārējie – "Neiekļaut")
 const pfOnly = map => Object.fromEntries(PF_KEYS.map(k => [k, map[k] || 'none']));
-// kampaņas tvēruma filtri (saglabājami "Mani filtri")
-const SCOPE_KEYS = ['year', 'pf', 'reports', 'fz', 'allReports', 'operator', 'resp', 'excludeInvited', 'mergeNmk'];
 // agrākiem melnrakstiem un ieplānotajām kampaņām: viens periodiskums (freq) -> saraksts (freqs);
 // agrāk bez atlases tika ņemti visi pārskati – tad atzīmē visus periodiskumus
 const migrateSel = sel => {
@@ -3603,7 +3594,6 @@ ui.tplOpen = new Set();
 // mainīgo vērtības: rediģējamā vērtība un izvērstie apsekojumu bloki
 ui.varEdit = ''; ui.varOpen = new Set();
 // saglabātais filtrs, kas lietots pēdējais
-ui.savedFilter = '';
 // "Pēc respondenta": izvērsti papildu filtri
 ui.respMore = false;
 ui.tab = '';
@@ -6335,15 +6325,8 @@ function syncScopeInputs(){
   $('#c-opt-merge').checked = !!compose.sel.mergeNmk;
   if (['nmkps', 'uuk', 'email', 'eaddr'].some(k => String(f[k] || '').trim()) || (f.exclSt || []).length || f.list) ui.respMore = true;
 }
-function renderSavedFilters(){
-  const list = state.savedFilters || [];
-  $('#c-saved').innerHTML = `<option value="">${list.length ? 'Izvēlēties…' : 'Nav saglabātu filtru'}</option>` + list.map(x => `<option value="${x.id}" ${ui.savedFilter === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('');
-  $('#c-saved').disabled = !list.length;
-  $('#c-saved-del').hidden = !ui.savedFilter || !list.some(x => x.id === ui.savedFilter);
-}
 function renderScope(){
   const sel = compose.sel, reps = audReports();
-  renderSavedFilters();
   // "Pēc respondenta": aktīvo filtru skaits, statusa šifri, saraksts no faila
   const rf = sel.resp || (sel.resp = defaultResp()), nrf = respFilterCount(rf);
   $('#c-resp-count').hidden = !nrf; $('#c-resp-count').textContent = `${nrf} ${plural(nrf, 'filtrs', 'filtri')}`;
@@ -8402,7 +8385,7 @@ $('#c-aud').addEventListener('change', e => {
     Object.assign(sel, {year:new Date().getFullYear(), pf:defaultPf(), operator:'', resp:defaultResp()});
     cleared = true;
   }
-  if (cleared){ ui.savedFilter = ''; syncScopeInputs(); toast('Kampaņas tvērums notīrīts, jo mainīta statistikas joma.'); }
+  if (cleared){ syncScopeInputs(); toast('Kampaņas tvērums notīrīts, jo mainīta statistikas joma.'); }
   selChanged();
 });
 // Iedzīvotāju statistika: mainot apsekojumu – gads, periods un reizes / cikli no jauna ar noklusējumiem
@@ -8817,41 +8800,6 @@ $('#cr-file-res').addEventListener('click', e => {
 });
 $('#c-opt-invited').addEventListener('change', e => { compose.sel.excludeInvited = e.target.checked; selChanged(); });
 $('#c-opt-merge').addEventListener('change', e => { compose.sel.mergeNmk = e.target.checked; selChanged(); });
-// Notīrīt filtrus; Saglabāt filtru; Mani filtri
-$('#c-scope-clear').addEventListener('click', () => {
-  Object.assign(compose.sel, {year:new Date().getFullYear(), pf:defaultPf(), reports:[], fz:defaultFz(), allReports:false, operator:'', resp:defaultResp(), excludeInvited:false, mergeNmk:false});
-  ui.savedFilter = ''; $('#c-rep-search').value = '';
-  syncScopeInputs(); selChanged(); toast('Filtri notīrīti.');
-});
-$('#c-scope-save').addEventListener('click', () => {
-  openSubModal({title:'Saglabāt filtru', info:'Saglabāto filtru var atkārtoti izmantot citās kampaņās (izvēlne “Mani filtri”).',
-    content:`<div class="field"><label for="sf-name">Filtra nosaukums <span class="req">*</span></label><input type="text" id="sf-name" maxlength="80"><span class="err" id="sf-name-err" hidden></span></div>`,
-    actions:[{label:'Atcelt'}, {label:'Saglabāt', cls:'btn-primary', onClick: close => {
-      const name = $('#sf-name').value.trim(), err = $('#sf-name-err');
-      err.hidden = !!name; err.textContent = name ? '' : 'Norādiet nosaukumu.';
-      if (!name){ $('#sf-name').focus(); return; }
-      const sel = Object.fromEntries(SCOPE_KEYS.map(k => [k, clone(compose.sel[k])]));
-      const ex = (state.savedFilters = state.savedFilters || []).find(x => x.name.toLowerCase() === name.toLowerCase());
-      if (ex) Object.assign(ex, {sel, savedAt:new Date().toISOString()});
-      else state.savedFilters.push({id:'sf' + uid(), name, sel, savedAt:new Date().toISOString()});
-      ui.savedFilter = (ex || state.savedFilters[state.savedFilters.length - 1]).id;
-      save(); close(); renderSavedFilters(); toast(`Filtrs “${name}” saglabāts.`);
-    }}]});
-  setTimeout(() => { const i = $('#sf-name'); if (i) i.focus(); }, 30);
-});
-$('#c-saved').addEventListener('change', e => {
-  const f = (state.savedFilters || []).find(x => x.id === e.target.value);
-  if (!f) return;
-  Object.assign(compose.sel, migrateSel({...compose.sel, ...clone(f.sel)}));
-  ui.savedFilter = f.id; $('#c-rep-search').value = '';
-  syncScopeInputs(); selChanged(); toast(`Lietots filtrs “${f.name}”.`);
-});
-$('#c-saved-del').addEventListener('click', async () => {
-  const f = (state.savedFilters || []).find(x => x.id === ui.savedFilter);
-  if (!f || !(await confirmDialog({title:'Dzēst saglabāto filtru?', message:`Filtrs <b>${esc(f.name)}</b> tiks dzēsts. Kampaņas atlase netiek mainīta.`, okLabel:'Dzēst', danger:true}))) return;
-  state.savedFilters = state.savedFilters.filter(x => x.id !== f.id); ui.savedFilter = '';
-  save(); renderSavedFilters();
-});
 // 1. solis: nosūtīšana tūlīt vai ieplānot; 4. solis: paraksts
 $('#c-when').addEventListener('click', e => {
   const b = e.target.closest('[data-when]');
