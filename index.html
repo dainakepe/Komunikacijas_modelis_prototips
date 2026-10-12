@@ -469,10 +469,25 @@ td.contacts{display:table-cell}
 .compose-grid.wiz[data-step="4"] .wiz-card{max-width:1280px}
 .compose-grid.wiz[data-step="4"] .wiz-nav{display:none}
 .sub-h.sub-h4{font-size:var(--fs-md);margin-top:16px}
-.rv-sum{margin:0;display:flex;flex-direction:column;gap:9px;font-size:var(--fs-sm)}
-.rv-sum dt{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--text-muted);font-size:var(--fs-xs)}
-.rv-sum dt .link-btn{font-size:var(--fs-xs);padding:0}
-.rv-sum dd{margin:0;overflow-wrap:anywhere}
+/* kompakts kopsavilkums */
+/* solī "Pārbaude" kreisā kolonna nedaudz platāka, lai kompaktā kopsavilkuma rindas ietilptu vienā rindā */
+.r-layout.rv-layout{grid-template-columns:300px minmax(0,1fr)}
+@media (max-width:1000px){ .r-layout.rv-layout{grid-template-columns:minmax(0,1fr)} }
+.r-card.rv-card:has(#c-final-sum){padding:10px 12px}
+.rv-card .rv-sum-h{margin:0;font-size:var(--fs-xs);line-height:16px;font-weight:600;color:var(--text-muted);text-transform:none;letter-spacing:0}
+.rv-sum{display:flex;flex-direction:column;gap:6px;font-size:var(--fs-xs)}
+.rv-name{display:flex;align-items:center;gap:6px;line-height:20px}
+.rv-name b{flex:1;min-width:0;font-size:var(--fs-md);font-weight:700;color:var(--primary-darker);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rv-rows{margin:0;display:flex;flex-direction:column;gap:6px}
+.rv-row{display:flex;align-items:center;gap:4px;min-height:18px;line-height:18px}
+.rv-row dt{flex:none;color:var(--text-muted)}
+.rv-row dd{flex:1;min-width:0;margin:0;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rv-edit{flex:none;padding:2px;color:var(--icon-muted)}
+.rv-edit .icon{width:13px;height:13px}
+.rv-edit:hover{color:var(--primary-dark);background:var(--primary-50)}
+.rv-foot-sum{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:6px;border-top:1px solid var(--border-light);font-size:11px;line-height:16px;color:var(--text-muted)}
+.rv-order{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rv-noaddr{flex:none;color:var(--orange-ink);font-weight:600}
 .rv-checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .rv-ck{appearance:none;display:flex;align-items:flex-start;gap:8px;width:100%;padding:6px;margin:0 -6px;box-sizing:content-box;border:0;border-radius:var(--radius-sm);background:none;font:inherit;font-size:var(--fs-sm);text-align:left;color:var(--text)}
 button.rv-ck{cursor:pointer}
@@ -2397,8 +2412,8 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <div class="r-layout rv-layout">
             <aside class="r-side" aria-label="Kopsavilkums un pārbaudes">
               <section class="scope-card r-card rv-card" aria-labelledby="c-sum-h">
-                <h4 id="c-sum-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M9 5h11M9 12h11M9 19h11M4 5h.01M4 12h.01M4 19h.01"/></svg></span>Kopsavilkums</h4>
-                <dl class="rv-sum" id="c-final-sum"></dl>
+                <h4 class="rv-sum-h" id="c-sum-h">Kopsavilkums</h4>
+                <div class="rv-sum" id="c-final-sum"></div>
               </section>
               <section class="scope-card r-card rv-card" aria-labelledby="c-ck-h">
                 <h4 id="c-ck-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8.2 8 9 4.6-.8 8-4 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></span>Pārbaudes</h4>
@@ -2554,7 +2569,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 77</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 78</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7027,11 +7042,14 @@ function setStep(n){
 function renderFinalSummary(){
   const st = selStats(), recs = recipients(), ch = {epasts:0, eadrese:0};
   recs.forEach(r => { const f = addrPlan(r)[0]; if (f) ch[ADDR_TYPES[f.type].ch]++; });
-  const go = (n, l) => apvLocked() ? '' : `<button type="button" class="link-btn" data-action="wiz-go" data-id="${n}" aria-label="Labot: ${esc(l)}">Labot</button>`;
-  const row = (l, n, v) => `<dt><span>${esc(l)}</span>${go(n, l)}</dt><dd>${v}</dd>`;
-  $('#c-final-sum').innerHTML = row('Nosaukums', 1, `<b>${esc(compose.name)}</b>`) + row('Veids', 1, esc(SESS_LABELS[sessKindKey()])) + row('Nosūtīšanas laiks', 1, esc(whenText())) +
-    row('Respondenti', 2, `<b>${st.sel}</b> ${plural(st.sel, 'atlasīts', 'atlasīti')} · <b>${recs.length}</b> ${plural(recs.length, 'vēstule', 'vēstules')}${st.noAddr ? ` · bez adreses: ${st.noAddr}` : ''}`) +
-    row('Kanāli', 1, `${[['epasts', 'E-pasts'], ['eadrese', 'eAdrese']].filter(([k]) => ch[k]).map(([k, l]) => `${l} <b>${ch[k]}</b>`).join(' · ') || '<span class="muted">nav</span>'}<br><small class="muted">Secība: ${esc(prioLabel(compose.prio))}</small>`);
+  // kompakts: nosaukums lielākā tekstā; katrs lauks vienā rindā ar zīmuļa ikonu (pāreja uz attiecīgo soli); apakšā sūtīšanas secība un bez adreses
+  const go = (n, l) => apvLocked() ? '' : `<button type="button" class="icon-btn rv-edit" data-action="wiz-go" data-id="${n}" title="Labot" aria-label="Labot: ${esc(l)}">${ICON.edit}</button>`;
+  const row = (l, n, v) => `<div class="rv-row"><dt>${esc(l)}</dt><dd>${v}</dd>${go(n, l)}</div>`;
+  $('#c-final-sum').innerHTML = `<div class="rv-name"><b title="${esc(compose.name)}">${esc(compose.name)}</b>${go(1, 'Nosaukums')}</div>
+    <dl class="rv-rows">${row('Veids', 1, esc(SESS_LABELS[sessKindKey()]))}${row('Nosūtīšana', 1, isPlanned() ? esc(whenText()) : 'Nav ieplānota')}
+    ${row('Respondenti', 2, `${st.sel} · ${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}`)}
+    ${row('Kanāli', 1, [['eadrese', 'eAdrese'], ['epasts', 'E-pasts']].filter(([k]) => ch[k]).map(([k, l]) => `${l} ${ch[k]}`).join(' · ') || '<span class="muted">nav</span>')}</dl>
+    <div class="rv-foot-sum"><span class="rv-order" title="Sūtīšanas secība">${esc(prioLabel(compose.prio))}</span>${st.noAddr ? `<span class="rv-noaddr">${st.noAddr} bez adreses</span>` : ''}</div>`;
 }
 // 1. solis: komunikācijas veids un nosūtīšanas laiks
 // Ieplānošana: datums DD.MM.GGGG un laiks HH:MM (24 h); nedrīkst būt pagātnē
