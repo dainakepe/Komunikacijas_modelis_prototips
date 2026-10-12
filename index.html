@@ -464,12 +464,40 @@ td.contacts{display:table-cell}
 .compose-grid.wiz .wiz-card{max-width:1040px}
 /* solis "Respondenti" – plašāks (kreisā kolonna + tabula) */
 .compose-grid.wiz[data-step="2"] .wiz-card{max-width:1280px}
-.compose-grid.wiz .preview-card{display:none}
-.compose-grid.wiz[data-step="4"]{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px;align-items:start}
-.compose-grid.wiz[data-step="4"] .wiz-nav{position:static}
-.compose-grid.wiz[data-step="4"] .preview-card{display:block}
-/* solī "Pārbaude" nosūtīšanas poga priekšskatījumā netiek rādīta – sūtīšana / nodošana notiek pēdējā solī */
-.compose-grid.wiz[data-step="4"] #c-send{display:none}
+/* solis "Pārbaude": kā solis "Respondenti" – kreisajā kolonnā kopsavilkums un pārbaudes, labajā priekšskatījums; navigācija kartītes apakšā */
+.compose-grid.wiz[data-step="4"] .wiz-card{max-width:1280px}
+.compose-grid.wiz[data-step="4"] .wiz-nav{display:none}
+.sub-h.sub-h4{font-size:var(--fs-md);margin-top:16px}
+.rv-sum{margin:0;display:flex;flex-direction:column;gap:9px;font-size:var(--fs-sm)}
+.rv-sum dt{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--text-muted);font-size:var(--fs-xs)}
+.rv-sum dt .link-btn{font-size:var(--fs-xs);padding:0}
+.rv-sum dd{margin:0;overflow-wrap:anywhere}
+.rv-checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.rv-ck{appearance:none;display:flex;align-items:flex-start;gap:8px;width:100%;padding:6px;margin:0 -6px;box-sizing:content-box;border:0;border-radius:var(--radius-sm);background:none;font:inherit;font-size:var(--fs-sm);text-align:left;color:var(--text)}
+button.rv-ck{cursor:pointer}
+button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{background:var(--warning-bg)}
+.rv-ck .ck-ic{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-size:var(--fs-2xs);font-weight:700;flex:none;margin-top:1px}
+.rv-ck.is-ok .ck-ic{background:var(--success-bg);color:var(--success)}
+.rv-ck.is-warn .ck-ic{background:var(--warning-bg);color:var(--warning)}
+.rv-ck.is-warn{color:var(--warning)}
+.rv-ck-t{flex:1;min-width:0}
+.rv-ck-t small{display:block;color:var(--text-muted);font-size:var(--fs-xs)}
+.rv-ck-t small.rv-ck-go{color:var(--primary-dark);font-weight:600}
+.rv-ck .rv-n{font-weight:700;min-width:18px;text-align:right}
+.r-main.rv-main{padding:0;overflow:hidden}
+.rv-main .preview-head{padding:12px 14px}
+.rv-main .preview-head .r-main-h{margin:0}
+.pv-filter{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 14px;background:var(--warning-bg);border-bottom:1px solid var(--warning-border);font-size:var(--fs-sm)}
+.pv-filter[hidden]{display:none}
+.r-foot.rv-foot{margin:0;padding:10px 14px;background:var(--bg);border-radius:0 0 var(--radius-lg) var(--radius-lg);justify-content:space-between}
+.rv-test{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px}
+.rv-test-l{font-weight:600;font-size:var(--fs-sm)}
+.rv-test input{width:220px;max-width:100%;padding:5px 8px;font-size:var(--fs-sm)}
+.rv-test-info{flex-basis:100%;color:var(--text-muted);font-size:var(--fs-xs)}
+.rv-test-info:empty{display:none}
+.rv-test .err{flex-basis:100%;margin:0}
+.rv-nav{display:flex;gap:8px;margin-left:auto}
+.compose-grid.wiz[data-step="4"] .rv-foot[hidden]{display:none}/* solī "Pārbaude" nosūtīšanas poga priekšskatījumā netiek rādīta – sūtīšana / nodošana notiek pēdējā solī */
 /* automātiskās pārbaudes virs priekšskatījuma */
 .pv-checks{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 20px;border-bottom:1px solid var(--border-light);font-size:var(--fs-sm)}
 .pv-checks:empty{display:none}
@@ -1960,7 +1988,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   .rep-filters select{flex:1 1 140px}
   .rep-filters label,.filters label{flex:1 1 100%}
   .rep-filters label select,.filters label select{width:100%}
-  .compose-grid.wiz[data-step="4"]{grid-template-columns:minmax(0,1fr)}
   .wiz-step .t{display:none}
   .wiz-steps li{min-width:0}
   .hist-head{flex-wrap:wrap}
@@ -2336,17 +2363,57 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
             <summary>Mainīgo vērtības <span class="tip" tabindex="0" role="note" aria-label="Apsekojuma dati vēstules mainīgajiem tiek ņemti automātiski. Vērtību var mainīt tikai šai kampaņai. Ja kampaņā ir vairāki apsekojumi, katram respondentam vēstulē tiek izmantotas viņa apsekojuma vērtības. Tēmturi un sauklis attiecas uz šo sūtījumu." data-tip="Apsekojuma dati vēstules mainīgajiem tiek ņemti automātiski. Vērtību var mainīt tikai šai kampaņai. Ja kampaņā ir vairāki apsekojumi, katram respondentam vēstulē tiek izmantotas viņa apsekojuma vērtības. Tēmturi un sauklis attiecas uz šo sūtījumu.">i</span></summary>
             <div id="c-vars-body"></div>
           </details>
-          <h3 class="sub-h">Paraksts vēstulē <span class="tip" tabindex="0" role="note" aria-label="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu." data-tip="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu.">i</span></h3>
-          <div class="form-grid">
-            <div class="field"><label for="cs-signer">Parakstītājs <span class="muted">{parakstītājs}</span></label><input type="text" id="cs-signer" data-sign="signer"></div>
-            <div class="field"><label for="cs-position">Amats <span class="muted">{amats}</span></label><input type="text" id="cs-position" data-sign="position"></div>
-          </div>
-          <button type="button" class="link-btn sign-reset" id="c-sign-reset" data-action="c-sign-reset" hidden>Atjaunot noklusējumu</button>
         </div>
         <div class="step" data-wstep="4" hidden>
           <div class="step-title"><span class="step-num">4</span><h2>Pārbaude</h2></div>
           <div class="apv-ro" id="c-apv-ro" hidden></div>
-          <dl class="sum-dl" id="c-final-sum"></dl>
+          <div class="r-layout rv-layout">
+            <aside class="r-side" aria-label="Kopsavilkums un pārbaudes">
+              <section class="scope-card r-card rv-card" aria-labelledby="c-sum-h">
+                <h4 id="c-sum-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M9 5h11M9 12h11M9 19h11M4 5h.01M4 12h.01M4 19h.01"/></svg></span>Kopsavilkums</h4>
+                <dl class="rv-sum" id="c-final-sum"></dl>
+              </section>
+              <section class="scope-card r-card rv-card" aria-labelledby="c-ck-h">
+                <h4 id="c-ck-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8.2 8 9 4.6-.8 8-4 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></span>Pārbaudes</h4>
+                <ul class="rv-checks" id="c-checks" aria-label="Automātiskās pārbaudes"></ul>
+              </section>
+            </aside>
+            <section class="r-main rv-main" aria-labelledby="c-pv-h">
+              <div class="preview-head">
+                <h3 class="r-main-h" id="c-pv-h">Vēstuļu priekšskatījums</h3>
+                <div class="toolbar">
+                  <div class="seg" role="group" aria-label="Kanāls" id="c-pvch">
+                    <button type="button" data-pvch="epasts">E-pasts</button><button type="button" data-pvch="eadrese">eAdrese</button>
+                  </div>
+                  <label class="preview-opts"><input type="checkbox" id="c-hl" checked> Iezīmēt laukus</label>
+                  <div class="seg" role="group" aria-label="Skats" id="c-mode">
+                    <button type="button" data-action="mode" data-mode="one" aria-pressed="true">Pa vienai</button>
+                    <button type="button" data-action="mode" data-mode="all" aria-pressed="false">Visas</button>
+                  </div>
+                  <div class="preview-nav" id="c-nav">
+                    <button class="icon-btn" data-action="prev" id="c-prev" aria-label="Iepriekšējā vēstule"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+                    <span class="pos" id="c-pos">0 / 0</span>
+                    <button class="icon-btn" data-action="next" id="c-next" aria-label="Nākamā vēstule"><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+                  </div>
+                </div>
+              </div>
+              <div class="pv-filter" id="c-pv-filter" hidden></div>
+              <div class="preview-body hl" id="c-preview"></div>
+              <div class="r-foot rv-foot" id="c-rv-foot">
+                <div class="rv-test" role="group" aria-labelledby="c-test-l">
+                  <label class="rv-test-l" id="c-test-l" for="c-test-to">Testa vēstule</label>
+                  <input type="email" id="c-test-to" autocomplete="email" aria-describedby="c-test-info c-test-err">
+                  <button type="button" class="btn btn-secondary btn-sm" data-action="c-test-send" id="c-test-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>Nosūtīt testa vēstuli</button>
+                  <small class="rv-test-info" id="c-test-info" aria-live="polite"></small>
+                  <span class="err" id="c-test-err" role="alert" hidden></span>
+                </div>
+                <div class="rv-nav">
+                  <button type="button" class="btn btn-secondary" data-action="wiz-prev">← Atpakaļ</button>
+                  <button type="button" class="btn btn-primary" data-action="wiz-next" id="c-rv-next">Turpināt →</button>
+                </div>
+              </div>
+            </section>
+          </div>
         </div>
         <div class="step" data-wstep="5" hidden>
           <div class="step-title"><span class="step-num">5</span><h2>Saskaņošana un paraksts</h2></div>
@@ -2368,6 +2435,12 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
             <div class="field"><span class="label">Parakstīšanas veids</span><div class="esign-modes" id="c-esign-mode" role="group" aria-label="Parakstīšanas veids"></div></div>
             <div class="field"><span class="label">Parakstītāji <span class="req">*</span><span class="tip" tabindex="0" role="note" aria-label="Secīgai parakstīšanai secība ir atzīmēšanas kārtībā." data-tip="Secīgai parakstīšanai secība ir atzīmēšanas kārtībā.">i</span></span><div class="chk-list" id="c-signers"></div><span class="err" id="c-signers-err" hidden></span></div>
           </div>
+          <h4 class="sub-h sub-h4">Paraksts vēstulē <span class="tip" tabindex="0" role="note" aria-label="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu." data-tip="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu.">i</span></h4>
+          <div class="form-grid">
+            <div class="field"><label for="cs-signer">Parakstītājs <span class="muted">{parakstītājs}</span></label><input type="text" id="cs-signer" data-sign="signer"></div>
+            <div class="field"><label for="cs-position">Amats <span class="muted">{amats}</span></label><input type="text" id="cs-position" data-sign="position"></div>
+          </div>
+          <button type="button" class="link-btn sign-reset" id="c-sign-reset" data-action="c-sign-reset" hidden>Atjaunot noklusējumu</button>
           <h3 class="sub-h">Kopsavilkums</h3>
           <dl class="sum-dl send-sum" id="c-send-sum"></dl>
           <div class="wl-wrap" id="c-wl"></div>
@@ -2381,32 +2454,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         </div>
       </div>
 
-      <div class="card preview-card">
-        <div class="preview-head">
-          <h2>Vēstuļu priekšskatījums</h2>
-          <div class="toolbar">
-            <div class="seg" role="group" aria-label="Kanāls" id="c-pvch">
-              <button type="button" data-pvch="epasts">E-pasts</button><button type="button" data-pvch="eadrese">eAdrese</button>
-            </div>
-            <label class="preview-opts"><input type="checkbox" id="c-hl" checked> Iezīmēt laukus</label>
-            <div class="seg" role="group" aria-label="Skats" id="c-mode">
-              <button type="button" data-action="mode" data-mode="one" aria-pressed="true">Pa vienai</button>
-              <button type="button" data-action="mode" data-mode="all" aria-pressed="false">Visas</button>
-            </div>
-            <div class="preview-nav" id="c-nav">
-              <button class="icon-btn" data-action="prev" id="c-prev" aria-label="Iepriekšējā vēstule"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
-              <span class="pos" id="c-pos">0 / 0</span>
-              <button class="icon-btn" data-action="next" id="c-next" aria-label="Nākamā vēstule"><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
-            </div>
-          </div>
-        </div>
-        <div class="pv-checks" id="c-checks" aria-label="Automātiskās pārbaudes"></div>
-        <div class="preview-body hl" id="c-preview"></div>
-        <div class="send-bar">
-          <div class="send-summary" id="c-summary"></div>
-          <button class="btn btn-primary btn-lg" id="c-send" data-action="send">Nosūtīt</button>
-        </div>
-      </div>
     </div>
   </div>
   </section>
@@ -2481,7 +2528,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 74</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 75</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -6952,16 +6999,13 @@ function setStep(n){
 }
 // 4. solis "Pārbaude": kampaņas kopsavilkums (bez saskaņošanas un paraksta – tie ir 5. solī)
 function renderFinalSummary(){
-  const t = currentTemplate(), st = selStats(), recs = recipients(), nCust = recs.filter(r => compose.custom[r.id]).length;
-  const go = n => apvLocked() ? '' : `<button type="button" class="link-btn" data-action="wiz-go" data-id="${n}">Labot</button>`;
-  $('#c-final-sum').innerHTML = `
-    <dt>Nosaukums</dt><dd><b>${esc(compose.name)}</b>${go(1)}</dd>
-    <dt>Veids</dt><dd>${esc(SESS_LABELS[sessKindKey()])}${go(1)}</dd>
-    <dt>Nosūtīšana</dt><dd>${esc(whenText())}${go(1)}</dd>
-    <dt>Respondenti</dt><dd><b>${st.sel}</b> atlasīti · <b>${recs.length}</b> ${plural(recs.length, 'vēstule', 'vēstules')}${st.noAddr ? ` · bez adreses: ${st.noAddr}` : ''}${go(2)}</dd>
-    <dt>Saturs</dt><dd>${t ? esc(contentLabel()) : '<span class="muted">nav izvēlēts</span>'}${go(3)}</dd>
-    <dt>Adrešu prioritāte</dt><dd>${esc(prioLabel(compose.prio))}${go(1)}</dd>
-    <dt>Pielāgotas</dt><dd>${nCust ? `${nCust} ${plural(nCust, 'vēstule', 'vēstules')} <span class="pill pill-custom">Pielāgota</span>` : '<span class="muted">nav</span>'}</dd>`;
+  const st = selStats(), recs = recipients(), ch = {epasts:0, eadrese:0};
+  recs.forEach(r => { const f = addrPlan(r)[0]; if (f) ch[ADDR_TYPES[f.type].ch]++; });
+  const go = (n, l) => apvLocked() ? '' : `<button type="button" class="link-btn" data-action="wiz-go" data-id="${n}" aria-label="Labot: ${esc(l)}">Labot</button>`;
+  const row = (l, n, v) => `<dt><span>${esc(l)}</span>${go(n, l)}</dt><dd>${v}</dd>`;
+  $('#c-final-sum').innerHTML = row('Nosaukums', 1, `<b>${esc(compose.name)}</b>`) + row('Veids', 1, esc(SESS_LABELS[sessKindKey()])) + row('Nosūtīšanas laiks', 1, esc(whenText())) +
+    row('Respondenti', 2, `<b>${st.sel}</b> ${plural(st.sel, 'atlasīts', 'atlasīti')} · <b>${recs.length}</b> ${plural(recs.length, 'vēstule', 'vēstules')}${st.noAddr ? ` · bez adreses: ${st.noAddr}` : ''}`) +
+    row('Kanāli', 1, `${[['epasts', 'E-pasts'], ['eadrese', 'eAdrese']].filter(([k]) => ch[k]).map(([k, l]) => `${l} <b>${ch[k]}</b>`).join(' · ') || '<span class="muted">nav</span>'}<br><small class="muted">Secība: ${esc(prioLabel(compose.prio))}</small>`);
 }
 // 1. solis: komunikācijas veids un nosūtīšanas laiks
 // Ieplānošana: datums DD.MM.GGGG un laiks HH:MM (24 h); nedrīkst būt pagātnē
@@ -7255,16 +7299,20 @@ function renderComposePreview(){
   renderContent();
   saveDraft();
   const t = currentTemplate();
-  const recs = recipients();
+  // priekšskatījumā – visas vēstules vai (filtrs no pārbaudēm) tikai problemātiskās
+  const recs = pvRecs(), fk = pvFilterKey();
   const n = recs.length;
   if (compose.index >= n) compose.index = Math.max(0, n - 1);
+  { const box = $('#c-pv-filter'), c = fk && autoChecks().find(x => x.key === fk);
+    box.hidden = !c;
+    box.innerHTML = c ? `${ICON.warn}<span>Rādītas vēstules ar problēmām – <b>${esc(c.label)}</b>: ${n} no ${recipients().length} (${esc(c.detail)})</span>${apvLocked() ? '' : `<button type="button" class="link-btn" data-action="wiz-go" data-id="${c.step}">Labot</button>`}<button type="button" class="link-btn" data-pvf-clear>Rādīt visas vēstules</button>` : ''; }
   $('#c-nav').hidden = compose.mode !== 'one';
   $('#c-pos').textContent = n ? `${compose.index + 1} / ${n}` : '0 / 0';
   $('#c-prev').disabled = compose.index <= 0;
   $('#c-next').disabled = compose.index >= n - 1;
   $$('#c-mode button').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === compose.mode));
   // kanāla pārslēgs: pēc noklusējuma – kanāls, pa kuru vēstule tiks sūtīta pašreizējam respondentam
-  { const r0 = recipients()[compose.index], f0 = r0 && finalAttempt(deliveryAttempts(r0)), ch0 = compose.pvCh || (f0 ? ADDR_TYPES[f0.type].ch : 'epasts');
+  { const r0 = recs[compose.index], f0 = r0 && finalAttempt(deliveryAttempts(r0)), ch0 = compose.pvCh || (f0 ? ADDR_TYPES[f0.type].ch : 'epasts');
     $$('#c-pvch button').forEach(b => b.setAttribute('aria-pressed', b.dataset.pvch === ch0)); }
   const audVeids = t ? AUDS[t.aud].veids : null;
   if (t) $('#c-tpl-info').innerHTML = jomaPill(t.aud) + catPill(t.cat) + kindPill(t.kind) + (mainNameOf(t) ? `<span>${ICON.clip} ${esc(mainNameOf(t))}</span>` : '') +
@@ -7302,24 +7350,6 @@ function renderComposePreview(){
     pv.innerHTML = compose.mode === 'one' ? one(recs[compose.index], true) : recs.map(r => one(r, false)).join('');
   }
 
-  const issues = composeIssues(t, recs);
-  const st = selStats(), skipped = st.noAddr + st.outFilt;
-  // adresātu atbilstība veidnes adresātam
-  const mism = t && AUDS[t.aud].veids ? recs.filter(r => respAttrs(r).veids !== AUDS[t.aud].veids).length : 0;
-  // jauktajai komunikācijai – cik fizisko un juridisko personu
-  const mixCount = t && !AUDS[t.aud].veids && recs.length
-    ? Object.entries(ATTR_BY_KEY.veids.values).map(([k, v]) => [v.short, recs.filter(r => respAttrs(r).veids === k).length]).filter(([, c]) => c) : [];
-  const planned = isPlanned();
-  $('#c-summary').innerHTML = `<div class="hint"><b>${esc(SESS_LABELS[sessKindKey()])}</b>${planned ? ` · ${esc(whenText())}` : ''}${compose.esign.required ? ' · ar parakstu' : ''}</div>` +
-    `${planned ? 'Pēc pašreizējiem statusiem tiktu' : 'Tiks'} ${n === 1 ? 'nosūtīta' : 'nosūtītas'} <b>${n}</b> ${plural(n, 'vēstule', 'vēstules')} · adreses: <b>${esc(prioLabel(compose.prio))}</b>` +
-    (t && t.kind === 'pielikums' ? (t.main ? ' · ar pielikumu' : ' · ar PDF pielikumu') : '') +
-    (mixCount.length ? `<div class="hint">Adresāti: ${mixCount.map(([l, c]) => `<span class="pill pill-aud">${esc(l)} – ${c}</span>`).join(' ')}</div>` : '') +
-    (mism ? `<div class="hint warn">Veidne paredzēta ${AUDS[t.aud].dat}, bet ${mism} ${plural(mism, 'adresāts ir', 'adresāti ir')} ${t.aud === 'fiz' ? plural(mism, 'uzņēmums', 'uzņēmumi') : plural(mism, 'privātpersona', 'privātpersonas')}.</div>` : '') +
-    (skipped > 0 ? `<div class="hint">${skipped} ${plural(skipped, 'atzīmētais respondents', 'atzīmētie respondenti')} tiks ${plural(skipped, 'izlaists', 'izlaisti')} (${[st.noAddr ? 'nav adreses pēc izvēlētās prioritātes' : '', st.outFilt ? 'neatbilst atlasei' : ''].filter(Boolean).join('; ')}).</div>` : '') +
-    (issues.length && compose.tried.has(5) && compose.step === 5 ? `<ul class="send-errs">${issues.map(p => `<li>${esc(p)}</li>`).join('')}</ul>` : '');
-  const btn = $('#c-send');
-  btn.disabled = false;
-  btn.innerHTML = planned ? `${ICON.calendar}Ieplānot nosūtīšanu` : compose.esign.required ? `${ICON.edit}Nodot parakstīšanai${n ? ` (${n})` : ''}` : `${ICON.send}Nosūtīt${n ? ` (${n})` : ''}`;
   renderWizard();
 }
 // Individuāli pielāgota vēstule (F5): teksts un pielikumi konkrētam adresātam
@@ -7372,40 +7402,72 @@ function varIssues(t, recs){
   });
   return {missing:[...missing], unknown};
 }
+const PV_CHECK_MAX = 60;
 function autoChecks(){
   const t = currentTemplate(), recs = recipients(), out = [];
-  if (!t) return [{key:'content', label:'Saturs', ok:false, detail:'nav izvēlēts', step:3}];
-  const vi = varIssues(t, recs), vBad = [...vi.missing, ...vi.unknown];
-  out.push({key:'vars', label:'Mainīgie aizpildīti', ok:!vBad.length, detail:vBad.length ? `nav aizpildīti: ${vBad.map(k => '{' + k + '}').join(', ')}` : '', step:3});
-  // saites un pielikumi – pēc vēstulēm (pirmie 20 adresāti)
-  const msgs = recs.slice(0, 20).map(r => buildMessage(letterTpl(t, r), r, true));
-  const hrefs = [...new Set(msgs.flatMap(m => [...String(m.bodyHtml || '').matchAll(/href="([^"]*)"/g)].map(x => x[1])))];
-  const badL = hrefs.filter(h => !/^(https?:\/\/[^\s{}]+|mailto:[^\s{}]+)$/i.test(h.trim()));
-  out.push({key:'links', label:'Saites', ok:!badL.length, detail:badL.length ? `${badL.length} ${plural(badL.length, 'nederīga saite', 'nederīgas saites')}` : hrefs.length ? `${hrefs.length}` : 'nav', step:3});
-  const missLib = (t.files || []).filter(f => f.lib && !attById(f.lib)).length, needMain = t.kind === 'pielikums' && msgs.some(m => !m.attachments.length);
-  const nAtt = msgs.length ? Math.max(...msgs.map(m => m.attachments.length)) : 0;
-  out.push({key:'atts', label:'Pielikumi', ok:!missLib && !needMain, detail:needMain ? 'nav vēstules pielikuma' : missLib ? `${missLib} ${plural(missLib, 'pielikums nav atrasts', 'pielikumi nav atrasti')}` : nAtt ? `${nAtt}` : 'nav', step:3});
-  const st = selStats(), bad = acActive().filter(r => acState(r) === 'bad').length, nA = st.noAddr + bad;
-  out.push({key:'addr', label:'Adreses', ok:!nA, detail:nA ? [bad ? `${bad} ${plural(bad, 'nederīga', 'nederīgas')}` : '', st.noAddr ? `${st.noAddr} bez adreses` : ''].filter(Boolean).join(', ') : '', step:2});
+  if (!t) return [{key:'content', label:'Saturs', ok:false, n:0, detail:'nav izvēlēts', step:3}];
+  // personalizācijas lauki: vēstules ar neaizpildītiem laukiem (nezināmi lauki – visās vēstulēs)
+  const vi = varIssues(t, recs), vBad = [...vi.missing, ...vi.unknown], keys = usedVars(templateText(t, 'epasts')).filter(k => FIELD_KEYS.has(k));
+  const vIds = vi.unknown.length ? recs.map(r => r.id) : recs.filter(r => { const c = ctxFor(r); return keys.some(k => !c[k]); }).map(r => r.id);
+  out.push({key:'vars', label:'Personalizācijas lauki', ok:!vBad.length, n:vBad.length ? vIds.length : keys.length, ids:vIds,
+    detail:vBad.length ? `nav aizpildīti: ${vBad.map(k => '{' + k + '}').join(', ')}` : `${keys.length} ${plural(keys.length, 'lauks aizpildīts', 'lauki aizpildīti')} visās vēstulēs`, step:3});
+  // saites un pielikumi – pēc vēstulēm
+  const msgs = recs.slice(0, PV_CHECK_MAX).map(r => ({r, m:buildMessage(letterTpl(t, r), r, true)}));
+  const hrefsOf = m => [...String(m.bodyHtml || '').matchAll(/href="([^"]*)"/g)].map(x => x[1]), badHref = h => !/^(https?:\/\/[^\s{}]+|mailto:[^\s{}]+)$/i.test(h.trim());
+  const hrefs = [...new Set(msgs.flatMap(x => hrefsOf(x.m)))], badL = hrefs.filter(badHref), lIds = msgs.filter(x => hrefsOf(x.m).some(badHref)).map(x => x.r.id);
+  out.push({key:'links', label:'Saites', ok:!badL.length, n:badL.length ? lIds.length : hrefs.length, ids:lIds,
+    detail:badL.length ? `${badL.length} ${plural(badL.length, 'nederīga saite', 'nederīgas saites')}` : hrefs.length ? `${hrefs.length} ${plural(hrefs.length, 'saite pārbaudīta', 'saites pārbaudītas')}` : 'nav saišu', step:3});
+  const missLib = (t.files || []).filter(f => f.lib && !attById(f.lib)).length, aIds = t.kind === 'pielikums' ? msgs.filter(x => !x.m.attachments.length).map(x => x.r.id) : [];
+  const nAtt = msgs.length ? Math.max(...msgs.map(x => x.m.attachments.length)) : 0;
+  out.push({key:'atts', label:'Pielikumi', ok:!missLib && !aIds.length, n:aIds.length || missLib || nAtt, ids:aIds,
+    detail:aIds.length ? 'nav vēstules pielikuma' : missLib ? `${missLib} ${plural(missLib, 'pielikums nav atrasts', 'pielikumi nav atrasti')}` : nAtt ? `${nAtt} ${plural(nAtt, 'pielikums', 'pielikumi')} katrā vēstulē` : 'nav pielikumu', step:3});
+  // adreses: derīgas / jāpārskata (kā solī "Respondenti")
+  const sm = sharedMap(), act = acActive(), nAttn = act.filter(r => needsAttn(r, sm)).length, nOk = act.length - nAttn;
+  out.push({key:'addr', label:'Adreses', ok:!nAttn, n:nAttn || nOk, detail:`${nOk} ${plural(nOk, 'derīga', 'derīgas')} / ${nAttn} jāpārskata`, step:2});
   return out;
 }
 // pārbaudes "paraksts": kampaņas dati, kas ietekmē vēstules (bez saskaņošanas, paraksta un soļa); mainot tos, pārbaude jāiziet vēlreiz
-const reviewSig = () => { const {step, apv, review, tests, esign, savedAt, wl, ...rest} = sessionSnapshot(); return JSON.stringify(rest); };
+const reviewSig = () => { const {step, apv, review, tests, esign, sign, savedAt, wl, ...rest} = sessionSnapshot(); return JSON.stringify(rest); };
 const reviewValid = () => !!(compose.review && compose.review.sig === reviewSig());
 const apvLocked = () => !!(compose.apv && compose.apv.status === 'pending');
 const TEST_ADDR = 'testa.darbinieks@csp.example';
+// priekšskatījuma filtrs: tikai vēstules ar konkrētās pārbaudes problēmu (personalizācijas lauki, saites, pielikumi)
+const pvFilterKey = () => ui.pvF && ui.pvF.id === compose.draftId && compose.step === 4 ? ui.pvF.key : '';
+function pvRecs(){
+  const all = recipients(), k = pvFilterKey();
+  if (!k) return all;
+  const c = autoChecks().find(x => x.key === k), ids = new Set(c && !c.ok ? c.ids || [] : []);
+  const xs = all.filter(r => ids.has(r.id));
+  if (!xs.length){ ui.pvF = null; return all; }
+  return xs;
+}
 function renderChecks(){
-  const box = $('#c-checks'), cks = autoChecks(), lk = apvLocked(), last = (compose.tests || [])[0];
-  box.innerHTML = cks.map(c => `<span class="ck-item ${c.ok ? 'is-ok' : 'is-warn'}"><span class="ck-ic" aria-hidden="true">${c.ok ? '✓' : '⚠'}</span><span>${esc(c.label)}${c.detail ? ` <small>(${esc(c.detail)})</small>` : ''}</span>${!c.ok && !lk ? `<button type="button" class="link-btn" data-action="wiz-go" data-id="${c.step}">Labot</button>` : ''}<span class="sr-only">${c.ok ? 'kārtībā' : 'brīdinājums'}</span></span>`).join('')
-    + (lk ? '' : `<span class="ck-test">${last ? `<small>Testa vēstule nosūtīta ${esc(fmtStamp(last.at))}</small>` : ''}<button type="button" class="btn btn-secondary btn-sm" data-action="c-test-send" ${currentTemplate() && recipients().length ? '' : 'disabled'}>${ICON.send}Nosūtīt testa vēstuli sev</button></span>`);
+  const box = $('#c-checks'), cks = autoChecks(), lk = apvLocked(), last = (compose.tests || [])[0], fk = pvFilterKey();
+  // ⚠ – uzklikšķinot: priekšskatījuma filtrs uz problemātiskajām vēstulēm vai pāreja uz labošanu
+  box.innerHTML = cks.map(c => {
+    const filt = !c.ok && (c.ids || []).length > 0, go = !c.ok && !filt && !lk;
+    const inner = `<span class="ck-ic" aria-hidden="true">${c.ok ? '✓' : '⚠'}</span><span class="rv-ck-t">${esc(c.label)}<small>${esc(c.detail)}</small>${filt ? `<small class="rv-ck-go">${fk === c.key ? 'Rādīt visas vēstules' : 'Rādīt problemātiskās vēstules'}</small>` : go ? '<small class="rv-ck-go">Labot</small>' : ''}</span><b class="rv-n">${c.n}</b>`;
+    return `<li>${filt ? `<button type="button" class="rv-ck is-warn" data-pvf="${c.key}" aria-pressed="${fk === c.key}">${inner}</button>`
+      : go ? `<button type="button" class="rv-ck is-warn" data-action="wiz-go" data-id="${c.step}">${inner}</button>` : `<div class="rv-ck ${c.ok ? 'is-ok' : 'is-warn'}">${inner}</div>`}</li>`;
+  }).join('');
+  // testa vēstule (kartītes apakšā)
+  $('#c-rv-foot').hidden = lk;
+  const inp = $('#c-test-to');
+  if (ui.testFor !== compose.draftId){ ui.testFor = compose.draftId; inp.value = last ? last.to : TEST_ADDR; $('#c-test-err').hidden = true; inp.removeAttribute('aria-invalid'); }
+  $('#c-test-btn').disabled = !(currentTemplate() && recipients().length);
+  $('#c-test-info').textContent = last ? `Pēdējā testa vēstule nosūtīta ${fmtStamp(last.at)} uz ${last.to}` : '';
 }
 // testa vēstule sev (simulācija): pašreizējā priekšskatījuma vēstule uz lietotāja adresi
 function testSend(){
-  const r = recipients()[compose.index]; if (!r || !currentTemplate()) return;
+  const r = pvRecs()[compose.index]; if (!r || !currentTemplate()) return;
+  const inp = $('#c-test-to'), err = $('#c-test-err'), to = inp.value.trim();
+  const bad = !to ? 'Norādiet e-pasta adresi.' : !EMAIL_RE.test(to) ? 'Nederīga e-pasta adrese.' : '';
+  err.hidden = !bad; err.textContent = bad; inp.setAttribute('aria-invalid', String(!!bad));
+  if (bad){ inp.focus(); return; }
   const ch = compose.pvCh || ADDR_TYPES[finalAttempt(deliveryAttempts(r)).type].ch;
-  compose.tests = [{at:new Date().toISOString(), to:TEST_ADDR, ch, resp:r.name}, ...(compose.tests || [])].slice(0, 10);
+  compose.tests = [{at:new Date().toISOString(), to, ch, resp:r.name}, ...(compose.tests || [])].slice(0, 10);
   saveDraft(); renderChecks();
-  toast(`Testa vēstule (${ch === 'eadrese' ? 'eAdreses' : 'e-pasta'} versija, respondents ${r.name}) nosūtīta uz ${TEST_ADDR} – simulācija.`);
+  toast(`Testa vēstule (${ch === 'eadrese' ? 'eAdreses' : 'e-pasta'} versija, respondents ${r.name}) nosūtīta uz ${to} – simulācija.`);
 }
 // "Turpināt": ja ir brīdinājumi – apstiprinājums; pārbaudes rezultāts tiek saglabāts
 async function reviewContinue(){
@@ -9652,6 +9714,17 @@ $('#c-list').addEventListener('change', e => {
   renderScopeCtx(); renderAcBar(); renderComposeCount(); renderComposePreview();
 });
 $('#c-hl').addEventListener('change', e => $('#c-preview').classList.toggle('hl', e.target.checked));
+// pārbaudes (⚠): priekšskatījumā tikai problemātiskās vēstules; atkārtots klikšķis / "Rādīt visas vēstules" – filtrs noņemts
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-pvf], [data-pvf-clear]');
+  if (!b || !b.closest('#wiz')) return;
+  const k = b.dataset.pvf || '';
+  ui.pvF = k && pvFilterKey() !== k ? {id:compose.draftId, key:k} : null;
+  compose.index = 0; compose.mode = 'one'; renderComposePreview();
+  const el = k ? $(`#c-checks [data-pvf="${k}"]`) : $('#c-checks button') ; if (el) el.focus();
+});
+$('#c-test-to').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); testSend(); } });
+$('#c-test-to').addEventListener('input', () => { $('#c-test-err').hidden = true; $('#c-test-to').removeAttribute('aria-invalid'); });
 // Veidnes: apakšcilnes un sadaļa "Sagataves"
 const setTplView = v => { ui.tplView = v; v === 'veidnes' ? renderTemplates() : renderSagataves(); window.scrollTo({top:0}); };
 $('#sag-group').addEventListener('click', e => {
