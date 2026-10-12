@@ -317,7 +317,7 @@ Jaunu kampaņu sagatavo piecos soļos: Pamatdati, Respondenti, Saturs, Paraksts,
      - noklusējums – rītdiena plkst. 09:00;
      - pagātnes datumu un laiku nevar izvēlēties: kalendārā tie nav pieejami, šodienai laika ieteikumos ir tikai nākotnes laiki, bet ievadītam pagātnes vai nederīgam datumam vai laikam tiek parādīta kļūda, un kampaņu nevar ieplānot;
      - uz šauriem ekrāniem datuma un laika lauki pārceļas zem pārslēga;
-   - **"Kampaņas tvērums"** – skaidrojums ir "i" ikonas padomā blakus virsrakstam; augšējā labajā stūrī izvēlne **"Mani filtri"**. Kartītes atkarīgas no statistikas jomas:
+   - **"Kampaņas tvērums"** – skaidrojums ir "i" ikonas padomā blakus virsrakstam (saglabāto filtru – izvēlnes "Mani filtri" un pogu "Saglabāt filtru" / "Notīrīt filtrus" – vairs nav, arī agrāk pārlūkā saglabātie filtri tiek dzēsti). Kartītes atkarīgas no statistikas jomas:
      - **Uzņēmumu statistika:** trīs vienāda platuma un augstuma kartītes vienā rindā (zem 1000 px – viena zem otras) – "Pēc perioda", "Pēc apsekojuma", "Pēc respondenta" (aprakstītas zemāk). Atlase ir visu kartīšu kritēriju krustpunkts;
      - **Iedzīvotāju statistika:** tikai kartīte **"Pēc apsekojuma"** visā tvēruma bloka platumā. Lauks "Apsekojums" ir atsevišķā rindā, zem tā vienā rindā blakus, vienāda platuma – "Gads" → "Periods" → "Cikls" (zem 700 px – viens zem otra):
        1. **"Apsekojums"** (obligāts) – izkrītošā izvēlne ar iedzīvotāju apsekojumiem, piem., "1-DSA Darbaspēka apsekojums", "1-C Ceļotāju apsekojums";
@@ -347,7 +347,6 @@ Jaunu kampaņu sagatavo piecos soļos: Pamatdati, Respondenti, Saturs, Paraksts,
        - "Izslēgt jau uzaicinātos" – neiekļauj pienākumus (un līdz ar to respondentus), par kuriem jau nosūtīts uzaicinājums (pēc nosūtīto vēstuļu pienākumu sarakstiem; neveiksmīgās vēstules netiek ņemtas vērā);
        - "Apvienot vēstules pēc NMK" – vairākas vienības ar vienu NMK saņem vienu kopīgu vēstuli: adresāts ir pirmā vienība, bet `{pārskatu_tabula}` ietver visu vienību pienākumus (pie citu vienību pienākumiem – vienības nosaukums). 2. solī pie vēstules adresāta redzams "Apvienota vēstule: N vienības (NMK …)".
      - zem kartītēm ir dzīvs kopsavilkums "Atlasīti X respondenti, Y pārskati/periodi" (apvienojot – arī apvienoto vienību skaits);
-     - apakšā pogas **"Notīrīt filtrus"** un **"Saglabāt filtru"** (ar nosaukumu; saglabātie filtri ir izvēlnē "Mani filtri" un izmantojami citās kampaņās; tos var arī dzēst).
    - **vēstules dati:**
      - lauka "Nosaukums vēstulē" nav: `{apsekojums}` vēstulē aizpildās automātiski no izvēlētā apsekojuma (ja apsekojumi ir vairāki – ar respondenta apsekojumu nosaukumiem; tie redzami arī blokā `{pārskatu_tabula}`), bet vēstules tekstu definē solī "Saturs";
      - "Vēstules datums `{datums}`" un "Dokumenta Nr. `{dok_nr}`";
