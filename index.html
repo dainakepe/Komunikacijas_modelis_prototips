@@ -2170,7 +2170,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 58</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 59</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -2267,8 +2267,8 @@ const SURVEYS = [
 // Simulācijā e-pasti uz šo domēnu "neizdodas" – lai varētu redzēt kļūdas statusu.
 // Veidņu grupēšana: adresāts un kategorija
 const AUDS = {
-  fiz:{tab:'Komunikācija ar fiziskām personām', label:'Fiziskā persona', group:'Fiziskās personas', field:'Iedzīvotāju statistika', dat:'fiziskām personām', veids:'privatpersona', icon:'user'},
-  jur:{tab:'Komunikācija ar juridiskām personām', label:'Juridiskā persona', group:'Juridiskās personas', field:'Uzņēmumu statistika', dat:'juridiskām personām', veids:'uznemums', icon:'building'},
+  fiz:{tab:'Fiziskām personām', label:'Fiziskā persona', group:'Fiziskās personas', field:'Iedzīvotāju statistika', dat:'fiziskām personām', veids:'privatpersona', icon:'user'},
+  jur:{tab:'Juridiskām personām', label:'Juridiskā persona', group:'Juridiskās personas', field:'Uzņēmumu statistika', dat:'juridiskām personām', veids:'uznemums', icon:'building'},
   visi:{tab:'Cita komunikācija', sub:'Jaukta komunikācija, piem., viena ziņa visiem', label:'Visi (jaukta komunikācija)', group:'Cita komunikācija', field:'Visi', dat:'visiem adresātiem', veids:null, icon:'users'},
 };
 // Komunikācijas kampaņas veids: nosaka respondentu atlasi un piedāvātās veidnes (pēc kategorijas)
@@ -4458,7 +4458,7 @@ const kindPill = k => k === 'pielikums'
 const catPill = c => `<span class="pill pill-cat">${esc(CAT_BY_KEY[c] ? CAT_BY_KEY[c].one : c)}</span>`;
 const audPill = a => `<span class="pill pill-aud">${ICON[AUDS[a].icon]}${esc(AUDS[a].group)}</span>`;
 // kampaņās: statistikas joma (Iedzīvotāju statistika / Uzņēmumu statistika / Visi)
-const jomaPill = a => `<span class="pill pill-aud">${ICON[AUDS[a].icon]}${esc(AUDS[a].field)}</span>`;
+const jomaPill = a => `<span class="pill pill-aud">${ICON[AUDS[a].icon]}${esc(AUDS[a].label)}</span>`;
 function tplMatches(t, q){
   if (!q) return true;
   return norm([t.name, t.subject, ...Object.values(t.tr || {}).map(v => v.subject)].join(' ')).includes(norm(q));
@@ -4627,6 +4627,8 @@ function openTemplateEditor(id, preset = {}){
   const presetSample = !existing && preset.sample ? (state.mailSamples || []).find(x => x.id === preset.sample) : null;
   if (presetSample){ t.kind = 'epasts'; t.body = presetSample.body; t.subject = ''; t.ea = {subject:'', body:(presetSample.ea || {}).body || ''}; }
   if (!AUDS[t.aud]) t.aud = 'fiz';
+  // kampaņas saturam adresāts – pēc kampaņas statistikas jomas (iedzīvotāju → fiziskā persona, uzņēmumu → juridiskā persona, visi → visi)
+  if (sess) t.aud = compose.aud;
   if (!CAT_BY_KEY[t.cat]) t.cat = 'cits';
   t.doc = t.doc || defaultDoc();
   t.files = t.files || [];
@@ -4660,7 +4662,7 @@ function openTemplateEditor(id, preset = {}){
           <input type="text" id="te-name" value="${esc(t.name)}" maxlength="120"><span class="err" id="te-name-err" hidden></span></div>
         <div class="te-row3${sess ? ' sess' : ''}">
           <div class="field"${sess ? ' hidden' : ''}><label for="te-aud">Adresāts ${tip('Jauktajai komunikācijai lietojiet lauku {adresāts} – uzņēmumiem tas būs nosaukums, fiziskām personām – vārds.', 'te-aud-hint')}</label>
-            <select id="te-aud">${Object.entries(AUDS).map(([k, a]) => `<option value="${k}" ${t.aud === k ? 'selected' : ''}>${esc(a.field)}</option>`).join('')}</select></div>
+            <select id="te-aud">${Object.entries(AUDS).map(([k, a]) => `<option value="${k}" ${t.aud === k ? 'selected' : ''}>${esc(a.label)}</option>`).join('')}</select></div>
           <div class="field"${sess ? ' hidden' : ''}><label for="te-cat">Kategorija</label>
             <select id="te-cat">${CATS.map(c => `<option value="${c.key}" ${t.cat === c.key ? 'selected' : ''}>${esc(c.one)}</option>`).join('')}</select></div>
         </div>
@@ -4810,7 +4812,7 @@ function openTemplateEditor(id, preset = {}){
   // Kampaņas saturs (veidne netiek mainīta)
   const sessionRec = () => clone({...current(), name: baseTpl ? baseTpl.name : t.name || ''});
   function saveAsTemplate(closeEditor){
-    openSubModal({title:'Saglabāt arī kā veidni', info:`Saturs tiks saglabāts kā jauna veidne (adresāts: ${AUDS[aud()].group}; statistikas joma: ${AUDS[aud()].field}), un kampaņa turpinās to izmantot.`, content:`
+    openSubModal({title:'Saglabāt arī kā veidni', info:`Saturs tiks saglabāts kā jauna veidne (adresāts: ${AUDS[aud()].label} – pēc kampaņas statistikas jomas „${AUDS[aud()].field}”), un kampaņa turpinās to izmantot.`, content:`
       <div class="field"><label for="sv-name">Veidnes nosaukums <span class="req">*</span></label><input type="text" id="sv-name" maxlength="120"><span class="err" id="sv-name-err" hidden></span></div>
       <div class="field"><label for="sv-cat">Kategorija</label><select id="sv-cat">${CATS.map(c => `<option value="${c.key}" ${$('#te-cat').value === c.key ? 'selected' : ''}>${esc(c.one)}</option>`).join('')}</select></div>`,
       actions:[{label:'Atcelt', cls:'btn-secondary'}, {label:'Saglabāt veidni', cls:'btn-primary', onClick: closeSub => {
@@ -5138,7 +5140,7 @@ function openTemplateEditor(id, preset = {}){
 const allAtts = () => [...ATT_LIB, ...state.attachments];
 const attById = id => allAtts().find(a => a.id === id);
 const attHref = a => ATT_DIR + a.file;
-const attAudLabel = k => k === 'visi' ? AUDS.visi.label : AUDS[k].group;
+const attAudLabel = k => AUDS[k].label;
 const tplsUsing = id => state.templates.filter(t => (t.files || []).some(f => f.lib === id) || (t.kind === 'pielikums' && t.main && t.main.lib === id));
 // Atļautie failu veidi bibliotēkā (PDF vai DOCX, līdz 1 MB)
 const ATT_EXT = {pdf:'application/pdf', docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'};
@@ -5359,7 +5361,7 @@ function renderSagataves(){
   const groups = Object.keys(AUDS).map(ak => {
     const inA = list.filter(x => x.aud === ak);
     if (!inA.length) return '';
-    return `<section class="sag-aud"><h2 class="sag-aud-h">${ICON[AUDS[ak].icon]}${esc(attAudLabel(ak))} <span class="count">${inA.length}</span></h2>
+    return `<section class="sag-aud"><h2 class="sag-aud-h">${ICON[AUDS[ak].icon]}${esc(AUDS[ak].tab)} <span class="count">${inA.length}</span></h2>
       ${CATS.map(c => { const items = inA.filter(x => x.cat === c.key); return items.length ? `<h3 class="sag-cat-h">${esc(c.label)} <span class="count">${items.length}</span></h3>
         <div class="att-grid">${items.map(att ? attCard : msCard).join('')}</div>` : ''; }).join('')}</section>`;
   }).join('');
@@ -5844,9 +5846,9 @@ function openTemplatePicker(){
   const prev = ui.tpPick && ui.tpPick.id === compose.draftId ? ui.tpPick.sel : '';
   let sel = prev || compose.content && compose.content.templateId || '', q = '', ch = ui.tpCh || 'epasts';
   const cats = SESS_KINDS[compose.kind].cats;
-  const list = () => state.templates.filter(t => t.aud === compose.aud && cats.includes(t.cat));
-  const cur = () => state.templates.find(x => x.id === sel && x.aud === compose.aud && cats.includes(x.cat));
-  const m = openModal({title:'Izmantot veidni', editor:true, back:'← Atpakaļ uz kampaņu', info:`Tiek rādītas tikai kampaņas statistikas jomai (${AUDS[compose.aud].field}) un veidam (${SESS_KINDS[compose.kind].label}) atbilstošās veidnes: ${cats.map(c => CAT_BY_KEY[c].label).join(', ')}.`, content:`
+  const list = () => state.templates.filter(t => tplFitsCamp(t) && cats.includes(t.cat));
+  const cur = () => state.templates.find(x => x.id === sel && tplFitsCamp(x) && cats.includes(x.cat));
+  const m = openModal({title:'Izmantot veidni', editor:true, back:'← Atpakaļ uz kampaņu', info:`Tiek rādītas tikai kampaņas statistikas jomai (${AUDS[compose.aud].field}${compose.aud === 'visi' ? ' – visu adresātu veidnes' : ` – adresāts „${AUDS[compose.aud].label}” un „${AUDS.visi.label}”`}) un veidam (${SESS_KINDS[compose.kind].label}) atbilstošās veidnes: ${cats.map(c => CAT_BY_KEY[c].label).join(', ')}.`, content:`
     <div class="tp-grid">
       <div class="tp-list">
         <label class="search"><span class="sr-only">Meklēt veidnes</span>
@@ -5874,7 +5876,7 @@ function openTemplatePicker(){
       const g = items.filter(t => t.cat === c.key);
       return g.length ? `<section class="tp-group"><h3>${esc(c.label)} <span class="pill pill-cat">${g.length}</span></h3>
         ${g.map(t => `<button type="button" class="tp-item" data-tp="${esc(t.id)}" aria-pressed="${t.id === sel}"><b>${esc(t.name)}</b>
-          <small>${esc(KINDS[t.kind] || '')}${verOnly(t) ? ` · ${esc(verOnly(t))}` : ''}</small></button>`).join('')}</section>` : '';
+          <small>${esc(KINDS[t.kind] || '')} · ${esc(AUDS[t.aud].label)}${verOnly(t) ? ` · ${esc(verOnly(t))}` : ''}</small></button>`).join('')}</section>` : '';
     }).join('') : `<div class="empty" style="padding:20px"><p>${list().length ? 'Neviena veidne neatbilst meklēšanai.' : 'Šim adresātam un kampaņas veidam veidņu vēl nav.'}</p></div>`;
   }
   // priekšskatījums ar pirmā kampaņas adresāta datiem; pārslēgs E-pasts / eAdrese
@@ -5913,6 +5915,8 @@ const isPlanned = () => compose.when === 'plan';
 const whenLabel = (c = compose) => c.when === 'plan' ? `${fmtDate(c.sel.sendDate)} ${c.sendTime || ''}`.trim() : 'Tūlīt';
 const lateLimit = () => isoDate(addDays(-(parseInt(compose.sel.lateDays, 10) || 0)));
 // pārskati / apsekojumi pēc kampaņas adresāta
+// kampaņai piedāvātās veidnes: iedzīvotāju statistika – fiziskā persona un visi; uzņēmumu – juridiskā persona un visi; visi – visas
+const tplFitsCamp = (t, aud = compose.aud) => aud === 'visi' || t.aud === aud || t.aud === 'visi';
 const audReports = () => (state.reports || []).filter(p => compose.aud === 'visi' || p.aud === compose.aud);
 // Iedzīvotāju statistika un Visi: tvērums tikai pēc apsekojuma (ar neobligātu periodu / vilni)
 const surveyMode = (aud = compose.aud) => aud !== 'jur';
