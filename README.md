@@ -57,7 +57,7 @@ Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
   - Kampaņas: Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās. Atverot cilni, vienmēr aktīva ir "Visas";
   - Veidnes: adresātu grupu kartītes (Fiziskām personām · Juridiskām personām · Cita komunikācija). "Sagataves" ir poga augšējā labajā stūrī pirms "Pastāvīgās daļas", un tā atver atsevišķu skatu ar pogu "← Atpakaļ uz veidnēm";
   - Sūtīšanas vēsture: Visas · Gaida parakstu · Procesā · Piegādātas · Neveiksmīgas · Manuāla pārbaude · Administratoram;
-  - Atskaites: Nosūtīšanas kopsavilkums · Piegādes rezultāti · Neveiksmīgās ziņas · Atkārtotā nosūtīšana · Citi pārskati.
+  - Atskaites: Nosūtīšanas kopsavilkums · Piegādes rezultāti · Neveiksmīgās ziņas · Atkārtotā nosūtīšana · Citi pārskati · Darba laika patēriņš.
 
 Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA moduļiem. Tie ir redzami kampaņas solī "Respondenti" un respondenta kartītē. Vecās saites turpina darboties: `#sagatavot` atver kampaņas redaktoru, `#nosutitas` atver cilni "Sūtīšanas vēsture", bet `#respondenti` atver cilni "Kampaņas".
 
@@ -508,6 +508,26 @@ Skati:
 - **Neveiksmīgās ziņas:** NDR/DIV paziņojumu sadalījums pa iemesliem (kategorijām no abām klasifikācijas tabulām), pa tipiem (pastāvīgs, īslaicīgs, saturs, sūtītāja puse, nav kļūda, manuāli, starpstatuss, saņēmēja konfigurācija) un pa novirzījumam, kā arī visu paziņojumu tabula (laiks, respondents, kampaņa, kanāls un adrese, iemesls, tips, klasifikācija – MI ar ticamību vai DIV statuss, automātiskā rīcība, vēstules statuss).
 - **Atkārtotā nosūtīšana:** rādītāji un tabula ar mēģinājumu skaitu un iemeslu: pagaidu kļūda, pāreja uz nākamo adresi vai manuāla atkārtota nosūtīšana.
 - **Citi pārskati:** parakstīšanas rezultāti pa kampaņām (veids, parakstītāji, parakstītās vēstules, gaida parakstu, laiki).
+- **Darba laika patēriņš** (KPI: laika patēriņš darbībām; sk. "Darba laika uzskaite"):
+  - filtri: periods, kampaņas veids un **statistikas joma** (Visas jomas / Iedzīvotāju / Uzņēmumu statistika); kanāla un kampaņas filtra šajā atskaitē nav. Kampaņas tiek atlasītas pēc nosūtīšanas datuma, veidnes – pēc pēdējās saglabāšanas;
+  - rādītāji: vidējais aktīvais laiks vienas kampaņas sagatavošanai, vienas veidnes sagatavošanai, vidēji gaida saskaņojumu, vidēji gaida parakstu, vidējais kopējais ilgums (no izveides līdz nosūtīšanai);
+  - grafiks: vidējais kampaņas sagatavošanas laiks pa mēnešiem (ar datu tabulu);
+  - sadalījums (vidēji, min): pēc kampaņas veida, statistikas jomas, satura avota (gatava veidne / pielāgota veidne / jauns saturs) un pa soļiem (kurš solis aizņem visvairāk laika);
+  - rāda kopsavilkumu (vidējos rādītājus), nevis atsevišķu darbinieku rezultātus; MI kopsavilkums – par vidējiem laikiem;
+  - "Eksportēt CSV": katra kampaņa un veidne (objekts, nosaukums, veids/kategorija, joma, satura avots, pabeigts, aktīvais laiks, sesijas, kopējais ilgums, gaidīšana saskaņošanā un parakstīšanā, laiks pa soļiem).
+
+## Darba laika uzskaite
+
+Prototips automātiski reģistrē darba laiku kampaņām un veidnēm (lietotājam nekas nav jādara):
+- **Aktīvais darba laiks** tiek skaitīts, kamēr atvērts kampaņas izveides / rediģēšanas skats vai veidnes redaktors un lietotājs ir aktīvs (peles, tastatūras, ritināšanas darbības). Pēc **3 minūtēm bez aktivitātes** skaitīšana apstājas un atsākas pie nākamās darbības (tad sākas jauna sesija). Citās cilnēs, saskaņotāja skatā un paslēptā pārlūka cilnē laiks netiek skaitīts.
+- Laiks summējas pa sesijām (arī ja melnrakstu turpina citā dienā): kampaņai tas glabājas melnrakstā (saglabājas ik pēc 15 s), veidnei – pieskaitās, saglabājot veidni (atceļot redaktoru, laiks netiek saglabāts). Kampaņas satura logā ("Noformēt saturu") laiks pieskaitās kampaņai (solim "Saturs").
+- Kampaņām – arī **aktīvais laiks pa soļiem** (Pamatdati, Respondenti, Saturs, Pārbaude, Saskaņošana un paraksts).
+- **Kopējais ilgums:** kampaņai – no izveides līdz nosūtīšanai (ar parakstu – līdz parakstīšanai), ieskaitot gaidīšanu; veidnei – no izveides līdz pēdējai saglabāšanai. Atsevišķi – **gaidīšana saskaņošanā** (no nodošanas līdz saskaņojumam / atgriešanai; summējas, ja nodota vairākkārt) un **parakstīšanā** (no nodošanas parakstīšanai līdz parakstam).
+- Reģistrē arī: kas strādāja (lietotājs un viņa laiks), sesiju skaits, satura avots (gatava veidne / pielāgota veidne / jauns saturs).
+- **Kur redzams** (saraksta tabulās laiks netiek rādīts):
+  - kampaņas pēdējā solī "Saskaņošana un paraksts" (zem kopsavilkuma), saskaņotāja skatā, ieplānotās kampaņas logā un sūtīšanas vēsturē, atlasot kampaņu (kampaņas informācijas kartīte virs tabulas) – kompakta rinda, piem., "Darba laiks: 18 min (3 sesijas) · Kopējais ilgums: 1 d. 4 st. · Gaida saskaņojumu: 6 st." (vai "Saskaņošanā: …", "Gaida parakstu: …", "Parakstīšanā: …"). Uzklikšķinot – sadalījums pa soļiem (laiks un %), kas strādāja, satura avots un izveides laiks;
+  - veidnes redaktorā (esošai veidnei) zem nosaukuma: "Sagatavošanas laiks: 12 min (2 sesijas) · kopējais ilgums: …".
+- **Testa dati:** esošajām kampaņām un veidnēm pievienoti reālistiski laiki – kampaņa no gatavas veidnes 5–15 min, ar pielāgotu veidni 10–30 min, ar jaunu saturu 20–60 min (satura avots testa datos dažādots), daļai kampaņu – gaidīšana saskaņošanā 2–30 st.; veidne 10–40 min, 1–3 sesijas; melnrakstiem 3–18 min.
 
 ## Respondentu pazīmes
 
