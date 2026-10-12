@@ -116,6 +116,8 @@
 
 *{box-sizing:border-box}
 html,body{margin:0}
+html{scrollbar-gutter:stable}
+@supports not (scrollbar-gutter:stable){ html{overflow-y:scroll} }
 body{font-family:var(--font);font-size:var(--fs-base);line-height:1.5;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
 h1,h2,h3{margin:0;line-height:1.25;color:var(--primary-darker)}
 h1{font-size:var(--fs-2xl);font-weight:650;letter-spacing:-.1px}
@@ -418,12 +420,11 @@ td.contacts{display:table-cell}
 .resp-table .row-toggle b{margin-right:4px}
 .prio-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 10px}
 /* 1. solis: adrešu prioritāte vienā rindā */
-.prio-card{display:block}
-.prio-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
-.prio-sel{display:inline-flex;align-items:center;gap:5px;margin:0}
-.prio-n{font-weight:700;color:var(--primary-ink);font-size:var(--fs-sm)}
-.prio-sel select{width:auto;min-width:150px;padding:6px 8px;font-size:var(--fs-md)}
-.prio-arr{color:var(--text-muted);font-size:var(--fs-lg)}
+.prio-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.prio-sel{position:relative;display:inline-flex;align-items:center;margin:0;flex:none}
+.prio-n{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--primary-100);color:var(--primary-darker);font-size:var(--fs-xs);font-weight:700;line-height:1;pointer-events:none}
+.prio-sel select{width:148px;min-width:0;padding:6px 24px 6px 34px;font-size:var(--fs-md);text-overflow:ellipsis}
+.prio-arr{color:var(--icon-muted);font-size:var(--fs-lg);line-height:1}
 /* 2. solis: sūtīšanas secība, kolonnu numuri, primārā adrese, citas adreses */
 .col-n{display:inline-grid;place-items:center;min-width:16px;height:16px;border-radius:50%;background:var(--primary-tint);color:var(--primary-ink);font-size:var(--fs-2xs);font-weight:700;margin-left:3px;vertical-align:1px}
 .ac-tag.t-prim{color:var(--primary-ink);border-color:#BFD6DA;background:var(--primary-tint)}
@@ -2337,12 +2338,10 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           </div>
           <div class="dvp-note" id="c-dvp"></div>
           <h3 class="sub-h scope-h" id="c-prio-h">Adrešu prioritāte<span class="tip" tabindex="0" role="note" aria-label="Katram respondentam vēstule tiek sūtīta uz pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, tiek mēģināta nākamā. 1. prioritāte – obligāta, 2. un 3. var būt tukšas." data-tip="Katram respondentam vēstule tiek sūtīta uz pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, tiek mēģināta nākamā. 1. prioritāte – obligāta, 2. un 3. var būt tukšas.">i</span></h3>
-          <div class="scope-card prio-card" role="group" aria-labelledby="c-prio-h">
-            <div class="prio-row" id="c-prio">
-              <label class="prio-sel"><span class="prio-n">1.</span><select id="c-prio-0" data-prio="0" aria-label="1. prioritāte (obligāta)"></select></label><span class="prio-arr" aria-hidden="true">→</span>
-              <label class="prio-sel"><span class="prio-n">2.</span><select id="c-prio-1" data-prio="1" aria-label="2. prioritāte"></select></label><span class="prio-arr" aria-hidden="true">→</span>
-              <label class="prio-sel"><span class="prio-n">3.</span><select id="c-prio-2" data-prio="2" aria-label="3. prioritāte"></select></label>
-            </div>
+          <div class="prio-row" id="c-prio" role="group" aria-labelledby="c-prio-h">
+            <label class="prio-sel"><span class="prio-n" aria-hidden="true">1</span><select id="c-prio-0" data-prio="0" aria-label="1. prioritāte (obligāta)"></select></label><span class="prio-arr" aria-hidden="true">→</span>
+            <label class="prio-sel"><span class="prio-n" aria-hidden="true">2</span><select id="c-prio-1" data-prio="1" aria-label="2. prioritāte"></select></label><span class="prio-arr" aria-hidden="true">→</span>
+            <label class="prio-sel"><span class="prio-n" aria-hidden="true">3</span><select id="c-prio-2" data-prio="2" aria-label="3. prioritāte"></select></label>
           </div>
           <span class="err" id="c-scope-err" hidden></span>
           <h3 class="sub-h">Vēstules dati <span class="tip" tabindex="0" role="note" aria-label="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). {apsekojums} tiek aizpildīts automātiski no izvēlētā apsekojuma." data-tip="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). {apsekojums} tiek aizpildīts automātiski no izvēlētā apsekojuma.">i</span></h3>
@@ -2555,7 +2554,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 76</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 77</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
