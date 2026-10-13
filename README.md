@@ -304,7 +304,8 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
 - **Zināmās kļūdas** (redzamas arī priekšskatījumā): e-adreses `_DEFAULT@00000000112` un `_PRIVATE@00000000222` – "Nav publiskās atslēgas šifrēšanai" (sūta uz e-pastu, respondents tiek informēts); e-pasti uz `nepiegadajams.example` – "Adrese vai domēns neeksistē" (pastāvīga kļūda); e-pasti uz `surogatfiltrs.example` – "Bloķēts kā spams" (sūtītāja puse).
 - **Neveiksmīga:** ja visas adreses ir izsmeltas, vēstule ir neveiksmīga un nodota manuālai pārbaudei.
 - Adreses, kas pēc pastāvīgas kļūdas atzīmētas kā **nederīgas**, nākamajās kampaņās netiek izmantotas (kamēr adrese nav mainīta).
-- Testa datos ir arī nesen (pirms 1 min no pirmās ielādes) nosūtīta kampaņa "Informācija par datu iesniegšanas kalendāru" ar dažādiem iznākumiem un procesā esošiem statusiem.
+- Testa datos ir arī nesen (pirms 1 min no pirmās ielādes) nosūtīta kampaņa "Informācija par datu iesniegšanas kalendāru" ar dažādiem iznākumiem un procesā esošiem statusiem, kā arī pirms 4 dienām nosūtīta kampaņa "Mēneša pārskati – uzaicinājums (oktobris)" ar ticamiem piegādes rezultātiem (12 vēstules · piegādātas 10 · nepiegādātas 1 · procesā 1). Visām testa kampaņām, kas nosūtītas pirms vairāk nekā 72 h, lielākā daļa vēstuļu ir piegādāta.
+- **Nosūtītas kampaņas kartīte** (Vēsturē atlasot kampaņu vai atverot nosūtītu kampaņu no saraksta – virs tabulas, tikai lasāma): kampaņas nosaukums (bez kampaņas numura), veids un joma; "Nosūtīta: datums laiks"; "Vēstules: 12 · piegādātas 10 · nepiegādātas 1 · procesā 1" (ja ir – arī "gaida parakstu N"). Nepiegādātas – Nepiegādāts un Aizturēts; procesā – Piegāde procesā, Gaida atkārtojumu, Pārsūtīts uz nākamo adresi, Manuālai izskatīšanai. Tikko nosūtītai kampaņai e-pasta vēstules ir "procesā" līdz 72 h logam (eAdresē – piegādātas pēc dažām minūtēm). Laika rādītāju kartītē nav.
 
 Priekšskatījumā redzama prioritāšu secība un paredzamais rezultāts (zināmās kļūdas), bet nosūtītajā vēstulē – katrs faktiskais mēģinājums.
 
@@ -574,11 +575,10 @@ Prototips automātiski reģistrē darba laiku kampaņām un veidnēm (lietotāja
 - Kampaņām – arī **aktīvais laiks pa soļiem** (Pamatdati, Respondenti, Saturs, Pārbaude, Nosūtīšana).
 - **Kopējais ilgums:** kampaņai – no izveides līdz nosūtīšanai (ar parakstu – līdz parakstīšanai), ieskaitot gaidīšanu; veidnei – no izveides līdz pēdējai saglabāšanai. Atsevišķi – **gaidīšana saskaņošanā** (no nodošanas līdz saskaņojumam / atgriešanai; summējas, ja nodota vairākkārt) un **parakstīšanā** (no nodošanas parakstīšanai līdz parakstam).
 - Reģistrē arī: kas strādāja (lietotājs un viņa laiks), sesiju skaits, satura avots (gatava veidne / pielāgota veidne / jauns saturs).
-- **Kur redzams:**
-  - **kampaņas veidošanas soļos** (Pamatdati, Respondenti, Saturs, Pārbaude, Nosūtīšana) un saskaņotāja skatā laika rādītāji **netiek rādīti nekur** (ne kartē, ne kopsavilkumā, ne galvenē); uzskaite turpinās fonā un saglabājas kampaņas datos;
+- **Kur redzams – tikai divās vietās:**
   - **kampaņu sarakstā** – kolonna "Darba laiks" (sk. "Kampaņu saraksts");
-  - **nosūtītas / pabeigtas kampaņas skatā** (atverot kampaņu no saraksta vai Vēsturē – kampaņas informācijas kartīte virs tabulas; tikai lasāms) un ieplānotās kampaņas logā – sadaļa **"Procesa laiks"** pašā apakšā, zem pārējās informācijas ("Nosaukums: vērtība" pa kreisi, 13 px): "Darba laiks: 58 min (14 sesijas)", "Kopējais ilgums: 20 st. 20 min (no izveides līdz nosūtīšanai)" (ieplānotajai – "līdz šim"), "Saskaņošanā: 1 st. 47 min" (ja bija saskaņošana; ja parakstīšana – arī "Parakstīšanā" / "Gaida parakstu"). Kartītē virs tās – nosūtīšanas laiks un vēstuļu / piegādāto skaits;
-  - veidnes redaktorā (esošai veidnei) zem nosaukuma: "Sagatavošanas laiks: 12 min (2 sesijas) · kopējais ilgums: …".
+  - **cilnē Atskaites** – atskaitē "Darba laika patēriņš" bloks "Procesa laiks".
+- **Kur netiek rādīts:** kampaņas veidošanas soļos (Pamatdati, Respondenti, Saturs, Pārbaude, Nosūtīšana), saskaņotāja skatā, nosūtītas / pabeigtas kampaņas skatā, ieplānotās kampaņas logā un veidnes redaktorā laika rādītāju nav; uzskaite turpinās fonā un saglabājas kampaņas / veidnes datos.
 - **Testa dati:** esošajām kampaņām un veidnēm pievienoti reālistiski laiki – kampaņa no gatavas veidnes 5–15 min, ar pielāgotu veidni 10–30 min, ar jaunu saturu 20–60 min (satura avots testa datos dažādots), daļai kampaņu – gaidīšana saskaņošanā 2–30 st.; veidne 10–40 min, 1–3 sesijas; melnrakstiem 3–18 min.
 
 ## Respondentu pazīmes
