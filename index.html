@@ -466,6 +466,7 @@ td.contacts{display:table-cell}
 /* visos soļos – viens kopīgs satura konteiners (.step-content) pilnā platumā: malas sakrīt ar soļu joslu un galveni; navigācijas josla zem tā, ārpus kartēm, tādā pašā platumā */
 .compose-grid.wiz .wiz-card.step-content{width:100%;max-width:none;box-sizing:border-box}
 .sub-h.sub-h4{font-size:var(--fs-md);margin-top:16px}
+.sign-letter[hidden]{display:none}
 /* kompakts kopsavilkums */
 .rv-checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .rv-ck{appearance:none;display:flex;align-items:flex-start;gap:8px;width:100%;padding:6px;margin:0 -6px;box-sizing:content-box;border:0;border-radius:var(--radius-sm);background:none;font:inherit;font-size:var(--fs-sm);text-align:left;color:var(--text)}
@@ -588,6 +589,9 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .dr-tasks{margin-top:10px;font-size:var(--fs-sm)}
 .dr-tasks ul{margin:4px 0 0;padding-left:18px}
 .rules-table td{vertical-align:top}
+.rules-table .cst{white-space:nowrap}
+.rules-table .rule-alt{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:var(--fs-xs);color:var(--text-muted);white-space:nowrap}
+.rules-table tr.rule-grp th{background:var(--bg);color:var(--text-muted);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;text-align:left;padding:6px 10px}
 .rules-modal h3{margin:16px 0 6px;font-size:var(--fs-base)}
 .hl-table.admin-list td:first-child{min-width:0;white-space:nowrap}
 .admin-list td:nth-child(2){max-width:190px}
@@ -654,6 +658,9 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .hs-sign{color:var(--warning)} .hs-sign i{background:#E0A800}
 .hs-proc{color:var(--primary-dark)} .hs-proc i{background:var(--primary)}
 .hs-man{color:var(--orange-ink)} .hs-man i{background:#E07B1F}
+.hs-wait{color:#1D5F99} .hs-wait i{background:#3B82C4}
+.hs-next{color:#4C4FA8} .hs-next i{background:#6A6FD0}
+.hs-held{color:#6B3FA0} .hs-held i{background:#8E5CC2}
 .hist-table tr.hist-detail > td{height:auto;white-space:normal;padding:12px 14px;background:var(--primary-50)}
 .hd-meta{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 12px;margin:0 0 14px;font-size:var(--fs-sm)}
 .hd-meta dt{color:var(--text-muted)}
@@ -820,6 +827,9 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .camp-name:hover{color:var(--primary-dark);text-decoration:underline}
 .camp-name:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:var(--radius-xs)}
 .camp-table th:first-child{width:27%}
+.camp-table th.c-wl{width:70px;white-space:normal;line-height:1.15}
+.camp-table th.c-wl .th-sort{white-space:normal;text-align:right}
+.camp-table td.c-wl{color:var(--text-muted);font-size:var(--fs-sm)}
 /* kārtošana pēc kolonnas */
 .th-sort{appearance:none;border:0;background:none;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;padding:4px 6px;margin:0 -6px;border-radius:var(--radius-xs);cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .th-sort:hover{background:rgba(41,119,133,.10);color:var(--primary-darker)}
@@ -831,6 +841,11 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .ck{display:inline-flex;align-items:center;gap:6px;color:var(--text)}
 .ck .icon{width:15px;height:15px;color:var(--primary-dark);flex:none}
 .ck-sub{color:var(--text-muted);margin-left:6px;font-size:var(--fs-sm)}
+/* kampaņu sarakstā: "pirms / pēc termiņa" – otrā rindā zem veida (tabula ietilpst platumā arī ar kolonnu "Darba laiks") */
+#camp-scroll .ck-sub{display:block;margin:1px 0 0 22px;font-size:var(--fs-xs);line-height:1.2}
+#camp-scroll .camp-name{max-width:min(236px,17vw)}
+#camp-scroll .camp-table th:first-child{width:auto}
+#camp-scroll .camp-table th,#camp-scroll .camp-table td{padding-left:8px;padding-right:8px}
 .ck,.ck-sub{vertical-align:middle}
 .cst{display:inline-flex;align-items:center;gap:7px;font-weight:500;font-size:var(--fs-sm)}
 .cst i{width:9px;height:9px;border-radius:50%;flex:none;background:currentColor}
@@ -1738,6 +1753,16 @@ mark.v-miss,mark.v-unk{background:var(--danger-bg);color:var(--danger);border-ra
 .compose-head-side{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .draft-info{display:flex;align-items:center;gap:8px;font-size:var(--fs-sm);color:var(--text-muted)}
 .draft-info .icon{width:16px;height:16px;color:var(--success)}
+/* darba laiks galvenē: mazs, neuzkrītošs (bez fona un rāmja); detaļas – izlecošā kartītē */
+.draft-info .wl-sep{color:#6B6B6B}
+.wl-mini{appearance:none;display:inline-flex;align-items:center;gap:4px;border:0;background:none;padding:2px 0;font:inherit;font-size:12px;color:#6B6B6B;cursor:pointer;white-space:nowrap}
+.wl-mini .icon{width:13px;height:13px;color:#6B6B6B}
+.wl-mini:hover,.wl-mini[aria-expanded="true"]{color:var(--text)}
+.wl-mini:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:var(--radius-xs)}
+.ac-pop.wl-pop{width:240px;max-width:calc(100vw - 16px);padding:10px 12px;font-size:var(--fs-sm)}
+.wl-pop-dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 8px;margin:0}
+.wl-pop-dl dt{color:var(--text-muted)} .wl-pop-dl dd{margin:0;font-weight:600}
+.wl-pop-note{margin:8px 0 0;font-size:var(--fs-xs);color:var(--text-muted)}
 /* Solis "Saturs": divas lielas kartītes un izvēlētā satura kopsavilkums */
 .content-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .content-opt{appearance:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:120px;border:1.5px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);cursor:pointer;font:inherit;color:var(--primary-darker);padding:16px}
@@ -2316,7 +2341,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     <div class="flt-chips" id="cf-chips" hidden><span class="flt-chip-list" id="cf-chip-list" aria-label="Aktīvie filtri"></span><button type="button" class="link-btn flt-clear" id="cf-clear">Notīrīt visus</button></div>
     <div class="card">
       <div class="table-wrap camp-scroll" id="camp-scroll"><table class="camp-table">
-        <thead><tr><th aria-sort="none"><button type="button" class="th-sort" data-csort="name">Kampaņa<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="kind">Veids<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="num" aria-sort="none"><button type="button" class="th-sort" data-csort="n">Respondenti<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="when">Nosūtīšana<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="st">Statuss<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="res">Rezultāts<span class="sort-ic" aria-hidden="true">↕</span></button></th><th><span class="sr-only">Darbības</span></th></tr></thead>
+        <thead><tr><th aria-sort="none"><button type="button" class="th-sort" data-csort="name">Kampaņa<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="kind">Veids<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="num" aria-sort="none"><button type="button" class="th-sort" data-csort="n">Respondenti<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="when">Nosūtīšana<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="st">Statuss<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="res">Rezultāts<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="num c-wl" aria-sort="none"><button type="button" class="th-sort" data-csort="wl">Darba laiks<span class="sort-ic" aria-hidden="true">↕</span></button></th><th><span class="sr-only">Darbības</span></th></tr></thead>
         <tbody id="camp-tbody"></tbody></table></div>
       <div class="table-foot camp-foot" id="camp-foot"></div>
     </div>
@@ -2329,6 +2354,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       </div>
       <div class="compose-head-side">
         <div class="draft-info" id="c-draft" aria-live="polite" hidden></div>
+        <div class="ac-pop wl-pop" id="wl-pop" role="dialog" aria-label="Darba laiks" hidden></div>
       </div>
     </div>
     <div class="alert alert-warn apv-note" id="c-apv-note" role="status" hidden></div>
@@ -2558,15 +2584,16 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
             <div class="field"><span class="label">Parakstīšanas veids</span><div class="esign-modes" id="c-esign-mode" role="group" aria-label="Parakstīšanas veids"></div></div>
             <div class="field"><span class="label">Parakstītāji <span class="req">*</span><span class="tip" tabindex="0" role="note" aria-label="Secīgai parakstīšanai secība ir atzīmēšanas kārtībā." data-tip="Secīgai parakstīšanai secība ir atzīmēšanas kārtībā.">i</span></span><div class="chk-list" id="c-signers"></div><span class="err" id="c-signers-err" hidden></span></div>
           </div>
+          <div class="sign-letter" id="c-sign-letter" hidden>
           <h4 class="sub-h sub-h4">Paraksts vēstulē <span class="tip" tabindex="0" role="note" aria-label="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu." data-tip="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu.">i</span></h4>
           <div class="form-grid">
-            <div class="field"><label for="cs-signer">Parakstītājs <span class="muted">{parakstītājs}</span></label><input type="text" id="cs-signer" data-sign="signer"></div>
-            <div class="field"><label for="cs-position">Amats <span class="muted">{amats}</span></label><input type="text" id="cs-position" data-sign="position"></div>
+            <div class="field"><label for="cs-signer">Parakstītājs <span class="req">*</span> <span class="muted">{parakstītājs}</span></label><input type="text" id="cs-signer" data-sign="signer" aria-required="true" aria-describedby="cs-signer-err"><span class="err" id="cs-signer-err" hidden></span></div>
+            <div class="field"><label for="cs-position">Amats <span class="req">*</span> <span class="muted">{amats}</span></label><input type="text" id="cs-position" data-sign="position" aria-required="true" aria-describedby="cs-position-err"><span class="err" id="cs-position-err" hidden></span></div>
           </div>
           <button type="button" class="link-btn sign-reset" id="c-sign-reset" data-action="c-sign-reset" hidden>Atjaunot noklusējumu</button>
+          </div>
           <h3 class="sub-h">Nosūtīšana</h3>
           <dl class="sum-dl send-sum" id="c-send-sum"></dl>
-          <div class="wl-wrap" id="c-wl"></div>
         </div>
       </div>
       <nav class="wiz-nav" id="wiz-nav" aria-label="Kampaņas soļu navigācija"></nav>
@@ -2646,7 +2673,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 87</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 88</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -3087,10 +3114,11 @@ function expandTables(html, ctx, mark){
   t.content.querySelectorAll('div.rtab').forEach(div => div.replaceWith(parseHtml(dutyTableHtml(div.dataset.cols, div.dataset.rows, ctx, mark)).content));
   return t.innerHTML;
 }
-function fillText(text, ctx){ return String(text).replace(VAR_RE, (m, k) => (k in ctx && ctx[k]) ? ctx[k] : m); }
+function fillText(text, ctx){ if (ctx && ctx.__nosign) text = stripSignVars(text, /<\/?(p|br|span)\b/i.test(text)); return String(text).replace(VAR_RE, (m, k) => (k in ctx && ctx[k]) ? ctx[k] : m); }
 // Vienkāršs teksts -> HTML ar iezīmētiem laukiem
 function fillHtml(text, ctx){
   text = String(text);
+  if (ctx && ctx.__nosign) text = stripSignVars(text, false);
   let out = '', last = 0;
   for (const m of text.matchAll(VAR_RE)){
     out += esc(text.slice(last, m.index));
@@ -3108,7 +3136,7 @@ function fillHtml(text, ctx){
 }
 // Formatēts HTML -> HTML ar aizpildītiem laukiem (mark = iezīmēt laukus)
 function fillRich(html, ctx, mark){
-  const t = parseHtml(expandTables(html, ctx, mark));
+  const t = parseHtml(expandTables(ctx && ctx.__nosign ? stripSignVars(html, true) : html, ctx, mark));
   t.content.querySelectorAll('span.fld').forEach(s => s.replaceWith(document.createTextNode(s.textContent)));
   t.content.normalize();
   t.content.querySelectorAll('a[href]').forEach(a => {
@@ -4106,13 +4134,31 @@ function saveDraft(){
   draftTimer = setTimeout(flushDraft, 300);
 }
 const removeDraft = id => { state.drafts = state.drafts.filter(x => x.id !== id); };
+// darba laiks galvenē: vērtība netikšķ – tā tiek nofiksēta, atverot kampaņu, pārejot uz citu soli vai saglabājot melnrakstu ("Saglabāt melnrakstu")
+const wlSnapNow = () => { const w = composeWork(); ui.wlSnap = {...w, wl:clone(w.wl)}; return ui.wlSnap; };
 function renderDraftInfo(){
-  const box = $('#c-draft'), d = state.drafts.find(x => x.id === compose.draftId);
-  // kampaņa, kas gaida saskaņojumu, nav rediģējama un dzēšama saskaņotāja skatā
-  box.hidden = !d || apvLocked();
-  box.innerHTML = d ? `${ICON.check}<span>Melnraksts saglabāts ${esc(fmtDateTime(d.savedAt))}</span>
-    <button type="button" class="btn btn-ghost btn-sm" data-action="c-restart">Dzēst melnrakstu</button>` : '';
+  const box = $('#c-draft'), d = state.drafts.find(x => x.id === compose.draftId), w = ui.wlSnap || wlSnapNow();
+  // kampaņa, kas gaida saskaņojumu, nav rediģējama un dzēšama saskaņotāja skatā (redzams tikai darba laiks)
+  const draft = d && !apvLocked();
+  box.hidden = false;
+  box.innerHTML = (draft ? `${ICON.check}<span>Melnraksts saglabāts ${esc(fmtDateTime(d.savedAt))}</span>
+    <button type="button" class="btn btn-ghost btn-sm" data-action="c-restart">Dzēst melnrakstu</button><span class="wl-sep" aria-hidden="true">·</span>` : '') +
+    `<button type="button" class="wl-mini" id="c-wl-mini" data-action="wl-pop" aria-haspopup="dialog" aria-expanded="${!$('#wl-pop').hidden}" aria-controls="wl-pop" aria-label="Darba laiks: ${esc(fmtDur(w.wl.active))} – detaļas"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${esc(fmtDur(w.wl.active))}</button>`;
+  if (!$('#wl-pop').hidden) renderWlPop();
 }
+function renderWlPop(){
+  const w = ui.wlSnap || wlSnapNow(), wl = w.wl;
+  $('#wl-pop').innerHTML = `<dl class="wl-pop-dl"><dt>Darba laiks:</dt><dd>${esc(fmtDur(wl.active))} (${esc(wlSess(wl.sessions || 0))})</dd>
+    <dt>Kopējais ilgums:</dt><dd>${esc(fmtDur(w.total))}</dd>${w.apvPending ? `<dt>Gaida saskaņojumu:</dt><dd>${esc(fmtDur(w.waitApv))}</dd>` : w.waitApv ? `<dt>Saskaņošanā:</dt><dd>${esc(fmtDur(w.waitApv))}</dd>` : ''}</dl>
+    <p class="wl-pop-note">Laiks tiek uzskaitīts procesa uzlabošanai.</p>`;
+}
+function showWlPop(){
+  const btn = $('#c-wl-mini'), pop = $('#wl-pop'); if (!btn) return;
+  renderWlPop(); pop.hidden = false; btn.setAttribute('aria-expanded', 'true');
+  const r = btn.getBoundingClientRect(), w = pop.offsetWidth;
+  pop.style.top = `${Math.round(r.bottom + 6)}px`; pop.style.left = `${Math.round(Math.max(8, Math.min(window.innerWidth - w - 8, r.right - w)))}px`;
+}
+function hideWlPop(){ const pop = $('#wl-pop'); ui.wlPopHover = false; if (pop.hidden) return; pop.hidden = true; const b = $('#c-wl-mini'); if (b) b.setAttribute('aria-expanded', 'false'); }
 // Jauna kampaņa (pēc nosūtīšanas – saglabā apsekojuma datus un adrešu prioritāti)
 function newSession(full){
   Object.assign(compose, {draftId:'k' + uid(), nameAuto:true, createdAt:new Date().toISOString(), content:null, sign:{signer:'', position:''}, excluded:new Set(), open:new Set(), index:0, noneOpen:false});
@@ -4176,13 +4222,23 @@ function ctxFor(r, f = compose.f, lang = 'lv'){
     'dok_nr': f.docNr || '',
     'tālrunis': L.phone || '',
     // kampaņā var norādīt citu parakstītāju un amatu (solis "Paraksts")
-    'parakstītājs': compose.sign.signer || (firstSigner() || {}).name || L.signer || '',
-    'amats': compose.sign.position || (firstSigner() || {}).role || L.position || '',
+    'parakstītājs': noSign() ? '' : compose.sign.signer || (firstSigner() || {}).name || L.signer || '',
+    'amats': noSign() ? '' : compose.sign.position || (firstSigner() || {}).role || L.position || '',
+    __nosign: noSign(),
     'pārskatu_tabula': r ? msgDuties(r).map(d => `${(repById(d.reportId) || {}).name || d.reportId}${d.respondentId !== r.id ? ` (${(state.respondents.find(x => x.id === d.respondentId) || {}).name})` : ''} – ${periodLabel(d.period)} (termiņš ${fmtDate(d.deadline)})`).join('; ') : '',
     __duties: r ? msgDuties(r) : null, __rid: r ? r.id : null, __lang: lang,
   };
 }
 const firstSigner = () => compose.esign && compose.esign.required ? signerById(compose.esign.signers[0]) : null;
+// "Paraksts vēstulē": tikai, ja jāparaksta (citādi {parakstītājs} un {amats} netiek aizpildīti, paraksta bloks vēstulē netiek rādīts)
+const SIGN_VARS = ['parakstītājs', 'amats'];
+const signSumText = () => noSign() ? 'Nav jāparaksta' : `Jāparaksta: ${[signVal('signer'), signVal('position')].filter(Boolean).join(', ')}`;
+const noSign = () => !(compose.esign && compose.esign.required);
+const signVal = k => k === 'signer' ? compose.sign.signer || (firstSigner() || {}).name || state.layout.signer || '' : compose.sign.position || (firstSigner() || {}).role || state.layout.position || '';
+// izņem paraksta vietturus (ar iepriekšējo rindas pārnesumu), lai vēstulē nepaliek tukšas rindas
+const stripSignVars = (h, rich) => rich
+  ? String(h).replace(/(<br\s*\/?>\s*)?(<span[^>]*class="fld"[^>]*>)?\{(parakstītājs|amats)\}(<\/span>)?/g, '').replace(/<p>(\s|<br\s*\/?>)*<\/p>/g, '')
+  : String(h).replace(/\n?[ \t]*\{(parakstītājs|amats)\}/g, '');
 const addrFor = (r, ch) => ch === 'eadrese' ? r.eaddress : r.email;
 const addrShort = k => ADDR_TYPES[k] ? (ADDR_TYPES[k].short || ADDR_TYPES[k].label) : k;
 const prioLabel = prio => (prio || []).filter(Boolean).map(addrShort).join(' → ');
@@ -4518,8 +4574,8 @@ function docHtml(t, ctx, mark, attrs, f = compose.f, L = state.layout){
     <div class="rich">${R(d.body)}</div>
     ${d.conf ? `<div class="rich"><h3>${esc(L.confTitle)}</h3>${R(L.confHtml)}</div>` : ''}
     ${d.info ? `<div class="rich"><h3>${esc(L.infoTitle)}</h3>${R(L.infoHtml)}</div>` : ''}
-    <div class="doc-sign"><div>${esc(L.closing)}<br><br>${R('{amats}')}</div><div class="doc-signer">${R('{parakstītājs}')}</div></div>
-    <div class="doc-esign">${esc(L.esign)}</div>
+    ${ctx && ctx.__nosign ? '' : `<div class="doc-sign"><div>${esc(L.closing)}<br><br>${R('{amats}')}</div><div class="doc-signer">${R('{parakstītājs}')}</div></div>
+    <div class="doc-esign">${esc(L.esign)}</div>`}
     <div class="doc-bar"></div>
   </div>`;
 }
@@ -5171,7 +5227,7 @@ function openEditor(draftId){
     const d = (state.drafts || []).find(x => x.id === draftId);
     if (d){ flushDraft(); applySnapshot(d); compose.draftId = d.id; if (apvLocked()) compose.step = 4; compose.open = new Set(); compose.search = ''; compose.repF = ''; compose.acF = ''; }
   }
-  state.activeDraft = compose.draftId;
+  state.activeDraft = compose.draftId; ui.wlSnap = null; hideWlPop();
   showTab('kampanas', {edit:true});
 }
 // Cilnēm skaitītāju nav (funkcija saglabāta izsaukumu saderībai)
@@ -7126,7 +7182,7 @@ function stepIssues(n){
       compose.when === 'plan' && planError() ? planError() : ''].filter(Boolean);
     case 2: return selectedResp().length ? (recipients().length ? [] : ['Nevienam atlasītajam respondentam nav derīgas adreses pēc adrešu prioritātes.']) : ['Nav atlasīts neviens respondents.'];
     case 3: return currentTemplate() ? [] : ['Nav izvēlēts saturs.'];
-    case 5: return compose.esign.required && !compose.esign.signers.length ? ['Norādiet vismaz vienu parakstītāju.'] : [];
+    case 5: return compose.esign.required ? [compose.esign.signers.length ? '' : 'Norādiet vismaz vienu parakstītāju.', signVal('signer') ? '' : 'Norādiet parakstītāju vēstulē.', signVal('position') ? '' : 'Norādiet amatu vēstulē.'].filter(Boolean) : [];
     default: return [];
   }
 }
@@ -7141,6 +7197,8 @@ function stepFieldErrors(){
     '#c-resp-err': [2, selectedResp().length ? (recipients().length ? '' : 'Nevienam atlasītajam respondentam nav derīgas adreses pēc adrešu prioritātes.') : 'Nav atlasīts neviens respondents.'],
     '#c-content-err': [3, currentTemplate() ? '' : 'Izvēlieties saturu.'],
     '#c-signers-err': [5, compose.esign.required && !compose.esign.signers.length ? 'Norādiet vismaz vienu parakstītāju.' : ''],
+    '#cs-signer-err': [5, compose.esign.required && !signVal('signer') ? 'Norādiet parakstītāju.' : ''],
+    '#cs-position-err': [5, compose.esign.required && !signVal('position') ? 'Norādiet amatu.' : ''],
   };
 }
 function renderStepErrors(){
@@ -7218,6 +7276,7 @@ function renderStepNav(n){
 }
 function setStep(n){
   compose.step = Math.min(WIZ_STEPS.length, Math.max(1, n));
+  wlSnapNow(); renderDraftInfo();
   renderWizard(); saveDraft();
   window.scrollTo({top:0});
   const h = $(`#wiz [data-wstep="${compose.step}"] h2`); if (h){ h.setAttribute('tabindex', '-1'); h.focus({preventScroll:true}); }
@@ -7328,6 +7387,7 @@ function renderSign(){
   $('#cs-signer').value = compose.sign.signer || (fs && fs.name) || state.layout.signer || '';
   $('#cs-position').value = compose.sign.position || (fs && fs.role) || state.layout.position || '';
   $('#c-sign-reset').hidden = !(compose.sign.signer || compose.sign.position);
+  $('#c-sign-letter').hidden = noSign();
 }
 // Adrešu prioritātes izvēle un kopsavilkums
 function renderPrio(){
@@ -7663,7 +7723,7 @@ function openLetterCustomizer(rid){
 // ---------- 4. solis "Pārbaude": automātiskās pārbaudes ----------
 // mainīgie: neaizpildītie un nezināmie lauki
 function varIssues(t, recs){
-  const keys = usedVars(templateText(t, 'epasts')), unknown = keys.filter(k => !FIELD_KEYS.has(k)), missing = new Set();
+  const keys = usedVars(templateText(t, 'epasts')).filter(k => !(noSign() && SIGN_VARS.includes(k))), unknown = keys.filter(k => !FIELD_KEYS.has(k)), missing = new Set();
   (recs.length ? recs : [null]).forEach(r => {
     const ctx = ctxFor(r);
     keys.forEach(k => { if (FIELD_KEYS.has(k) && !ctx[k] && (r || !['vārds', 'uzņēmums', 'pārskatu_tabula'].includes(k))) missing.add(k); });
@@ -7675,7 +7735,7 @@ function autoChecks(){
   const t = currentTemplate(), recs = recipients(), out = [];
   if (!t) return [{key:'content', label:'Saturs', ok:false, n:0, detail:'nav izvēlēts', step:3}];
   // personalizācijas lauki: vēstules ar neaizpildītiem laukiem (nezināmi lauki – visās vēstulēs)
-  const vi = varIssues(t, recs), vBad = [...vi.missing, ...vi.unknown], keys = usedVars(templateText(t, 'epasts')).filter(k => FIELD_KEYS.has(k));
+  const vi = varIssues(t, recs), vBad = [...vi.missing, ...vi.unknown], keys = usedVars(templateText(t, 'epasts')).filter(k => FIELD_KEYS.has(k) && !(noSign() && SIGN_VARS.includes(k)));
   const vIds = vi.unknown.length ? recs.map(r => r.id) : recs.filter(r => { const c = ctxFor(r); return keys.some(k => !c[k]); }).map(r => r.id);
   out.push({key:'vars', label:'Personalizācijas lauki', ok:!vBad.length, n:vBad.length ? vIds.length : keys.length, ids:vIds,
     detail:vBad.length ? `nav aizpildīti: ${vBad.map(k => '{' + k + '}').join(', ')}` : `${keys.length} ${plural(keys.length, 'lauks aizpildīts', 'lauki aizpildīti')} visās vēstulēs`, step:3});
@@ -7778,9 +7838,9 @@ function renderApproval(){
     <dt>Respondenti</dt><dd><b>${selectedResp().length}</b> atlasīti · <b>${recs.length}</b> ${plural(recs.length, 'vēstule', 'vēstules')}</dd>
     <dt>Kanāli</dt><dd>${Object.keys(byCh).length ? Object.entries(byCh).map(([ch, c]) => `${esc(CHANNELS[ch] || ch)} <b>${c}</b>`).join(' · ') : '—'}</dd>
     <dt>Nosūtīšana</dt><dd>${esc(whenText())}</dd>
+    <dt>Paraksts</dt><dd id="c-sum-sign">${esc(signSumText())}</dd>
     <dt>Pārbaude</dt><dd>${reviewLine()}</dd>
     <dt>Tālāk</dt><dd>${esc(next)}</dd>`;
-  $('#c-wl').innerHTML = wlBox(composeWork());
 }
 // noslēdzošā poga: nodot saskaņošanai / nodot parakstīšanai / ieplānot / nosūtīt
 async function finalSubmit(){
@@ -7809,7 +7869,6 @@ function renderApvNote(){
   ro.hidden = !apvLocked();
   ro.innerHTML = apvLocked() ? `<div><b>Gaida saskaņojumu</b> – skats tikai lasīšanai. Nodeva: ${esc(a.by || '—')}, ${esc(fmtStamp(a.at))} · saskaņotājs: <b>${esc(ap ? ap.name : '—')}</b></div>
     ${a.comment ? `<div class="apv-cmt">Komentārs: “${esc(a.comment)}”</div>` : ''}
-    <div class="wl-wrap">${wlBox(composeWork())}</div>
     <div class="apv-acts"><button type="button" class="btn btn-primary" data-action="apv-approve">${ICON.check}Saskaņot</button><button type="button" class="btn btn-secondary" data-action="apv-return">Atgriezt labošanai</button></div>` : '';
 }
 async function apvApprove(){
@@ -8221,6 +8280,8 @@ function campRows(){
   ];
   return rows.sort((a, b) => String(b.ts || '').localeCompare(String(a.ts || '')));
 }
+// darba laiks (aktīvais): melnraksts – no melnraksta, ieplānotā – no momentuzņēmuma, nosūtītā – no laika uzskaites ierakstiem
+const campWlMs = x => { const wl = x.type === 'draft' ? (x.d || {}).wl : x.type === 'planned' ? ((x.pl || {}).snap || {}).wl : (state.campWl || {})[x.id]; return wl && wl.active > 0 ? wl.active : null; };
 // rezultāts: šaura josla un īss teksts "3/5 · 1 ✕" (pilnais teksts – padomā)
 function campResult(x){
   if (x.type !== 'sent' || x.sign) return '<span class="muted">—</span>';
@@ -8243,6 +8304,7 @@ function campSortVal(x, k){
     return x.d.when === 'plan' && x.d.sel && x.d.sel.sendDate ? `${x.d.sel.sendDate}T${x.d.sendTime || '00:00'}` : null;
   }
   if (k === 'res') return x.type === 'sent' && !x.sign && x.n ? x.ok / x.n : null;
+  if (k === 'wl') return campWlMs(x);
   return null;
 }
 function campSorted(list){
@@ -8285,13 +8347,14 @@ function renderCampaigns(){
       <td>${esc(x.when)}</td>
       <td><span class="cst ${CAMP_ST[x.st].cls}"><i aria-hidden="true"></i>${CAMP_ST[x.st].label}</span></td>
       <td>${campResult(x)}</td>
+      <td class="num c-wl">${campWlMs(x) != null ? esc(fmtDur(campWlMs(x))) : '<span class="muted">—</span>'}</td>
       <td class="actions"><button type="button" class="icon-btn camp-more" data-action="camp-menu" data-id="${esc(x.key)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.name)}" title="Darbības">${ICON.dots}</button></td></tr>`;
   const page = list.slice(0, ui.campLimit), shown = page.length, html = page.map(row).join('');
-  $('#camp-tbody').innerHTML = !rows.length ? `<tr><td colspan="7"><div class="empty">${ICON.send}<h3>Vēl nav nevienas kampaņas</h3>
+  $('#camp-tbody').innerHTML = !rows.length ? `<tr><td colspan="8"><div class="empty">${ICON.send}<h3>Vēl nav nevienas kampaņas</h3>
       <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></td></tr>`
-    : !list.length ? (campFiltOn() ? `<tr><td colspan="7"><div class="empty"><h3>Nav kampaņu, kas atbilst filtriem</h3>
+    : !list.length ? (campFiltOn() ? `<tr><td colspan="8"><div class="empty"><h3>Nav kampaņu, kas atbilst filtriem</h3>
       <button type="button" class="btn btn-secondary" data-action="camp-filt-clear">Notīrīt filtrus</button></div></td></tr>`
-      : `<tr><td colspan="7"><div class="empty"><h3>Nav kampaņu sadaļā “${esc((CAMP_SUBS.find(([k]) => k === ui.campSub) || [])[1])}”</h3>
+      : `<tr><td colspan="8"><div class="empty"><h3>Nav kampaņu sadaļā “${esc((CAMP_SUBS.find(([k]) => k === ui.campSub) || [])[1])}”</h3>
       <p>Izvēlieties citu sadaļu vai izveidojiet jaunu kampaņu.</p></div></td></tr>`)
     : html;
   $('#camp-foot').innerHTML = list.length ? `<span>Rādītas <b>${shown}</b> no <b>${list.length}</b></span>${shown < list.length ? `<button type="button" class="btn btn-secondary btn-sm" data-action="camp-more-rows">Rādīt vairāk</button>` : ''}` : '';
@@ -8571,43 +8634,69 @@ function histDetail(x){
 }
 // Klasifikācijas noteikumi (tikai lasīšanai): abas specifikācijas tabulas
 function openRulesModal(){
-  const tbl = (ch, h) => `<div class="table-wrap"><table class="rep-table rules-table"><thead><tr><th>${h}</th><th>Tips</th><th>Automātiskā rīcība</th></tr></thead>
-    <tbody>${Object.values(RULES).filter(r => r.ch === ch).map(r => `<tr><td>${esc(r.reason)}</td><td><span class="pill ${NDR_TYPES[r.type].cls}">${esc(NDR_TYPES[r.type].label)}</span></td><td>${esc(r.action)}</td></tr>`).join('')}</tbody></table></div>`;
+  // normālā plūsma (starpstatuss un gala statuss – nav kļūdu tipi): tips "—", tabulas augšā; kļūdu rindas zemāk
+  const flow = r => r.type === 'interim' || r.type === 'final';
+  const stCell = r => { const k = RULE_MSG[r.type]; return `${msgBadge(k)}${k === 'next' ? `<small class="rule-alt">ja adreses beigušās → ${msgBadge('fail')}</small>` : ''}`; };
+  const row = r => `<tr${flow(r) ? ' class="is-flow"' : ''}><td>${esc(r.reason)}</td><td>${flow(r) ? '<span class="muted">—</span>' : `<span class="pill ${NDR_TYPES[r.type].cls}">${esc(NDR_TYPES[r.type].label)}</span>`}</td><td>${stCell(r)}</td><td>${esc(r.action)}</td></tr>`;
+  const tbl = (ch, h) => { const rs = Object.values(RULES).filter(r => r.ch === ch), fl = rs.filter(flow), er = rs.filter(r => !flow(r));
+    return `<div class="table-wrap"><table class="rep-table rules-table"><thead><tr><th>${h}</th><th>Tips</th><th>Ziņas statuss</th><th>Automātiskā rīcība</th></tr></thead>
+    <tbody>${fl.length ? `<tr class="rule-grp"><th colspan="4">Normālā plūsma</th></tr>${fl.map(row).join('')}<tr class="rule-grp"><th colspan="4">Kļūdas</th></tr>` : ''}${er.map(row).join('')}</tbody></table></div>`; };
   openModal({title:'Klasifikācijas noteikumi', wide:true, content:`<div class="rules-modal">
     <p>Paziņojumi par neveiksmīgu piegādi – e-pasta atgriezeniskie paziņojumi (NDR) un e-adreses (DIV) kļūdu statusi – tiek automātiski piesaistīti sākotnējai ziņai un klasificēti pēc tipa. NDR klasificē MI (prototipā – simulācija ar ticamību), DIV statusi ir strukturēti.</p>
     <ul class="hint"><li>pagaidu kļūda – atkārtots mēģinājums;</li><li>pastāvīga kļūda – adrese atzīmēta kā nederīga, sūtīšana uz nākamo adresi;</li><li>sūtītāja puses kļūda (bloķēšana, noraidījums) – paziņojums administratoram;</li><li>automātiska atbilde (prombūtne) – statuss netiek mainīts;</li><li>neatpazīts – nodots darbiniekam manuālai izskatīšanai.</li></ul>
+    <p>Klasifikācija nosaka automātisko rīcību un ziņas statusu, kas redzams Vēsturē. Ja tiek izmantota nākamā adrese, iepriekšējā adrese tiek atzīmēta kā nederīga.</p>
     <h3>E-pasts</h3>${tbl('epasts', 'Iemesls')}
     <h3>E-adrese</h3>${tbl('eadrese', 'Pašreizējais statuss')}
     <p class="hint">Noteikumi ir tikai lasīšanai.</p></div>`, actions:[{label:'Aizvērt', cls:'btn-primary'}]});
 }
 // Sūtīšanas vēsture (F16, F17): katra vēstule ar statusu; izvēršot – statusu ceļš un mēģinājumi
-// apakšsadaļas: Visas · Gaida parakstu · Procesā · Piegādātas · Neveiksmīgas · Manuāla pārbaude · Administratoram
-const HIST_SUBS = [
-  ['', 'Visas', () => true],
-  ['paraksts', 'Gaida parakstu', x => x.status === 'paraksts'],
-  ['proc', 'Procesā', x => ST_PROC.includes(x.status)],
-  ['piegadats', 'Piegādātas', x => x.status === 'piegadats'],
-  ['fail', 'Neveiksmīgas', x => ST_FAIL.includes(x.status)],
-  ['manual', 'Manuāla pārbaude', x => (x.status === 'kluda' || x.status === 'manuali') && !x.reviewed],
-  ['admin', 'Administratoram', x => x.status === 'admin' && !x.adminResolved],
-];
+// Ziņas statuss – viena vārdnīca: Vēstures tabula, statusu filtrs un "Klasifikācijas noteikumi" (kolonna "Ziņas statuss")
+// ("Gaida parakstu" – pirms nosūtīšanas, nav klasifikācijas rezultāts)
+const HIST_FINAL = {
+  sign:{label:'Gaida parakstu',              cls:'hs-sign'},
+  proc:{label:'Piegāde procesā',             cls:'hs-proc'},
+  wait:{label:'Gaida atkārtojumu',           cls:'hs-wait'},
+  next:{label:'Pārsūtīts uz nākamo adresi',  cls:'hs-next'},
+  ok:  {label:'Piegādāts',                   cls:'hs-ok'},
+  fail:{label:'Nepiegādāts',                 cls:'hs-fail'},
+  held:{label:'Aizturēts',                   cls:'hs-held'},
+  man: {label:'Manuālai izskatīšanai',       cls:'hs-man'},
+};
+// klasifikācijas tips → ziņas statuss (pastāvīgai kļūdai: ja adreses beigušās – "Nepiegādāts")
+const RULE_MSG = {perm:'next', config:'next', temp:'wait', content:'wait', sender:'held', none:'ok', manual:'man', interim:'proc', final:'ok'};
+const lastNdrOf = x => ndrsOf(x).filter(n => n.rule && RULES[n.rule]).pop() || null;
+function histFinal(x){
+  if (x.status === 'paraksts') return 'sign';
+  if (x.status === 'piegadats') return 'ok';
+  if (x.status === 'admin') return 'held';
+  if (x.status === 'manuali') return x.reviewed ? 'fail' : 'man';
+  if (x.status === 'kluda') return 'fail';
+  // procesā: pēdējā klasifikācija nosaka, vai vēstule pārsūtīta uz nākamo adresi vai gaida atkārtojumu
+  const n = lastNdrOf(x), m = n ? RULE_MSG[ruleOf(n.rule).type] : '';
+  if (m === 'next' || m === 'wait') return m;
+  return x.status === 'atkartots' ? 'wait' : 'proc';
+}
+const msgBadge = (k, tag = 'span') => `<${tag} class="cst ${HIST_FINAL[k].cls}"><i aria-hidden="true"></i>${esc(HIST_FINAL[k].label)}</${tag}>`;
+// statusa padoms: klasifikācija un iemesls, mēģinājums (piem., "Īslaicīgs: pastkaste pilna · mēģinājums 1/3")
+function histStTip(x){
+  const all = (x.attempts || []).filter(a => attKind(a) !== 'skip'), past = all.filter(a => a.at && Date.parse(a.at) <= Date.now()).length;
+  const att = all.length ? ` · mēģinājums ${Math.max(1, Math.min(past, all.length))}/${all.length}` : '';
+  const n = lastNdrOf(x), f = histFinal(x);
+  if (f === 'sign') return 'Gaida parakstu – vēl nav nosūtīta';
+  if (n && f !== 'ok'){ const r = ruleOf(n.rule), t = NDR_TYPES[r.type] || {label:r.type}; return `${r.type === 'interim' || r.type === 'final' ? 'Statuss' : t.label}: ${r.reason.charAt(0).toLowerCase() + r.reason.slice(1)}${att}`; }
+  if (f === 'ok') return `Nav kļūda: ${x.channel === 'eadrese' ? 'saņēmēja pieņemts' : 'piegādāts'}${n && ruleOf(n.rule).type === 'none' ? ` (${ruleOf(n.rule).reason.toLowerCase()})` : ''}${att}`;
+  if (f === 'fail') return `Pastāvīgs: visas adreses izsmeltas${att}`;
+  return `${HIST_FINAL[f].label}${att}`;
+}
+// apakšsadaļas (statusu filtrs) – tieši tie paši ziņas statusi kā tabulā un klasifikācijas noteikumos
+const HIST_SUBS = [['', 'Visas', () => true], ...Object.keys(HIST_FINAL).map(k => [k, HIST_FINAL[k].label, x => histFinal(x) === k])];
 // vēstules apsekojumu kodi (pēc tās pienākumiem), piem., "1-DSA, 1-C"
 const dutyRepMap = () => new Map((state.duties || []).map(d => [d.id, d.reportId]));
 const sentCodes = (xs, dm = dutyRepMap()) => [...new Set(xs.flatMap(x => (x.duties || []).map(id => dm.get(id)).filter(Boolean)))].map(id => (repById(id) || {}).code).filter(Boolean).join(', ');
 const histSubFn = k => (HIST_SUBS.find(x => x[0] === k) || HIST_SUBS[0])[2];
-// sūtītāja puses kļūdu saraksts (Administratoram)
-function adminListHtml(list){
-  return `<div class="card"><p class="hint" style="padding:12px 14px 0;margin:0">Sūtītāja puses kļūdas (bloķēts kā surogātpasts, autentifikācijas kļūda, Noraidīts DIV). Adreses netiek mainītas, vēstules netiek sūtītas atkārtoti.</p>
-    <div class="table-wrap"><table class="hl-table admin-list"><thead><tr><th>Laiks</th><th>Adresāts</th><th>Kampaņa</th><th>Kanāls un adrese</th><th>Klasifikācija</th><th>Paziņojums</th><th><span class="sr-only">Darbības</span></th></tr></thead>
-    <tbody>${list.slice(0, ui.histLimit).map(x => { const n = ndrsOf(x).filter(y => ruleOf(y.rule).type === 'sender').pop() || {};
-      return `<tr><td style="white-space:nowrap">${esc(fmtT(n.at || x.statusAt))}</td><td>${respLink(x.respondentId, x.recipient)}</td><td>${esc(x.sessionName || `Kampaņa Nr. ${x.batch}`)}<span class="cell-sub">Nr. ${x.batch}</span></td>
-        <td><span class="pill pill-ch">${CHANNELS[x.channel]}</span><span class="cell-sub mono">${esc(addrShort(x.addrType || ''))}: ${esc(x.address)}</span></td>
-        <td>${n.rule ? rulePills(n) : ''}</td><td><code class="tl-code">${esc(n.text || '')}</code></td>
-        <td class="actions"><button type="button" class="btn btn-secondary btn-sm" data-action="hist-resolve" data-id="${x.id}">Atzīmēt kā atrisinātu</button></td></tr>`; }).join('')}</tbody></table></div></div>`;
-}
+// atskaitēm: darba rindas (gaida manuālu pārbaudi; neatrisinātas sūtītāja puses kļūdas)
+const isManualQ = x => (x.status === 'kluda' || x.status === 'manuali') && !x.reviewed, isAdminQ = x => x.status === 'admin' && !x.adminResolved;
 // gala statuss tabulā (detaļās – visi starpstatusi)
-const HIST_FINAL = {ok:{label:'Piegādāta', cls:'hs-ok'}, fail:{label:'Neveiksmīga', cls:'hs-fail'}, sign:{label:'Gaida parakstu', cls:'hs-sign'}, proc:{label:'Procesā', cls:'hs-proc'}, man:{label:'Manuāla pārbaude', cls:'hs-man'}};
-const histFinal = x => x.status === 'paraksts' ? 'sign' : x.status === 'piegadats' ? 'ok' : (x.status === 'kluda' || x.status === 'manuali') && !x.reviewed ? 'man' : ST_FAIL.includes(x.status) ? 'fail' : 'proc';
 // kolonnas un kārtošana (kā kampaņu sarakstā): 1. klikšķis – augoši, 2. – dilstoši, 3. – noklusējums (jaunākās augšā)
 const HIST_COLS = [['name', 'Adresāts'], ['camp', 'Kampaņa'], ['st', 'Statuss'], ['ch', 'Kanāls'], ['at', 'Nosūtīts']];
 ui.histSort = {k:'', dir:0};
@@ -8673,19 +8762,14 @@ function renderSent(){
       <button type="button" class="btn btn-primary btn-sm" data-action="camp-sign" data-id="${b}">Parakstīt</button></div>`; }).join('');
   $('#hist-body').innerHTML = !all.length ? `<div class="card"><div class="empty">${ICON.inbox}<h3>Vēl nav nosūtītu vēstuļu</h3>
       <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></div>`
-    : !list.length ? `<div class="card"><div class="empty">${h.status === 'paraksts' && !active
-        ? '<h3>Nav vēstuļu, kas gaida parakstu</h3>'
-        : h.status === 'manual' && !active ? '<h3>Nav vēstuļu, kas gaida manuālu pārbaudi</h3>'
-        : h.status === 'admin' && !active ? '<h3>Nav neatrisinātu sūtītāja puses kļūdu</h3>'
-        : '<h3>Nekas netika atrasts</h3>'}</div></div>`
-    : h.status === 'admin' ? adminListHtml(list)
+    : !list.length ? `<div class="card"><div class="empty">${h.status && !active ? `<h3>Nav vēstuļu ar statusu “${esc(HIST_FINAL[h.status].label)}”</h3>` : '<h3>Nekas netika atrasts</h3>'}</div></div>`
     : histCampInfo(h.camp) + signBars + `<div class="card"><div class="table-wrap camp-scroll hist-scroll" id="hist-scroll"><table class="camp-table hist-table">
       <thead><tr>${HIST_COLS.map(([k, l]) => `<th aria-sort="none"><button type="button" class="th-sort" data-hsort="${k}">${l}<span class="sort-ic" aria-hidden="true">↕</span></button></th>`).join('')}<th class="actions"><span class="sr-only">Darbības</span></th></tr></thead>
       <tbody>${sorted.slice(0, ui.histLimit).map(x => { const op = ui.histRow.has(x.id), f = HIST_FINAL[histFinal(x)];
         return `<tr class="hist-row ${op ? 'is-open' : ''} ${ui.newIds.has(x.id) ? 'is-new' : ''}" data-hrow="${x.id}">
           <td><span class="hist-name" title="${esc(x.recipient)}">${respLink(x.respondentId, x.recipient)}</span></td>
           <td><span class="hist-camp" title="${esc(x.sessionName || `Kampaņa Nr. ${x.batch}`)}">${esc(x.sessionName || `Kampaņa Nr. ${x.batch}`)}</span></td>
-          <td><button type="button" class="cst hist-st ${f.cls}" data-action="hist-row" data-id="${x.id}" aria-expanded="${op}" title="Detaļas: adrese, mēģinājumi, starpstatusi, NDR/DIV">${'<i aria-hidden="true"></i>'}${f.label}</button></td>
+          <td><button type="button" class="cst hist-st ${f.cls}" data-action="hist-row" data-id="${x.id}" aria-expanded="${op}" title="${esc(histStTip(x))}\nKlikšķis – detaļas: adrese, mēģinājumi, starpstatusi, NDR/DIV">${'<i aria-hidden="true"></i>'}${f.label}</button></td>
           <td>${esc(CHANNELS[x.channel] || '')}</td>
           <td>${esc(fmtDateTime(x.sentAt))}</td>
           <td class="actions"><button type="button" class="icon-btn camp-more" data-action="hist-menu" data-id="${x.id}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.recipient)}" title="Darbības">${ICON.dots}</button></td></tr>
@@ -8697,7 +8781,7 @@ function renderSent(){
     if (nb && rec){ campMenuBtn = nb; nb.setAttribute('aria-expanded', 'true'); $('#cm-menu').innerHTML = histMenuItems(rec); } else closeCampMenu();
   }
   // admin sarakstam – skaits zem tabulas (galvenajai tabulai skaits un "Rādīt vairāk" ir tabulas apakšā)
-  $('#hist-foot').textContent = all.length && h.status === 'admin' && list.length ? `${list.length} ${plural(list.length, 'vēstule', 'vēstules')}${list.length > ui.histLimit ? ` · rādītas ${ui.histLimit}` : ''}` : '';
+  $('#hist-foot').textContent = '';
 }
 // atlasītās kampaņas informācija vēsturē (darba laiks; sarakstā laiks netiek rādīts)
 function histCampInfo(batch){
@@ -8855,7 +8939,7 @@ function reportView(xs){
     const nd = xs.flatMap(x => ndrsOf(x).map(n => ({...n, x})));
     const byRule = ndrByRule(nd), byType = ndrByType(nd);
     const byRoute = Object.entries(NDR_ROUTES).map(([k, l]) => ({label:l, v:nd.filter(n => ruleOf(n.rule).route === k).length})).filter(r => r.v);
-    const failed = xs.filter(x => ST_FAIL.includes(x.status)), manualN = xs.filter(histSubFn('manual')).length, adminN = xs.filter(histSubFn('admin')).length;
+    const failed = xs.filter(x => ST_FAIL.includes(x.status)), manualN = xs.filter(isManualQ).length, adminN = xs.filter(isAdminQ).length;
     const head = ['Laiks', 'Respondents', 'Kampaņa', 'Kanāls un adrese', 'Iemesls', 'Tips', 'Klasifikācija', 'Automātiskā rīcība', 'Vēstules statuss'];
     const stTxt = x => STATUSES[x.status].label + (STATUSES[x.status].next ? ` → ${STATUSES[x.status].next}` : '') + (x.reviewed ? ' · izskatīta' : '') + (x.adminResolved ? ' · atrisināta' : '');
     const rows = nd.sort((a, b) => String(b.at).localeCompare(String(a.at))).map(n => { const r = ruleOf(n.rule), t = NDR_TYPES[r.type];
@@ -8997,7 +9081,7 @@ function aiSummary(xs){
   if (top) out.push(`Biežākais NDR/DIV iemesls – ${top.label.toLowerCase()} (${top.v} no ${nd.length}); automātiskā rīcība: ${RULES[top.k].action.toLowerCase()}.`);
   const rs = xs.filter(isRetried), rOk = rs.filter(x => ['piegadats', 'nosutits', 'div_pienemts', 'piegade'].includes(x.status)).length;
   if (rs.length) out.push(`Atkārtota nosūtīšana bija nepieciešama ${rs.length} ${plural(rs.length, 'vēstulei', 'vēstulēm')}; ${rOk} no tām pēc atkārtojuma bija veiksmīgas.`);
-  const pend = xs.filter(histSubFn('manual')).length, sign = xs.filter(x => x.status === 'paraksts').length;
+  const pend = xs.filter(isManualQ).length, sign = xs.filter(x => x.status === 'paraksts').length;
   if (pend || sign) out.push([pend ? `Manuālu pārbaudi gaida ${pend} ${plural(pend, 'neveiksmīga vēstule', 'neveiksmīgas vēstules')}` : '', sign ? `parakstu gaida ${sign} ${plural(sign, 'vēstule', 'vēstules')}` : ''].filter(Boolean).join('; ') + '.');
   return out;
 }
@@ -9027,7 +9111,7 @@ function aiSummaryMain(xs){
   const kinds = [...groupBy(xs.filter(isSent), x => x.sessionKind)].sort((a, b) => b[1].length - a[1].length);
   if (kinds.length) out.push(`Visvairāk ziņu nosūtīts kampaņās “${SESS_LABELS[kinds[0][0]] || 'Cits'}” (${kinds[0][1].length}, ${pct(kinds[0][1].length, k.sent)}%).`);
   const nd = xs.flatMap(ndrsOf);
-  const top = topRule(nd), man = xs.filter(histSubFn('manual')).length;
+  const top = topRule(nd), man = xs.filter(isManualQ).length;
   if (top) out.push(`Biežākais NDR/DIV iemesls – ${top.label.toLowerCase()} (${pct(top.v, nd.length)}% paziņojumu)${man ? `; manuālu pārbaudi prasa ${man} ${plural(man, 'ziņa', 'ziņas')}` : ''}.`);
   return out.slice(0, 4);
 }
@@ -9146,7 +9230,7 @@ const actions = {
   'wiz-go': id => { if (apvLocked()) return; if (+id > 1 && !selCanGo()){ if (compose.step !== 1) setStep(1); toast('Vispirms veiciet atlasi.', true); const b = $('#c-sel-btn'); if (b) b.focus(); return; } if (+id > compose.step){ markTried(compose.step); if (fzBlocks() || acBlocks(+id)) return; } setStep(+id); },
   'wiz-prev': () => setStep(compose.step - 1),
   'wiz-next': () => { if (compose.step === 1 && !selCanGo()) return; if (compose.step === 4) return reviewContinue(); if (compose.step === 5) return finalSubmit(); markTried(compose.step); if (fzBlocks() || acBlocks(compose.step + 1)) return; setStep(compose.step + 1); },
-  'wiz-save': () => { markTried(compose.step); flushDraft(true); renderWizard(); toast(`Melnraksts “${compose.name}” saglabāts.`); },
+  'wiz-save': () => { markTried(compose.step); wlSnapNow(); flushDraft(true); renderWizard(); toast(`Melnraksts “${compose.name}” saglabāts.`); },
   'c-customize': id => openLetterCustomizer(id),
   'c-uncustom': id => { delete compose.custom[id]; renderComposeList(); renderComposePreview(); toast('Vēstule atjaunota atbilstoši kampaņas saturam.'); },
   'camp-sign': id => signBatch(id),
@@ -9158,7 +9242,8 @@ const actions = {
     compose.content = null; compose.index = 0; renderComposePreview();
     const b = $('#c-content .content-opt'); if (b) b.focus();
   },
-  'c-sign-reset': () => { compose.sign = {signer:'', position:''}; renderSign(); renderComposePreview(); },
+  'wl-pop': () => { if ($('#wl-pop').hidden) showWlPop(); else if (ui.wlPopHover) ui.wlPopHover = false; else hideWlPop(); },
+  'c-sign-reset': () => { compose.sign = {signer:'', position:''}; renderWizard(); renderComposePreview(); },
   'c-restart': async () => {
     const ok = await confirmDialog({title:'Dzēst melnrakstu?', okLabel:'Dzēst', danger:true,
       message:`Kampaņas <b>${esc(compose.name)}</b> melnraksts (respondentu atlase, saturs, paraksts un adreses) tiks dzēsts.`});
@@ -9482,6 +9567,7 @@ $$('[data-sign]').forEach(inp => inp.addEventListener('input', () => {
   const k = inp.dataset.sign, v = inp.value.trim();
   compose.sign[k] = v === (state.layout[k] || '') ? '' : v;
   $('#c-sign-reset').hidden = !(compose.sign.signer || compose.sign.position);
+  const sd = $('#c-sum-sign'); if (sd) sd.textContent = signSumText();
   renderComposePreview();
 }));
 $$('[data-f]').forEach(inp => inp.addEventListener('input', () => { compose.f[inp.dataset.f] = inp.value.trim(); renderComposePreview(); }));
@@ -9498,6 +9584,10 @@ $('#c-prio').addEventListener('change', e => {
   compose.prioManual = true; compose.index = 0;
   renderPrio(); renderScopeResult(); renderComposeList(); renderComposePreview();
 });
+document.addEventListener('mouseover', e => { if (e.target.closest && e.target.closest('#c-wl-mini') && $('#wl-pop').hidden){ showWlPop(); ui.wlPopHover = true; } });
+document.addEventListener('click', e => { if (!$('#wl-pop').hidden && !e.target.closest('#wl-pop, #c-wl-mini')) hideWlPop(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#wl-pop').hidden){ hideWlPop(); const b = $('#c-wl-mini'); if (b) b.focus(); } });
+window.addEventListener('scroll', () => hideWlPop(), {passive:true});
 // Manuālā e-pasta ievade (kampaņā un respondenta kartītē): Enter = Saglabāt
 document.addEventListener('keydown', e => {
   const inp = e.target.closest && e.target.closest('input[data-e3]');
@@ -9995,7 +10085,7 @@ $('#c-esign').addEventListener('click', e => {
   const b = e.target.closest('[data-esign]');
   if (!b) return;
   compose.esign.required = b.dataset.esign === '1';
-  renderSign(); renderComposePreview();
+  renderWizard(); renderComposePreview();
 });
 $('#c-esign-mode').addEventListener('click', e => {
   const b = e.target.closest('[data-emode]');
@@ -10007,7 +10097,7 @@ $('#c-signers').addEventListener('change', e => {
   if (!id) return;
   const es = compose.esign;
   es.signers = e.target.checked ? [...es.signers.filter(x => x !== id), id] : es.signers.filter(x => x !== id);
-  renderSign(); renderComposePreview();
+  renderWizard(); renderComposePreview();
   const inp = $(`#c-signers [data-signer="${id}"]`); if (inp) inp.focus();
 });
 $('#c-pvch').addEventListener('click', e => {
