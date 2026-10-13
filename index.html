@@ -1872,10 +1872,17 @@ h1 .tip,h2 .tip,h3 .tip,h4 .tip{vertical-align:middle;margin-left:6px}
 .subtab:hover{color:var(--primary-dark)}
 .subtab[aria-selected="true"]{color:var(--primary-darker);border-bottom-color:var(--primary)}
 .subtab .count{background:var(--primary-50);color:var(--primary-dark);border:1px solid var(--primary-200);font-size:var(--fs-xs);padding:0 7px;border-radius:var(--radius-lg);line-height:18px}
-.sag-group{margin-bottom:12px}
-.sag-group button{display:inline-flex;align-items:center;gap:7px}
-.sag-group .count{background:var(--primary-50);color:var(--primary-dark);border:1px solid var(--primary-200);font-size:var(--fs-xs);padding:0 7px;border-radius:var(--radius-lg);line-height:18px}
-.sag-group button[aria-pressed="true"] .count{background:var(--surface);color:var(--primary-darker);border-color:var(--surface)}
+/* veidņu un sagatavju tabulas (kā kampaņu saraksts) */
+.tpl-table th:first-child,.sag-table th:first-child{width:auto}
+.tpl-table .camp-name,.sag-table .camp-name{max-width:min(290px,20vw)}
+.tpl-table td:nth-child(3),.tpl-table td:nth-child(4),.sag-table td:nth-child(4){max-width:170px;overflow:hidden;text-overflow:ellipsis}
+.ver-cell{gap:3px}
+.ver-cell{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-sm)}
+.ver-cell .v-ok{color:var(--success)} .ver-cell .v-no{color:var(--icon-muted)} .ver-cell .v-sep{color:var(--icon-muted)}
+.sag-file{display:inline-block;max-width:125px;overflow:hidden;text-overflow:ellipsis;vertical-align:bottom;font-size:var(--fs-sm)}
+.sag-nm{display:flex;align-items:center;gap:6px;min-width:0}
+.sag-nm .pill-tag{flex:none}
+.sag-table .sag-nm .camp-name{max-width:min(230px,16vw)}
 .sag-toolbar select{width:auto;flex:0 1 200px;min-width:0}
 .sag-toolbar .btn-primary{margin-left:auto}
 .sag-aud{margin-bottom:22px}
@@ -2161,15 +2168,26 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         <button class="btn btn-primary" data-action="tpl-new"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Jauna veidne</button>
       </div>
     </div>
-    <div class="aud-cards" role="tablist" aria-label="Adresātu grupa" id="tpl-aud"></div>
-    <div class="tpl-toolbar">
-      <label class="search"><span class="sr-only">Meklēt veidnes</span>
-        <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input type="search" id="tpl-search" placeholder="Meklēt veidnes pēc nosaukuma vai temata…">
-      </label>
-      <button type="button" class="link-btn" id="tpl-toggle-all" data-action="blk-all" aria-controls="tpl-blocks" aria-expanded="false">Izvērst visus</button>
+    <div class="subnav camp-sub" id="tpl-sub" role="group" aria-label="Adresātu grupa"></div>
+    <div class="flt" id="tpl-filters" role="search" aria-label="Veidņu filtri">
+      <div class="flt-row">
+        <label class="search flt-search"><span class="sr-only">Meklēt pēc veidnes nosaukuma vai temata</span>
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="tpl-search" placeholder="Meklēt pēc nosaukuma vai temata…">
+        </label>
+        <label class="cf-f cf-kind"><span class="sr-only">Kategorija</span><select id="tpl-cat"></select></label>
+        <button type="button" class="flt-adv-btn" id="tpl-adv-btn" aria-expanded="false" aria-controls="tpl-adv"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Papildu filtri<span class="flt-n" id="tpl-adv-n"></span><span class="flt-caret" aria-hidden="true">▾</span></button>
+      </div>
+      <div class="flt-adv" id="tpl-adv" hidden>
+        <label class="flt-f"><span class="sr-only">Vēstules veids</span><select id="tpl-kind"></select></label>
+      </div>
     </div>
-    <div id="tpl-blocks" role="tabpanel"></div>
+    <div class="card">
+      <div class="table-wrap camp-scroll" id="tpl-scroll"><table class="camp-table tpl-table">
+        <thead><tr id="tpl-head"></tr></thead>
+        <tbody id="tpl-tbody"></tbody></table></div>
+      <div class="table-foot camp-foot" id="tpl-foot"></div>
+    </div>
     </div>
     <div id="tpl-view-sag" hidden>
       <div class="page-head">
@@ -2177,20 +2195,26 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <button type="button" class="btn btn-ghost btn-sm back-link" data-action="sag-back">← Atpakaļ uz veidnēm</button>
           <h1>Sagataves <span class="tip" tabindex="0" role="note" aria-label="Atkārtoti izmantojami materiāli, no kuriem veido vai papildina veidnes: e-pasta satura šabloni un pielikumu sagataves." data-tip="Atkārtoti izmantojami materiāli, no kuriem veido vai papildina veidnes: e-pasta satura šabloni un pielikumu sagataves.">i</span></h1>
         </div>
+        <div class="toolbar"><button type="button" class="btn btn-primary" id="sag-add"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Pievienot sagatavi</button></div>
       </div>
-      <div class="seg sag-group" id="sag-group" role="group" aria-label="Sagatavju grupa"></div>
-      <div class="tpl-toolbar sag-toolbar">
-        <label class="search"><span class="sr-only">Meklēt sagataves</span>
-          <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="sag-search" placeholder="Meklēt sagataves…">
-        </label>
-        <select id="sag-aud" aria-label="Adresāts"></select>
-        <select id="sag-cat" aria-label="Kategorija"></select>
-        <select id="sag-kind" aria-label="Sagataves veids"></select>
-        <button type="button" class="btn btn-primary" id="sag-add"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Pievienot sagatavi</button>
+      <div class="subnav camp-sub sag-group" id="sag-group" role="group" aria-label="Sagatavju grupa"></div>
+      <div class="flt sag-toolbar" id="sag-filters" role="search" aria-label="Sagatavju filtri">
+        <div class="flt-row">
+          <label class="search flt-search"><span class="sr-only">Meklēt sagataves</span>
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" id="sag-search" placeholder="Meklēt sagataves…">
+          </label>
+          <label class="cf-f cf-kind"><span class="sr-only">Adresāts</span><select id="sag-aud" aria-label="Adresāts"></select></label>
+          <label class="cf-f cf-kind"><span class="sr-only">Kategorija</span><select id="sag-cat" aria-label="Kategorija"></select></label>
+          <label class="cf-f cf-kind"><span class="sr-only">Sagataves veids</span><select id="sag-kind" aria-label="Sagataves veids"></select></label>
+        </div>
       </div>
-      <div class="att-count" id="sag-count" aria-live="polite"></div>
-      <div id="sag-body"></div>
+      <div class="card">
+        <div class="table-wrap camp-scroll" id="sag-scroll"><table class="camp-table sag-table">
+          <thead><tr id="sag-head"></tr></thead>
+          <tbody id="sag-body"></tbody></table></div>
+        <div class="table-foot camp-foot att-count" id="sag-count" aria-live="polite"></div>
+      </div>
     </div>
   </section>
 
@@ -2565,7 +2589,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 79</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 80</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4044,22 +4068,16 @@ function newSession(full){
 }
 const ui = {campView:'list', camp:{q:'', kind:'', status:'', creator:'', quick:'', from:'', to:''}, campRaw:{}, hist:{q:'', kind:'', status:'', camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histRow:new Set(), histLimit:50, cardId:'',
   rep:{from:'', to:'', camp:'', kind:'', ch:'', aud:'', sort:{key:'date', dir:'desc'}},
-  tplView:'veidnes', sagGroup:'mail', sag:{q:'', aud:'', cat:'', lang:''}, newIds:new Set(), tplAud:'fiz', tplSearch:'', attSearch:'', attAud:'', attCat:'', attLang:''};
+  tplView:'veidnes', sagGroup:'mail', sag:{q:'', aud:'', cat:'', lang:''}, newIds:new Set(), tplAud:'', tplSearch:'', tplCat:'', tplKind:'', tplSort:{k:'', dir:0}, tplLimit:20, sagSort:{k:'', dir:0}, sagLimit:20, attSearch:'', attAud:'', attCat:'', attLang:''};
 // Sakļautie kategoriju bloki (tikai šajā kampaņā – pēc noklusējuma visi izvērsti)
 // Izvērstie kategoriju bloki (pēc noklusējuma visi sakļauti)
-ui.tplOpen = new Set();
 // mainīgo vērtības: rediģējamā vērtība un izvērstie apsekojumu bloki
 ui.varEdit = ''; ui.varOpen = new Set();
 // saglabātais filtrs, kas lietots pēdējais
 // "Pēc respondenta": izvērsti papildu filtri
 ui.respMore = false;
 ui.tab = '';
-const blockKey = (aud, cat) => aud + ':' + cat;
 // Sakļauj visus blokus; ja ir meklēšana – izvērš blokus ar rezultātiem
-function resetBlocks(){
-  const q = ui.tplSearch.trim();
-  ui.tplOpen = new Set(q ? CATS.filter(c => state.templates.some(t => t.aud === ui.tplAud && t.cat === c.key && tplMatches(t, q))).map(c => blockKey(ui.tplAud, c.key)) : []);
-}
 let previewDocs = [];
 
 // {termiņš} un {sākums} – no respondenta atlasītajiem pienākumiem (pārskata un perioda dati);
@@ -5071,7 +5089,7 @@ function showTab(name, opts = {}){
     if (b.dataset.tab === name){ b.setAttribute('aria-current', 'page'); b.scrollIntoView({block:'nearest', inline:'nearest'}); }
     else b.removeAttribute('aria-current');
   });
-  if (name === 'veidnes'){ if (ui.tab !== 'veidnes') resetBlocks(); renderTemplates(); if (ui.tplView === 'sagataves') renderSagataves(); }
+  if (name === 'veidnes'){ renderTemplates(); if (ui.tplView === 'sagataves') renderSagataves(); }
   if (name === 'kampanas'){
     if (ui.campView === 'edit' && !opts.edit) flushDraft();
     ui.campView = opts.edit ? 'edit' : 'list';
@@ -5115,67 +5133,78 @@ function tplMatches(t, q){
   if (!q) return true;
   return norm([t.name, t.subject, ...Object.values(t.tr || {}).map(v => v.subject)].join(' ')).includes(norm(q));
 }
-function tplCard(t){
-  const isDoc = t.kind === 'pielikums' && t.doc && !t.main;
-  const vars = usedVars(t.subject + t.body + (isDoc ? t.doc.title + t.doc.body + t.doc.fileName : ''));
-  const excerpt = htmlToText(isDoc ? t.doc.body : t.body);
-  return `<article class="card tpl-card ${isDoc ? 'k-doc' : ''}">
-    <div class="card-pad">
-      <div class="pills">${catPill(t.cat)}${kindPill(t.kind)}${verOnly(t) ? `<span class="pill pill-veronly" title="${esc(verOnly(t) === 'Tikai e-pasts' ? 'Nav eAdreses versijas' : 'Nav e-pasta versijas')}">${ICON.warn}${esc(verOnly(t))}</span>` : ''}</div>
-      <h2>${esc(t.name)}</h2>
-      <div class="tpl-subject">Temats: <b>${esc(t.subject)}</b></div>
-      ${t.kind === 'pielikums' ? `<div class="tpl-subject">Pielikums: <b>${esc(mainNameOf(t))}</b></div>` : ''}
-      <div class="tpl-excerpt">${esc(excerpt)}</div>
-      <div>${vars.length ? vars.map(v => `<span class="var-chip">{${esc(v)}}</span>`).join('') : '<span class="hint">Lauki netiek lietoti</span>'}</div>
-      ${(t.files || []).length ? `<div class="hint">${ICON.clip} Papildu pielikumi: ${t.files.map(f => esc(f.name)).join(', ')}</div>` : ''}
-      <div class="tpl-meta">Pēdējās izmaiņas: ${fmtDateTime(t.updated)}</div>
-    </div>
-    <div class="tpl-actions">
-      <button class="btn btn-ghost btn-sm" data-action="tpl-edit" data-id="${t.id}">${ICON.edit}Rediģēt</button>
-      <button class="btn btn-danger-ghost btn-sm" data-action="tpl-delete" data-id="${t.id}">${ICON.trash}Dzēst</button>
-      <button class="btn btn-secondary btn-sm" data-action="tpl-use" data-id="${t.id}">${ICON.send}Izmantot</button>
-    </div>
-  </article>`;
-}
 // Skats "Veidnes" vai atsevišķs skats "Sagataves" (poga augšējā labajā stūrī; "← Atpakaļ uz veidnēm")
 function renderTplViews(){
   $('#tpl-view-veidnes').hidden = ui.tplView !== 'veidnes';
   $('#tpl-view-sag').hidden = ui.tplView !== 'sagataves';
 }
+// Veidņu saraksts (kā kampaņu saraksts): adresātu filtra pogas, meklēšana, kategorija, papildu filtri un tabula ar kārtošanu
+const TPL_SUBS = [['', 'Visas'], ['fiz', 'Fiziskām personām'], ['jur', 'Juridiskām personām'], ['visi', 'Cita komunikācija']];
+const TPL_COLS = [['name', 'Veidne'], ['aud', 'Adresāts'], ['cat', 'Kategorija'], ['kind', 'Vēstules veids'], ['ver', 'Versijas'], ['upd', 'Pēdējās izmaiņas']];
+const TPL_PAGE = 20;
+const tplVers = t => { const v = verOnly(t); return {ep:v !== 'Tikai eAdrese', ea:v !== 'Tikai e-pasts'}; };
+const verCell = (v, title) => `<span class="ver-cell" title="${esc(title)}"><span class="${v.ep ? 'v-ok' : 'v-no'}">E-pasts ${v.ep ? '✓' : '–'}</span><span class="v-sep" aria-hidden="true">/</span><span class="${v.ea ? 'v-ok' : 'v-no'}">eAdrese ${v.ea ? '✓' : '–'}</span></span>`;
+// kārtošana: 1. klikšķis – augoši, 2. – dilstoši, 3. – noklusējums (adresāts → kategorija, kā agrāk blokos)
+const sortHead = (cols, st, attr) => cols.map(([k, l]) => { const on = st.k === k && st.dir;
+  return `<th aria-sort="${on ? (st.dir > 0 ? 'ascending' : 'descending') : 'none'}"><button type="button" class="th-sort${on ? ' is-on' : ''}" data-${attr}="${k}" title="${on ? (st.dir > 0 ? 'Kārtots augoši – klikšķis: dilstoši' : 'Kārtots dilstoši – klikšķis: noklusējuma secība') : 'Kārtot augoši'}">${l}<span class="sort-ic" aria-hidden="true">${on ? (st.dir > 0 ? '↑' : '↓') : '↕'}</span></button></th>`; }).join('') + '<th class="actions"><span class="sr-only">Darbības</span></th>';
+function sortList(list, st, val){
+  if (!st.k || !st.dir) return list;
+  return list.map((x, i) => ({x, i, v:val(x, st.k)})).sort((a, b) => {
+    if (a.v == null || b.v == null) return a.v == null && b.v == null ? a.i - b.i : a.v == null ? 1 : -1;
+    const c = typeof a.v === 'number' ? a.v - b.v : st.k === 'upd' ? String(a.v).localeCompare(String(b.v)) : String(a.v).localeCompare(String(b.v), 'lv', {sensitivity:'base'});
+    return c ? c * st.dir : a.i - b.i;
+  }).map(o => o.x);
+}
+const nextSort = (st, k) => st.k !== k ? {k, dir:1} : st.dir === 1 ? {k, dir:-1} : {k:'', dir:0};
+const AUD_ORD = Object.keys(AUDS), CAT_ORD = CATS.map(c => c.key);
+const defOrder = list => list.map((x, i) => ({x, i})).sort((a, b) => (AUD_ORD.indexOf(a.x.aud) - AUD_ORD.indexOf(b.x.aud)) || (CAT_ORD.indexOf(a.x.cat) - CAT_ORD.indexOf(b.x.cat)) || a.i - b.i).map(o => o.x);
+function tplSortVal(t, k){
+  if (k === 'name') return t.name || '';
+  if (k === 'aud') return AUDS[t.aud] ? AUDS[t.aud].group : '';
+  if (k === 'cat') return (CAT_BY_KEY[t.cat] || {}).one || t.cat || '';
+  if (k === 'kind') return KINDS[t.kind] || '';
+  if (k === 'ver') { const v = tplVers(t); return v.ep && v.ea ? 0 : v.ep ? 1 : 2; }
+  if (k === 'upd') return t.updated || null;
+  return null;
+}
+const tplFiltOn = () => !!(ui.tplSearch.trim() || ui.tplCat || ui.tplKind);
+function tplMenuItems(t){
+  const it = (action, icon, label, cls = '') => `<button type="button" role="menuitem" tabindex="-1" class="${cls}" data-action="${action}" data-id="${esc(t.id)}">${ICON[icon]}${esc(label)}</button>`;
+  return [it('tpl-edit', 'edit', 'Rediģēt'), it('tpl-use', 'send', 'Izmantot kampaņā'), it('tpl-copy', 'copy', 'Kopēt'), '<hr>', it('tpl-delete', 'trash', 'Dzēst', 'danger')].join('');
+}
 function renderTemplates(){
   renderTplViews();
-  // 1. līmenis – adresātu cilnes
-  const tplWord = n => n === 0 ? 'veidņu' : plural(n, 'veidne', 'veidnes');
-  $('#tpl-aud').innerHTML = Object.entries(AUDS).map(([k, a]) => {
-    const n = state.templates.filter(t => t.aud === k).length;
-    return `<button type="button" class="aud-card" role="tab" id="aud-${k}" aria-selected="${k === ui.tplAud}" aria-controls="tpl-blocks" tabindex="${k === ui.tplAud ? 0 : -1}" data-action="aud" data-aud="${k}"${a.sub ? ` title="${esc(a.sub)}"` : ''}>
-      <span class="aud-icon">${ICON[a.icon]}</span>
-      <span class="aud-text"><b>${esc(a.tab)}</b></span>
-      <span class="aud-count">${n}<small>${tplWord(n)}</small></span></button>`;
-  }).join('');
-  $('#tpl-blocks').setAttribute('aria-labelledby', 'aud-' + ui.tplAud);
-  // 2. līmenis – kategoriju bloki
+  if (!TPL_SUBS.some(([k]) => k === ui.tplAud)) ui.tplAud = '';
+  $('#tpl-sub').innerHTML = subnavHtml(TPL_SUBS, ui.tplAud, 'tsub');
+  $('#tpl-cat').innerHTML = optList(CATS.map(c => [c.key, c.label]), ui.tplCat, 'Visas kategorijas');
+  $('#tpl-kind').innerHTML = optList(Object.entries(KINDS), ui.tplKind, 'Visi vēstules veidi');
+  if (document.activeElement !== $('#tpl-search')) $('#tpl-search').value = ui.tplSearch;
+  $('#tpl-adv-n').textContent = ui.tplKind ? ' (1)' : '';
   const q = ui.tplSearch.trim();
-  const inAud = state.templates.filter(t => t.aud === ui.tplAud);
-  const allOpen = CATS.every(c => ui.tplOpen.has(blockKey(ui.tplAud, c.key)));
-  $('#tpl-toggle-all').textContent = allOpen ? 'Sakļaut visus' : 'Izvērst visus';
-  $('#tpl-toggle-all').setAttribute('aria-expanded', allOpen);
-  $('#tpl-blocks').innerHTML = CATS.map(c => {
-    const all = inAud.filter(t => t.cat === c.key), shown = all.filter(t => tplMatches(t, q));
-    const key = blockKey(ui.tplAud, c.key), open = ui.tplOpen.has(key);
-    const addBtn = (cls, label) => `<button type="button" class="btn ${cls} btn-sm" data-action="tpl-new" data-aud="${ui.tplAud}" data-cat="${c.key}" title="Pievienot veidni: ${esc(c.label)}">${ICON.plus}<span class="lbl">${label}</span></button>`;
-    const body = shown.length ? `<div class="tpl-grid">${shown.map(tplCard).join('')}</div>`
-      : (q && all.length) ? `<div class="block-empty">Nav veidņu, kas atbilst meklēšanai “${esc(q)}”.</div>`
-      : `<div class="block-empty">${ICON.file}<span>Šajā kategorijā vēl nav veidņu</span>${addBtn('btn-secondary', 'Pievienot veidni')}</div>`;
-    return `<section class="tpl-block" aria-labelledby="blk-${c.key}">
-      <div class="tpl-block-head">
-        <button type="button" class="block-toggle" id="blk-${c.key}" aria-expanded="${open}" aria-controls="blkb-${c.key}" data-action="blk-toggle" data-key="${key}">
-          ${ICON.chev}<span>${esc(c.label)}</span><span class="count" aria-label="Veidņu skaits">${q ? `${shown.length} no ${all.length}` : all.length}</span></button>
-        ${addBtn('btn-ghost', 'Pievienot veidni')}
-      </div>
-      <div class="tpl-block-body" id="blkb-${c.key}" ${open ? '' : 'hidden'}>${body}</div>
-    </section>`;
-  }).join('');
+  const list = sortList(defOrder(state.templates.filter(t => (!ui.tplAud || t.aud === ui.tplAud) && (!ui.tplCat || t.cat === ui.tplCat) && (!ui.tplKind || t.kind === ui.tplKind) && tplMatches(t, q))), ui.tplSort, tplSortVal);
+  $('#tpl-head').innerHTML = sortHead(TPL_COLS, ui.tplSort, 'tsort');
+  const row = t => { const v = tplVers(t), a = AUDS[t.aud] || AUDS.fiz;
+    return `<tr class="camp-row tpl-row" data-action="tpl-edit" data-id="${esc(t.id)}">
+      <td><button type="button" class="camp-name" data-action="tpl-edit" data-id="${esc(t.id)}" title="${esc(t.name + '\nTemats: ' + (t.subject || '—'))}">${esc(t.name)}</button></td>
+      <td><span class="ck">${ICON[a.icon]}${esc(a.group)}</span></td>
+      <td>${esc((CAT_BY_KEY[t.cat] || {}).one || t.cat)}</td>
+      <td><span class="ck" title="${esc(KINDS[t.kind] || '')}">${t.kind === 'pielikums' ? ICON.doc : ICON.mail}${esc((KINDS[t.kind] || '').replace(/\s*\(PDF\)$/, ''))}</span></td>
+      <td>${verCell(v, v.ep && v.ea ? 'Ir e-pasta un eAdreses versija' : v.ep ? 'Nav eAdreses versijas' : 'Nav e-pasta versijas')}</td>
+      <td title="${esc(t.updated ? fmtDateTime(t.updated) : '')}">${esc(t.updated ? fmtShortIso(t.updated) : '—')}</td>
+      <td class="actions"><button type="button" class="icon-btn camp-more" data-action="tpl-menu" data-id="${esc(t.id)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(t.name)}" title="Darbības">${ICON.dots}</button></td></tr>`; };
+  const page = list.slice(0, ui.tplLimit);
+  $('#tpl-tbody').innerHTML = !state.templates.length ? `<tr><td colspan="7"><div class="empty">${ICON.file}<h3>Vēl nav nevienas veidnes</h3><button class="btn btn-primary" data-action="tpl-new">${ICON.plus}Jauna veidne</button></div></td></tr>`
+    : !list.length ? `<tr><td colspan="7"><div class="empty"><h3>${tplFiltOn() ? 'Nav veidņu, kas atbilst filtriem' : `Nav veidņu sadaļā “${esc((TPL_SUBS.find(([k]) => k === ui.tplAud) || [])[1])}”`}</h3>${tplFiltOn() ? '<button type="button" class="btn btn-secondary" data-action="tpl-filt-clear">Notīrīt filtrus</button>' : `<button class="btn btn-primary" data-action="tpl-new" data-aud="${ui.tplAud}">${ICON.plus}Jauna veidne</button>`}</div></td></tr>`
+    : page.map(row).join('');
+  $('#tpl-foot').innerHTML = list.length ? `<span>Rādītas <b>${page.length}</b> no <b>${list.length}</b></span>${page.length < list.length ? '<button type="button" class="btn btn-secondary btn-sm" data-action="tpl-more-rows">Rādīt vairāk</button>' : ''}` : '';
+}
+// veidnes kopija (jauna veidne ar nosaukumu "… (kopija)"; darba laiks netiek kopēts)
+function copyTemplate(id){
+  const t = state.templates.find(x => x.id === id); if (!t) return;
+  const nt = {...clone(t), id:'t' + uid(), name:`${t.name} (kopija)`, updated:new Date().toISOString()};
+  delete nt.wl;
+  state.templates.splice(state.templates.indexOf(t) + 1, 0, nt);
+  save(); renderTemplates(); toast(`Izveidota veidnes kopija “${nt.name}”.`);
 }
 
 const defaultDoc = () => ({title:'', fileName:'CSP_vestule_{dok_nr}.pdf', banner:true, conf:true, info:true,
@@ -5272,7 +5301,7 @@ function openTemplateEditor(id, preset = {}){
   const existing = sess ? null : state.templates.find(t => t.id === id);
   const base = sess ? sess.tpl : existing;
   const baseTpl = sess && sess.baseId ? state.templates.find(x => x.id === sess.baseId) : null;
-  const newAud = AUDS[preset.aud] ? preset.aud : ui.tplAud;
+  const newAud = AUDS[preset.aud] ? preset.aud : AUDS[ui.tplAud] ? ui.tplAud : 'fiz';
   // jaunai veidnei vēstules veids vēl nav izvēlēts
   const t = base ? clone(base) : {aud:newAud, cat:CAT_BY_KEY[preset.cat] ? preset.cat : 'uzaicinajums', kind:'', name:'', subject:'',
     body:blankBody(newAud), doc:null, main:null, files:[], tr:{}, ea:{subject:'', body:''}};
@@ -5429,9 +5458,8 @@ function openTemplateEditor(id, preset = {}){
         else state.templates.push({id:'t' + uid(), ...rec});
         // sagatavošanas laiks: summējas pa redaktora sesijām; kopējais ilgums – līdz pēdējai saglabāšanai
         { const saved = existing || state.templates[state.templates.length - 1]; saved.wl = wlMergeTpl(existing && existing.wl, ui.tplWl && ui.tplWl.wl, rec.updated); if (ui.tplWl) ui.tplWl.wl = wlNew(); }
-        // parāda veidni tās cilnē un izvērstā blokā
-        if (ui.tplAud !== rec.aud){ ui.tplAud = rec.aud; resetBlocks(); }
-        ui.tplOpen.add(blockKey(rec.aud, rec.cat));
+        // saglabātā veidne paliek redzama sarakstā (adresātu filtrs pārslēdzas uz tās adresātu)
+        if (ui.tplAud && ui.tplAud !== rec.aud) ui.tplAud = rec.aud;
         ui.tplView = 'veidnes';
         save(); renderTemplates(); renderCounts(); close();
         const w = verWarn(rec);
@@ -5479,7 +5507,6 @@ function openTemplateEditor(id, preset = {}){
         const rec = {...clone(current()), name, cat:$('#sv-cat').value, updated:new Date().toISOString()};
         const nt = {id:'t' + uid(), ...rec};
         state.templates.push(nt);
-        ui.tplOpen.add(blockKey(rec.aud, rec.cat));
         save(); renderTemplates(); renderCounts();
         closeSub(); closeEditor();
         sess.onDone(rec, nt.id);
@@ -5956,8 +5983,8 @@ function renderAttFilters(){
   $('#sag-kind').hidden = ui.sagGroup !== 'att';
   $('#sag-search').placeholder = ui.sagGroup === 'att' ? 'Meklēt pēc nosaukuma, apraksta vai faila…' : 'Meklēt pēc nosaukuma vai teksta…';
   const nM = (state.mailSamples || []).length, nA = allAtts().length;
-  $('#sag-group').innerHTML = [['mail', 'E-pasta satura šabloni', nM, 'mail'], ['att', 'Pielikumu sagataves', nA, 'doc']].map(([k, l, n, ic]) =>
-    `<button type="button" data-sgroup="${k}" aria-pressed="${ui.sagGroup === k}">${ICON[ic]}${l} <span class="count">${n}</span></button>`).join('');
+  $('#sag-group').innerHTML = [['mail', 'E-pasta satura šabloni', nM], ['att', 'Pielikumu sagataves', nA]].map(([k, l, n]) =>
+    `<button type="button" data-sgroup="${k}" aria-pressed="${ui.sagGroup === k}" title="${n} ${plural(n, 'sagatave', 'sagataves')}">${l}</button>`).join('');
 }
 // E-pasta satura šablona kartīte
 // Veidnes, kas izveidotas no šablona
@@ -6009,20 +6036,56 @@ function attCard(a){
     </div>
   </article>`;
 }
-// Sadaļa "Sagataves": e-pasta satura šabloni vai pielikumu sagataves, sakārtotas pēc adresāta un kategorijas
+// Sadaļa "Sagataves": tāds pats izkārtojums kā veidnēm – grupas pogas, meklēšana un filtri, tabula ar kārtošanu
+const SAG_COLS = {mail:[['name', 'Sagatave'], ['aud', 'Adresāts'], ['cat', 'Kategorija'], ['ver', 'Versijas'], ['used', 'Veidnēs'], ['upd', 'Pēdējās izmaiņas']],
+  att:[['name', 'Sagatave'], ['kind', 'Veids'], ['aud', 'Adresāts'], ['cat', 'Kategorija'], ['file', 'Fails'], ['used', 'Veidnēs']]};
+function sagSortVal(x, k){
+  const att = ui.sagGroup === 'att';
+  if (k === 'name') return x.name || '';
+  if (k === 'aud') return AUDS[x.aud] ? AUDS[x.aud].group : null;
+  if (k === 'cat') return att ? ATT_CATS[x.cat] || ATT_CATS.cits : (CAT_BY_KEY[x.cat] || {}).one || '';
+  if (k === 'kind') return ATT_KINDS[attKindOf(x)] || '';
+  if (k === 'ver') { const v = msVerOnly(x); return !v ? 0 : v === 'Tikai e-pasts' ? 1 : 2; }
+  if (k === 'used') return (att ? tplsUsing(x.id) : tplsFromSample(x.id)).length;
+  if (k === 'file') return x.fileName || '';
+  if (k === 'upd') return x.updated || null;
+  return null;
+}
+function msMenuItems(x){
+  const it = (action, icon, label, cls = '') => `<button type="button" role="menuitem" tabindex="-1" class="${cls}" data-action="${action}" data-id="${esc(x.id)}">${ICON[icon]}${esc(label)}</button>`;
+  return [it('ms-edit', 'edit', 'Rediģēt'), it('ms-use', 'plus', 'Jauna veidne'), '<hr>', it('ms-delete', 'trash', 'Dzēst', 'danger')].join('');
+}
+function attMenuItems(a){
+  const it = (action, icon, label, cls = '') => `<button type="button" role="menuitem" tabindex="-1" class="${cls}" data-action="${action}" data-id="${esc(a.id)}">${ICON[icon]}${esc(label)}</button>`;
+  return [it('att-open', 'eye', 'Atvērt'), `<button type="button" role="menuitem" tabindex="-1" data-action="att-download" data-id="${esc(a.id)}">${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Lejupielādēt</button>`,
+    it('att-to-tpl', 'clip', 'Pievienot veidnei'), ...(a.lib ? [] : [it('att-edit', 'edit', 'Rediģēt'), '<hr>', it('att-delete', 'trash', 'Dzēst', 'danger')])].join('');
+}
 function renderSagataves(){
   renderTplViews();
   renderAttFilters();
-  const att = ui.sagGroup === 'att', all = att ? allAtts() : (state.mailSamples || []), list = all.filter(att ? attMatches : msMatches);
-  $('#sag-count').textContent = list.length === all.length ? `Kopā ${all.length} ${plural(all.length, 'sagatave', 'sagataves')}` : `Atrastas ${list.length} no ${all.length}`;
-  const groups = Object.keys(AUDS).map(ak => {
-    const inA = list.filter(x => x.aud === ak);
-    if (!inA.length) return '';
-    return `<section class="sag-aud"><h2 class="sag-aud-h">${ICON[AUDS[ak].icon]}${esc(AUDS[ak].tab)} <span class="count">${inA.length}</span></h2><div class="sag-cats">
-      ${CATS.map(c => { const items = inA.filter(x => x.cat === c.key); return items.length ? `<div class="sag-cat"><h3 class="sag-cat-h">${esc(c.label)} <span class="count">${items.length}</span></h3>
-        <div class="att-grid">${items.map(att ? attCard : msCard).join('')}</div></div>` : ''; }).join('')}</div></section>`;
-  }).join('');
-  $('#sag-body').innerHTML = groups || `<div class="empty">${ICON.file}<h3>Nav atrasta neviena sagatave</h3></div>`;
+  const att = ui.sagGroup === 'att', all = att ? allAtts() : (state.mailSamples || []);
+  const list = sortList(defOrder(all.filter(att ? attMatches : msMatches)), ui.sagSort, sagSortVal), page = list.slice(0, ui.sagLimit);
+  $('#sag-head').innerHTML = sortHead(SAG_COLS[ui.sagGroup], ui.sagSort, 'ssort');
+  const audCell = k => AUDS[k] ? `<span class="ck" title="${esc(attAudLabel(k))}">${ICON[AUDS[k].icon]}${esc(AUDS[k].group)}</span>` : '<span class="muted">—</span>';
+  const usedCell = xs => xs.length ? `<span title="${esc((att ? 'Pievienots veidnēm:\n' : 'Izmantots veidnēs:\n') + xs.map(t => t.name).join('\n'))}">${xs.length}</span>` : '<span class="muted">—</span>';
+  const tag = x => (att ? x.lib : x.builtin) ? '<span class="pill pill-tag" title="Iebūvēta sagatave">Sagatave</span>' : '';
+  const nameCell = (x, action) => `<td><span class="sag-nm"><button type="button" class="camp-name" data-action="${action}" data-id="${esc(x.id)}" title="${esc(x.name + (x.desc ? '\n' + x.desc : ''))}">${esc(x.name)}</button>${tag(x)}</span></td>`;
+  const mailRow = x => { const v = msVerOnly(x);
+    return `<tr class="camp-row sag-row" data-action="ms-edit" data-id="${esc(x.id)}">
+      ${nameCell(x, 'ms-edit')}
+      <td>${audCell(x.aud)}</td><td>${esc((CAT_BY_KEY[x.cat] || {}).one || x.cat)}</td>
+      <td>${verCell({ep:v !== 'Tikai eAdrese', ea:v !== 'Tikai e-pasts'}, !v ? 'Ir e-pasta un eAdreses versija' : v === 'Tikai e-pasts' ? 'Nav eAdreses versijas' : 'Nav e-pasta versijas')}</td>
+      <td>${usedCell(tplsFromSample(x.id))}</td>
+      <td title="${esc(x.updated ? fmtDateTime(x.updated) : '')}">${esc(x.updated ? fmtShortIso(x.updated) : '—')}</td>
+      <td class="actions"><button type="button" class="icon-btn camp-more" data-action="ms-menu" data-id="${esc(x.id)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.name)}" title="Darbības">${ICON.dots}</button></td></tr>`; };
+  const attRow = a => `<tr class="camp-row sag-row" data-action="att-open" data-id="${esc(a.id)}">
+      ${nameCell(a, 'att-open')}
+      <td>${esc(ATT_KINDS[attKindOf(a)] || '')}</td><td>${audCell(a.aud)}</td><td>${esc(ATT_CATS[a.cat] || ATT_CATS.cits)}</td>
+      <td><span class="sag-file mono" title="${esc(a.fileName)}">${esc(a.fileName)}</span> <span class="muted">${fmtSize(a.size)}</span></td>
+      <td>${usedCell(tplsUsing(a.id))}</td>
+      <td class="actions"><button type="button" class="icon-btn camp-more" data-action="att-menu" data-id="${esc(a.id)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(a.name)}" title="Darbības">${ICON.dots}</button></td></tr>`;
+  $('#sag-body').innerHTML = page.length ? page.map(att ? attRow : mailRow).join('') : `<tr><td colspan="7"><div class="empty">${ICON.file}<h3>Nav atrasta neviena sagatave</h3></div></td></tr>`;
+  $('#sag-count').innerHTML = `<span>${list.length === all.length ? `Kopā <b>${all.length}</b> ${plural(all.length, 'sagatave', 'sagataves')}` : `Atrastas <b>${list.length}</b> no <b>${all.length}</b>`}${page.length < list.length ? ` · rādītas <b>${page.length}</b>` : ''}</span>${page.length < list.length ? '<button type="button" class="btn btn-secondary btn-sm" data-action="sag-more-rows">Rādīt vairāk</button>' : ''}`;
 }
 const renderAttachments = renderSagataves;
 // E-pasta satura šablona pievienošana un rediģēšana: cilnes "E-pasts" / "eAdrese", priekšskatījums
@@ -8078,7 +8141,7 @@ function renderCampaigns(){
   }
 }
 const campByKey = key => campRows().find(x => x.key === key);
-$('.camp-table thead').addEventListener('click', e => {
+$('#camp-scroll .camp-table thead').addEventListener('click', e => {
   const b = e.target.closest('[data-csort]'); if (!b) return;
   const k = b.dataset.csort, cur = ui.campSort;
   ui.campSort = cur.k !== k ? {k, dir:1} : cur.dir === 1 ? {k, dir:-1} : {k:'', dir:0};
@@ -8109,9 +8172,16 @@ function closeCampMenu(focus){
   if (campMenuBtn){ campMenuBtn.setAttribute('aria-expanded', 'false'); if (focus && campMenuBtn.isConnected) campMenuBtn.focus(); }
   campMenuBtn = null;
 }
+const MENU_SRC = {
+  'hist-menu':{find:id => state.sent.find(y => y.id === id), items:x => histMenuItems(x), name:x => x.recipient},
+  'camp-menu':{find:id => campByKey(id), items:x => campMenuItems(x), name:x => x.name},
+  'tpl-menu':{find:id => state.templates.find(y => y.id === id), items:x => tplMenuItems(x), name:x => x.name},
+  'ms-menu':{find:id => (state.mailSamples || []).find(y => y.id === id), items:x => msMenuItems(x), name:x => x.name},
+  'att-menu':{find:id => allAtts().find(y => y.id === id), items:x => attMenuItems(x), name:x => x.name},
+};
 function openCampMenu(btn){
-  const hist = btn.dataset.action === 'hist-menu';
-  const x = hist ? state.sent.find(y => y.id === btn.dataset.id) : campByKey(btn.dataset.id); if (!x) return;
+  const src = MENU_SRC[btn.dataset.action] || MENU_SRC['camp-menu'];
+  const x = src.find(btn.dataset.id); if (!x) return;
   if (campMenuBtn === btn){ closeCampMenu(true); return; }
   closeCampMenu();
   let m = $('#cm-menu');
@@ -8124,8 +8194,8 @@ function openCampMenu(btn){
       else if (e.key === 'Escape' || e.key === 'Tab'){ e.preventDefault(); closeCampMenu(true); }
     });
   }
-  m.innerHTML = hist ? histMenuItems(x) : campMenuItems(x);
-  m.setAttribute('aria-label', `Darbības: ${hist ? x.recipient : x.name}`);
+  m.innerHTML = src.items(x);
+  m.setAttribute('aria-label', `Darbības: ${src.name(x)}`);
   m.hidden = false;
   campMenuBtn = btn; btn.setAttribute('aria-expanded', 'true');
   placeCampMenu();
@@ -8140,7 +8210,7 @@ function placeCampMenu(){
   m.style.left = Math.max(8, Math.min(r.right - w, innerWidth - w - 8)) + 'px';
   m.style.top = (r.bottom + 4 + h > innerHeight - 8 ? Math.max(8, r.top - h - 4) : r.bottom + 4) + 'px';
 }
-document.addEventListener('click', e => { if (campMenuBtn && !e.target.closest('#cm-menu') && e.target.closest('[data-action="camp-menu"], [data-action="hist-menu"]') !== campMenuBtn) closeCampMenu(); }, true);
+document.addEventListener('click', e => { if (campMenuBtn && !e.target.closest('#cm-menu') && e.target.closest('[data-action$="-menu"]') !== campMenuBtn) closeCampMenu(); }, true);
 window.addEventListener('resize', () => placeCampMenu());
 window.addEventListener('scroll', () => placeCampMenu(), true);
 // Rindas atvēršana: melnraksts – rediģēšanai, ieplānotā – pārskats, nosūtītā – sūtīšanas vēsturē
@@ -8876,18 +8946,13 @@ function openDocSrc(src){
    ===================================================================== */
 const actions = {
   'tpl-new': (id, el) => openTemplateEditor(null, {aud:el.dataset.aud, cat:el.dataset.cat}),
-  'aud': (id, el) => { ui.tplAud = el.dataset.aud; resetBlocks(); renderTemplates(); $('#aud-' + ui.tplAud).focus(); },
-  'blk-toggle': (id, el) => {
-    const k = el.dataset.key;
-    ui.tplOpen.has(k) ? ui.tplOpen.delete(k) : ui.tplOpen.add(k);
-    renderTemplates(); $('#' + el.id).focus();
-  },
-  'blk-all': () => {
-    const keys = CATS.map(c => blockKey(ui.tplAud, c.key));
-    const allOpen = keys.every(k => ui.tplOpen.has(k));
-    keys.forEach(k => allOpen ? ui.tplOpen.delete(k) : ui.tplOpen.add(k));
-    renderTemplates(); $('#tpl-toggle-all').focus();
-  },
+  'tpl-copy': id => copyTemplate(id),
+  'tpl-menu': (id, el) => openCampMenu(el),
+  'ms-menu': (id, el) => openCampMenu(el),
+  'att-menu': (id, el) => openCampMenu(el),
+  'tpl-more-rows': () => { ui.tplLimit += TPL_PAGE; renderTemplates(); },
+  'sag-more-rows': () => { ui.sagLimit += TPL_PAGE; renderSagataves(); },
+  'tpl-filt-clear': () => { ui.tplSearch = ''; ui.tplCat = ''; ui.tplKind = ''; ui.tplLimit = TPL_PAGE; renderTemplates(); $('#tpl-search').focus(); },
   'tpl-edit': id => openTemplateEditor(id),
   'att-new': () => openAttForm(),
   'ms-edit': id => openMailSampleForm(id),
@@ -9177,14 +9242,13 @@ $('#hist-body').addEventListener('click', e => {
   const tr = e.target.closest('tr.hist-row');
   if (tr) actions['hist-row'](tr.dataset.hrow);
 });
-$('#tpl-search').addEventListener('input', e => { ui.tplSearch = e.target.value; resetBlocks(); renderTemplates(); });
-// adresātu grupu kartītes – pārslēgšana ar bultiņām
-$('#tpl-aud').addEventListener('keydown', e => {
-  if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
-  const keys = Object.keys(AUDS), i = keys.indexOf(ui.tplAud);
-  ui.tplAud = keys[(i + (e.key === 'ArrowRight' ? 1 : keys.length - 1)) % keys.length];
-  renderTemplates(); $('#aud-' + ui.tplAud).focus();
-});
+$('#tpl-search').addEventListener('input', e => { ui.tplSearch = e.target.value; ui.tplLimit = TPL_PAGE; renderTemplates(); });
+$('#tpl-cat').addEventListener('change', e => { ui.tplCat = e.target.value; ui.tplLimit = TPL_PAGE; renderTemplates(); });
+$('#tpl-kind').addEventListener('change', e => { ui.tplKind = e.target.value; ui.tplLimit = TPL_PAGE; renderTemplates(); });
+$('#tpl-sub').addEventListener('click', e => { const b = e.target.closest('[data-tsub]'); if (!b) return; ui.tplAud = b.dataset.tsub; ui.tplLimit = TPL_PAGE; renderTemplates(); $(`#tpl-sub [data-tsub="${ui.tplAud}"]`).focus(); });
+$('#tpl-adv-btn').addEventListener('click', () => { const row = $('#tpl-adv'), b = $('#tpl-adv-btn'); row.hidden = !row.hidden; b.setAttribute('aria-expanded', String(!row.hidden)); if (!row.hidden) $('#tpl-kind').focus(); });
+$('#tpl-head').addEventListener('click', e => { const b = e.target.closest('[data-tsort]'); if (!b) return; const k = b.dataset.tsort; ui.tplSort = nextSort(ui.tplSort, k); renderTemplates(); const nb = $(`#tpl-head [data-tsort="${k}"]`); if (nb) nb.focus(); });
+$('#sag-head').addEventListener('click', e => { const b = e.target.closest('[data-ssort]'); if (!b) return; const k = b.dataset.ssort; ui.sagSort = nextSort(ui.sagSort, k); renderSagataves(); const nb = $(`#sag-head [data-ssort="${k}"]`); if (nb) nb.focus(); });
 $('#c-name').addEventListener('input', e => { compose.nameAuto = !e.target.value.trim(); compose.name = e.target.value.trim() || defaultSessionName(); $('#c-title').textContent = compose.name; setCrumb(); saveDraft(); });
 $('#c-name').addEventListener('blur', e => { e.target.value = compose.name; });
 // Kampaņas adresāts: nosaka piedāvātās veidnes un atlasa atbilstošos respondentus
@@ -9809,9 +9873,9 @@ const setTplView = v => { ui.tplView = v; v === 'veidnes' ? renderTemplates() : 
 $('#sag-group').addEventListener('click', e => {
   const b = e.target.closest('[data-sgroup]');
   if (!b || b.dataset.sgroup === ui.sagGroup) return;
-  ui.sagGroup = b.dataset.sgroup; renderSagataves();
+  ui.sagGroup = b.dataset.sgroup; ui.sagSort = {k:'', dir:0}; ui.sagLimit = TPL_PAGE; renderSagataves();
 });
-$('#sag-search').addEventListener('input', e => { ui.sag.q = e.target.value; renderSagataves(); });
+$('#sag-search').addEventListener('input', e => { ui.sag.q = e.target.value; ui.sagLimit = TPL_PAGE; renderSagataves(); });
 [['#sag-aud', 'aud'], ['#sag-cat', 'cat'], ['#sag-kind', 'kind']].forEach(([sel, k]) =>
   $(sel).addEventListener('change', e => { ui.sag[k] = e.target.value; renderSagataves(); }));
 $('#sag-add').addEventListener('click', () => ui.sagGroup === 'att' ? openAttForm() : openMailSampleForm());

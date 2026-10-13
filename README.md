@@ -56,7 +56,7 @@ Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
 - **Navigācijas ceļš:** "DELTA › Respondentu pārvaldība › Komunikācija › [cilne]".
 - **Apakšsadaļas** ir filtru pogas zem virsraksta (bez skaitītājiem):
   - Kampaņas: Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās. Atverot cilni, vienmēr aktīva ir "Visas";
-  - Veidnes: adresātu grupu kartītes (Fiziskām personām · Juridiskām personām · Cita komunikācija). "Sagataves" ir poga augšējā labajā stūrī pirms "Pastāvīgās daļas", un tā atver atsevišķu skatu ar pogu "← Atpakaļ uz veidnēm";
+  - Veidnes: adresāta filtru pogas (Visas · Fiziskām personām · Juridiskām personām · Cita komunikācija) tādā pašā stilā kā kampaņu statusa pogas. "Sagataves" ir poga augšējā labajā stūrī starp "Pastāvīgās daļas" un "+ Jauna veidne", un tā atver atsevišķu skatu ar grupu pogām "E-pasta satura šabloni" · "Pielikumu sagataves";
   - Sūtīšanas vēsture: Visas · Gaida parakstu · Procesā · Piegādātas · Neveiksmīgas · Manuāla pārbaude · Administratoram;
   - Atskaites: Nosūtīšanas kopsavilkums · Piegādes rezultāti · Neveiksmīgās ziņas · Atkārtotā nosūtīšana · Citi pārskati · Darba laika patēriņš.
 
@@ -93,24 +93,19 @@ Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA 
 
 ## Veidņu grupēšana
 
-Lapā "Veidnes" veidnes ir sagrupētas divos līmeņos.
+Cilnes "Veidnes" augšdaļa ir tādā pašā stilā kā cilnei "Kampaņas" (vienots izskats; virsraksts, pogas, filtru pogas, filtru rinda un tabula ir tajās pašās pozīcijās):
 
-**Izskats.** Augšējā labajā stūrī pogas secībā **[Pastāvīgās daļas] [Sagataves] [+ Jauna veidne]**: "Pastāvīgās daļas" – vienkārša pelēka teksta poga, "Sagataves" – izcelta otrā poga (gaiši tirkīzzaļš fons, tirkīzzaļš teksts un apmale, mapes ikona), "+ Jauna veidne" – galvenā poga pamatkrāsā (#297785). Adresātu grupu kartītes ir kompaktas un neitrālas (baltas, ar plānu pelēku apmali, tumši pelēks teksts, ikona pelēkā aplī, mazāks skaitlis); aktīvajai kartītei – tirkīzzaļš teksts un ikona, 3 px tirkīzzaļa apakšlīnija un ļoti gaišs tirkīzzaļš fons.
-
-
-1. **Adresāts.** Trīs kartītes ar veidņu skaitu: "Fiziskām personām" (atvērta pēc noklusējuma), "Juridiskām personām" un "Cita komunikācija" (jaukta komunikācija, piem., viena ziņa visiem). Jauktās komunikācijas veidnēm adresāts ir "Visi (jaukta komunikācija)", un tajās lieto lauku `{adresāts}`: uzņēmumam tas ir nosaukums, fiziskai personai – vārds. Šādu veidni var sūtīt reizē gan fiziskām, gan juridiskām personām.
-2. **Kategorija.** Katrā cilnē ir četri bloki: "Uzaicinājumi", "Atgādinājumi", "Informatīvie ziņojumi" un "Citi". Katram blokam ir veidņu skaits un teksta poga "+ Pievienot veidni" (bloku galvenēm nav krāsainas malas).
-
-Bloku sakļaušana:
-- **Pēc noklusējuma visi bloki ir sakļauti**, atverot lapu "Veidnes" vai pārslēdzot adresātu grupu. Redzams tikai virsraksts, veidņu skaits un poga "+ Pievienot veidni".
-- Uzklikšķinot uz bloka virsraksta, tas izvēršas, vēlreiz uzklikšķinot – sakļaujas. Bultiņa rāda stāvokli.
-- Saite **"Izvērst visus / Sakļaut visus"** blakus meklēšanas laukam izvērš vai sakļauj visus aktīvās grupas blokus.
-- Meklējot automātiski izvēršas bloki ar rezultātiem. Notīrot meklēšanu, visi bloki atkal ir sakļauti.
-- Pēc veidnes pievienošanas vai rediģēšanas izvēršas bloks, kurā tā atrodas.
+1. **Virsraksta rinda:** kreisajā pusē "Vēstuļu veidnes", labajā pusē pogas **[Pastāvīgās daļas] [Sagataves] [+ Jauna veidne]** – tādā pašā augstumā, fontā un atstarpēs kā "Komunikācijas kampaņas" ar "+ Jauna kampaņa". "Pastāvīgās daļas" – vienkārša pelēka teksta poga, "Sagataves" – otrā poga ar mapes ikonu, "+ Jauna veidne" – galvenā poga pamatkrāsā.
+2. **Adresāts – filtru pogas** (tādā pašā stilā kā kampaņu statusa pogas): **Visas** (pēc noklusējuma) · **Fiziskām personām** · **Juridiskām personām** · **Cita komunikācija** (jaukta komunikācija, piem., viena ziņa visiem). Jauktās komunikācijas veidnēm adresāts ir "Visi (jaukta komunikācija)", un tajās lieto lauku `{adresāts}`: uzņēmumam tas ir nosaukums, fiziskai personai – vārds. Šādu veidni var sūtīt reizē gan fiziskām, gan juridiskām personām. Agrākās lielās adresātu kartītes vairs netiek rādītas.
+3. **Filtru rinda** (kā kampaņās): meklēšana pēc veidnes nosaukuma vai temata, izvēlne **Kategorija** (Visas kategorijas / Uzaicinājumi / Atgādinājumi / Informatīvie ziņojumi / Citi) un poga **"Papildu filtri ▾"** ar izvēlni **Vēstules veids** (E-pasta saturs / Vēstule pielikumā (PDF)); aktīvo papildu filtru skaits redzams pogā, piem., "Papildu filtri (1)".
+4. **Veidņu tabula** (tādā pašā stilā kā kampaņu saraksts – tonēta galvene, bez vertikālām apmalēm, fiksēts augstums ar ritināšanu tabulas iekšpusē, galvene paliek redzama, tāds pats platums; apakšā "Rādītas N no M" un "Rādīt vairāk"): **Veidne** (nosaukums; uzbraucot – arī temats) | **Adresāts** | **Kategorija** | **Vēstules veids** | **Versijas** ("E-pasts ✓ / eAdrese ✓"; trūkstošā versija – pelēka "–") | **Pēdējās izmaiņas** | **⋯**.
+   - Kārtošana katrā kolonnā ar bultiņu (↑ augoši, ↓ dilstoši, 3. klikšķis – noklusējuma secība: pēc adresāta, tad kategorijas).
+   - Uzklikšķinot uz rindas, atveras veidnes redaktors. Izvēlnē **"⋯"**: Rediģēt, Izmantot kampaņā, **Kopēt** (jauna veidne "… (kopija)" ar to pašu saturu) un **Dzēst** (ar apstiprinājumu).
+   - Sakļaujamie kategoriju bloki un veidņu kartītes vairs netiek rādīti – kategorija ir tabulas kolonna un filtrs. Ja filtriem neatbilst neviena veidne – paziņojums un poga "Notīrīt filtrus".
+   - Pēc veidnes saglabāšanas, ja ir izvēlēts cits adresātu filtrs, tas pārslēdzas uz saglabātās veidnes adresātu.
 
 Papildus:
-- **Lauki veidnē.** Katrai veidnei ir lauki "Adresāts" (Iedzīvotāju statistika / Uzņēmumu statistika / Visi) un "Kategorija". Ja veidni pievieno no konkrēta bloka, abi lauki jau ir aizpildīti.
-- **Meklēšana.** Meklēšanas lauks filtrē aktīvās cilnes veidnes pēc nosaukuma un temata.
+- **Lauki veidnē.** Katrai veidnei ir lauki "Adresāts" (Iedzīvotāju statistika / Uzņēmumu statistika / Visi) un "Kategorija". Jaunai veidnei adresāts ir izvēlētā adresātu filtra adresāts ("Visas" – fiziskās personas).
 - **Sagatavošana.** Veidņu izvēlne ir sagrupēta pēc adresāta un kategorijas. Ja atzīmētie respondenti neatbilst veidnes adresātam, sistēma par to brīdina, un ar vienu klikšķi var atlasīt tikai atbilstošos.
 
 ## Vēstuļu veidnes
@@ -187,7 +182,9 @@ Abos veidos var lietot iepriekš definētus laukus. Tos ievieto ar izvēlni "+ I
 
 ## Sagataves
 
-Sagataves atver ar pogu **"Sagataves"** cilnes "Veidnes" augšējā labajā stūrī. Tās ir atsevišķā skatā ar pogu "← Atpakaļ uz veidnēm". Vecās saites `#sagataves` un `#pielikumi` atver šo skatu.
+Sagataves atver ar pogu **"Sagataves"** cilnes "Veidnes" augšējā labajā stūrī. Tās ir atsevišķā skatā ar pogu "← Atpakaļ uz veidnēm". Vecās saites `#sagataves` un `#pielikumi` atver šo skatu. Izkārtojums ir tāds pats kā veidņu sarakstam: virsraksta rindā labajā pusē poga **"+ Pievienot sagatavi"**; grupas kā **filtru pogas** ("E-pasta satura šabloni" · "Pielikumu sagataves"); filtru rinda – meklēšana, Adresāts, Kategorija (pielikumiem arī Sagataves veids); **tabula** ar kārtošanu katrā kolonnā un izvēlni "⋯":
+- e-pasta satura šabloni: Sagatave (iebūvētajām – birka "Sagatave") | Adresāts | Kategorija | Versijas | Veidnēs (cik veidņu izveidotas no šablona; uzbraucot – to nosaukumi) | Pēdējās izmaiņas; uzklikšķinot uz rindas – šablona redaktors; "⋯": Rediģēt, Jauna veidne, Dzēst;
+- pielikumu sagataves: Sagatave | Veids | Adresāts | Kategorija | Fails (nosaukums un izmērs) | Veidnēs; uzklikšķinot uz rindas – faila atvēršana; "⋯": Atvērt, Lejupielādēt, Pievienot veidnei, kā arī (pašu pievienotajām) Rediģēt un Dzēst.
 
 Sagataves ir divās grupās:
 - **E-pasta satura šabloni** – teksta sagataves, no kurām var sākt jaunu e-pasta veidni (poga "Jauna veidne" kartītē vai "No sagataves" redaktorā). Sākotnēji tie ir esošo e-pasta satura veidņu teksti un trīs papildu šabloni, lai katrai adresātu grupai katrā kategorijā ir vismaz viens. Šablonus var pievienot, rediģēt un dzēst.
