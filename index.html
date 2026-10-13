@@ -1041,10 +1041,16 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 /* tvēruma kopsavilkums – virsraksta rindā labajā pusē, mazs pelēks teksts, skaitļi pustreknā */
 /* atlases rezultāta rinda tvēruma apakšā – neitrāla (bez krāsām un ikonām) */
 /* tvēruma apakšā: poga "Veikt atlasi" (sekundāra) un atlases rezultāta lauks – neitrāls (bez krāsām un ikonām) */
-.sel-run{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px;margin-top:14px}
-.btn.sel-run-btn{flex:none;background:#fff;border-color:var(--primary);color:var(--primary)}
-.btn.sel-run-btn:hover:not(:disabled){background:var(--primary-50)}
-.scope-res{flex:1 1 320px;min-width:0;padding:8px 12px;border-radius:4px;background:#F5F5F5;color:#333;font-size:13px;line-height:1.45}
+/* "Kampaņas tvērums" – rāmis ar 3 kartēm un darbību joslu apakšā: pa kreisi atlases rezultāts, pa labi statusi un "Veikt atlasi" */
+.scope-frame{border:1px solid #D6E4E7;border-radius:var(--radius-lg);padding:12px}
+.scope-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px 16px;margin-top:12px;padding-top:10px;border-top:1px solid #D6E4E7}
+.scope-res{flex:1 1 280px;min-width:0;color:#333;font-size:13px;line-height:1.45}
+.scope-bar-r{display:flex;align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:6px 14px;margin-left:auto}
+.scope-bar .dvp-note{margin:0;gap:4px 8px;font-size:12px;color:var(--text-muted)}
+.scope-bar .dvp-sync{font-size:12px;padding:2px 0}
+/* "Veikt atlasi" – neitrāla, maza sekundāra poga (nav aizpildīta akcenta krāsā) */
+.btn.sel-run-btn{flex:none;height:32px;padding:0 14px;font-size:13px;font-weight:600;background:#fff;border:1px solid #A9C9CF;color:#1F5E69}
+.btn.sel-run-btn:hover:not(:disabled){background:#EEF5F6;border-color:#A9C9CF}
 .scope-res .sr-muted,.scope-res.is-stale{color:var(--text-muted)}
 .scope-res.is-stale s{color:var(--text-muted)}
 /* "Tālāk" bez veiktas atlases – neaktīva, bet ar padomu */
@@ -2323,6 +2329,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <div class="scope-head">
             <h3 class="sub-h scope-h">Kampaņas tvērums <span class="req">*</span><span class="tip" tabindex="0" role="note" aria-label="Atlase ir visu kartīšu kritēriju krustpunkts. Noklusējumā tiek atlasīti visi izvēlētā gada respondenti neatkarīgi no periodiskuma; izvēlnes un filtri atlasi sašaurina." data-tip="Atlase ir visu kartīšu kritēriju krustpunkts. Noklusējumā tiek atlasīti visi izvēlētā gada respondenti neatkarīgi no periodiskuma; izvēlnes un filtri atlasi sašaurina.">i</span></h3>
           </div>
+          <div class="scope-frame" id="c-scope-frame">
           <div class="scope-grid">
             <section class="scope-card" id="c-per-card" aria-labelledby="c-sc-per">
               <h4 id="c-sc-per"><span class="scope-ic" aria-hidden="true"></span>Pēc perioda</h4>
@@ -2378,16 +2385,16 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
               </div>
             </section>
           </div>
-          <div class="dvp-note" id="c-dvp"></div>
+          <div class="scope-bar" id="c-sel-run">
+            <div class="scope-res" id="c-scope-res" role="status" aria-live="polite"></div>
+            <div class="scope-bar-r"><span class="dvp-note" id="c-dvp"></span><button type="button" class="btn btn-secondary sel-run-btn" id="c-sel-btn" data-action="c-sel-run">Veikt atlasi</button></div>
+          </div>
+          </div>
           <h3 class="sub-h scope-h" id="c-prio-h">Adrešu prioritāte<span class="tip" tabindex="0" role="note" aria-label="Katram respondentam vēstule tiek sūtīta uz pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, tiek mēģināta nākamā. 1. prioritāte – obligāta, 2. un 3. var būt tukšas." data-tip="Katram respondentam vēstule tiek sūtīta uz pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, tiek mēģināta nākamā. 1. prioritāte – obligāta, 2. un 3. var būt tukšas.">i</span></h3>
           <div class="prio-row" id="c-prio" role="group" aria-labelledby="c-prio-h">
             <label class="prio-sel"><span class="prio-n" aria-hidden="true">1</span><select id="c-prio-0" data-prio="0" aria-label="1. prioritāte (obligāta)"></select></label><span class="prio-arr" aria-hidden="true">→</span>
             <label class="prio-sel"><span class="prio-n" aria-hidden="true">2</span><select id="c-prio-1" data-prio="1" aria-label="2. prioritāte"></select></label><span class="prio-arr" aria-hidden="true">→</span>
             <label class="prio-sel"><span class="prio-n" aria-hidden="true">3</span><select id="c-prio-2" data-prio="2" aria-label="3. prioritāte"></select></label>
-          </div>
-          <div class="sel-run" id="c-sel-run">
-            <button type="button" class="btn btn-secondary sel-run-btn" id="c-sel-btn" data-action="c-sel-run">Veikt atlasi</button>
-            <div class="scope-res" id="c-scope-res" role="status" aria-live="polite"></div>
           </div>
           <span class="err" id="c-scope-err" hidden></span>
           <h3 class="sub-h">Vēstules dati <span class="tip" tabindex="0" role="note" aria-label="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). {apsekojums} tiek aizpildīts automātiski no izvēlētā apsekojuma." data-tip="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). {apsekojums} tiek aizpildīts automātiski no izvēlētā apsekojuma.">i</span></h3>
@@ -2595,7 +2602,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 85</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 86</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4069,6 +4076,8 @@ function newSession(full){
   Object.assign(compose, {kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', repF:'', when:'now', sendTime:'09:00', esign:defaultEsign(), apv:defaultApv(), review:null, tests:[], selRun:null, wl:wlNew(), custom:{}, step:1, pvCh:'', tried:new Set(), varOvr:{}, addrFix:{}, addrUndo:{}, exc:{}, dupKeep:{}, shared:{}, miRej:{}, addrMi:{}, riskOk:{}, riskSkip:{}, acF:''});
   if (full) Object.assign(compose, {aud:'fiz', surveyIdx:0, prio:prioDefault('fiz'), prioManual:false, filt:{},
     f:{...SURVEYS[0], start:isoDate(addDays(3)), deadline:isoDate(addDays(30)), date:isoDate(new Date())}});
+  // jaunai kampaņai uzņēmumu statistikā – "Apvienot pēc NMK" ieslēgts (melnrakstā saglabātā izvēle netiek pārrakstīta)
+  compose.sel.mergeNmk = compose.aud === 'jur';
   compose.name = defaultSessionName();
   compose.f.docNr = nextDocNr();
   clearTimeout(draftTimer); state.activeDraft = compose.draftId;
@@ -7031,7 +7040,7 @@ function renderFilters(){
   if (document.activeElement !== $('#c-late')) $('#c-late').value = sel.lateDays;
   renderTargetInfo();
   $('#c-dvp').innerHTML = `<span>Statusi atjaunoti ${esc(fmtDateTime(state.statusSyncedAt || new Date().toISOString()))}</span>
-    <button type="button" class="btn btn-ghost btn-sm" data-action="c-status-sync"><svg class="icon" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16M20 20v-4h-4"/></svg>Atjaunot statusus</button>`;
+    <button type="button" class="link-btn dvp-sync" data-action="c-status-sync">Atjaunot statusus</button>`;
 }
 // Pirmstermiņa atgādinājums: aprēķinātais termiņš un tam atbilstošie pārskati un periodi
 // Atgādinājums (1. solis): aprēķinātais termiņš blakus dienu laukam
@@ -9368,7 +9377,8 @@ $('#c-aud').addEventListener('change', e => {
   // adrešu prioritāte – noklusējums jaunajai jomai (ja lietotājs to nav mainījis)
   if (!compose.prioManual){ compose.prio = prioDefault(compose.aud); renderPrio(); }
   // atlases opcija (apvienot pēc NMK) – tikai uzņēmumu statistikai (citām jomām – izslēgta)
-  if (compose.aud !== 'jur'){ sel.mergeNmk = false; $('#c-opt-merge').checked = false; }
+  // "Apvienot pēc NMK" – uzņēmumu statistikā pēc noklusējuma ieslēgts (arī pārslēdzot jomu), citās jomās izslēgts
+  sel.mergeNmk = compose.aud === 'jur'; $('#c-opt-merge').checked = sel.mergeNmk;
   const valid = new Set(audReports().map(p => p.id));
   let cleared = false;
   const keep = sel.reports.filter(id => valid.has(id));
