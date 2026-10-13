@@ -462,12 +462,8 @@ td.contacts{display:table-cell}
 .wiz-step[aria-current="step"] .n{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
 .wiz-step:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
 .compose-grid.wiz{display:block}
-.compose-grid.wiz .wiz-card{max-width:1040px}
-/* solis "Respondenti" – plašāks (kreisā kolonna + tabula) */
-.compose-grid.wiz[data-step="2"] .wiz-card{max-width:1280px}
-/* solis "Pārbaude": kā solis "Respondenti" – kreisajā kolonnā kopsavilkums un pārbaudes, labajā priekšskatījums; navigācija kartītes apakšā */
-.compose-grid.wiz[data-step="4"] .wiz-card{max-width:1280px}
-.compose-grid.wiz[data-step="4"] .wiz-nav{display:none}
+/* visos soļos – viens satura konteiners (tāds pats platums kā soļu joslai); navigācijas josla zem tā, ārpus kartēm */
+.compose-grid.wiz .wiz-card{max-width:none}
 .sub-h.sub-h4{font-size:var(--fs-md);margin-top:16px}
 /* kompakts kopsavilkums */
 .rv-checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
@@ -487,15 +483,15 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .rv-main .preview-head .r-main-h{margin:0}
 .pv-filter{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 14px;background:var(--warning-bg);border-bottom:1px solid var(--warning-border);font-size:var(--fs-sm)}
 .pv-filter[hidden]{display:none}
-.r-foot.rv-foot{margin:0;padding:10px 14px;background:var(--bg);border-radius:0 0 var(--radius-lg) var(--radius-lg);justify-content:space-between}
+/* solī "Pārbaude" labajā kolonnā: priekšskatījums un zem tā kartīte "Testa vēstule" */
+.rv-col{display:flex;flex-direction:column;gap:12px;min-width:0}
 .rv-test{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px}
 .rv-test-l{font-weight:600;font-size:var(--fs-sm)}
-.rv-test input{width:220px;max-width:100%;padding:5px 8px;font-size:var(--fs-sm)}
+.rv-test input{width:240px;max-width:100%;padding:5px 8px;font-size:var(--fs-sm)}
 .rv-test-info{flex-basis:100%;color:var(--text-muted);font-size:var(--fs-xs)}
 .rv-test-info:empty{display:none}
 .rv-test .err{flex-basis:100%;margin:0}
-.rv-nav{display:flex;gap:8px;margin-left:auto}
-.compose-grid.wiz[data-step="4"] .rv-foot[hidden]{display:none}/* solī "Pārbaude" nosūtīšanas poga priekšskatījumā netiek rādīta – sūtīšana / nodošana notiek pēdējā solī */
+.rv-test-card[hidden]{display:none}
 /* automātiskās pārbaudes virs priekšskatījuma */
 .pv-checks{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 20px;border-bottom:1px solid var(--border-light);font-size:var(--fs-sm)}
 .pv-checks:empty{display:none}
@@ -517,9 +513,15 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .apv-note .apv-cmt{font-style:italic}
 .send-sum .ck-ok{color:var(--success);font-weight:600}
 .send-sum .ck-warn{color:var(--warning);font-weight:600}
-.wiz-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--border-light);background:var(--bg);border-radius:0 0 var(--radius) var(--radius);position:sticky;bottom:0;z-index:2}
+/* kopīgā soļu navigācijas josla (renderStepNav): visos soļos vienāda vieta, izmērs un pogas */
+.wiz-nav{display:flex;flex-wrap:wrap;align-items:center;gap:10px;box-sizing:border-box;min-height:68px;margin-top:24px;padding:14px 0;border-top:1px solid #E0E0E0;background:var(--bg);position:sticky;bottom:0;z-index:2}
+.wiz-nav[hidden]{display:none}
+.wiz-nav .btn{height:40px;padding:0 16px;font-size:var(--fs-md)}
+.wiz-nav #wiz-prev{min-width:116px}
+.wiz-nav #wiz-prev.is-void{visibility:hidden}
 .wiz-nav .spacer{flex:1}
 .wiz-issues{font-size:var(--fs-sm);color:var(--warning);font-weight:600}
+.wiz-issues:empty{display:none}
 .when-opts{display:flex;gap:8px;flex-wrap:wrap}
 /* Nosūtīšanas datums un laiks: kompakts pārslēgs un (ieplānojot) datuma un laika lauki tajā pašā rindā */
 .when-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}
@@ -1257,7 +1259,6 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .r-main-h{margin:0 0 8px;font-size:var(--fs-base);color:var(--primary-darker)}
 #c-list{max-height:65vh}
 .r-foot{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light)}
-.r-foot #c-resp-next{margin-left:auto}
 #c-ready{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:var(--fs-md)}
 #c-ready > span{display:inline-flex;align-items:center;gap:5px}
 #c-ready .icon{width:16px;height:16px}
@@ -2404,7 +2405,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
               </div>
               <div class="r-list" id="c-list"></div>
               <div class="r-count" id="c-count" aria-live="polite"></div>
-              <div class="r-foot"><span id="c-ready" aria-live="polite"></span><button type="button" class="btn btn-primary" data-action="wiz-next" id="c-resp-next">Apstiprināt atlasi un turpināt</button></div>
+              <div class="r-foot"><span id="c-ready" aria-live="polite"></span></div>
             </section>
           </div>
         </div>
@@ -2433,41 +2434,40 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                 <ul class="rv-checks" id="c-checks" aria-label="Automātiskās pārbaudes"></ul>
               </section>
             </aside>
-            <section class="r-main rv-main" aria-labelledby="c-pv-h">
-              <div class="preview-head">
-                <h3 class="r-main-h" id="c-pv-h">Vēstuļu priekšskatījums</h3>
-                <div class="toolbar">
-                  <div class="seg" role="group" aria-label="Kanāls" id="c-pvch">
-                    <button type="button" data-pvch="epasts">E-pasts</button><button type="button" data-pvch="eadrese">eAdrese</button>
-                  </div>
-                  <label class="preview-opts"><input type="checkbox" id="c-hl" checked> Iezīmēt laukus</label>
-                  <div class="seg" role="group" aria-label="Skats" id="c-mode">
-                    <button type="button" data-action="mode" data-mode="one" aria-pressed="true">Pa vienai</button>
-                    <button type="button" data-action="mode" data-mode="all" aria-pressed="false">Visas</button>
-                  </div>
-                  <div class="preview-nav" id="c-nav">
-                    <button class="icon-btn" data-action="prev" id="c-prev" aria-label="Iepriekšējā vēstule"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
-                    <span class="pos" id="c-pos">0 / 0</span>
-                    <button class="icon-btn" data-action="next" id="c-next" aria-label="Nākamā vēstule"><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+            <div class="rv-col">
+              <section class="r-main rv-main" aria-labelledby="c-pv-h">
+                <div class="preview-head">
+                  <h3 class="r-main-h" id="c-pv-h">Vēstuļu priekšskatījums</h3>
+                  <div class="toolbar">
+                    <div class="seg" role="group" aria-label="Kanāls" id="c-pvch">
+                      <button type="button" data-pvch="epasts">E-pasts</button><button type="button" data-pvch="eadrese">eAdrese</button>
+                    </div>
+                    <label class="preview-opts"><input type="checkbox" id="c-hl" checked> Iezīmēt laukus</label>
+                    <div class="seg" role="group" aria-label="Skats" id="c-mode">
+                      <button type="button" data-action="mode" data-mode="one" aria-pressed="true">Pa vienai</button>
+                      <button type="button" data-action="mode" data-mode="all" aria-pressed="false">Visas</button>
+                    </div>
+                    <div class="preview-nav" id="c-nav">
+                      <button class="icon-btn" data-action="prev" id="c-prev" aria-label="Iepriekšējā vēstule"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+                      <span class="pos" id="c-pos">0 / 0</span>
+                      <button class="icon-btn" data-action="next" id="c-next" aria-label="Nākamā vēstule"><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="pv-filter" id="c-pv-filter" hidden></div>
-              <div class="preview-body hl" id="c-preview"></div>
-              <div class="r-foot rv-foot" id="c-rv-foot">
-                <div class="rv-test" role="group" aria-labelledby="c-test-l">
-                  <label class="rv-test-l" id="c-test-l" for="c-test-to">Testa vēstule</label>
+                <div class="pv-filter" id="c-pv-filter" hidden></div>
+                <div class="preview-body hl" id="c-preview"></div>
+              </section>
+              <section class="scope-card r-card rv-test-card" id="c-test-card" aria-labelledby="c-test-h">
+                <h4 id="c-test-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></span>Testa vēstule</h4>
+                <div class="rv-test">
+                  <label class="rv-test-l" for="c-test-to">E-pasta adrese</label>
                   <input type="email" id="c-test-to" autocomplete="email" aria-describedby="c-test-info c-test-err">
                   <button type="button" class="btn btn-secondary btn-sm" data-action="c-test-send" id="c-test-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>Nosūtīt testa vēstuli</button>
                   <small class="rv-test-info" id="c-test-info" aria-live="polite"></small>
                   <span class="err" id="c-test-err" role="alert" hidden></span>
                 </div>
-                <div class="rv-nav">
-                  <button type="button" class="btn btn-secondary" data-action="wiz-prev">← Atpakaļ</button>
-                  <button type="button" class="btn btn-primary" data-action="wiz-next" id="c-rv-next">Turpināt →</button>
-                </div>
-              </div>
-            </section>
+              </section>
+            </div>
           </div>
         </div>
         <div class="step" data-wstep="5" hidden>
@@ -2500,14 +2500,8 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <dl class="sum-dl send-sum" id="c-send-sum"></dl>
           <div class="wl-wrap" id="c-wl"></div>
         </div>
-        <div class="wiz-nav">
-          <button type="button" class="btn btn-secondary" data-action="wiz-prev" id="wiz-prev">← Atpakaļ</button>
-          <button type="button" class="btn btn-ghost" data-action="wiz-save">Saglabāt melnrakstu</button>
-          <span class="spacer"></span>
-          <span class="wiz-issues" id="wiz-issues" aria-live="polite"></span>
-          <button type="button" class="btn btn-primary" data-action="wiz-next" id="wiz-next">Tālāk →</button>
-        </div>
       </div>
+      <nav class="wiz-nav" id="wiz-nav" aria-label="Kampaņas soļu navigācija"></nav>
 
     </div>
   </div>
@@ -2582,7 +2576,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 81</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 82</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7056,11 +7050,7 @@ function renderWizard(){
     return `<li><button type="button" class="wiz-step ${st}" data-action="wiz-go" data-id="${n}" ${n === cur ? 'aria-current="step"' : ''} ${locked ? 'disabled' : ''} title="${st === 'is-warn' ? esc(iss.join(' ')) : ''}">
       <span class="n">${st === 'is-done' ? ICON.check : st === 'is-warn' ? '!' : n}</span><span class="t">${esc(l)}</span></button></li>`;
   }).join('');
-  $('#wiz-prev').disabled = cur <= 1;
-  $('#wiz-next').hidden = cur === 2;
-  $('#wiz-next').innerHTML = cur === 2 ? 'Apstiprināt atlasi un turpināt' : cur === 4 ? 'Turpināt →' : cur === 5 ? finalLabel() : `Tālāk: ${WIZ_STEPS[cur]} →`;
-  $('.wiz-nav').hidden = locked;
-  $('#wiz-issues').textContent = '';
+  renderStepNav(cur);
   renderStepErrors();
   renderApvNote();
   if (cur === 4){ renderFinalSummary(); renderChecks(); }
@@ -7083,6 +7073,28 @@ function acBlocks(target){
     actions:[{label:'Pārskatīt', cls:'btn-secondary', onClick: close => { close(); compose.acF = pend.length ? 'shared' : 'bad'; renderComposeList(); const b = $(`[data-acf="${compose.acF}"]`); if (b){ b.scrollIntoView({block:'center'}); b.focus(); } }},
       {label:'Turpināt', cls:'btn-primary', onClick: close => { close(); setStep(target); }}]});
   return true;
+}
+// Kopīgā soļu navigācijas josla – vienīgā navigācija visos soļos (soļa satura apakšā, ārpus kartēm).
+// Pa kreisi: "← Atpakaļ" (1. solī vieta paliek tukša) un "Saglabāt melnrakstu"; pa labi – viena primārā poga ar soļa tekstu.
+function stepNextLabel(n){
+  if (n === 2) return 'Apstiprināt atlasi un turpināt →';
+  if (n === 4) return (compose.apv || {}).required ? 'Tālāk: Saskaņošana →' : 'Tālāk: Paraksts un nosūtīšana →';
+  if (n === 5) return finalLabel();
+  return `Tālāk: ${WIZ_STEPS[n]} →`;
+}
+function renderStepNav(n){
+  const nav = $('#wiz-nav');
+  nav.hidden = apvLocked();
+  // josla tiek izveidota vienreiz (fokuss saglabājas), pēc tam atjaunināts tikai soļa stāvoklis
+  if (!nav.firstElementChild) nav.innerHTML = `<button type="button" class="btn btn-secondary" data-action="wiz-prev" id="wiz-prev">← Atpakaļ</button>
+    <button type="button" class="btn btn-ghost" data-action="wiz-save" id="wiz-save">Saglabāt melnrakstu</button>
+    <span class="spacer"></span>
+    <span class="wiz-issues" id="wiz-issues" aria-live="polite"></span>
+    <button type="button" class="btn btn-primary" data-action="wiz-next" id="wiz-next"></button>`;
+  const prev = $('#wiz-prev'), first = n <= 1;
+  prev.classList.toggle('is-void', first); prev.disabled = first; prev.toggleAttribute('aria-hidden', first); prev.tabIndex = first ? -1 : 0;
+  $('#wiz-issues').textContent = '';
+  $('#wiz-next').innerHTML = stepNextLabel(n);
 }
 function setStep(n){
   compose.step = Math.min(WIZ_STEPS.length, Math.max(1, n));
@@ -7578,7 +7590,7 @@ function renderChecks(){
       : go ? `<button type="button" class="rv-ck is-warn" data-action="wiz-go" data-id="${c.step}">${inner}</button>` : `<div class="rv-ck ${c.ok ? 'is-ok' : 'is-warn'}">${inner}</div>`}</li>`;
   }).join('');
   // testa vēstule (kartītes apakšā)
-  $('#c-rv-foot').hidden = lk;
+  $('#c-test-card').hidden = lk;
   const inp = $('#c-test-to');
   if (ui.testFor !== compose.draftId){ ui.testFor = compose.draftId; inp.value = last ? last.to : TEST_ADDR; $('#c-test-err').hidden = true; inp.removeAttribute('aria-invalid'); }
   $('#c-test-btn').disabled = !(currentTemplate() && recipients().length);
