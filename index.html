@@ -470,20 +470,6 @@ td.contacts{display:table-cell}
 .compose-grid.wiz[data-step="4"] .wiz-nav{display:none}
 .sub-h.sub-h4{font-size:var(--fs-md);margin-top:16px}
 /* kompakts kopsavilkums */
-/* solī "Pārbaude" kreisā kolonna nedaudz platāka, lai kompaktā kopsavilkuma rindas ietilptu vienā rindā */
-.r-layout.rv-layout{grid-template-columns:300px minmax(0,1fr)}
-@media (max-width:1000px){ .r-layout.rv-layout{grid-template-columns:minmax(0,1fr)} }
-.r-card.rv-card:has(#c-final-sum){padding:10px 12px}
-.rv-card .rv-sum-h{margin:0;font-size:var(--fs-xs);line-height:16px;font-weight:600;color:var(--text-muted);text-transform:none;letter-spacing:0}
-.rv-sum-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:22px}
-.link-btn.rv-sum-edit{display:inline-flex;align-items:center;gap:4px;padding:2px 4px;margin-right:-4px;font-size:var(--fs-xs);font-weight:600}
-.rv-sum-edit .icon{width:13px;height:13px}
-.rv-sum-edit[hidden]{display:none}
-.rv-sum{margin:0;display:grid;grid-template-columns:max-content minmax(0,1fr);gap:5px 8px;font-size:var(--fs-xs);line-height:17px}
-.rv-sum dt{color:var(--text-muted);white-space:nowrap}
-.rv-sum dd{margin:0;min-width:0;color:var(--text);overflow-wrap:anywhere}
-.rv-sum dd.rv-nm{font-weight:700}
-.rv-sum .nw{white-space:nowrap}
 .rv-checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .rv-ck{appearance:none;display:flex;align-items:flex-start;gap:8px;width:100%;padding:6px;margin:0 -6px;box-sizing:content-box;border:0;border-radius:var(--radius-sm);background:none;font:inherit;font-size:var(--fs-sm);text-align:left;color:var(--text)}
 button.rv-ck{cursor:pointer}
@@ -1221,23 +1207,32 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .ac-pend .icon{width:14px;height:14px}
 /* Solis "Respondenti": divas kartītes – "Mērķa grupa" (~35%) un "Kontaktinformācijas kvalitāte" (~65%), vienāda augstuma */
 /* Solis "Respondenti": kreisā kolonna (~260 px, kartītes viena zem otras, ritinot paliek redzama) + kartīte "Respondenti" ar tabulu */
-.r-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:14px;align-items:start}
+/* soļos "Respondenti" un "Pārbaude" kreisā kolonna vienāda platuma (kartītes "Mērķa grupa" un "Kopsavilkums" vienā stilā; apakšējā rinda ietilpst vienā rindā) */
+.r-layout{display:grid;grid-template-columns:300px minmax(0,1fr);gap:14px;align-items:start}
 .r-side{display:flex;flex-direction:column;gap:12px;position:sticky;top:12px}
 .r-card{padding:12px 14px;gap:6px;font-size:var(--fs-sm)}
 .r-card h4{margin:0 0 2px;font-size:var(--fs-md)}
 .r-card .scope-ic .icon{width:17px;height:17px}
-.rt-scope{color:var(--text);font-size:var(--fs-sm);line-height:1.4}
-.rt-scope .cs-l{color:var(--text-muted)}
-.rt-scope .is-rem{color:var(--primary-darker);font-weight:600}
-.rt-n{font-size:var(--fs-sm);color:var(--text-muted);margin-top:4px}
-.rt-big{display:block;font-size:var(--fs-display);line-height:1.1;font-weight:700;color:var(--text)}
-.rt-num{font-size:var(--fs-sm);color:var(--text-muted)}
-.rt-num b{color:var(--text)}
-.rt-order{font-size:var(--fs-xs);color:var(--text-muted);line-height:1.4}
-.rt-order b{color:var(--text);font-weight:600}
-.rt-order .nw{white-space:nowrap}
-.rt-links{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:var(--fs-sm);margin-top:4px}
-.rt-links .link-btn{padding:0}
+/* kartītes "Mērķa grupa" un "Kopsavilkums": virsraksts + viena poga; "Nosaukums: vērtība"; apakšā secība un bez adreses */
+.r-card.kv-card{padding:10px 12px}
+.kv-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.kv-head h4{margin:0;white-space:nowrap;min-width:0}
+.link-btn.kv-act{display:inline-flex;align-items:center;gap:4px;padding:2px 4px;margin-right:-4px;font-size:var(--fs-xs);font-weight:600;white-space:nowrap}
+.kv-act .icon{width:13px;height:13px}
+.kv-act[hidden]{display:none}
+.kv{margin:2px 0 0;display:grid;grid-template-columns:max-content minmax(0,1fr);gap:5px 8px;font-size:var(--fs-xs);line-height:17px}
+.kv dt{color:var(--text-muted);white-space:nowrap}
+.kv dd{margin:0;min-width:0;color:var(--text);text-align:left;overflow-wrap:anywhere}
+.kv dd.kv-strong{font-weight:700}
+.kv .nw{white-space:nowrap}
+.kv .link-btn{padding:0 2px;font-size:var(--fs-xs);font-weight:600}
+.kv-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:6px;margin-top:2px;border-top:1px solid var(--border-light);font-size:11px;line-height:16px;color:var(--text-muted)}
+.kv-order{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kv-noaddr{flex:none;color:var(--orange-ink);font-weight:600}
+.kv-pop{max-width:300px;padding:10px 12px}
+.kv-pop .kv-pop-h{margin:0 0 6px;font-weight:600;word-break:normal}
+.kv-pop-list{list-style:none;margin:0;padding:0;max-height:240px;overflow:auto;font-size:var(--fs-xs);line-height:1.5}
+.kv-pop-list:focus-visible{outline:2px solid var(--focus-ring)}
 .q-list{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:2px}
 .q-item{appearance:none;font:inherit;width:100%;display:flex;align-items:center;gap:8px;padding:3px 8px;border:1px solid transparent;border-radius:var(--radius-sm);background:none;cursor:pointer;color:var(--text);font-size:var(--fs-sm);text-align:left}
 .q-item:hover:not(:disabled){background:var(--bg)}
@@ -2389,13 +2384,10 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <div class="step-title"><span class="step-num">2</span><h2>Respondenti</h2><span class="tip" tabindex="0" role="note" aria-label="Uzaicinājums, informatīvs ziņojums un cits – tiek atlasīti visi respondenti ar pienākumu kampaņas tvērumā. Atgādinājums – tikai neiesniegtie pienākumi." data-tip="Uzaicinājums, informatīvs ziņojums un cits – tiek atlasīti visi respondenti ar pienākumu kampaņas tvērumā. Atgādinājums – tikai neiesniegtie pienākumi.">i</span></div>
           <div class="r-layout">
             <aside class="r-side" aria-label="Mērķa grupa un kontaktu kvalitāte">
-              <section class="scope-card r-card r-target" id="c-ctx" aria-labelledby="c-tg-h">
-                <h4 id="c-tg-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.7"/></svg></span>Mērķa grupa</h4>
-                <div class="rt-scope" id="c-ctx-tags"></div>
-                <div class="rt-n" id="c-ctx-n"></div>
-                <div class="rt-num" id="c-ctx-sum"></div>
-                <div class="rt-order" id="c-ctx-order"></div>
-                <div class="rt-links"><button type="button" class="link-btn" id="c-exc-open" aria-haspopup="dialog">Izņēmumi (0)</button><button type="button" class="link-btn" data-action="wiz-go" data-id="1">Mainīt tvērumu</button></div>
+              <section class="scope-card r-card r-target kv-card" id="c-ctx" aria-labelledby="c-tg-h">
+                <div class="kv-head"><h4 id="c-tg-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.7"/></svg></span>Mērķa grupa</h4><button type="button" class="link-btn kv-act" data-action="wiz-go" data-id="1" aria-label="Mainīt tvērumu (solis “Pamatdati”)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Mainīt tvērumu</button></div>
+                <dl class="kv" id="c-ctx-kv"></dl>
+                <div class="kv-foot" id="c-ctx-foot"></div>
               </section>
               <section class="scope-card r-card r-quality" id="c-ac" aria-labelledby="c-q-h"></section>
             </aside>
@@ -2431,9 +2423,10 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <div class="apv-ro" id="c-apv-ro" hidden></div>
           <div class="r-layout rv-layout">
             <aside class="r-side" aria-label="Kopsavilkums un pārbaudes">
-              <section class="scope-card r-card rv-card" aria-labelledby="c-sum-h">
-                <div class="rv-sum-head"><h4 class="rv-sum-h" id="c-sum-h">Kopsavilkums</h4><button type="button" class="link-btn rv-sum-edit" id="c-sum-edit" data-action="wiz-go" data-id="1" aria-label="Labot kopsavilkumu (solis “Pamatdati”)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Labot</button></div>
-                <dl class="rv-sum" id="c-final-sum"></dl>
+              <section class="scope-card r-card rv-card kv-card" aria-labelledby="c-sum-h">
+                <div class="kv-head"><h4 id="c-sum-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M9 5h11M9 12h11M9 19h11M4 5h.01M4 12h.01M4 19h.01"/></svg></span>Kopsavilkums</h4><button type="button" class="link-btn kv-act" id="c-sum-edit" data-action="wiz-go" data-id="1" aria-label="Labot kopsavilkumu (solis “Pamatdati”)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Labot</button></div>
+                <dl class="kv" id="c-final-sum"></dl>
+                <div class="kv-foot" id="c-final-foot"></div>
               </section>
               <section class="scope-card r-card rv-card" aria-labelledby="c-ck-h">
                 <h4 id="c-ck-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8.2 8 9 4.6-.8 8-4 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg></span>Pārbaudes</h4>
@@ -2589,7 +2582,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 80</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 81</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7097,20 +7090,53 @@ function setStep(n){
   window.scrollTo({top:0});
   const h = $(`#wiz [data-wstep="${compose.step}"] h2`); if (h){ h.setAttribute('tabindex', '-1'); h.focus({preventScroll:true}); }
 }
+// Kartītes "Mērķa grupa" un "Kopsavilkums" (vienots stils): lauki "Nosaukums: vērtība" divu kolonnu režģī; apakšā adrešu secība un bez adreses
+const kvRow = (l, v, cls = '') => `<dt>${esc(l)}:</dt><dd${cls ? ` class="${cls}"` : ''}>${v}</dd>`;
+const kvNw = v => `<span class="nw">${v}</span>`;
+const kvFoot = noAddr => `<span class="kv-order" title="Adrešu secība">${compose.prio.filter(Boolean).map(k => kvNw(esc(addrShort(k)))).join(' → ')}</span>${noAddr ? `<span class="kv-noaddr">${noAddr} bez adreses</span>` : ''}`;
+const kvChannels = ch => [['eadrese', 'eAdrese'], ['epasts', 'E-pasts']].filter(([k]) => ch[k]).map(([k, l]) => kvNw(`${l} ${ch[k]}`)).join(' · ') || '<span class="muted">nav</span>';
+// garš saraksts: kopskaits, pirmie 2 ieraksti un "+N" (uzklikšķinot – uznirstošs saraksts ar visiem)
+ui.kvLists = {};
+function kvList(key, items, titles = items){
+  if (!items.length) return '<span class="muted">—</span>';
+  ui.kvLists[key] = titles;
+  const rest = items.length - 2;
+  return `${items.length} · ${items.slice(0, 2).map(x => kvNw(esc(x))).join(', ')}${rest > 0 ? ` <button type="button" class="link-btn kv-more" data-kvmore="${key}" aria-haspopup="dialog" aria-expanded="false" aria-label="Rādīt visus (${items.length})">+${rest}</button>` : ''}`;
+}
+let kvPopBtn = null;
+function hideKvPop(focus){ const p = $('#kv-pop'); if (p) p.hidden = true; if (kvPopBtn){ kvPopBtn.setAttribute('aria-expanded', 'false'); if (focus && kvPopBtn.isConnected) kvPopBtn.focus(); } kvPopBtn = null; }
+function showKvPop(btn){
+  if (kvPopBtn === btn){ hideKvPop(true); return; }
+  hideKvPop();
+  const items = ui.kvLists[btn.dataset.kvmore] || [], label = btn.closest('dd').previousElementSibling.textContent.replace(/:$/, '');
+  let p = $('#kv-pop');
+  if (!p){ p = document.createElement('div'); p.id = 'kv-pop'; p.className = 'ac-pop kv-pop'; p.setAttribute('role', 'dialog'); p.hidden = true; document.body.appendChild(p);
+    p.addEventListener('keydown', e => { if (e.key === 'Escape'){ e.preventDefault(); hideKvPop(true); } }); }
+  p.setAttribute('aria-label', `${label} (${items.length})`);
+  p.innerHTML = `<p class="kv-pop-h">${esc(label)} <span class="muted">(${items.length})</span></p><ul class="kv-pop-list" tabindex="0">${items.map(x => `<li>${esc(x)}</li>`).join('')}</ul>`;
+  p.hidden = false; kvPopBtn = btn; btn.setAttribute('aria-expanded', 'true');
+  const r = btn.getBoundingClientRect(), w = p.offsetWidth, h = p.offsetHeight;
+  p.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px';
+  p.style.top = (r.bottom + 4 + h > innerHeight - 8 ? Math.max(8, r.top - h - 4) : r.bottom + 4) + 'px';
+  $('.kv-pop-list', p).focus();
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-kvmore]');
+  if (b){ showKvPop(b); return; }
+  if (kvPopBtn && !e.target.closest('#kv-pop')) hideKvPop();
+});
+window.addEventListener('scroll', e => { if (kvPopBtn && !(e.target.closest && e.target.closest('#kv-pop'))) hideKvPop(); }, true);
 // 4. solis "Pārbaude": kampaņas kopsavilkums (bez saskaņošanas un paraksta – tie ir 5. solī)
 function renderFinalSummary(){
   const st = selStats(), recs = recipients(), ch = {epasts:0, eadrese:0};
   recs.forEach(r => { const f = addrPlan(r)[0]; if (f) ch[ADDR_TYPES[f.type].ch]++; });
-  // kompakts: lauka nosaukums ar kolu (vienāda platuma kolonna) un vērtība tajā pašā rindā; viena poga "Labot" virsrakstā (solis "Pamatdati")
+  // viena poga "Labot" virsrakstā (solis "Pamatdati"); lauki "Nosaukums: vērtība"; apakšā adrešu secība un bez adreses
   $('#c-sum-edit').hidden = apvLocked();
-  const nw = v => `<span class="nw">${v}</span>`;
-  const row = (l, v, cls = '') => `<dt>${esc(l)}:</dt><dd${cls ? ` class="${cls}"` : ''}>${v}</dd>`;
-  $('#c-final-sum').innerHTML = row('Nosaukums', esc(compose.name), 'rv-nm') + row('Veids', esc(SESS_LABELS[sessKindKey()])) +
-    row('Nosūtīšanas laiks', isPlanned() ? esc(whenLabel()) : 'Nav ieplānota') +
-    // garas vērtības pārnes starp daļām (nevis daļu vidū, piem., "E-pasts")
-    row('Respondenti', [`${st.sel} ${plural(st.sel, 'atlasīts', 'atlasīti')}`, `${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}`, st.noAddr ? `bez adreses: ${st.noAddr}` : ''].filter(Boolean).map(nw).join(' · ')) +
-    row('Kanāli', [['epasts', 'E-pasts'], ['eadrese', 'eAdrese']].filter(([k]) => ch[k]).map(([k, l]) => nw(`${l} ${ch[k]}`)).join(' · ') || '<span class="muted">nav</span>') +
-    row('Secība', compose.prio.filter(Boolean).map(k => nw(esc(addrShort(k)))).join(' → '));
+  $('#c-final-sum').innerHTML = kvRow('Kampaņa', esc(compose.name), 'kv-strong') + kvRow('Veids', esc(SESS_LABELS[sessKindKey()])) +
+    kvRow('Nosūtīšana', isPlanned() ? esc(whenLabel()) : 'Nav ieplānota') +
+    kvRow('Respondenti', `${kvNw(String(st.sel))} · ${kvNw(`${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}`)}`) +
+    kvRow('Kanāli', kvChannels(ch));
+  $('#c-final-foot').innerHTML = kvFoot(st.noAddr);
 }
 // 1. solis: komunikācijas veids un nosūtīšanas laiks
 // Ieplānošana: datums DD.MM.GGGG un laiks HH:MM (24 h); nedrīkst būt pagātnē
@@ -7214,37 +7240,33 @@ function scopeCtxTags(){
 // Tvēruma kopsavilkums (2. solis): statistikas joma; apsekojums / pārskati un periodi; aktīvie filtri; respondentu skaits
 const CTX_SHOW = 6;
 function renderScopeCtx(){
-  const sel = compose.sel, rs = state.respondents.filter(matchesFilt), ds = rs.flatMap(r => selDutiesOf(r)), parts = [], full = [];
-  const add = (txt, title = txt, cls = '') => { parts.push(`<span${cls ? ` class="${cls}"` : ''}>${esc(txt)}</span>`); full.push(title); };
-  add(AUDS[compose.aud].field);
-  if (isReminder()) add(scopeCtxTags()[0].val, undefined, 'is-rem');
+  const sel = compose.sel, rs = state.respondents.filter(matchesFilt), ds = rs.flatMap(r => selDutiesOf(r)), rows = [];
+  rows.push(kvRow('Joma', esc(AUDS[compose.aud].field)));
+  if (isReminder()) rows.push(kvRow('Atgādinājums', esc(scopeCtxTags()[0].val)));
   if (fizMode()){
     const p = repById(sel.reports[0]), per = sel.fz.period, R = ROUNDS[sel.reports[0]], rn = fzRounds(sel);
-    if (p) add(p.code, repTitle(p));
-    if (per) add(periodCode(per), periodLabel(per));
-    if (R) add(`${R.label}: ${rn.length ? `${rn.map(n => `${n}.`).join(', ')} ${R.word}` : '—'}`);
+    rows.push(kvRow('Apsekojums', p || per ? [p ? `<span title="${esc(repTitle(p))}">${esc(p.code)}</span>` : '', per ? `<span title="${esc(periodLabel(per))}">${esc(periodCode(per))}</span>` : ''].filter(Boolean).join(' · ') : '<span class="muted">—</span>'));
+    if (R) rows.push(kvRow(R.label, rn.length ? esc(`${rn.map(n => `${n}.`).join(', ')} ${R.word}`) : '—'));
   } else {
     // pārskati un periodi no atlasītajiem pienākumiem
     const reps = [...new Set(ds.map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
-    const pers = [...new Set(ds.map(d => d.period))].sort((x, y) => periodBounds(y).end - periodBounds(x).end || String(y).localeCompare(String(x))).map(periodCode), PS = 3;
-    if (reps.length){ add(reps.map(p => p.code).join(', '), reps.map(repTitle).join(', ')); add(`${pers.slice(0, PS).join(', ')}${pers.length > PS ? ` +${pers.length - PS}` : ''}`, 'Periodi: ' + pers.join(', ')); }
-    else add(sel.reports.length ? sel.reports.map(id => (repById(id) || {}).code || id).join(', ') : 'Visi apsekojumi');
+    const pers = [...new Set(ds.map(d => d.period))].sort((x, y) => periodBounds(y).end - periodBounds(x).end || String(y).localeCompare(String(x)));
+    rows.push(kvRow('Apsekojumi', reps.length ? kvList('reps', reps.map(p => p.code), reps.map(repTitle)) : esc(sel.reports.length ? sel.reports.map(id => (repById(id) || {}).code || id).join(', ') : 'Visi apsekojumi')));
+    rows.push(kvRow('Periodi', kvList('pers', pers.map(periodCode), pers.map(k => `${periodCode(k)} – ${periodLabel(k)}`))));
   }
   // aktīvie filtri (bez jomas, apsekojuma un perioda)
   const skip = new Set(['Statistikas joma', 'Gads', 'Apsekojums']), flt = scopeCtxTags().filter(t => !t.cls && !skip.has(t.label) && t.label !== (ROUNDS[sel.reports[0]] || {}).label && !/^Visi /.test(t.val) && !(t.label === '' && (PF_KEYS.some(k => PF_LABELS[k] === t.val))));
   const fx = compose.aud === 'fiz' ? [] : PF_KEYS.filter(k => pfOf(sel)[k] !== 'all' && pfOf(sel)[k] !== 'none').map(k => ({label:PF_LABELS[k], val:pfSpan(k, +sel.year, pfOf(sel)[k])}));
-  [...fx, ...flt.filter(t => !PF_KEYS.some(k => PF_LABELS[k] === t.label))].forEach(t => add(t.label ? `${t.label}: ${t.val}` : t.val));
-  const box = $('#c-ctx-tags');
-  box.innerHTML = parts.join(' <span class="cs-l" aria-hidden="true">·</span> ');
-  box.title = full.join(' · ');
+  const fl = [...fx, ...flt.filter(t => !PF_KEYS.some(k => PF_LABELS[k] === t.label))].map(t => t.label ? `${t.label}: ${t.val}` : t.val);
+  if (fl.length) rows.push(kvRow('Filtri', kvList('flt', fl)));
   // respondentu skaits un skaits pa kanāliem (pēc primārās adreses – pirmā pieejamā pēc adrešu prioritātes; kampaņā iekļautie)
   const ch = {eadrese:0, epasts:0, none:0};
   acActive().forEach(r => { const f = addrPlan(r)[0]; ch[f ? ADDR_TYPES[f.type].ch : 'none']++; });
-  $('#c-ctx-n').innerHTML = `<b class="rt-big">${rs.length}</b> ${plural(rs.length, 'respondents', 'respondenti')}`;
-  $('#c-ctx-order').innerHTML = `Sūtīšanas secība: <b>${compose.prio.filter(Boolean).map(k => `<span class="nw">${esc(addrShort(k))}</span>`).join(' → ')}</b>`;
-  $('#c-ctx-sum').innerHTML = `<span class="rt-ch">eAdrese <b>${ch.eadrese}</b> <span class="cs-l">·</span> E-pasts <b>${ch.epasts}</b> <span class="cs-l">·</span> Bez adreses <b>${ch.none}</b></span>`;
   const nx = Object.keys(compose.exc || {}).filter(id => rs.some(r => r.id === id)).length;
-  $('#c-exc-open').textContent = `Izņēmumi (${nx})`;
+  rows.push(kvRow('Respondenti', String(rs.length), 'kv-strong'), kvRow('Kanāli', kvChannels(ch)),
+    kvRow('Izņēmumi', `${nx} · <button type="button" class="link-btn kv-link" data-action="c-exc-open" aria-haspopup="dialog">${nx ? 'Skatīt / pievienot' : 'Pievienot'}</button>`));
+  $('#c-ctx-kv').innerHTML = rows.join('');
+  $('#c-ctx-foot').innerHTML = kvFoot(ch.none);
 }
 // apsekojuma filtrs tabulā: tvērumā esošie apsekojumi ar respondentu skaitu
 function renderRepFilter(){
@@ -8947,6 +8969,7 @@ function openDocSrc(src){
 const actions = {
   'tpl-new': (id, el) => openTemplateEditor(null, {aud:el.dataset.aud, cat:el.dataset.cat}),
   'tpl-copy': id => copyTemplate(id),
+  'c-exc-open': () => openExcModal(),
   'tpl-menu': (id, el) => openCampMenu(el),
   'ms-menu': (id, el) => openCampMenu(el),
   'att-menu': (id, el) => openCampMenu(el),
@@ -9545,7 +9568,7 @@ $('#c-list').addEventListener('keydown', e => {
   if (e.key === 'Escape'){ e.preventDefault(); const k = ui.acEdit; ui.acEdit = ''; renderComposeList(); const el = $(`#c-list [data-ac-edit="${k}"]`); if (el) el.focus(); }
 });
 // 1.2 Kontaktinformācija: filtri un eksports; 1.1 Mērķa grupa: izņēmumi
-$('#c-exc-open').addEventListener('click', () => openExcModal());
+
 // Kontaktu saraksts (CSV): kampaņas tvēruma respondenti ar primāro un alternatīvajām adresēm, kvalitāti un piezīmēm
 function exportContacts(){
   const sm = sharedMap(), q = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
