@@ -223,6 +223,7 @@ main.container{padding-top:28px;padding-bottom:48px}
 /* ===== Formas ===== */
 .field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;min-width:0}
 .field label,.label{font-weight:600;font-size:var(--fs-md);color:var(--text)}
+.field > .seg{align-self:flex-start}
 .label-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .req{color:var(--danger)}
 input[type=text],input[type=email],input[type=search],input[type=date],select,textarea{width:100%;border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;background:var(--surface);line-height:1.4}
@@ -462,8 +463,8 @@ td.contacts{display:table-cell}
 .wiz-step[aria-current="step"] .n{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
 .wiz-step:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
 .compose-grid.wiz{display:block}
-/* visos soļos – viens satura konteiners (tāds pats platums kā soļu joslai); navigācijas josla zem tā, ārpus kartēm */
-.compose-grid.wiz .wiz-card{max-width:none}
+/* visos soļos – viens kopīgs satura konteiners (.step-content) pilnā platumā: malas sakrīt ar soļu joslu un galveni; navigācijas josla zem tā, ārpus kartēm, tādā pašā platumā */
+.compose-grid.wiz .wiz-card.step-content{width:100%;max-width:none;box-sizing:border-box}
 .sub-h.sub-h4{font-size:var(--fs-md);margin-top:16px}
 /* kompakts kopsavilkums */
 .rv-checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
@@ -514,7 +515,7 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .send-sum .ck-ok{color:var(--success);font-weight:600}
 .send-sum .ck-warn{color:var(--warning);font-weight:600}
 /* kopīgā soļu navigācijas josla (renderStepNav): visos soļos vienāda vieta, izmērs un pogas */
-.wiz-nav{display:flex;flex-wrap:wrap;align-items:center;gap:10px;box-sizing:border-box;min-height:68px;margin-top:24px;padding:14px 0;border-top:1px solid #E0E0E0;background:var(--bg);position:sticky;bottom:0;z-index:2}
+.wiz-nav{display:flex;flex-wrap:wrap;align-items:center;gap:10px;box-sizing:border-box;width:100%;min-height:68px;margin-top:24px;padding:14px 0;border-top:1px solid #E0E0E0;background:var(--bg);position:sticky;bottom:0;z-index:2}
 .wiz-nav[hidden]{display:none}
 .wiz-nav .btn{height:40px;padding:0 16px;font-size:var(--fs-md)}
 .wiz-nav #wiz-prev{min-width:116px}
@@ -626,12 +627,14 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 /* Vēstures ierakstu dzēšana (tikai vecāki par 2 gadiem) */
 .del-wrap,.purge-wrap{display:inline-flex}
 /* sūtīšanas vēsture: pogas augšā labajā (noteikumi; zem tām – neuzkrītoša dzēšana) */
-.page-actions.hist-actions{flex-direction:column;align-items:flex-end;gap:4px;margin-left:auto}
-.hist-actions .purge-wrap{align-items:center;gap:2px}
-.hist-actions .purge-btn{padding:5px;color:var(--icon-muted)}
-.hist-actions .purge-btn .icon{width:16px;height:16px}
-.hist-actions .purge-btn:hover:not(:disabled){color:var(--danger);background:var(--danger-bg)}
-.hist-actions .purge-btn:disabled{opacity:.45;cursor:not-allowed}
+/* statusu rinda ar darbību labajā galā (Vēsture: miskaste) – tāds pats augstums un atstarpes kā citām cilnēm */
+.subnav-row{display:flex;align-items:center;gap:8px}
+.subnav-row > .subnav{margin:0;flex:1 1 auto;min-width:0}
+.subnav-row .sub-end{margin-left:auto;flex:none;align-items:center}
+.sub-end .purge-btn{padding:5px;color:var(--icon-muted)}
+.sub-end .purge-btn .icon{width:16px;height:16px}
+.sub-end .purge-btn:hover:not(:disabled){color:var(--danger);background:var(--danger-bg)}
+.sub-end .purge-btn:disabled{opacity:.45;cursor:not-allowed}
 /* sūtīšanas vēsture: tabula kā kampaņu sarakstā */
 .hist-table th:first-child{width:24%}
 .hist-table tbody td{vertical-align:middle}
@@ -2278,7 +2281,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     <div class="alert alert-warn apv-note" id="c-apv-note" role="status" hidden></div>
     <ol class="wiz-steps" id="wiz-steps" aria-label="Kampaņas soļi"></ol>
     <div class="compose-grid wiz" id="wiz" data-step="1">
-      <div class="card wiz-card">
+      <div class="card wiz-card step-content">
         <div class="step" data-wstep="1">
           <div class="step-title"><span class="step-num">1</span><h2>Pamatdati</h2></div>
           <div class="form-grid">
@@ -2522,10 +2525,12 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       <div>
         <h1>Sūtīšanas vēsture <span class="tip" tabindex="0" role="note" aria-label="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts." data-tip="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts.">i</span></h1>
       </div>
-      <div class="page-actions hist-actions"><button type="button" class="btn btn-secondary" data-action="rules-open"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Klasifikācijas noteikumi</button>
-        <span class="purge-wrap" id="sent-purge-wrap"><button type="button" class="icon-btn purge-btn" data-action="sent-purge" id="sent-purge-btn" title="Dzēst ierakstus, vecākus par 2 gadiem" aria-label="Dzēst ierakstus, vecākus par 2 gadiem"><svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button><span class="tip" tabindex="0" role="note" aria-label="Sūtīšanas vēstures ierakstus drīkst dzēst tikai pēc 2 gadiem no nosūtīšanas dienas. Jaunākus ierakstus dzēst nav iespējams." data-tip="Sūtīšanas vēstures ierakstus drīkst dzēst tikai pēc 2 gadiem no nosūtīšanas dienas. Jaunākus ierakstus dzēst nav iespējams.">i</span></span></div>
+      <div class="toolbar"><button type="button" class="btn btn-secondary" data-action="rules-open" title="NDR (e-pasts) un DIV (e-adrese) statusu klasifikācija: iemesls → tips → automātiskā rīcība"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Klasifikācijas noteikumi</button></div>
     </div>
-    <div class="subnav" id="hist-sub" role="group" aria-label="Vēstuļu statuss"></div>
+    <div class="subnav-row camp-sub">
+      <div class="subnav" id="hist-sub" role="group" aria-label="Vēstuļu statuss"></div>
+      <span class="purge-wrap sub-end" id="sent-purge-wrap"><button type="button" class="icon-btn purge-btn" data-action="sent-purge" id="sent-purge-btn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></span>
+    </div>
     <div class="flt hist-filters" role="search" aria-label="Vēstuļu filtri">
       <div class="flt-row">
         <label class="search flt-search"><span class="sr-only">Meklēt pēc respondenta vai adreses</span>
@@ -2566,7 +2571,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       </div>
       <div class="page-actions"><button type="button" class="btn btn-secondary" data-action="rep-csv"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg>Eksportēt CSV</button></div>
     </div>
-    <div class="subnav" id="rep-sub" role="group" aria-label="Atskaites"></div>
+    <div class="subnav camp-sub" id="rep-sub" role="group" aria-label="Atskaites"></div>
     <div class="card" style="margin-bottom:14px"><div class="rep-filters">
       <span class="rep-period"><label for="rep-from">Periods no</label><input type="date" id="rep-from"><label for="rep-to">līdz</label><input type="date" id="rep-to"></span>
       <span class="seg rep-quick" id="rep-quick" role="group" aria-label="Ātrā perioda izvēle">
@@ -2585,7 +2590,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 83</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 84</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -8551,7 +8556,9 @@ function renderSent(){
   // dzēst drīkst tikai ierakstus, kas vecāki par 2 gadiem (pēc nosūtīšanas datuma)
   const nOld = all.filter(canDeleteRec).length;
   $('#sent-purge-btn').disabled = !nOld;
-  $('#sent-purge-btn').title = nOld ? 'Dzēst ierakstus, vecākus par 2 gadiem' : 'Dzēst ierakstus, vecākus par 2 gadiem – šādu ierakstu nav';
+  // paskaidrojums (agrāk – atsevišķa "i" ikona) – pogas padomā
+  const purgeTip = (nOld ? 'Dzēst ierakstus, vecākus par 2 gadiem.' : 'Dzēst ierakstus, vecākus par 2 gadiem – šādu ierakstu nav.') + ' Sūtīšanas vēstures ierakstus drīkst dzēst tikai pēc 2 gadiem no nosūtīšanas dienas; jaunākus ierakstus dzēst nav iespējams.';
+  $('#sent-purge-btn').title = purgeTip; $('#sent-purge-btn').setAttribute('aria-label', purgeTip);
   if (!HIST_SUBS.some(x => x[0] === h.status)) h.status = '';
   $('#hist-sub').innerHTML = subnavHtml(HIST_SUBS.map(([k, l]) => [k, `${l} (${c(k)})`]), h.status, 'hsub');
   $('#hist-camp').innerHTML = campOpts(h.camp);
