@@ -634,6 +634,12 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 /* statusu rinda ar darbību labajā galā (Vēsture: miskaste) – tāds pats augstums un atstarpes kā citām cilnēm */
 .subnav-row{display:flex;align-items:center;gap:8px}
 .subnav-row > .subnav{margin:0;flex:1 1 auto;min-width:0}
+/* Vēsture: visi ziņas statusi vienā rindā (augstums kā citās cilnēs); ja neietilpst – horizontāla ritināšana (ritenis, Tab), labajā malā izbalēšana */
+#hist-sub{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth}
+#hist-sub::-webkit-scrollbar{display:none}
+#hist-sub > button{flex:none}
+#hist-sub > button:focus-visible{outline-offset:-3px}
+#hist-sub.is-ov:not(.at-end){-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 40px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 40px),transparent)}
 .subnav-row .sub-end{margin-left:auto;flex:none;align-items:center}
 .sub-end .purge-btn{padding:5px;color:var(--icon-muted)}
 .sub-end .purge-btn .icon{width:16px;height:16px}
@@ -8688,6 +8694,13 @@ function histStTip(x){
   if (f === 'fail') return `Pastāvīgs: visas adreses izsmeltas${att}`;
   return `${HIST_FINAL[f].label}${att}`;
 }
+// statusu rinda: vai neietilpst platumā (izbalēšana) un izvēlētā poga redzamā daļā
+function histSubFit(){
+  const s = $('#hist-sub'); if (!s) return;
+  const upd = () => { s.classList.toggle('is-ov', s.scrollWidth > s.clientWidth + 1); s.classList.toggle('at-end', s.scrollLeft + s.clientWidth >= s.scrollWidth - 2); };
+  const on = s.querySelector('[aria-pressed="true"]'); if (on && on.offsetLeft + on.offsetWidth > s.clientWidth) s.scrollLeft = on.offsetLeft - 20;
+  upd();
+}
 // apakšsadaļas (statusu filtrs) – tieši tie paši ziņas statusi kā tabulā un klasifikācijas noteikumos
 const HIST_SUBS = [['', 'Visas', () => true], ...Object.keys(HIST_FINAL).map(k => [k, HIST_FINAL[k].label, x => histFinal(x) === k])];
 // vēstules apsekojumu kodi (pēc tās pienākumiem), piem., "1-DSA, 1-C"
@@ -8738,6 +8751,7 @@ function renderSent(){
   $('#sent-purge-btn').title = purgeTip; $('#sent-purge-btn').setAttribute('aria-label', purgeTip);
   if (!HIST_SUBS.some(x => x[0] === h.status)) h.status = '';
   $('#hist-sub').innerHTML = subnavHtml(HIST_SUBS.map(([k, l]) => [k, `${l} (${c(k)})`]), h.status, 'hsub');
+  histSubFit();
   $('#hist-camp').innerHTML = campOpts(h.camp);
   $('#hist-kind').innerHTML = kindOpts(h.kind);
   $('#hist-ch').value = h.ch;
@@ -9449,6 +9463,9 @@ $('#camp-tbody').addEventListener('mouseout', e => { const el = e.target.closest
 $('#camp-tbody').addEventListener('focusin', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
 $('#camp-tbody').addEventListener('focusout', () => hideCTip());
 $('#camp-scroll').addEventListener('scroll', () => hideCTip());
+$('#hist-sub').addEventListener('scroll', () => histSubFit(), {passive:true});
+$('#hist-sub').addEventListener('wheel', e => { const s = e.currentTarget; if (s.scrollWidth <= s.clientWidth || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; e.preventDefault(); s.scrollLeft += e.deltaY; }, {passive:false});
+window.addEventListener('resize', () => histSubFit());
 $('#hist-sub').addEventListener('click', e => { const b = e.target.closest('[data-hsub]'); if (!b) return; ui.hist.status = b.dataset.hsub; ui.histLimit = 50; renderSent(); $(`#hist-sub [data-hsub="${ui.hist.status}"]`).focus(); });
 $('#rep-sub').addEventListener('click', e => { const b = e.target.closest('[data-rsub]'); if (!b) return; ui.repSub = b.dataset.rsub; renderReports(); $(`#rep-sub [data-rsub="${ui.repSub}"]`).focus(); });
 $('#hist-search').addEventListener('input', e => { ui.hist.q = e.target.value; ui.histLimit = 50; renderSent(); });
