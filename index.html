@@ -718,18 +718,15 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .wl-steps{font-size:var(--fs-sm)}
 .wl-steps th,.wl-steps td{padding:5px 8px}
 .wl-det .hint{margin-top:6px}
-.te-wl{margin:-6px 0 10px}
 .hist-campinfo{padding:12px 16px;margin-bottom:10px}
 .proc-rep{padding:14px 16px;margin-bottom:16px}
 .proc-rep h3{margin:0 0 10px;font-size:var(--fs-base);color:var(--primary-darker)}
 .proc-rep h4{margin:0 0 6px;font-size:13px;color:var(--text-secondary)}
 .proc-rep-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px 28px}
 .proc-note{margin:12px 0 0;font-size:var(--fs-xs);color:var(--text-muted)}
-/* "Procesa laiks" un citas informācijas sadaļas: "Nosaukums: vērtība" pa kreisi, 13 px */
+/* informācijas sadaļas: "Nosaukums: vērtība" pa kreisi, 13 px */
 .proc-dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 10px;margin:0;font-size:13px}
 .proc-dl dt{color:var(--text-muted)} .proc-dl dd{margin:0;color:var(--text)}
-.proc-time{margin-top:12px;padding-top:10px;border-top:1px solid var(--border-light)}
-.proc-time h4{margin:0 0 6px;font-size:13px;color:var(--primary-darker)}
 .hci-dl{margin-top:6px}
 .wl-cols{margin-top:20px}
 .hci-h{margin-bottom:4px}
@@ -2698,7 +2695,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 89</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 90</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5464,7 +5461,6 @@ function openTemplateEditor(id, preset = {}){
         ${sess ? `<div class="sess-info">Statistikas joma: <b>${esc(AUDS[t.aud].field)}</b> (no kampaņas)${baseTpl ? ` · Veidne: <b>${esc(baseTpl.name)}</b> – izmaiņas attiecas tikai uz šo kampaņu, veidne netiek mainīta.` : ''}</div>` : ''}
         <div class="field"${sess ? ' hidden' : ''}><label for="te-name">Veidnes nosaukums <span class="req">*</span></label>
           <input type="text" id="te-name" value="${esc(t.name)}" maxlength="120"><span class="err" id="te-name-err" hidden></span></div>
-        ${existing ? `<p class="hint te-wl">${wlTplLine(existing.wl)}</p>` : ''}
         <div class="te-row3${sess ? ' sess' : ''}">
           <div class="field"${sess ? ' hidden' : ''}><label for="te-aud">Adresāts ${tip('Jauktajai komunikācijai lietojiet lauku {adresāts} – uzņēmumiem tas būs nosaukums, fiziskām personām – vārds.', 'te-aud-hint')}</label>
             <select id="te-aud">${Object.entries(AUDS).map(([k, a]) => `<option value="${k}" ${t.aud === k ? 'selected' : ''}>${esc(a.label)}</option>`).join('')}</select></div>
@@ -8042,11 +8038,14 @@ const SEED_HIST = [
   {days:-12, h:10, snap:{name:'Pārskats par darbu – uzaicinājums', aud:'jur', kind:'uzaicinajums', sel:{pf:pfOnly({cet:'all'}), reports:['p-ds'], resp:{nmk:'40000000101, 40000000114, 40000000116'}}, content:{source:'tpl', templateId:'t8'}}},
   {days:-21, h:11, snap:{name:'Kontaktinformācijas precizēšana', aud:'fiz', kind:'cits', sel:{reports:['a-mba'], fz:{year:'', period:periodBack('gads', 1), rounds:null}}, prio:['email1', 'email2', 'eadrese'], content:{source:'tpl', templateId:'t7'}}},
   {days:-6, h:9, snap:{name:'Nokavētie pārskati – atgādinājums', aud:'jur', kind:'atgadinajums', remind:'after', sel:{pf:pfOnly({gads:'all', pusg:'all', cet:'all', men:'all', ned:'all'})}, content:{source:'tpl', templateId:'t9'}}},
-  {days:-2, h:13, snap:{name:'Ceļotāju apsekojums – atgādinājums', aud:'fiz', kind:'atgadinajums', remind:'after', sel:{reports:['a-cel'], fz:{year:'', period:periodBack('men', 2), rounds:null}}, prio:['email1', 'eadrese', 'email2'],
+  {days:-4, h:13, snap:{name:'Ceļotāju apsekojums – atgādinājums', aud:'fiz', kind:'atgadinajums', remind:'after', sel:{reports:['a-cel'], fz:{year:'', period:periodBack('men', 2), rounds:null}}, prio:['email1', 'eadrese', 'email2'],
     esign:{required:true, mode:'paralela', signers:['sg2']}, content:{source:'tpl', templateId:'t3'}}},
   // nesen nosūtīta kampaņa (pirms 1 min): procesā esošie statusi un dažādi klasifikācijas noteikumi (force – pirmās adreses iznākums)
   {minsAgo:1, snap:{name:'Informācija par datu iesniegšanas kalendāru', aud:'jur', kind:'info', sel:{pf:pfOnly({gads:'all', pusg:'all', cet:'all', men:'all'})}, prio:['email1', 'eadrese', 'email2'], content:{source:'tpl', templateId:'t10'}},
     force:{epasts:['e-full', 'e-server', 'e-size', 'e-sender', 'e-manual', 'e-away', 'e-perm'], eadrese:['d-transit', 'd-late', 'd-full', 'd-rejdiv']}},
+  // nosūtīta pirms 4 dienām (e-pasta 72 h logs beidzies): lielākā daļa piegādāta, dažas nepiegādātas, viena vēl procesā
+  {days:-4, h:10, snap:{name:'Mēneša pārskati – uzaicinājums (oktobris)', aud:'jur', kind:'uzaicinajums', sel:{pf:pfOnly({men:'all'})}, content:{source:'tpl', templateId:'t8'}},
+    force:{epasts:[], eadrese:['d-ok', 'd-ok', 'd-rejdiv', 'd-ok', 'd-transit']}},
 ];
 const OLD_SEED_NAMES = ['Darbaspēka apsekojums – uzaicinājums', 'Nokavētie pārskati – atgādinājums'];
 // Testa arhīvs: kampaņas par pēdējiem 12 mēnešiem un dažas, kas vecākas par 2 gadiem (vēstules bez satura – tikai piegādes dati)
@@ -8092,7 +8091,7 @@ function seedHistory(){
   try { seedHistoryAll(); } finally { state.respondents = allR; }
 }
 function seedHistoryAll(){
-  state.histSeeded = true; state.histVer = 6;
+  state.histSeeded = true; state.histVer = 7;
   if (state.sent.length) return;
   seedArchive();
   const keep = sessionSnapshot(), keepId = compose.draftId, wasDefault = compose.nameAuto;
@@ -8116,7 +8115,7 @@ function seedHistoryAll(){
   ui.newIds = new Set();
 }
 // Agrāk izveidotā testa vēsture tiek aizstāta ar jauno (ja tajā ir tikai testa ieraksti)
-if (state.histSeeded && state.histVer !== 6 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
+if (state.histSeeded && state.histVer !== 7 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
   state.sent = []; state.seq = 0; state.histSeeded = false; state.tasks = [];
   state.respondents.forEach(r => { delete r.invalidAddr; });
 }
@@ -8471,8 +8470,7 @@ function openPlanned(pl){
       <dt>Saturs</dt><dd>${esc(pl.contentLabel || pl.contentName || '—')}</dd>
       <dt>Paraksts</dt><dd>${es.required ? `Jāparaksta (${esc((es.signers || []).map(id => (signerById(id) || {}).name).filter(Boolean).join(', ') || '—')})` : 'Nav jāparaksta'}</dd>
       <dt>Adrešu prioritāte</dt><dd>${esc(prioLabel(pl.prio || sn.prio) || '—')}</dd>
-      <dt>Izveidoja</dt><dd>${esc(pl.createdBy || CURRENT_USER)}${pl.createdAt ? `, ${esc(fmtStamp(pl.createdAt))}` : ''}</dd></dl>
-      ${procTimeHtml({wl:sn.wl, total:Date.now() - Date.parse(pl.createdAt || (sn.wl || {}).createdAt || new Date().toISOString()), waitApv:apvWaitMs(sn.apv)}, 'no izveides līdz šim')}`,
+      <dt>Izveidoja</dt><dd>${esc(pl.createdBy || CURRENT_USER)}${pl.createdAt ? `, ${esc(fmtStamp(pl.createdAt))}` : ''}</dd></dl>`,
     actions:[{label:'Aizvērt', cls:'btn-ghost'}, {label:'Kopēt kā jaunu kampaņu', cls:'btn-secondary', onClick: close => { close(); copyCampaign('planned:' + pl.id); }},
       {label:'Izpildīt tagad', cls:'btn-primary', onClick: close => { close(); runPlanned(pl.id); }}]});
 }
@@ -8808,11 +8806,13 @@ function renderSent(){
 // atlasītās kampaņas informācija vēsturē (darba laiks; sarakstā laiks netiek rādīts)
 function histCampInfo(batch){
   if (!batch) return '';
-  const o = campWork(batch); if (!o) return '';
-  const xs = state.sent.filter(x => String(x.batch) === String(batch)), ok = xs.filter(x => histFinal(x) === 'ok').length;
-  return `<div class="card hist-campinfo"><div class="hci-h"><b>${esc(o.name)}</b> <span class="muted">Nr. ${esc(batch)} · ${esc(SESS_LABELS[o.kind] || '')}${o.aud ? ' · ' + esc(AUDS[o.aud].field) : ''}</span></div>
-    <dl class="proc-dl hci-dl"><dt>Nosūtīta:</dt><dd>${esc(fmtDateTime(o.sentAt))}</dd><dt>Vēstules:</dt><dd>${xs.length} · piegādātas ${ok}</dd></dl>
-    ${procTimeHtml(o, o.signing && !o.done ? 'no izveides līdz šim' : 'no izveides līdz nosūtīšanai')}</div>`;
+  const xs = state.sent.filter(x => String(x.batch) === String(batch)); if (!xs.length) return '';
+  const x0 = xs[0], wl = (state.campWl || {})[batch] || {}, kind = wl.kind || x0.sessionKind || '', aud = wl.aud || '';
+  const c = {ok:0, fail:0, proc:0, sign:0};
+  xs.forEach(x => { const f = histFinal(x); c[f === 'ok' ? 'ok' : f === 'sign' ? 'sign' : f === 'fail' || f === 'held' ? 'fail' : 'proc']++; });
+  const parts = [`${xs.length}`, `piegādātas ${c.ok}`, `nepiegādātas ${c.fail}`, `procesā ${c.proc}`].concat(c.sign ? [`gaida parakstu ${c.sign}`] : []);
+  return `<div class="card hist-campinfo"><div class="hci-h"><b>${esc(x0.sessionName || `Kampaņa Nr. ${batch}`)}</b>${kind || aud ? ` <span class="muted">${esc([SESS_LABELS[kind] || '', aud && AUDS[aud] ? AUDS[aud].field : ''].filter(Boolean).join(' · '))}</span>` : ''}</div>
+    <dl class="proc-dl hci-dl"><dt>Nosūtīta:</dt><dd>${esc(fmtDateTime(wl.sentAt || x0.sentAt))}</dd><dt>Vēstules:</dt><dd>${esc(parts.join(' · '))}</dd></dl></div>`;
 }
 // Ierakstu dzēšana: tikai vecāki par 2 gadiem (pēc nosūtīšanas datuma)
 function twoYearsAgo(){ const d = new Date(); d.setFullYear(d.getFullYear() - 2); return d; }
@@ -10246,36 +10246,6 @@ function campWork(batch, now = Date.now()){
     total:Math.max(0, end - Date.parse(wl.createdAt || x0.createdAt || x0.sentAt)), waitApv:wl.waitApv || 0, hadApv:!!wl.hadApv || (wl.waitApv || 0) > 0,
     waitSign:signing ? Math.max(0, (signedAt ? Date.parse(signedAt) : now) - sentAt) : 0, signing, pendSign, done:!pendSign};
 }
-// "Procesa laiks" (tikai lasāmos kampaņas skatos, apakšā): "Nosaukums: vērtība"
-function procTimeHtml(o, toLabel = 'no izveides līdz nosūtīšanai'){
-  if (!o || !o.wl) return '';
-  const wl = o.wl, row = (l, v) => `<dt>${esc(l)}:</dt><dd>${v}</dd>`;
-  return `<section class="proc-time" aria-label="Procesa laiks"><h4>Procesa laiks</h4><dl class="proc-dl">
-    ${row('Darba laiks', `${esc(fmtDur(wl.active))} (${esc(wlSess(wl.sessions || 0))})`)}
-    ${row('Kopējais ilgums', `${esc(fmtDur(o.total))} <span class="muted">(${esc(toLabel)})</span>`)}
-    ${o.apvPending ? row('Gaida saskaņojumu', esc(fmtDur(o.waitApv))) : o.waitApv ? row('Saskaņošanā', esc(fmtDur(o.waitApv))) : ''}
-    ${o.pendSign ? row('Gaida parakstu', esc(fmtDur(o.waitSign))) : o.waitSign ? row('Parakstīšanā', esc(fmtDur(o.waitSign))) : ''}</dl></section>`;
-}
-// kompakta rinda + sadalījums pa soļiem (uzklikšķinot)
-function wlBox(o){
-  if (!o || !o.wl) return '<span class="muted">Darba laika dati nav pieejami.</span>';
-  const wl = o.wl, parts = [`Darba laiks: <b>${fmtDur(wl.active)}</b> (${wlSess(wl.sessions || 0)})`, `${o.totalLabel || 'Kopējais ilgums'}: <b>${fmtDur(o.total)}</b>`];
-  if (o.apvPending) parts.push(`Gaida saskaņojumu: <b>${fmtDur(o.waitApv)}</b>`); else if (o.waitApv) parts.push(`Saskaņošanā: <b>${fmtDur(o.waitApv)}</b>`);
-  if (o.pendSign) parts.push(`Gaida parakstu: <b>${fmtDur(o.waitSign)}</b>`); else if (o.waitSign) parts.push(`Parakstīšanā: <b>${fmtDur(o.waitSign)}</b>`);
-  const st = wl.steps || {}, sum = Object.values(st).reduce((a, b) => a + b, 0) || 1;
-  const users = Object.entries(wl.users || {}).filter(([, v]) => v > 0).map(([n, v]) => `${esc(n)} (${fmtDur(v)})`).join(', ') || '—';
-  return `<details class="wl-box"><summary>${parts.join(' · ')}</summary><div class="wl-det">
-    <table class="wl-steps"><thead><tr><th>Solis</th><th class="num">Aktīvais laiks</th><th class="num">%</th></tr></thead>
-    <tbody>${WL_STEPS.map((l, i) => `<tr><td>${i + 1}. ${esc(l)}</td><td class="num">${fmtDur(st[i + 1] || 0)}</td><td class="num">${Math.round((st[i + 1] || 0) / sum * 100)}%</td></tr>`).join('')}</tbody></table>
-    <p class="hint">Strādāja: ${users}${o.source ? ` · Satura avots: ${esc(WL_SRC[o.source] || o.source)}` : ''}${wl.createdAt ? ` · Izveidota: ${esc(fmtStamp(wl.createdAt))}` : ''}</p></div></details>`;
-}
-// atvērtā kampaņa (melnraksts) – kopējais ilgums līdz šim
-function composeWork(){
-  const wl = compose.wl || wlNew(compose.createdAt), now = Date.now();
-  return {wl, total:now - Date.parse(compose.createdAt || wl.createdAt), totalLabel:'Kopējais ilgums (līdz šim)', waitApv:apvWaitMs(compose.apv, now), apvPending:apvLocked(), source:(compose.content || {}).source || ''};
-}
-// veidnes informācija: "Sagatavošanas laiks: 12 min (2 sesijas)"
-const wlTplLine = wl => wl && wl.active ? `Sagatavošanas laiks: <b>${fmtDur(wl.active)}</b> (${wlSess(wl.sessions || 0)})${wl.createdAt && wl.lastSavedAt ? ` · kopējais ilgums: ${fmtDur(Date.parse(wl.lastSavedAt) - Date.parse(wl.createdAt))}` : ''}` : 'Sagatavošanas laiks: <span class="muted">nav datu</span>';
 function wlMergeTpl(old, cur, at){
   const o = old || {}, c = cur || {}, users = {...(o.users || {})};
   Object.entries(c.users || {}).forEach(([n, v]) => { users[n] = (users[n] || 0) + v; });
