@@ -590,6 +590,7 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .dr-tasks ul{margin:4px 0 0;padding-left:18px}
 .rules-table td{vertical-align:top}
 .rules-table .cst{white-space:nowrap}
+.rules-table .rule-grp-n{font-size:var(--fs-xs);color:var(--text-muted);white-space:nowrap}
 .rules-table .rule-alt{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:var(--fs-xs);color:var(--text-muted);white-space:nowrap}
 .rules-table tr.rule-grp th{background:var(--bg);color:var(--text-muted);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.03em;text-align:left;padding:6px 10px}
 .rules-modal h3{margin:16px 0 6px;font-size:var(--fs-base)}
@@ -637,7 +638,39 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 /* Vēsture: visi ziņas statusi vienā rindā (augstums kā citās cilnēs); ja neietilpst – horizontāla ritināšana (ritenis, Tab), labajā malā izbalēšana */
 #hist-sub{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth}
 #hist-sub::-webkit-scrollbar{display:none}
-#hist-sub > button{flex:none}
+#hist-sub > button, #hist-sub > .hg-split{flex:none}
+/* Vēsture: statusu grupas (Visas · Procesā ▾ · Piegādāts · Jārisina ▾) */
+.hg-row{position:relative}
+#hist-sub .hg-btn{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.hg-dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--hg-c,var(--primary))}
+.hg-proc{--hg-c:#3B82C4;--hg-bg:#E8F0F8;--hg-ink:#1D5F99}
+.hg-ok{--hg-c:#2E9B5F;--hg-bg:#E6F4EC;--hg-ink:var(--success)}
+.hg-todo{--hg-c:#E07B1F;--hg-bg:#FFF0E0;--hg-ink:var(--orange-ink)}
+#hist-sub .hg-btn.hg-ok[aria-pressed="true"]{background:var(--hg-bg);border-color:var(--hg-c);color:var(--hg-ink)}
+.hg-n{font-weight:600;font-variant-numeric:tabular-nums}
+.hg-n.is-warn{background:#FCE3C6;color:var(--orange-ink);border-radius:var(--radius-pill);padding:0 6px;margin:-1px 0}
+/* poga ar bultiņu: teksts (izvēlas visu grupu) | ▾ (atver izvēlni) */
+.hg-split{display:inline-flex;align-items:stretch;border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-pill);color:var(--text-secondary)}
+.hg-split:hover{border-color:var(--primary-300)}
+.hg-split.is-on{background:var(--hg-bg);border-color:var(--hg-c);color:var(--hg-ink)}
+#hist-sub .hg-split > button{border:0;background:transparent;border-radius:0;color:inherit;margin:0}
+#hist-sub .hg-split > .hg-main{border-radius:var(--radius-pill) 0 0 var(--radius-pill);padding-right:10px}
+#hist-sub .hg-split > .hg-main[aria-pressed="true"]{background:transparent;color:inherit}
+#hist-sub .hg-split > .hg-caret{display:inline-flex;align-items:center;padding:0 10px 0 8px;border-left:1px solid var(--border);border-radius:0 var(--radius-pill) var(--radius-pill) 0}
+.hg-split.is-on > .hg-caret{border-left-color:color-mix(in srgb,var(--hg-c) 45%,transparent)!important}
+#hist-sub .hg-split > button:hover{color:var(--hg-ink,var(--primary))}
+#hist-sub .hg-split > button:focus-visible{outline:3px solid var(--focus-ring);outline-offset:-3px}
+.hg-caret .chev{width:14px;height:14px;transform:rotate(90deg);transition:transform .15s}
+.hg-caret[aria-expanded="true"] .chev{transform:rotate(-90deg)}
+.hg-menu{position:absolute;top:calc(100% + 4px);z-index:60;min-width:260px;background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.12);padding:6px 0;font-size:var(--fs-sm)}
+.hg-menu label{display:flex;align-items:center;gap:8px;padding:6px 14px;cursor:pointer;white-space:nowrap}
+.hg-menu label:hover{background:var(--surface-2,#F4F7F8)}
+.hg-menu input{margin:0;accent-color:var(--primary)}
+.hg-menu .hg-all{font-weight:600}
+.hg-menu hr{border:0;border-top:1px solid var(--border-light);margin:4px 0}
+.hg-menu .hg-c{margin-left:auto;padding-left:16px;font-variant-numeric:tabular-nums;color:var(--text-secondary)}
+.hg-menu .is-zero{color:var(--text-muted)} .hg-menu .is-zero .hg-c{color:var(--text-muted)}
+.hg-menu .cst{font-weight:400}
 #hist-sub > button:focus-visible{outline-offset:-3px}
 #hist-sub.is-ov:not(.at-end){-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 40px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 40px),transparent)}
 .subnav-row .sub-end{margin-left:auto;flex:none;align-items:center}
@@ -2632,8 +2665,9 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       </div>
       <div class="toolbar"><button type="button" class="btn btn-secondary" data-action="rules-open" title="NDR (e-pasts) un DIV (e-adrese) statusu klasifikācija: iemesls → tips → automātiskā rīcība"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Klasifikācijas noteikumi</button></div>
     </div>
-    <div class="subnav-row camp-sub">
+    <div class="subnav-row camp-sub hg-row">
       <div class="subnav" id="hist-sub" role="group" aria-label="Vēstuļu statuss"></div>
+      <div class="hg-menu" id="hg-menu" role="group" hidden></div>
       <span class="purge-wrap sub-end" id="sent-purge-wrap"><button type="button" class="icon-btn purge-btn" data-action="sent-purge" id="sent-purge-btn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></span>
     </div>
     <div class="flt hist-filters" role="search" aria-label="Vēstuļu filtri">
@@ -2695,7 +2729,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 90</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 91</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4176,7 +4210,7 @@ function newSession(full){
   compose.f.docNr = nextDocNr();
   clearTimeout(draftTimer); state.activeDraft = compose.draftId;
 }
-const ui = {campView:'list', camp:{q:'', kind:'', status:'', creator:'', quick:'', from:'', to:''}, campRaw:{}, hist:{q:'', kind:'', status:'', camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histRow:new Set(), histLimit:50, cardId:'',
+const ui = {campView:'list', camp:{q:'', kind:'', status:'', creator:'', quick:'', from:'', to:''}, campRaw:{}, hist:{q:'', kind:'', sts:[], camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histRow:new Set(), histLimit:50, cardId:'',
   rep:{from:'', to:'', camp:'', kind:'', ch:'', aud:'', sort:{key:'date', dir:'desc'}},
   tplView:'veidnes', sagGroup:'mail', sag:{q:'', aud:'', cat:'', lang:''}, newIds:new Set(), tplAud:'', tplSearch:'', tplCat:'', tplKind:'', tplSort:{k:'', dir:0}, tplLimit:20, sagSort:{k:'', dir:0}, sagLimit:20, attSearch:'', attAud:'', attCat:'', attLang:''};
 // Sakļautie kategoriju bloki (tikai šajā kampaņā – pēc noklusējuma visi izvērsti)
@@ -8502,7 +8536,7 @@ function copyCampaign(key){
 }
 // Sūtīšanas vēsture ar atlasītu kampaņu
 function showHistoryOf(batch){
-  Object.assign(ui.hist, histDefaults(), {camp:String(batch), status:''}); ui.histRaw = {};
+  Object.assign(ui.hist, histDefaults(), {camp:String(batch), sts:[]}); ui.histRaw = {};
   $('#hist-search').value = ''; $('#hist-ch').value = '';
   showTab('vesture');
 }
@@ -8648,7 +8682,8 @@ function histDetail(x){
 function openRulesModal(){
   // normālā plūsma (starpstatuss un gala statuss – nav kļūdu tipi): tips "—", tabulas augšā; kļūdu rindas zemāk
   const flow = r => r.type === 'interim' || r.type === 'final';
-  const stCell = r => { const k = RULE_MSG[r.type]; return `${msgBadge(k)}${k === 'next' ? `<small class="rule-alt">ja adreses beigušās → ${msgBadge('fail')}</small>` : ''}`; };
+  const grp = k => { const g = histGroupOf(k); return g && g.label !== HIST_FINAL[k].label ? ` <span class="rule-grp-n">(${esc(g.label)})</span>` : ''; };
+  const stCell = r => { const k = RULE_MSG[r.type]; return `${msgBadge(k)}${grp(k)}${k === 'next' ? `<small class="rule-alt">ja adreses beigušās → ${msgBadge('fail')}${grp('fail')}</small>` : ''}`; };
   const row = r => `<tr${flow(r) ? ' class="is-flow"' : ''}><td>${esc(r.reason)}</td><td>${flow(r) ? '<span class="muted">—</span>' : `<span class="pill ${NDR_TYPES[r.type].cls}">${esc(NDR_TYPES[r.type].label)}</span>`}</td><td>${stCell(r)}</td><td>${esc(r.action)}</td></tr>`;
   const tbl = (ch, h) => { const rs = Object.values(RULES).filter(r => r.ch === ch), fl = rs.filter(flow), er = rs.filter(r => !flow(r));
     return `<div class="table-wrap"><table class="rep-table rules-table"><thead><tr><th>${h}</th><th>Tips</th><th>Ziņas statuss</th><th>Automātiskā rīcība</th></tr></thead>
@@ -8707,12 +8742,49 @@ function histSubFit(){
   const on = s.querySelector('[aria-pressed="true"]'); if (on && on.offsetLeft + on.offsetWidth > s.clientWidth) s.scrollLeft = on.offsetLeft - 20;
   upd();
 }
-// apakšsadaļas (statusu filtrs) – tieši tie paši ziņas statusi kā tabulā un klasifikācijas noteikumos
-const HIST_SUBS = [['', 'Visas', () => true], ...Object.keys(HIST_FINAL).map(k => [k, HIST_FINAL[k].label, x => histFinal(x) === k])];
+// statusu filtrs – 4 grupas (tie paši ziņas statusi kā tabulā un klasifikācijas noteikumos); ar ▾ – var izvēlēties atsevišķus statusus
+const HIST_GROUPS = [
+  {k:'',     label:'Visas',     sts:[]},
+  {k:'proc', label:'Procesā',   sts:['sign', 'proc', 'wait', 'next'], cls:'hg-proc', menu:true},
+  {k:'ok',   label:'Piegādāts', sts:['ok'],                           cls:'hg-ok'},
+  {k:'todo', label:'Jārisina',  sts:['fail', 'held', 'man'],          cls:'hg-todo', menu:true},
+];
+const histGroupOf = st => HIST_GROUPS.find(g => g.sts.includes(st));
+// izvēle: [] – visas; citādi – vienas grupas statusi
+const histStSel = h => { const v = (h.sts || []).filter(k => HIST_FINAL[k]), g = v.length && histGroupOf(v[0]); return g && v.every(k => g.sts.includes(k)) ? v : []; };
+const histStFn = sel => sel.length ? x => sel.includes(histFinal(x)) : () => true;
+function histGroupsHtml(sel, c){
+  const gSel = sel.length ? histGroupOf(sel[0]) : null;
+  return HIST_GROUPS.map(g => {
+    const on = g.k ? gSel === g : !sel.length, part = on && g.k && sel.length < g.sts.length;
+    const n = (g.k ? (on ? sel : g.sts) : Object.keys(HIST_FINAL)).reduce((s, k) => s + c(k), 0);
+    const txt = g.label + (part ? (sel.length === 1 ? `: ${HIST_FINAL[sel[0]].label}` : `: ${sel.length} statusi`) : '');
+    const cnt = `<span class="hg-n${g.k === 'todo' && n > 0 ? ' is-warn' : ''}">(${n})</span>`, dot = g.k ? '<i class="hg-dot" aria-hidden="true"></i>' : '';
+    if (!g.menu) return `<button type="button" class="hg-btn ${g.cls || ''}" data-hg="${g.k}" aria-pressed="${on}">${dot}${esc(txt)} ${cnt}</button>`;
+    const open = ui.hgMenu === g.k;
+    return `<span class="hg-split ${g.cls}${on ? ' is-on' : ''}"><button type="button" class="hg-btn hg-main" data-hg="${g.k}" aria-pressed="${on}" title="Rādīt visus grupas “${esc(g.label)}” statusus">${dot}${esc(txt)} ${cnt}</button><button type="button" class="hg-caret" data-hg-menu="${g.k}" aria-haspopup="true" aria-expanded="${open}" aria-controls="hg-menu" aria-label="${esc(g.label)}: izvēlēties statusus">${ICON.chev}</button></span>`;
+  }).join('');
+}
+function renderHgMenu(sel, c){
+  const m = $('#hg-menu'), g = HIST_GROUPS.find(x => x.k === ui.hgMenu && x.menu);
+  if (!g){ m.hidden = true; m.innerHTML = ''; return; }
+  const on = sel.length && histGroupOf(sel[0]) === g, whole = on && sel.length === g.sts.length;
+  m.setAttribute('aria-label', `${g.label}: statusi`);
+  m.innerHTML = `<label class="hg-all"><input type="checkbox" data-hg-all="${g.k}" ${whole ? 'checked' : ''}>Visi grupas statusi</label><hr>`
+    + g.sts.map(k => `<label class="${c(k) ? '' : 'is-zero'}"><input type="checkbox" data-hg-st="${k}" ${on && !whole && sel.includes(k) ? 'checked' : ''}>${msgBadge(k)}<span class="hg-c">${c(k)}</span></label>`).join('');
+  m.hidden = false;
+  const cb = $(`#hist-sub [data-hg-menu="${g.k}"]`), row = m.parentElement;
+  if (cb){ const sp = cb.closest('.hg-split').getBoundingClientRect(), rr = row.getBoundingClientRect();
+    m.style.left = Math.max(0, Math.min(sp.left - rr.left, rr.width - m.offsetWidth)) + 'px'; }
+}
+function closeHgMenu(focus){
+  if (!ui.hgMenu) return; const k = ui.hgMenu; ui.hgMenu = '';
+  $('#hg-menu').hidden = true; const b = $(`#hist-sub [data-hg-menu="${k}"]`); if (b){ b.setAttribute('aria-expanded', 'false'); if (focus) b.focus(); }
+}
+function setHistSts(v){ ui.hist.sts = v; ui.histLimit = 50; renderSent(); }
 // vēstules apsekojumu kodi (pēc tās pienākumiem), piem., "1-DSA, 1-C"
 const dutyRepMap = () => new Map((state.duties || []).map(d => [d.id, d.reportId]));
 const sentCodes = (xs, dm = dutyRepMap()) => [...new Set(xs.flatMap(x => (x.duties || []).map(id => dm.get(id)).filter(Boolean)))].map(id => (repById(id) || {}).code).filter(Boolean).join(', ');
-const histSubFn = k => (HIST_SUBS.find(x => x[0] === k) || HIST_SUBS[0])[2];
 // atskaitēm: darba rindas (gaida manuālu pārbaudi; neatrisinātas sūtītāja puses kļūdas)
 const isManualQ = x => (x.status === 'kluda' || x.status === 'manuali') && !x.reviewed, isAdminQ = x => x.status === 'admin' && !x.adminResolved;
 // gala statuss tabulā (detaļās – visi starpstatusi)
@@ -8748,15 +8820,17 @@ function renderSent(){
   const all = state.sent, h = ui.hist;
   // statusa pogas – pēc izvēlētajiem filtriem
   const base = all.filter(x => histMatch(x, h));
-  const c = k => base.filter(histSubFn(k)).length;
+  const cnt = {}; base.forEach(x => { const f = histFinal(x); cnt[f] = (cnt[f] || 0) + 1; });
+  const c = k => cnt[k] || 0;
   // dzēst drīkst tikai ierakstus, kas vecāki par 2 gadiem (pēc nosūtīšanas datuma)
   const nOld = all.filter(canDeleteRec).length;
   $('#sent-purge-btn').disabled = !nOld;
   // paskaidrojums (agrāk – atsevišķa "i" ikona) – pogas padomā
   const purgeTip = (nOld ? 'Dzēst ierakstus, vecākus par 2 gadiem.' : 'Dzēst ierakstus, vecākus par 2 gadiem – šādu ierakstu nav.') + ' Sūtīšanas vēstures ierakstus drīkst dzēst tikai pēc 2 gadiem no nosūtīšanas dienas; jaunākus ierakstus dzēst nav iespējams.';
   $('#sent-purge-btn').title = purgeTip; $('#sent-purge-btn').setAttribute('aria-label', purgeTip);
-  if (!HIST_SUBS.some(x => x[0] === h.status)) h.status = '';
-  $('#hist-sub').innerHTML = subnavHtml(HIST_SUBS.map(([k, l]) => [k, `${l} (${c(k)})`]), h.status, 'hsub');
+  const sel = h.sts = histStSel(h);
+  $('#hist-sub').innerHTML = histGroupsHtml(sel, c);
+  renderHgMenu(sel, c);
   histSubFit();
   $('#hist-camp').innerHTML = campOpts(h.camp);
   $('#hist-kind').innerHTML = kindOpts(h.kind);
@@ -8774,7 +8848,7 @@ function renderSent(){
   $('#hist-more-n').textContent = nMore ? ` (${nMore})` : '';
   $('#hist-chipbar').hidden = !active;
   $('#hist-chips').innerHTML = chips.map(([k, l]) => `<span class="ms-tag"><span>${esc(l)}</span><button type="button" data-hchip="${k}" aria-label="Noņemt filtru: ${esc(l)}">×</button></span>`).join('');
-  const list = base.filter(histSubFn(h.status)), sorted = histSorted(list);
+  const list = base.filter(histStFn(sel)), sorted = histSorted(list);
   // parakstīšanai nodotās kampaņas
   const signB = [...new Set(list.filter(x => x.status === 'paraksts').map(x => x.batch))];
   const signBars = signB.map(b => { const xs = all.filter(x => x.batch === b && x.status === 'paraksts'), x0 = xs[0];
@@ -8782,7 +8856,7 @@ function renderSent(){
       <button type="button" class="btn btn-primary btn-sm" data-action="camp-sign" data-id="${b}">Parakstīt</button></div>`; }).join('');
   $('#hist-body').innerHTML = !all.length ? `<div class="card"><div class="empty">${ICON.inbox}<h3>Vēl nav nosūtītu vēstuļu</h3>
       <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></div>`
-    : !list.length ? `<div class="card"><div class="empty">${h.status && !active ? `<h3>Nav vēstuļu ar statusu “${esc(HIST_FINAL[h.status].label)}”</h3>` : '<h3>Nekas netika atrasts</h3>'}</div></div>`
+    : !list.length ? `<div class="card"><div class="empty">${sel.length && !active ? `<h3>Nav vēstuļu ar statusu “${esc(sel.length === histGroupOf(sel[0]).sts.length ? histGroupOf(sel[0]).label : sel.map(k => HIST_FINAL[k].label).join(', '))}”</h3>` : '<h3>Nekas netika atrasts</h3>'}</div></div>`
     : histCampInfo(h.camp) + signBars + `<div class="card"><div class="table-wrap camp-scroll hist-scroll" id="hist-scroll"><table class="camp-table hist-table">
       <thead><tr>${HIST_COLS.map(([k, l]) => `<th aria-sort="none"><button type="button" class="th-sort" data-hsort="${k}">${l}<span class="sort-ic" aria-hidden="true">↕</span></button></th>`).join('')}<th class="actions"><span class="sr-only">Darbības</span></th></tr></thead>
       <tbody>${sorted.slice(0, ui.histLimit).map(x => { const op = ui.histRow.has(x.id), f = HIST_FINAL[histFinal(x)];
@@ -9485,7 +9559,30 @@ $('#camp-scroll').addEventListener('scroll', () => hideCTip());
 $('#hist-sub').addEventListener('scroll', () => histSubFit(), {passive:true});
 $('#hist-sub').addEventListener('wheel', e => { const s = e.currentTarget; if (s.scrollWidth <= s.clientWidth || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; e.preventDefault(); s.scrollLeft += e.deltaY; }, {passive:false});
 window.addEventListener('resize', () => histSubFit());
-$('#hist-sub').addEventListener('click', e => { const b = e.target.closest('[data-hsub]'); if (!b) return; ui.hist.status = b.dataset.hsub; ui.histLimit = 50; renderSent(); $(`#hist-sub [data-hsub="${ui.hist.status}"]`).focus(); });
+$('#hist-sub').addEventListener('click', e => {
+  const cb = e.target.closest('[data-hg-menu]');
+  if (cb){ const k = cb.dataset.hgMenu; if (ui.hgMenu === k) closeHgMenu(); else { ui.hgMenu = k; renderSent(); const m = $('#hg-menu input'); if (m) m.focus(); } return; }
+  const b = e.target.closest('[data-hg]'); if (!b) return;
+  const g = HIST_GROUPS.find(x => x.k === b.dataset.hg); ui.hgMenu = '';
+  setHistSts(g ? [...g.sts] : []); const f = $(`#hist-sub [data-hg="${b.dataset.hg}"]`); if (f) f.focus();
+});
+// izvēlne: "Visi grupas statusi" vai atsevišķi statusi (tikai vienas grupas; citas grupas izvēle atiestatās)
+$('#hg-menu').addEventListener('change', e => {
+  const g = HIST_GROUPS.find(x => x.k === ui.hgMenu); if (!g) return;
+  const cur = histStSel(ui.hist).filter(k => g.sts.includes(k)), whole = cur.length === g.sts.length;
+  let v;
+  if (e.target.dataset.hgAll != null) v = e.target.checked ? [...g.sts] : [];
+  else { const k = e.target.dataset.hgSt, base = whole ? [] : cur; v = e.target.checked ? [...base, k] : base.filter(x => x !== k); }
+  const keep = e.target.dataset.hgAll != null ? '[data-hg-all]' : `[data-hg-st="${e.target.dataset.hgSt}"]`;
+  setHistSts(g.sts.filter(k => v.includes(k))); const el = $('#hg-menu ' + keep); if (el) el.focus();
+});
+$('#hg-menu').addEventListener('keydown', e => {
+  if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); closeHgMenu(true); }
+  else if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); const xs = $$('#hg-menu input'), i = xs.indexOf(document.activeElement); const n = xs[(i + (e.key === 'ArrowDown' ? 1 : -1) + xs.length) % xs.length]; if (n) n.focus(); }
+});
+document.addEventListener('mousedown', e => { if (ui.hgMenu && !e.target.closest('#hg-menu, [data-hg-menu]')) closeHgMenu(); });
+document.addEventListener('focusin', e => { if (ui.hgMenu && !e.target.closest('#hg-menu, .hg-split')) closeHgMenu(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && ui.hgMenu){ e.preventDefault(); closeHgMenu(true); } });
 $('#rep-sub').addEventListener('click', e => { const b = e.target.closest('[data-rsub]'); if (!b) return; ui.repSub = b.dataset.rsub; renderReports(); $(`#rep-sub [data-rsub="${ui.repSub}"]`).focus(); });
 $('#hist-search').addEventListener('input', e => { ui.hist.q = e.target.value; ui.histLimit = 50; renderSent(); });
 [['#hist-camp', 'camp'], ['#hist-kind', 'kind'], ['#hist-ch', 'ch'], ['#hist-creator', 'creator']].forEach(([sel, k]) => $(sel).addEventListener('change', e => { ui.hist[k] = e.target.value; ui.histLimit = 50; renderSent(); }));
