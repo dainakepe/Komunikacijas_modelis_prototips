@@ -418,6 +418,48 @@ td.contacts{display:table-cell}
 .duty-table th{background:var(--bg);font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.3px;color:var(--text-muted)}
 .duty-table th,.duty-table td{padding:7px 10px;border-bottom:1px solid var(--border-light);text-align:left}
 .duty-table .late,.rtab-out .late{color:var(--danger);font-weight:600}
+/* ===== Respondentu reakcija un veidlapu iesniegšana (3.4) – jaunas klases ===== */
+.hist-table th.c-react,.hist-table td.c-react{width:104px;min-width:104px;max-width:104px;padding-left:8px;padding-right:8px}
+/* ar kolonnu "Reakcija" tabula ietilpst platumā (adresāta nosaukums – saīsināts ar "…", pilns – padomā) */
+.hist-table .hist-name{max-width:min(290px,20vw)}
+.rx{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.rx-eye{display:inline-flex;color:#C3CCD0}
+.rx-eye .icon{width:16px;height:16px}
+.rx-eye.is-open{color:var(--text-secondary)}
+.rx-eye.is-open .icon{fill:currentColor;stroke:var(--surface)}
+.rx-forms{display:inline-flex;align-items:center;gap:1px;font-size:var(--fs-xs);color:var(--text-secondary)}
+.rx-d{font-style:normal;font-size:12px;line-height:1;width:11px;text-align:center;color:var(--text-secondary)}
+.rx-d.rx-kl{color:var(--orange)}
+.rx-d.rx-nav,.rx-d.rx-more{color:#A9B4B8}
+.rx-n{margin-left:3px;font-weight:600;font-variant-numeric:tabular-nums}
+.hd-forms{margin-top:16px}
+.hd-forms h4{font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.03em;color:var(--text-muted);margin:0 0 8px}
+.rx-table tbody tr.rx-row{cursor:pointer}
+.rx-table tbody tr.rx-row:hover > td{background:var(--th-bg)}
+.rx-table .rx-tg{display:inline-flex;width:14px;color:var(--text-muted)}
+.rx-table .rx-tg .chev{width:12px;height:12px;transition:transform .15s}
+.rx-table tr.is-open .rx-tg .chev{transform:rotate(90deg)}
+.rx-st{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.rx-st.rx-kl{color:var(--orange-ink)}
+.rx-tag{font-size:var(--fs-xs);color:var(--text-muted);white-space:nowrap}
+.rx-tag.is-late{color:var(--orange-ink)}
+.rx-tl > td{background:var(--bg);font-size:var(--fs-sm)}
+.rx-evs{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:baseline}
+.rx-ev b{font-variant-numeric:tabular-nums}
+.rx-ev.rx-kl{color:var(--orange-ink)}
+.rx-sep{color:var(--text-muted)}
+.rx-sec{margin-top:12px;padding-top:12px;border-top:1px solid var(--border-light)}
+.rx-sec-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
+.rx-sec-h h4{margin:0;font-size:var(--fs-md);color:var(--primary-darker)}
+.rx-funnel{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;margin:0 0 12px}
+.rx-step{flex:1 1 120px;min-width:110px;border:1px solid var(--border-light);border-radius:var(--radius-sm);padding:8px 10px;background:var(--surface)}
+.rx-step b{display:block;font-size:var(--fs-lg,18px);font-variant-numeric:tabular-nums;color:var(--text)}
+.rx-step span{display:block;font-size:var(--fs-xs);color:var(--text-muted)}
+.rx-step .rx-bar{display:block;height:4px;margin-top:6px;border-radius:2px;background:var(--border-light);overflow:hidden}
+.rx-step .rx-bar i{display:block;height:100%;width:var(--w);background:var(--primary-300,#7FB3BC)}
+.rx-arr{align-self:center;color:var(--text-muted)}
+.rx-err{align-self:center;margin-left:6px;font-size:var(--fs-sm);color:var(--orange-ink);white-space:nowrap}
+.rx-note{margin:8px 0 0;font-size:var(--fs-xs);color:var(--text-muted)}
 .duty-empty{padding:8px 4px}
 .rs-block{border-top:1px solid var(--border-light)}
 .rs-block:first-child{border-top:0}
@@ -2769,7 +2811,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 93</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 94</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -8518,6 +8560,7 @@ const MENU_SRC = {
   'tpl-menu':{find:id => state.templates.find(y => y.id === id), items:x => tplMenuItems(x), name:x => x.name},
   'ms-menu':{find:id => (state.mailSamples || []).find(y => y.id === id), items:x => msMenuItems(x), name:x => x.name},
   'att-menu':{find:id => allAtts().find(y => y.id === id), items:x => attMenuItems(x), name:x => x.name},
+  'react-menu':{find:id => state.sent.some(y => String(y.batch) === String(id)) ? {batch:id} : null, items:x => reactMenuItems(x.batch), name:() => 'Veidot atgādinājumu'},
 };
 function openCampMenu(btn){
   const src = MENU_SRC[btn.dataset.action] || MENU_SRC['camp-menu'];
@@ -8790,6 +8833,153 @@ function histFinal(x){
   if (m === 'next' || m === 'wait') return m;
   return x.status === 'atkartots' ? 'wait' : 'proc';
 }
+// ===== Respondentu reakcija un veidlapu iesniegšana (procesa 3.4 apakšprocess) =====
+// Testa dati (simulācija, deterministiski pēc vēstules ID): vēstules atvēršana un katras vēstulē iekļautās veidlapas statusu vēsture.
+// Atvēršana: eAdresē – uzticama; e-pastā – aptuvena (izsekošanas attēls). Notikumi nākotnē netiek rādīti, līdz to laiks pienāk.
+// Veidlapa = vēstulē iekļautais pienākums (apsekojums + periods); iesniegtajiem pienākumiem – iesniegšanas datums no pienākuma datiem.
+const FORM_ST = {nav:{label:'Nav uzsākta', ic:'○'}, sak:{label:'Iesākta', ic:'◐'}, kl:{label:'Kļūdaina', ic:'⚠', d:'atgriezta labošanai'}, ies:{label:'Iesniegta', ic:'●'}};
+const FORM_KINDS = ['uzaicinajums', 'atg-pirms', 'atg-pec', 'atgadinajums'];
+const REACT_V = 2;
+let rxDutyCache = null;
+const rxDuty = id => { if (!rxDutyCache || rxDutyCache.n !== (state.duties || []).length){ rxDutyCache = {n:(state.duties || []).length, m:new Map((state.duties || []).map(d => [d.id, d]))}; } return rxDutyCache.m.get(id); };
+function reactData(x){
+  if (x.status === 'paraksts') return {open:null, forms:(FORM_KINDS.includes(x.sessionKind) ? x.duties || [] : []).filter(rxDuty).map(id => ({duty:id, pre:false, late:false, hist:[]}))};
+  if (x.react && x.react.v === REACT_V) return x.react;
+  const rnd = wlRnd('react-' + x.id), base = Date.parse(x.signedAt || x.sentAt), now = Date.now(), H = 3600e3, iso = ms => new Date(ms).toISOString();
+  const r = {v:REACT_V, open:null, forms:[]};
+  // ticami laiki: veidlapas – darba laikā (8–19), atvēršana – 7–22
+  const inHours = (ms, a, b) => { const d = new Date(ms), hr = d.getHours(); if (hr < a) d.setHours(a, d.getMinutes()); else if (hr >= b){ d.setDate(d.getDate() + 1); d.setHours(a + (hr - b) % 3, d.getMinutes()); } return d.getTime(); };
+  const order = h => { h.sort((a, b) => a.at.localeCompare(b.at)); h.forEach((e, i) => { if (i && e.at <= h[i - 1].at) e.at = iso(Date.parse(h[i - 1].at) + 25 * 60e3); }); return h; };
+  if (rnd() < .64) r.open = {at:iso(Math.max(base + 6 * 60e3, inHours(base + 6 * 60e3 + Math.pow(rnd(), 2.2) * 4 * 864e5, 7, 22)))};
+  const wk = ms => inHours(ms, 8, 19);
+  if (FORM_KINDS.includes(x.sessionKind)) (x.duties || []).forEach(id => {
+    const d = rxDuty(id); if (!d) return;
+    const h = [];
+    if (d.submitted){
+      let at = Date.parse(d.submitted + 'T00:00:00') + (8 + rnd() * 9) * H; if (at > now) at = now - (5 + rnd() * 60) * 60e3;
+      const pre = at < base;
+      if (pre) h.push({st:'sak', at:iso(at - (20 + rnd() * 120) * 60e3)});
+      else { const t1 = Math.min(at - 30 * 60e3, wk(base + (at - base) * (.1 + rnd() * .4))); h.push({st:'sak', at:iso(Math.max(base + 10 * 60e3, t1))});
+        if (rnd() < .22){ const t2 = t1 + (at - t1) * .35, t3 = t1 + (at - t1) * .6; h.push({st:'ies', at:iso(wk(t2))}, {st:'kl', at:iso(wk(t3))}); } }
+      h.push({st:'ies', at:iso(at)});
+      r.forms.push({duty:id, pre, late:d.submitted > d.deadline, hist:pre ? h : order(h).filter(e => Date.parse(e.at) <= at || e.st === 'ies')});
+    } else {
+      const u = rnd(), t1 = wk(base + (.5 + Math.pow(rnd(), 1.6) * 72) * H);
+      if (u >= .4) h.push({st:'sak', at:iso(t1)});
+      // nokavētam pienākumam (atgādinājums pēc termiņa) – daļa iesniegta pēc termiņa (tikai reakcijas datos; pienākumu dati netiek mainīti)
+      const lateSub = u >= .4 && d.deadline < String(x.sentAt).slice(0, 10) && rnd() < .45;
+      if (lateSub){ const t2 = wk(t1 + (2 + rnd() * 40) * H); h.push({st:'ies', at:iso(t2)}); }
+      else if (u >= .85){ const t2 = wk(t1 + (1 + rnd() * 30) * H); h.push({st:'ies', at:iso(t2)}, {st:'kl', at:iso(wk(t2 + (2 + rnd() * 20) * H))}); }
+      r.forms.push({duty:id, pre:false, late:lateSub, hist:order(h)});
+    }
+  });
+  x.react = r;
+  return r;
+}
+// skats šim brīdim: atvēršana (tikai, ja vēstule nav nepiegādāta / aizturēta) un veidlapu pašreizējais statuss
+function reactView(x, now = Date.now()){
+  const r = reactData(x), fin = histFinal(x);
+  const open = !['sign', 'fail', 'held', 'man'].includes(fin) && r.open && Date.parse(r.open.at) <= now ? {at:r.open.at, approx:x.channel !== 'eadrese'} : null;
+  const forms = r.forms.map((f, i) => { const d = rxDuty(f.duty), hist = f.hist.filter(e => Date.parse(e.at) <= now), last = hist[hist.length - 1];
+    return {i, d, st:last ? last.st : 'nav', at:last ? last.at : '', hist, pre:f.pre && !!last, late:f.late && !!last && last.st === 'ies'}; }).filter(f => f.d);
+  return {open, forms, res:forms.filter(f => !f.pre)};
+}
+// vēstules kopējais stāvoklis (pēc veidlapām, kas iesniegtas pēc vēstules nosūtīšanas)
+function reactSum(v){
+  const rs = v.res, ies = rs.filter(f => f.st === 'ies').length;
+  if (!v.forms.length) return 'Vēstulē nav veidlapu';
+  if (!rs.length) return 'Visas veidlapas iesniegtas pirms vēstules';
+  return ies === rs.length ? 'Visas iesniegtas' : rs.some(f => f.st === 'kl') ? 'Ir kļūdainas' : ies ? 'Daļēji iesniegtas' : 'Nav iesniegta neviena';
+}
+const rxT = iso => new Date(iso).getFullYear() === new Date().getFullYear() ? fmtShortIso(iso) : fmtDateTime(iso);
+// kolonna "Reakcija": atvēršanas acs + veidlapu punkti un "iesniegtas/visas"
+function reactCell(x){
+  const v = reactView(x), rs = v.res, ies = rs.filter(f => f.st === 'ies').length, pre = v.forms.length - rs.length;
+  const eyeT = v.open ? `Atvērta ${rxT(v.open.at)}${v.open.approx ? ' · aptuveni' : ''}` : 'Nav atvērta';
+  const ord = {kl:0, ies:1, sak:2, nav:3}, srt = [...rs].sort((a, b) => ord[a.st] - ord[b.st]);
+  const sum = reactSum(v) + (pre && rs.length ? ` · ${pre} iesniegta${pre > 1 ? 's' : ''} pirms vēstules` : '');
+  const forms = rs.length ? `<span class="rx-forms" title="${esc(sum)}" aria-label="Veidlapas: ${esc(sum)}, iesniegtas ${ies} no ${rs.length}">${srt.slice(0, 3).map(f => `<i class="rx-d rx-${f.st}" aria-hidden="true">${FORM_ST[f.st].ic}</i>`).join('')}<span class="rx-n">${ies}/${rs.length}</span></span>`
+    : `<span class="rx-forms muted" title="${esc(reactSum(v))}">—</span>`;
+  return `<td class="c-react"><span class="rx"><span class="rx-eye${v.open ? ' is-open' : ''}" title="${esc(eyeT)}" role="img" aria-label="${esc(eyeT)}">${ICON.eye}</span>${forms}</span></td>`;
+}
+// rindas detaļās: veidlapu tabula; uzklikšķinot uz veidlapas – laika līnija
+ui.histForm = new Set();
+function reactFormsHtml(x){
+  const v = reactView(x); if (!v.forms.length) return '';
+  const stCell = f => `<span class="rx-st rx-${f.st}"><i class="rx-d rx-${f.st}" aria-hidden="true">${FORM_ST[f.st].ic}</i>${esc(FORM_ST[f.st].label)}</span>${f.late ? ' <span class="rx-tag is-late">pēc termiņa</span>' : ''}${f.pre ? ' <span class="rx-tag">iesniegta pirms vēstules</span>' : ''}`;
+  const evLabel = e => e.st === 'kl' ? `${FORM_ST.kl.label} (${FORM_ST.kl.d})` : FORM_ST[e.st].label;
+  const tl = f => { const evs = [...(v.open ? [{at:v.open.at, t:`Vēstule atvērta${v.open.approx ? ' (aptuveni)' : ''}`}] : []), ...(f.pre ? [{at:x.signedAt || x.sentAt, t:'Vēstule nosūtīta'}] : []),
+      ...f.hist.map(e => ({at:e.at, t:evLabel(e) + (e.st === 'ies' && f.late && e === f.hist[f.hist.length - 1] ? ' (pēc termiņa)' : ''), st:e.st}))].sort((a, b) => a.at.localeCompare(b.at));
+    return evs.length ? evs.map((e, i) => `${i ? '<span class="rx-sep" aria-hidden="true">·</span>' : ''}<span class="rx-ev${e.st === 'kl' ? ' rx-kl' : ''}"><b>${esc(rxT(e.at))}</b> ${esc(e.t)}</span>`).join('') : '<span class="muted">Statusa izmaiņu vēl nav.</span>'; };
+  return `<div class="hd-forms"><h4>Veidlapas${tip('Vēstulē iekļautās veidlapas (apsekojums un periods) un to statuss. Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena.')}</h4>
+    <table class="duty-table rx-table"><thead><tr><th>Apsekojums</th><th>Periods</th><th>Termiņš</th><th>Statuss</th><th>Statusa laiks</th></tr></thead><tbody>${v.forms.map(f => {
+      const k = `${x.id}|${f.i}`, op = ui.histForm.has(k);
+      return `<tr class="rx-row${op ? ' is-open' : ''}" data-action="hist-form" data-id="${esc(k)}" tabindex="0" aria-expanded="${op}"><td><span class="rx-tg" aria-hidden="true">${ICON.chev}</span>${esc(f.d && repById(f.d.reportId) ? repTitle(repById(f.d.reportId)) : '—')}</td>
+        <td>${esc(periodLabel(f.d.period))}</td><td>${esc(fmtDate(f.d.deadline))}</td><td>${stCell(f)}</td><td>${f.at ? esc(rxT(f.at)) : '<span class="muted">—</span>'}</td></tr>
+        ${op ? `<tr class="rx-tl"><td colspan="5"><div class="rx-evs">${tl(f)}</div></td></tr>` : ''}`; }).join('')}</tbody></table></div>`;
+}
+// nosūtītas kampaņas skats: "Reakcija un iesniegšana"
+function reactGroups(xs){
+  const g = {nav:new Set(), sak:new Set(), kl:new Set()}, reps = {nav:new Set(), sak:new Set(), kl:new Set()};
+  xs.forEach(x => reactView(x).res.forEach(f => { if (g[f.st]){ g[f.st].add(x.respondentId); reps[f.st].add(f.d.reportId); } }));
+  return {g, reps};
+}
+const RX_REMIND = [['nav', 'Neuzsākušajiem', 'neuzsākušie'], ['sak', 'Iesākušajiem, bet neiesniegušajiem', 'iesākušie, nav iesnieguši'], ['kl', 'Ar kļūdainām veidlapām', 'kļūdainas veidlapas']];
+function reactSectionHtml(batch, xs){
+  const vs = xs.map(x => ({x, v:reactView(x)})), sentXs = vs.filter(o => histFinal(o.x) !== 'sign');
+  const nSent = sentXs.length, nDeliv = sentXs.filter(o => histFinal(o.x) === 'ok').length, nOpen = sentXs.filter(o => o.v.open).length;
+  const fs = vs.flatMap(o => o.v.res), nF = fs.length, nStart = fs.filter(f => f.st !== 'nav').length, nIes = fs.filter(f => f.st === 'ies').length, nKl = fs.filter(f => f.st === 'kl').length;
+  const nPre = vs.reduce((s, o) => s + o.v.forms.length - o.v.res.length, 0);
+  const pc = (a, b) => b ? Math.round(a / b * 100) : 0;
+  const step = (n, l, base, unit) => `<div class="rx-step"><b>${n}</b><span>${esc(l)}${base != null ? ` · ${pc(n, base)}%` : ''}</span><span class="rx-bar" aria-hidden="true"><i style="--w:${base != null ? pc(n, base) : 100}%"></i></span></div>`;
+  const arr = '<span class="rx-arr" aria-hidden="true">→</span>';
+  const byRep = new Map(); fs.forEach(f => { const k = f.d.reportId; if (!byRep.has(k)) byRep.set(k, []); byRep.get(k).push(f); });
+  const rows = [...byRep.entries()].map(([k, a]) => { const p = repById(k), n = a.length, ies = a.filter(f => f.st === 'ies').length;
+    return `<tr><td>${esc(p ? repTitle(p) : k)}</td><td class="num">${n}</td><td class="num">${a.filter(f => f.st === 'sak').length}</td><td class="num">${a.filter(f => f.st === 'kl').length}</td><td class="num">${ies}</td><td class="num">${pc(ies, n)}%</td></tr>`; }).join('');
+  const {g} = reactGroups(xs);
+  const btn = nF ? `<button type="button" class="btn btn-secondary btn-sm" data-action="react-menu" data-id="${esc(batch)}" aria-haspopup="menu" aria-expanded="false">${ICON.send}Veidot atgādinājumu</button>` : '';
+  return `<section class="rx-sec" aria-labelledby="rx-h-${esc(batch)}"><div class="rx-sec-h"><h4 id="rx-h-${esc(batch)}">Reakcija un iesniegšana</h4>${btn}</div>
+    <div class="rx-funnel" role="list" aria-label="Piltuve">${step(nSent, 'Nosūtītas', null)}${arr}${step(nDeliv, 'Piegādātas', nSent)}${arr}${step(nOpen, 'Atvērtas', nSent)}${arr}${step(nStart, 'Iesāktas veidlapas', nF)}${arr}${step(nIes, 'Iesniegtas veidlapas', nF)}<span class="rx-err">Kļūdainas: <b>${nKl}</b></span></div>
+    ${nF ? `<div class="table-wrap"><table class="rep-table rx-rep"><thead><tr><th>Apsekojums</th><th class="num">Veidlapas vēstulēs</th><th class="num">Iesāktas</th><th class="num">Kļūdainas</th><th class="num">Iesniegtas</th><th class="num">Iesniegšanas %</th></tr></thead><tbody>${rows}</tbody></table></div>`
+      : '<p class="hint">Kampaņas vēstulēs nav iekļautu veidlapu.</p>'}
+    <p class="rx-note">Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena.${nPre ? ` Iesniegtas pirms vēstules (neieskaita): ${nPre}.` : ''}${nF ? ` Veidlapas: ${nF} · procenti – no visām vēstulēs iekļautajām veidlapām; vēstulēm – no nosūtītajām.` : ''}</p></section>`;
+}
+function reactMenuItems(batch){
+  const {g} = reactGroups(state.sent.filter(x => String(x.batch) === String(batch)));
+  return RX_REMIND.map(([k, l]) => { const n = g[k].size;
+    return n ? `<button type="button" role="menuitem" tabindex="-1" data-action="react-remind" data-id="${esc(batch)}|${k}">${ICON.users}${esc(l)} (${n})</button>`
+      : `<button type="button" role="menuitem" tabindex="-1" class="is-dis" aria-disabled="true">${ICON.users}${esc(l)} (0)</button>`; }).join('');
+}
+// "Veidot atgādinājumu": jauna kampaņa (Pamatdati) – veids "Atgādinājums", apsekojums un respondentu saraksts aizpildīti; atlase tiek veikta uzreiz
+function reactReminder(batch, grp){
+  const xs = state.sent.filter(x => String(x.batch) === String(batch)), {g, reps} = reactGroups(xs), def = RX_REMIND.find(r => r[0] === grp);
+  const x = campByKey('sent:' + batch), sn = x && campSnapOf(x);
+  if (!sn || !def || !g[grp].size) return;
+  const rs = [...g[grp]].map(id => state.respondents.find(r => r.id === id)).filter(Boolean);
+  const ds = xs.flatMap(y => reactView(y).res.filter(f => f.st === grp).map(f => ({...f.d, rid:y.respondentId}))), today = todayIso();
+  if (ui.campView === 'edit') flushDraft();
+  const c = clone(sn);
+  ['apv', 'esign', 'custom', 'exc', 'excluded', 'selRun', 'review', 'tests', 'addrFix', 'addrUndo', 'dupKeep', 'shared', 'miRej', 'wl', 'createdAt', 'savedAt'].forEach(k => delete c[k]);
+  c.kind = 'atgadinajums'; c.content = null; c.when = 'now';
+  c.f = {...(c.f || {}), date:today}; delete c.f.docNr;
+  c.sel = c.sel || {}; c.sel.sendDate = today; c.sel.reports = [...reps[grp]].filter(id => repById(id));
+  // atgādinājuma veids (esošais nosacījums): pēc termiņa – nokavētie pienākumi; pirms termiņa – pienākumi ar vienu termiņu;
+  // izvēlas to, kas aptver vairāk respondentu (pārējiem termiņš vēl nav pienācis)
+  const cover = fn => new Set(ds.filter(fn).map(d => d.rid)).size, fut = {};
+  ds.filter(d => d.deadline >= today).forEach(d => { (fut[d.deadline] = fut[d.deadline] || new Set()).add(d.rid); });
+  const next = Object.keys(fut).sort((a, b) => fut[b].size - fut[a].size || a.localeCompare(b))[0];
+  c.remind = cover(d => d.deadline < today) >= (next ? fut[next].size : 0) ? 'after' : 'before';
+  if (c.remind === 'before') c.sel.days = String(Math.round((parseIso(next) - parseIso(today)) / 864e5));
+  c.sel.resp = {...defaultResp(), ...(c.sel.resp || {}), list:[...new Set(rs.map(r => String(r.nmk || r.uuk || '').toLowerCase()).filter(Boolean))], listName:`Kampaņa “${x.name}” – ${def[2]}`, listMissing:[]};
+  newSession(true);
+  applySnapshot({...c, name:`${sn.name || x.name} – atgādinājums (${def[2]})`, nameAuto:false, step:1});
+  flushDraft(true);
+  openEditor();
+  scrollTo(0, 0);
+  const nm = $('#c-name'); if (nm) nm.focus({preventScroll:true});
+  runSelection();
+  toast(`Izveidota atgādinājuma kampaņa: sarakstā ${rs.length} ${plural(rs.length, 'respondents', 'respondenti')} (${def[2]}); atlase veikta pēc atgādinājuma nosacījuma (${c.remind === 'after' ? 'pēc termiņa' : 'pirms termiņa'}).`);
+}
 const msgBadge = (k, tag = 'span') => `<${tag} class="cst ${HIST_FINAL[k].cls}"><i aria-hidden="true"></i>${esc(HIST_FINAL[k].label)}</${tag}>`;
 // statusa padoms: klasifikācija un iemesls, mēģinājums (piem., "Īslaicīgs: pastkaste pilna · mēģinājums 1/3")
 function histStTip(x){
@@ -8924,7 +9114,7 @@ function renderSent(){
   const hEmpty = !all.length ? tcEmptyBox('Vēl nav nosūtītu vēstuļu', `<button class="btn btn-primary btn-sm" data-action="camp-new">${ICON.plus}Jauna kampaņa</button>`)
     : !list.length ? tcEmptyBox(sel.length && !active ? `Nav vēstuļu ar statusu “${sel.length === histGroupOf(sel[0]).sts.length ? histGroupOf(sel[0]).label : sel.map(k => HIST_FINAL[k].label).join(', ')}”` : 'Nav ierakstu, kas atbilst filtriem') : '';
   $('#hist-body').innerHTML = (list.length ? histCampInfo(h.camp) + signBars : '') + `<div class="card table-card tc-fit" id="hist-card"><div class="table-wrap camp-scroll hist-scroll tc-area" id="hist-scroll"><table class="camp-table hist-table">
-      <thead><tr>${HIST_COLS.map(([k, l]) => `<th aria-sort="none"><button type="button" class="th-sort" data-hsort="${k}">${l}<span class="sort-ic" aria-hidden="true">↕</span></button></th>`).join('')}<th class="actions"><span class="sr-only">Darbības</span></th></tr></thead>
+      <thead><tr>${HIST_COLS.map(([k, l]) => `<th aria-sort="none"><button type="button" class="th-sort" data-hsort="${k}">${l}<span class="sort-ic" aria-hidden="true">↕</span></button></th>`).join('')}<th class="c-react">Reakcija</th><th class="actions"><span class="sr-only">Darbības</span></th></tr></thead>
       <tbody>${sorted.slice(0, ui.histLimit).map(x => { const op = ui.histRow.has(x.id), f = HIST_FINAL[histFinal(x)];
         return `<tr class="hist-row ${op ? 'is-open' : ''} ${ui.newIds.has(x.id) ? 'is-new' : ''}" data-hrow="${x.id}">
           <td><span class="hist-name" title="${esc(x.recipient)}">${respLink(x.respondentId, x.recipient)}</span></td>
@@ -8932,12 +9122,17 @@ function renderSent(){
           <td><button type="button" class="cst hist-st ${f.cls}" data-action="hist-row" data-id="${x.id}" aria-expanded="${op}" title="${esc(histStTip(x))}\nKlikšķis – detaļas: adrese, mēģinājumi, starpstatusi, NDR/DIV">${'<i aria-hidden="true"></i>'}${f.label}</button></td>
           <td>${esc(CHANNELS[x.channel] || '')}</td>
           <td>${esc(fmtDateTime(x.sentAt))}</td>
+          ${reactCell(x)}
           <td class="actions"><button type="button" class="icon-btn camp-more" data-action="hist-menu" data-id="${x.id}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.recipient)}" title="Darbības">${ICON.dots}</button></td></tr>
-          ${op ? `<tr class="hist-detail"><td colspan="6">${histDetail(x)}</td></tr>` : ''}`; }).join('')}</tbody></table><div class="tc-empty" id="hist-empty"${hEmpty ? '' : ' hidden'}>${hEmpty}</div></div>
+          ${op ? `<tr class="hist-detail"><td colspan="7">${histDetail(x)}${reactFormsHtml(x)}</td></tr>` : ''}`; }).join('')}</tbody></table><div class="tc-empty" id="hist-empty"${hEmpty ? '' : ' hidden'}>${hEmpty}</div></div>
       ${hEmpty ? '' : `<div class="table-foot camp-foot hist-foot2"><span>Rādītas <b>${Math.min(ui.histLimit, sorted.length)}</b> no <b>${sorted.length}</b>${sorted.length !== all.length ? ` <span class="muted">(kopā ${all.length})</span>` : ''}</span>${sorted.length > ui.histLimit ? `<button type="button" class="btn btn-secondary btn-sm" data-action="hist-more">Rādīt vairāk</button>` : ''}</div>`}</div>`;
   if (hEmpty) $('#hist-scroll').classList.add('is-empty');
   fitTables();
   renderHistSort();
+  if (campMenuBtn && campMenuBtn.dataset.action === 'react-menu' && !campMenuBtn.isConnected){
+    const nb = $(`#hist-body [data-action="react-menu"][data-id="${campMenuBtn.dataset.id}"]`);
+    if (nb){ campMenuBtn = nb; nb.setAttribute('aria-expanded', 'true'); $('#cm-menu').innerHTML = reactMenuItems(nb.dataset.id); } else closeCampMenu();
+  }
   if (campMenuBtn && campMenuBtn.dataset.action === 'hist-menu' && !campMenuBtn.isConnected){
     const nb = $(`#hist-body [data-action="hist-menu"][data-id="${campMenuBtn.dataset.id}"]`), rec = nb && state.sent.find(y => y.id === nb.dataset.id);
     if (nb && rec){ campMenuBtn = nb; nb.setAttribute('aria-expanded', 'true'); $('#cm-menu').innerHTML = histMenuItems(rec); } else closeCampMenu();
@@ -8954,7 +9149,7 @@ function histCampInfo(batch){
   xs.forEach(x => { const f = histFinal(x); c[f === 'ok' ? 'ok' : f === 'sign' ? 'sign' : f === 'fail' || f === 'held' ? 'fail' : 'proc']++; });
   const parts = [`${xs.length}`, `piegādātas ${c.ok}`, `nepiegādātas ${c.fail}`, `procesā ${c.proc}`].concat(c.sign ? [`gaida parakstu ${c.sign}`] : []);
   return `<div class="card hist-campinfo"><div class="hci-h"><b>${esc(x0.sessionName || `Kampaņa Nr. ${batch}`)}</b>${kind || aud ? ` <span class="muted">${esc([SESS_LABELS[kind] || '', aud && AUDS[aud] ? AUDS[aud].field : ''].filter(Boolean).join(' · '))}</span>` : ''}</div>
-    <dl class="proc-dl hci-dl"><dt>Nosūtīta:</dt><dd>${esc(fmtDateTime(wl.sentAt || x0.sentAt))}</dd><dt>Vēstules:</dt><dd>${esc(parts.join(' · '))}</dd></dl></div>`;
+    <dl class="proc-dl hci-dl"><dt>Nosūtīta:</dt><dd>${esc(fmtDateTime(wl.sentAt || x0.sentAt))}</dd><dt>Vēstules:</dt><dd>${esc(parts.join(' · '))}</dd></dl>${reactSectionHtml(batch, xs)}</div>`;
 }
 // Ierakstu dzēšana: tikai vecāki par 2 gadiem (pēc nosūtīšanas datuma)
 function twoYearsAgo(){ const d = new Date(); d.setFullYear(d.getFullYear() - 2); return d; }
@@ -9445,6 +9640,9 @@ const actions = {
     const rs = $$('#camp-tbody tr.camp-row'), nx = rs[before]; if (nx){ nx.querySelector('.camp-name').focus({preventScroll:true}); nx.scrollIntoView({block:'nearest'}); }
   },
   'camp-menu': (id, el) => openCampMenu(el),
+  'react-menu': (id, el) => openCampMenu(el),
+  'react-remind': id => { const [b, g] = String(id).split('|'); reactReminder(b, g); },
+  'hist-form': id => { ui.histForm.has(id) ? ui.histForm.delete(id) : ui.histForm.add(id); renderSent(); const b = $(`.hist-table [data-action="hist-form"][data-id="${id}"]`); if (b) b.focus(); },
   'hist-menu': (id, el) => openCampMenu(el),
   'camp-copy': id => copyCampaign(id),
   'camp-delete': async id => {
@@ -9696,6 +9894,8 @@ $('#hist-body').addEventListener('click', e => {
   ui.histSort = cur.k !== k ? {k, dir:1} : cur.dir === 1 ? {k, dir:-1} : {k:'', dir:0};
   renderSent(); const nb = $(`.hist-table [data-hsort="${k}"]`); if (nb) nb.focus();
 });
+// veidlapas rinda (detaļās) – Enter / atstarpe izvērš laika līniju
+$('#hist-body').addEventListener('keydown', e => { const tr = e.target.closest('tr.rx-row'); if (tr && e.target === tr && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); actions['hist-form'](tr.dataset.id); } });
 // vēstules rinda – izvērš statusu ceļu (izņemot saites un pogas)
 $('#hist-body').addEventListener('click', e => {
   if (e.target.closest('button, a, input, .hist-detail')) return;
