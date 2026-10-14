@@ -904,8 +904,6 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .flt-period .dt-field input[type="text"]{width:138px}
 .flt-f{flex:0 0 auto;min-width:0;max-width:100%}
 .flt-adv select{width:190px;max-width:100%}
-.flt-adv #hist-camp{width:270px}
-.flt-adv #hist-nmk{width:260px;max-width:100%}
 .flt-adv-btn{margin-left:auto;appearance:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border:1px solid var(--border);background:var(--surface);border-radius:var(--radius-sm);padding:7px 12px;font:inherit;font-size:var(--fs-sm);font-weight:600;color:var(--text-secondary);cursor:pointer}
 .flt-adv-btn .icon{width:15px;height:15px}
 .flt-adv-btn:hover{border-color:var(--primary-300);color:var(--primary-darker)}
@@ -913,6 +911,44 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .flt-caret{font-size:var(--fs-xs);transition:transform .15s}
 .flt-adv-btn[aria-expanded="true"] .flt-caret{transform:rotate(180deg)}
 .flt-n:not(:empty){color:var(--primary-darker)}
+/* Sūtīšanas vēsture: kompakta filtru rinda (meklēšana · Kampaņa · Apsekojums · Periods · Filtri · Eksportēt) */
+/* vadīklas 34 px; filtru zonas kopējais augstums kā citās cilnēs (55 px), lai tabulas galva visās cilnēs ir vienā līmenī */
+.hist-filters.hf{padding-top:9.5px;padding-bottom:9.5px}
+.hf-row{flex-wrap:nowrap;gap:8px}
+.hf-row .hf-q{flex:1 1 260px;min-width:260px}
+.hf-row .hf-q input,.hf-dd > summary,.hf-row .hf-btn{height:34px;box-sizing:border-box}
+.hf-row .hf-q input{padding-top:7px;padding-bottom:7px;line-height:18px;font-size:var(--fs-sm)}
+.hf-dd{flex:none}
+.hf-dd > summary{padding-top:7px;padding-bottom:7px;line-height:18px;font-size:var(--fs-sm)}
+.hf-dd > summary.is-on{border-color:var(--primary-300);color:var(--primary-darker);font-weight:600}
+.hf-camp,.hf-rep{width:200px}
+.hf-per{display:flex;align-items:center;gap:6px;flex:none}
+.hf-per-l{font-size:var(--fs-sm);color:var(--text-muted);white-space:nowrap}
+.hf-per .hf-dd{width:170px}
+.hf-list{right:auto;min-width:100%;width:max-content;max-width:min(380px,90vw);max-height:340px}
+.hf-camp .hf-list{width:340px}
+.hf-rep .hf-list{width:300px}
+.hf-list [role="option"]{display:flex;align-items:baseline;gap:8px}
+.hf-list [role="option"] .hf-o{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hf-list [role="option"] small{flex:none;color:var(--text-muted);font-weight:400}
+.hf-rep .hf-list [role="option"] b{flex:none}
+.hf-rep .hf-list [role="option"] small{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hf-cust{padding:6px 6px 4px;display:flex;flex-direction:column;gap:8px;width:250px}
+.hf-cust-f{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:var(--fs-sm)}
+.hf-cust-f .dt-field input[type="text"]{width:180px;padding-top:6px;padding-bottom:6px}
+.hf-cust .err{margin:0}
+.hf-cust-act{display:flex;justify-content:flex-end;gap:6px}
+.hf-more{position:relative;flex:none}
+.hf-row .hf-btn{margin-left:0;padding-top:0;padding-bottom:0}
+.hf-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:var(--radius-pill);background:var(--primary);color:var(--on-primary);font-size:11px;font-weight:700;line-height:1}
+.hf-panel{position:absolute;z-index:40;right:0;top:calc(100% + 4px);width:300px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:12px}
+.hf-pgrid{display:flex;flex-direction:column;gap:10px}
+.hf-pf{display:flex;flex-direction:column;gap:4px;font-size:var(--fs-sm);font-weight:600;color:var(--text-secondary)}
+.hf-pf select{font-weight:400;padding-top:6px;padding-bottom:6px}
+.hf-pfoot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border-light)}
+.hf-exp{flex:none;display:inline-flex;align-items:center;gap:5px;height:34px;box-sizing:border-box;font-size:var(--fs-sm)}
+.hf-exp .icon{width:15px;height:15px}
+@media (max-width:1100px){.hf-row{flex-wrap:wrap}}
 .flt-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:-2px 0 10px}
 .flt-chip-list{display:contents}
 .flt-chips .ms-tag{background:var(--primary-50);border-color:var(--primary-200);font-weight:500;font-size:var(--fs-xs);padding:1px 3px 1px 9px}
@@ -937,7 +973,7 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .cf-toggle .cnt{background:var(--primary);color:var(--on-primary);border-radius:var(--radius-lg);padding:0 7px;font-size:var(--fs-xs);line-height:18px}
 @media (max-width:1100px){ .flt-row .flt-search{flex:1 1 100%} }
 @media (max-width:600px){ .cf-toggle{display:inline-flex} #camp-filters{display:none} #camp-filters.is-open{display:block}
-  .flt-row > *,.flt-adv > *,.flt-adv select,.flt-adv #hist-camp,.flt-adv #hist-nmk,.cf-kind select,.cf-creator .dd{flex:1 1 100%;width:100%}
+  .flt-row > *,.flt-adv > *,.flt-adv select,.cf-kind select,.cf-creator .dd{flex:1 1 100%;width:100%}
   .flt-period .dt-field{flex:1 1 40%;min-width:120px} .flt-period .dt-field input[type="text"]{width:100%} .flt-period select{flex:1 1 100%}
   .flt-adv-btn{margin-left:0;justify-content:center} }
 .camp-scroll{max-height:60vh;overflow-y:auto;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#9AA8AD #EEF2F3;scrollbar-gutter:stable}
@@ -2823,35 +2859,42 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       <div class="hg-menu" id="hg-menu" role="group" hidden></div>
       <span class="purge-wrap sub-end" id="sent-purge-wrap"><button type="button" class="icon-btn purge-btn" data-action="sent-purge" id="sent-purge-btn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></span>
     </div>
-    <div class="flt hist-filters" role="search" aria-label="Vēstuļu filtri">
-      <div class="flt-row">
-        <label class="search flt-search"><span class="sr-only">Meklēt pēc respondenta vai adreses</span>
+    <div class="flt hist-filters hf" role="search" aria-label="Vēstuļu filtri">
+      <div class="flt-row hf-row">
+        <label class="search flt-search hf-q"><span class="sr-only">Meklēt respondentu, NMK vai adresi</span>
           <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="hist-search" placeholder="Respondents vai adrese…">
+          <input type="search" id="hist-search" placeholder="Meklēt respondentu, NMK vai adresi…">
         </label>
-        <div class="flt-period" role="group" aria-labelledby="hist-per-l"><span class="cf-l" id="hist-per-l">Nosūtīšanas periods</span>
-        <select id="hist-quick" aria-label="Nosūtīšanas periods – ātrā izvēle"></select>
-        <div class="dt-field"><input type="text" id="hist-from" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-label="Nosūtīšanas periods no (DD.MM.GGGG)" aria-describedby="hist-per-err">
-          <button type="button" class="dt-btn" data-hcal="from" aria-label="Periods no – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
-          <input type="date" id="hist-from-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div>
-        <span class="hf-dash" aria-hidden="true">–</span>
-        <div class="dt-field"><input type="text" id="hist-to" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-label="Nosūtīšanas periods līdz (DD.MM.GGGG)" aria-describedby="hist-per-err">
-          <button type="button" class="dt-btn" data-hcal="to" aria-label="Periods līdz – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
-          <input type="date" id="hist-to-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div>
-        </div>
-        <button type="button" class="flt-adv-btn" id="hist-more-f" aria-expanded="false" aria-controls="hist-row2"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Papildu filtri<span class="flt-n" id="hist-more-n"></span><span class="flt-caret" aria-hidden="true">▾</span></button>
-      </div>
-      <div class="flt-adv" id="hist-row2" hidden>
-        <label class="flt-f"><span class="sr-only">NMK</span><input type="text" id="hist-nmk" placeholder="NMK – viens vai vairāki, ar komatu" autocomplete="off"></label>
-        <label class="flt-f"><span class="sr-only">Kampaņa</span><select id="hist-camp"></select></label>
-        <label class="flt-f"><span class="sr-only">Kampaņas veids</span><select id="hist-kind"></select></label>
-        <label class="flt-f"><span class="sr-only">Kanāls</span><select id="hist-ch"><option value="">Visi kanāli</option><option value="eadrese">eAdrese</option><option value="epasts">E-pasts</option></select></label>
-        <label class="flt-f"><span class="sr-only">Kampaņas veidotājs</span><select id="hist-creator"></select></label>
-        <label class="flt-f"><span class="sr-only">Atvērts</span><select id="hist-open"><option value="">Atvērts: Visi</option><option value="yes">Atvērts</option><option value="no">Nav atvērts</option></select></label>
-        <label class="flt-f"><span class="sr-only">Iesniegšana</span><select id="hist-subm"><option value="">Iesniegšana: Visi</option><option value="nav">Nav uzsākta</option><option value="sak">Iesākta</option><option value="kl">Kļūdaina</option><option value="ies">Iesniegta</option></select></label>
+        <details class="dd hf-dd hf-camp" id="hist-camp-dd"><summary id="hist-camp-sum" aria-label="Kampaņa">Visas kampaņas</summary>
+          <div class="dd-list cf-dd hf-list"><input type="search" id="hist-camp-q" placeholder="Meklēt kampaņu…" aria-label="Meklēt kampaņu"><div id="hist-camp-list" role="listbox" aria-label="Kampaņa"></div></div></details>
+        <details class="dd hf-dd hf-rep" id="hist-rep-dd"><summary id="hist-rep-sum" aria-label="Apsekojums">Visi apsekojumi</summary>
+          <div class="dd-list cf-dd hf-list"><input type="search" id="hist-rep-q" placeholder="Meklēt apsekojumu…" aria-label="Meklēt apsekojumu"><div id="hist-rep-list" role="listbox" aria-label="Apsekojums"></div></div></details>
+        <div class="hf-per"><span class="hf-per-l" id="hist-per-l">Periods:</span>
+          <details class="dd hf-dd" id="hist-per-dd"><summary id="hist-per-sum" aria-labelledby="hist-per-l hist-per-sum">Jebkurā laikā</summary>
+            <div class="dd-list cf-dd hf-list hf-per-list"><div id="hist-per-list" role="listbox" aria-label="Periods"></div>
+              <div class="hf-cust" id="hist-cust" role="group" aria-label="Cits periods" hidden>
+                <div class="hf-cust-f"><label for="hist-from">No</label><div class="dt-field"><input type="text" id="hist-from" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-describedby="hist-per-err">
+                  <button type="button" class="dt-btn" data-hcal="from" aria-label="Periods no – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+                  <input type="date" id="hist-from-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div></div>
+                <div class="hf-cust-f"><label for="hist-to">Līdz</label><div class="dt-field"><input type="text" id="hist-to" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-describedby="hist-per-err">
+                  <button type="button" class="dt-btn" data-hcal="to" aria-label="Periods līdz – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+                  <input type="date" id="hist-to-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div></div>
+                <span class="err" id="hist-per-err" hidden></span>
+                <div class="hf-cust-act"><button type="button" class="btn btn-ghost btn-sm" id="hist-cust-cancel">Atcelt</button><button type="button" class="btn btn-primary btn-sm" id="hist-cust-apply">Lietot</button></div>
+              </div></div></details></div>
+        <div class="hf-more"><button type="button" class="flt-adv-btn hf-btn" id="hist-more-f" aria-expanded="false" aria-controls="hist-fpanel" aria-haspopup="dialog"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtri<span class="hf-badge" id="hist-more-n" hidden></span></button>
+          <div class="hf-panel" id="hist-fpanel" role="dialog" aria-label="Filtri" hidden>
+            <div class="hf-pgrid">
+              <label class="hf-pf"><span>Kanāls</span><select id="hist-ch"><option value="">Visi kanāli</option><option value="eadrese">eAdrese</option><option value="epasts">E-pasts</option></select></label>
+              <label class="hf-pf"><span>Kampaņas veids</span><select id="hist-kind"></select></label>
+              <label class="hf-pf"><span>E-pasta reakcija</span><select id="hist-mr"><option value="">Visas</option><option value="open">Atvērts</option><option value="none">Nav konstatēta</option><option value="na">Nav attiecināms</option><option value="nodata">Nav datu</option></select></label>
+              <label class="hf-pf"><span>Anketas aktivitāte</span><select id="hist-fa"><option value="">Visas</option><option value="ies">Iesniegta</option><option value="st">Statuss mainīts</option><option value="none">Izmaiņu nav</option><option value="nodata">Nav datu</option></select></label>
+            </div>
+            <div class="hf-pfoot"><button type="button" class="link-btn" id="hist-fclear">Notīrīt</button><button type="button" class="btn btn-primary btn-sm" id="hist-fapply">Lietot</button></div>
+          </div></div>
+        <button type="button" class="link-btn hf-exp" id="hist-export"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>Eksportēt</button>
       </div>
     </div>
-    <span class="err cf-err" id="hist-per-err" hidden></span>
     <div class="flt-chips" id="hist-chipbar" hidden><span class="flt-chip-list" id="hist-chips" aria-label="Aktīvie filtri"></span><button type="button" class="link-btn flt-clear" id="hist-clear">Notīrīt visus</button></div>
     <div id="hist-body"></div>
     <div class="table-foot" id="hist-foot" style="border:0;padding-left:2px"></div>
@@ -2885,7 +2928,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 99</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 100</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -9063,17 +9106,22 @@ function copyCampaign(key){
 }
 // Sūtīšanas vēsture ar atlasītu kampaņu
 function showHistoryOf(batch){
-  Object.assign(ui.hist, histDefaults(), {camp:String(batch), sts:[]}); ui.histRaw = {};
+  Object.assign(ui.hist, histDefaults(), {camp:String(batch), sts:[]});
   $('#hist-search').value = ''; $('#hist-ch').value = '';
   showTab('vesture');
 }
 // Sūtīšanas vēstures filtri (bez statusa)
-const histDefaults = () => ({q:'', kind:'', camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:'', open:'', subm:''});
+const histDefaults = () => ({q:'', camp:'', rep:'', quick:'', from:'', to:'', ch:'', kind:'', mr:'', fa:''});
+// perioda izvēle (Sūtīšanas vēsturē)
+const HF_QUICK = [['', 'Jebkurā laikā'], ['today', 'Šodien'], ['7d', 'Pēdējās 7 dienas'], ['30d', 'Pēdējās 30 dienas'], ['year', 'Šis gads'], ['custom', 'Cits periods…']];
+const HF_MR = {open:'Atvērts', none:'Nav konstatēta', na:'Nav attiecināms', nodata:'Nav datu'};
+const HF_FA = {ies:'Iesniegta', st:'Statuss mainīts', none:'Izmaiņu nav', nodata:'Nav datu'};
 const HIST_QUICK = [['', 'Jebkurā laikā'], ['today', 'Šodien'], ['7d', 'Pēdējās 7 dienas'], ['month', 'Šis mēnesis'], ['prev', 'Iepriekšējais mēnesis'], ['year', 'Šis gads']];
 function histRange(q){
   const t = new Date(), y = t.getFullYear(), m = t.getMonth(), today = isoDate(t);
   if (q === 'today') return {from:today, to:today};
   if (q === '7d') return {from:isoDate(addDays(-6)), to:today};
+  if (q === '30d') return {from:isoDate(addDays(-29)), to:today};
   if (q === 'month') return {from:isoDate(new Date(y, m, 1)), to:today};
   if (q === 'prev') return {from:isoDate(new Date(y, m - 1, 1)), to:isoDate(new Date(y, m, 0))};
   if (q === 'year') return {from:isoDate(new Date(y, 0, 1)), to:today};
@@ -9088,27 +9136,52 @@ function assignCreators(){ (state.sent || []).forEach(x => {
 }); }
 const histNmks = h => splitVals(h.nmk);
 const respNmk = id => { const r = state.respondents.find(y => y.id === id); return r ? lc(r.nmk) : ''; };
+// vēstulē iekļautie apsekojumi (pēc vēstules pienākumiem)
+const histReps = x => [...new Set((x.duties || []).map(rxDuty).filter(Boolean).map(d => d.reportId))];
+const faKey = x => { const r = formAct(x); return r.k === 'ev' ? (r.t === 'Iesniegta' ? 'ies' : 'st') : r.k; };
 function histMatch(x, h){
-  const q = norm(h.q), nm = histNmks(h), d = h.from || h.to ? isoDate(new Date(x.sentAt)) : '';
-  return (!h.camp || String(x.batch) === String(h.camp)) && (!h.kind || x.sessionKind === h.kind) && (!h.ch || x.channel === h.ch) &&
-    (!h.creator || x.createdBy === h.creator) && (!h.from || d >= h.from) && (!h.to || d <= h.to) &&
-    (!nm.length || nm.includes(respNmk(x.respondentId))) && (!q || norm([x.recipient, x.address].join(' ')).includes(q)) &&
-    (!h.open || ((mailReact(x).k === 'open') === (h.open === 'yes'))) && (!h.subm || reactView(x).res.some(fm => fm.st === h.subm));
+  const q = norm(h.q), d = h.from || h.to ? isoDate(new Date(x.sentAt)) : '';
+  return (!h.camp || String(x.batch) === String(h.camp)) && (!h.rep || histReps(x).includes(h.rep)) && (!h.kind || x.sessionKind === h.kind) && (!h.ch || x.channel === h.ch) &&
+    (!h.from || d >= h.from) && (!h.to || d <= h.to) && (!q || norm([x.recipient, x.address, respNmk(x.respondentId)].join(' ')).includes(q)) &&
+    (!h.mr || mailReact(x).k === h.mr) && (!h.fa || faKey(x) === h.fa);
 }
-const HIST_OPEN_L = {yes:'Atvērts', no:'Nav atvērts'};
-// aktīvie filtri – birkas ar ×
+// perioda teksts: ātrā izvēle vai "01.10.–14.10." (cits gads – ar gadu)
+const hfDay = iso => fmtShortDay(iso);
+const hfPerLabel = h => h.quick && h.quick !== 'custom' ? (HF_QUICK.find(([k]) => k === h.quick) || [, ''])[1]
+  : h.from && h.to ? `${hfDay(h.from)}–${hfDay(h.to)}` : h.from ? `no ${hfDay(h.from)}` : h.to ? `līdz ${hfDay(h.to)}` : 'Jebkurā laikā';
+// aktīvo filtru birkas (zem filtru rindas): papildu filtri un periods
 function histChips(h){
-  const out = [], camp = h.camp && state.sent.find(x => String(x.batch) === String(h.camp));
-  if (h.q.trim()) out.push(['q', `Meklēt: ${h.q.trim()}`]);
-  if (histNmks(h).length) out.push(['nmk', `NMK: ${histNmks(h).join(', ')}`]);
-  if (h.from || h.to) out.push(['period', `Periods: ${h.quick && h.quick !== 'custom' ? HIST_QUICK.find(([k]) => k === h.quick)[1] + ' · ' : ''}${h.from ? dmy(h.from) : '…'} – ${h.to ? dmy(h.to) : '…'}`]);
-  if (h.camp) out.push(['camp', `Kampaņa: ${camp ? camp.sessionName || `Kampaņa Nr. ${h.camp}` : `Nr. ${h.camp}`}`]);
-  if (h.kind) out.push(['kind', `Veids: ${SESS_LABELS[h.kind] || h.kind}`]);
+  const out = [];
+  if (h.quick || h.from || h.to) out.push(['period', `Periods: ${hfPerLabel(h)}`]);
   if (h.ch) out.push(['ch', `Kanāls: ${CHANNELS[h.ch] || h.ch}`]);
-  if (h.creator) out.push(['creator', `Veidotājs: ${h.creator}`]);
-  if (h.open) out.push(['open', `Atvērts: ${HIST_OPEN_L[h.open].toLowerCase()}`]);
-  if (h.subm) out.push(['subm', `Iesniegšana: ${FORM_ST[h.subm].label.toLowerCase()}`]);
+  if (h.kind) out.push(['kind', `Kampaņas veids: ${SESS_LABELS[h.kind] || h.kind}`]);
+  if (h.mr) out.push(['mr', `E-pasta reakcija: ${HF_MR[h.mr]}`]);
+  if (h.fa) out.push(['fa', `Anketas aktivitāte: ${HF_FA[h.fa]}`]);
   return out;
+}
+// kampaņas (jaunākās augšā) un apsekojumi (kuriem ir vēstules)
+function histCampList(all){
+  const m = new Map(); all.forEach(x => { const c = m.get(x.batch); if (!c) m.set(x.batch, {b:x.batch, name:x.sessionName || `Kampaņa Nr. ${x.batch}`, at:x.sentAt}); else if (x.sentAt > c.at) c.at = x.sentAt; });
+  return [...m.values()].sort((a, b) => String(b.at).localeCompare(String(a.at)) || b.b - a.b);
+}
+function histRepList(all){
+  const ids = new Set(); all.forEach(x => histReps(x).forEach(id => ids.add(id)));
+  return [...ids].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv', {numeric:true}));
+}
+const hfOpt = (v, sel, inner, title = '') => `<button type="button" role="option" data-v="${esc(v)}" aria-selected="${sel}"${title ? ` title="${esc(title)}"` : ''}>${inner}</button>`;
+function renderHistFilters(h, all){
+  const camps = histCampList(all), cur = camps.find(c => String(c.b) === String(h.camp)), reps = histRepList(all), rp = h.rep && repById(h.rep);
+  const sum = (id, txt, on, title) => { const el = $(id); el.textContent = txt; el.classList.toggle('is-on', on); el.title = title || txt; };
+  sum('#hist-camp-sum', cur ? cur.name : 'Visas kampaņas', !!h.camp);
+  sum('#hist-rep-sum', rp ? rp.code : 'Visi apsekojumi', !!h.rep, rp ? `${rp.code} ${rp.name}` : '');
+  sum('#hist-per-sum', hfPerLabel(h), !!(h.quick || h.from || h.to));
+  const cq = norm($('#hist-camp-q').value), cl = camps.filter(c => !cq || norm(`${c.name} ${c.b}`).includes(cq));
+  $('#hist-camp-list').innerHTML = (cq ? '' : hfOpt('', !h.camp, '<span class="hf-o">Visas kampaņas</span>')) + cl.map(c => hfOpt(c.b, String(c.b) === String(h.camp), `<span class="hf-o">${esc(c.name)}</span><small>${esc(fmtDate(isoDate(new Date(c.at))))}</small>`, c.name)).join('') + (!cl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
+  const rq = norm($('#hist-rep-q').value), rl = reps.filter(r => !rq || norm(`${r.code} ${r.name}`).includes(rq));
+  $('#hist-rep-list').innerHTML = (rq ? '' : hfOpt('', !h.rep, '<span class="hf-o">Visi apsekojumi</span>')) + rl.map(r => hfOpt(r.id, r.id === h.rep, `<b>${esc(r.code)}</b><small>${esc(r.name)}</small>`, `${r.code} ${r.name}`)).join('') + (!rl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
+  $('#hist-per-list').innerHTML = HF_QUICK.map(([k, l]) => hfOpt(k, (h.quick || '') === k, `<span class="hf-o">${esc(l)}</span>${k === 'custom' && h.quick === 'custom' ? `<small>${esc(hfPerLabel(h))}</small>` : ''}`)).join('');
+  const n = [h.ch, h.kind, h.mr, h.fa].filter(Boolean).length, b = $('#hist-more-n');
+  b.hidden = !n; b.textContent = n || ''; $('#hist-more-f').setAttribute('aria-label', n ? `Filtri – aktīvi ${n}` : 'Filtri');
 }
 const campOpts = (cur, list = state.sent) => {
   const bs = [...new Set(list.map(x => x.batch))].sort((a, b) => b - a);
@@ -9534,30 +9607,19 @@ function renderSent(){
   $('#hist-sub').innerHTML = histGroupsHtml(sel, c);
   renderHgMenu(sel, c);
   histSubFit();
-  $('#hist-camp').innerHTML = campOpts(h.camp);
-  $('#hist-kind').innerHTML = kindOpts(h.kind);
-  $('#hist-ch').value = h.ch; $('#hist-open').value = h.open || ''; $('#hist-subm').value = h.subm || '';
-  $('#hist-creator').innerHTML = optList([...new Set(all.map(x => x.createdBy).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'lv')).map(n => [n, n]), h.creator, 'Visi veidotāji');
-  $('#hist-quick').innerHTML = HIST_QUICK.map(([k, l]) => `<option value="${k}" ${h.quick === k ? 'selected' : ''}>${esc(l)}</option>`).join('') + (h.quick === 'custom' ? '<option value="custom" selected>Norādīts periods</option>' : '');
-  [['#hist-search', h.q], ['#hist-nmk', h.nmk], ['#hist-from', ui.histRaw.from ?? dmy(h.from)], ['#hist-to', ui.histRaw.to ?? dmy(h.to)]].forEach(([sel, v]) => { if (document.activeElement !== $(sel)) $(sel).value = v; });
-  const perErr = ui.histRaw.from != null || ui.histRaw.to != null ? 'Nederīgs datums – ievadiet DD.MM.GGGG.' : h.from && h.to && h.from > h.to ? 'Datums “no” ir vēlāks par “līdz”.' : '';
-  $('#hist-per-err').hidden = !perErr; $('#hist-per-err').textContent = perErr;
-  $('#hist-from').setAttribute('aria-invalid', String(ui.histRaw.from != null || (!!perErr && ui.histRaw.to == null)));
-  $('#hist-to').setAttribute('aria-invalid', String(ui.histRaw.to != null));
+  renderHistFilters(h, all);
   const chips = histChips(h), active = chips.length > 0;
-  // "Vairāk filtru": cik paslēpto filtru ir aktīvi
-  const nMore = [h.nmk, h.camp, h.kind, h.ch, h.creator, h.open, h.subm].filter(Boolean).length;
-  $('#hist-more-n').textContent = nMore ? ` (${nMore})` : '';
   $('#hist-chipbar').hidden = !active;
   $('#hist-chips').innerHTML = chips.map(([k, l]) => `<span class="ms-tag"><span>${esc(l)}</span><button type="button" data-hchip="${k}" aria-label="Noņemt filtru: ${esc(l)}">×</button></span>`).join('');
   const list = base.filter(histStFn(sel)), sorted = histSorted(list);
+  ui.histList = sorted;
   // parakstīšanai nodotās kampaņas
   const signB = [...new Set(list.filter(x => x.status === 'paraksts').map(x => x.batch))];
   const signBars = signB.map(b => { const xs = all.filter(x => x.batch === b && x.status === 'paraksts'), x0 = xs[0];
     return `<div class="card hist-sign" style="margin-bottom:10px">${ICON.edit}<span><b>${esc(x0.sessionName || `Kampaņa Nr. ${b}`)}</b> – gaida parakstu: <b>${xs.length}</b> ${plural(xs.length, 'vēstule', 'vēstules')}${x0.esign ? ` · ${esc((ESIGN_MODES[x0.esign.mode] || {}).label || '')}: ${esc(x0.esign.signers.join(x0.esign.mode === 'seciga' ? ' → ' : ', '))}` : ''}</span>
       <button type="button" class="btn btn-primary btn-sm" data-action="camp-sign" data-id="${b}">Parakstīt</button></div>`; }).join('');
   const hEmpty = !all.length ? tcEmptyBox('Vēl nav nosūtītu vēstuļu', `<button class="btn btn-primary btn-sm" data-action="camp-new">${ICON.plus}Jauna kampaņa</button>`)
-    : !list.length ? tcEmptyBox(sel.length && !active ? `Nav vēstuļu ar statusu “${sel.length === histGroupOf(sel[0]).sts.length ? histGroupOf(sel[0]).label : sel.map(k => HIST_FINAL[k].label).join(', ')}”` : 'Nav ierakstu, kas atbilst filtriem') : '';
+    : !list.length ? tcEmptyBox(sel.length && !active && !h.q && !h.camp && !h.rep ? `Nav vēstuļu ar statusu “${sel.length === histGroupOf(sel[0]).sts.length ? histGroupOf(sel[0]).label : sel.map(k => HIST_FINAL[k].label).join(', ')}”` : 'Nav ierakstu, kas atbilst filtriem') : '';
   $('#hist-body').innerHTML = (list.length ? histCampInfo(h.camp) + signBars : '') + `<div class="card table-card tc-fit" id="hist-card"><div class="table-wrap camp-scroll hist-scroll tc-area" id="hist-scroll"><table class="camp-table hist-table"><colgroup>${HIST_W.map(w => `<col style="width:${w}%">`).join('')}</colgroup>
       <thead><tr>${HIST_COLS.map(([k, l]) => `<th aria-sort="none"><button type="button" class="th-sort" data-hsort="${k}">${l}<span class="sort-ic" aria-hidden="true">↕</span></button></th>`).join('')}<th class="actions"><span class="sr-only">Darbības</span></th></tr></thead>
       <tbody>${sorted.slice(0, ui.histLimit).map(x => { const op = ui.histRow.has(x.id), f = HIST_FINAL[histFinal(x)];
@@ -10372,32 +10434,91 @@ document.addEventListener('focusin', e => { if (ui.hgMenu && !e.target.closest('
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && ui.hgMenu){ e.preventDefault(); closeHgMenu(true); } });
 $('#rep-sub').addEventListener('click', e => { const b = e.target.closest('[data-rsub]'); if (!b) return; ui.repSub = b.dataset.rsub; renderReports(); $(`#rep-sub [data-rsub="${ui.repSub}"]`).focus(); });
 $('#hist-search').addEventListener('input', e => { ui.hist.q = e.target.value; ui.histLimit = 50; renderSent(); });
-[['#hist-camp', 'camp'], ['#hist-kind', 'kind'], ['#hist-ch', 'ch'], ['#hist-creator', 'creator'], ['#hist-open', 'open'], ['#hist-subm', 'subm']].forEach(([sel, k]) => $(sel).addEventListener('change', e => { ui.hist[k] = e.target.value; ui.histLimit = 50; renderSent(); }));
-$('#hist-nmk').addEventListener('input', e => { ui.hist.nmk = e.target.value; ui.histLimit = 50; renderSent(); });
-$('#hist-quick').addEventListener('change', e => { const q = e.target.value; if (q === 'custom') return; Object.assign(ui.hist, {quick:q}, histRange(q)); ui.histRaw = {}; ui.histLimit = 50; renderSent(); });
-// perioda datumi (DD.MM.GGGG); nederīgu ievadi saglabā laukā un parāda kļūdu
-function histDateSet(k, v){
-  v = String(v || '').trim();
-  const iso = v ? parseDmy(v) : '';
-  if (v && !iso){ ui.histRaw[k] = v; renderSent(); return; }
-  delete ui.histRaw[k]; ui.hist[k] = iso;
-  ui.hist.quick = ui.hist.from || ui.hist.to ? 'custom' : '';
-  ui.histLimit = 50; renderSent();
+// izkrītošās izvēlnes ar meklēšanu (Kampaņa, Apsekojums) un Periods
+const hfRender = () => renderSent();
+function hfDd(key, pick){
+  const dd = $(`#hist-${key}-dd`), q = $(`#hist-${key}-q`), list = $(`#hist-${key}-list`), sum = $(`#hist-${key}-sum`);
+  dd.addEventListener('toggle', () => {
+    if (!dd.open) return;
+    $$('.hf-dd[open]').forEach(o => { if (o !== dd) o.open = false; }); hfPanel(false);
+    if (q) q.value = '';
+    if (key === 'per'){ $('#hist-cust').hidden = true; list.hidden = false; }
+    hfRender();
+    setTimeout(() => { const f = q || $('[role="option"][aria-selected="true"]', list) || $('[role="option"]', list); if (f) f.focus(); }, 0);
+  });
+  if (q){ q.addEventListener('input', () => { hfRender(); q.focus(); });
+    q.addEventListener('keydown', e => { if (e.key === 'ArrowDown'){ e.preventDefault(); const o = $('[role="option"]', list); if (o) o.focus(); } if (e.key === 'Escape'){ e.preventDefault(); dd.open = false; sum.focus(); } }); }
+  list.addEventListener('keydown', e => { const os = $$('[role="option"]', list), i = os.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); const n = i + (e.key === 'ArrowDown' ? 1 : -1); if (n < 0){ if (q) q.focus(); } else if (os[n]) os[n].focus(); }
+    if (e.key === 'Escape'){ e.preventDefault(); dd.open = false; sum.focus(); } });
+  list.addEventListener('click', e => { const o = e.target.closest('[role="option"]'); if (!o) return; pick(o.dataset.v, dd, sum); });
 }
-['from', 'to'].forEach(k => {
-  $(`#hist-${k}`).addEventListener('change', e => histDateSet(k, e.target.value));
-  $(`#hist-${k}`).addEventListener('keydown', e => { if (e.key === 'Enter') histDateSet(k, e.target.value); });
-  $(`#hist-${k}-pick`).addEventListener('change', e => { if (e.target.value){ histDateSet(k, e.target.value); $(`#hist-${k}`).focus(); } });
+hfDd('camp', (v, dd, sum) => { ui.hist.camp = v; ui.histLimit = 50; dd.open = false; renderSent(); sum.focus(); });
+hfDd('rep', (v, dd, sum) => { ui.hist.rep = v; ui.histLimit = 50; dd.open = false; renderSent(); sum.focus(); });
+hfDd('per', (v, dd, sum) => {
+  if (v === 'custom'){ // "Cits periods…" – mazs logs ar datumiem no–līdz un "Lietot"
+    $('#hist-per-list').hidden = true; $('#hist-cust').hidden = false; $('#hist-per-err').hidden = true;
+    $('#hist-from').value = dmy(ui.hist.from); $('#hist-to').value = dmy(ui.hist.to); ['#hist-from', '#hist-to'].forEach(s => $(s).removeAttribute('aria-invalid'));
+    $('#hist-from').focus(); return; }
+  Object.assign(ui.hist, {quick:v}, histRange(v)); ui.histLimit = 50; dd.open = false; renderSent(); sum.focus();
 });
+function hfCustApply(){
+  const f = $('#hist-from').value.trim(), t = $('#hist-to').value.trim(), fi = f ? parseDmy(f) : '', ti = t ? parseDmy(t) : '';
+  const err = (f && !fi) || (t && !ti) ? 'Nederīgs datums – ievadiet DD.MM.GGGG.' : !f && !t ? 'Norādiet vismaz vienu datumu.' : fi && ti && fi > ti ? 'Datums “no” ir vēlāks par “līdz”.' : '';
+  $('#hist-per-err').hidden = !err; $('#hist-per-err').textContent = err;
+  $('#hist-from').setAttribute('aria-invalid', String(!!err && (!!(f && !fi) || (!f && !t) || (!!fi && !!ti && fi > ti))));
+  $('#hist-to').setAttribute('aria-invalid', String(!!err && !!(t && !ti)));
+  if (err){ ($('#hist-from').getAttribute('aria-invalid') === 'true' ? $('#hist-from') : $('#hist-to')).focus(); return; }
+  Object.assign(ui.hist, {quick:'custom', from:fi, to:ti}); ui.histLimit = 50; $('#hist-per-dd').open = false; renderSent(); $('#hist-per-sum').focus();
+}
+$('#hist-cust-apply').addEventListener('click', hfCustApply);
+$('#hist-cust-cancel').addEventListener('click', () => { $('#hist-cust').hidden = true; $('#hist-per-list').hidden = false; const o = $('#hist-per-list [aria-selected="true"]') || $('#hist-per-list [role="option"]'); if (o) o.focus(); });
+['from', 'to'].forEach(k => {
+  $(`#hist-${k}`).addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); hfCustApply(); } if (e.key === 'Escape'){ e.preventDefault(); $('#hist-per-dd').open = false; $('#hist-per-sum').focus(); } });
+  $(`#hist-${k}-pick`).addEventListener('change', e => { if (e.target.value){ $(`#hist-${k}`).value = dmy(e.target.value); $(`#hist-${k}`).focus(); } });
+});
+// "Filtri" panelis: Kanāls · Kampaņas veids · E-pasta reakcija · Anketas aktivitāte; "Notīrīt" un "Lietot"
+const HF_PANEL = [['#hist-ch', 'ch'], ['#hist-kind', 'kind'], ['#hist-mr', 'mr'], ['#hist-fa', 'fa']];
+function hfPanel(open, focusBtn){
+  const pn = $('#hist-fpanel'), btn = $('#hist-more-f');
+  if (open){
+    $$('.hf-dd[open]').forEach(o => { o.open = false; });
+    $('#hist-kind').innerHTML = kindOpts(ui.hist.kind);
+    HF_PANEL.forEach(([s, k]) => { $(s).value = ui.hist[k] || ''; });
+    pn.hidden = false; btn.setAttribute('aria-expanded', 'true'); $('#hist-ch').focus();
+  } else if (!pn.hidden){ pn.hidden = true; btn.setAttribute('aria-expanded', 'false'); if (focusBtn) btn.focus(); }
+}
+$('#hist-more-f').addEventListener('click', () => hfPanel($('#hist-fpanel').hidden));
+$('#hist-fapply').addEventListener('click', () => { HF_PANEL.forEach(([s, k]) => { ui.hist[k] = $(s).value; }); ui.histLimit = 50; hfPanel(false, true); renderSent(); });
+$('#hist-fclear').addEventListener('click', () => { HF_PANEL.forEach(([s, k]) => { $(s).value = ''; ui.hist[k] = ''; }); ui.histLimit = 50; hfPanel(false, true); renderSent(); });
+$('#hist-fpanel').addEventListener('keydown', e => { if (e.key === 'Escape'){ e.preventDefault(); hfPanel(false, true); } });
+document.addEventListener('click', e => {
+  $$('.hf-dd[open]').forEach(d => { if (!d.contains(e.target)) d.open = false; });
+  if (!e.target.closest('.hf-more')) hfPanel(false);
+});
+// "Eksportēt": CSV ar pašreizējiem filtriem (un statusu izvēli)
+function histExport(){
+  const list = ui.histList || [], rx = r => r.at ? `${r.t} · ${fmtDateTime(r.at)}${r.more ? ` +${r.more}` : ''}` : r.t;
+  const rows = [['Adresāts', 'NMK', 'Kampaņa', 'Statuss', 'Kanāls', 'Adrese', 'Nosūtīts', 'E-pasta reakcija', 'Anketas aktivitāte']].concat(list.map(x => {
+    const r = state.respondents.find(y => y.id === x.respondentId);
+    return [x.recipient, r ? r.nmk || '' : '', x.sessionName || `Kampaņa Nr. ${x.batch}`, HIST_FINAL[histFinal(x)].label, x.channel === 'eadrese' ? 'eAdrese' : CHANNELS[x.channel] || '', x.address || '', fmtDateTime(x.sentAt), rx(mailReact(x)), rx(formAct(x))]; }));
+  const cell = c => { const t = String(c ?? ''); return /[";\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t; };
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + rows.map(r => r.map(cell).join(';')).join('\r\n')], {type:'text/csv;charset=utf-8'}));
+  a.download = `sutisanas_vesture_${todayIso()}.csv`;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  toast(`Eksportēts: ${a.download} (${list.length} ${plural(list.length, 'rinda', 'rindas')}).`);
+}
+$('#hist-export').addEventListener('click', histExport);
 $('#tab-vesture').addEventListener('click', e => {
   const cal = e.target.closest('[data-hcal]');
-  if (cal){ const k = cal.dataset.hcal, n = $(`#hist-${k}-pick`); n.value = ui.hist[k] || ''; try { n.showPicker(); } catch (err) { $(`#hist-${k}`).focus(); } return; }
+  if (cal){ const k = cal.dataset.hcal, n = $(`#hist-${k}-pick`); n.value = parseDmy($(`#hist-${k}`).value) || ui.hist[k] || ''; try { n.showPicker(); } catch (err) { $(`#hist-${k}`).focus(); } return; }
   const chip = e.target.closest('[data-hchip]');
   if (chip){ const k = chip.dataset.hchip;
-    if (k === 'period'){ Object.assign(ui.hist, {quick:'', from:'', to:''}); ui.histRaw = {}; } else ui.hist[k] = '';
-    ui.histLimit = 50; renderSent(); const nxt = $('#hist-chips [data-hchip]') || $('#hist-search'); nxt.focus(); return; }
-  if (e.target.closest('#hist-more-f')){ const btn = $('#hist-more-f'), row = $('#hist-row2'); row.hidden = !row.hidden; btn.setAttribute('aria-expanded', String(!row.hidden)); if (!row.hidden) $('#hist-nmk').focus(); return; }
-  if (e.target.closest('#hist-clear')){ Object.assign(ui.hist, histDefaults()); ui.histRaw = {}; ui.histLimit = 50; renderSent(); $('#hist-search').focus(); }
+    if (k === 'period') Object.assign(ui.hist, {quick:'', from:'', to:''}); else ui.hist[k] = '';
+    ui.histLimit = 50; renderSent(); const nxt = $('#hist-chips [data-hchip]') || $('#hist-more-f'); nxt.focus(); return; }
+  if (e.target.closest('#hist-clear')){ Object.assign(ui.hist, histDefaults()); ui.histLimit = 50; renderSent(); $('#hist-search').focus(); }
 });
 [['#rep-from', 'from'], ['#rep-to', 'to'], ['#rep-camp', 'camp'], ['#rep-kind', 'kind'], ['#rep-ch', 'ch'], ['#rep-aud', 'aud']].forEach(([sel, k]) => $(sel).addEventListener('change', e => { ui.rep[k] = e.target.value; ui.repInit = true; renderReports(); }));
 $('#rep-rep').addEventListener('change', e => { ui.rep.rep = e.target.value; ui.repInit = true; renderReports(); });
