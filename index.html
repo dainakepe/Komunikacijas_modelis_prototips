@@ -326,6 +326,29 @@ td.actions{white-space:nowrap;text-align:right;width:1%}
 .mono{font-family:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;font-size:var(--fs-sm)}
 .none{color:var(--text-muted);font-style:italic;font-size:var(--fs-sm)}
 .table-foot{padding:10px 14px;border-top:1px solid var(--border-light);font-size:var(--fs-sm);color:var(--text-muted)}
+/* ===== Tabulu kartes – vienots noteikums visām tabulām =====
+   .table-card – flex kolonna: augšā virsraksts / filtri (ja ir), vidū tabulas laukums .tc-area (flex: 1, ritinās; galva sticky),
+   apakšā kopsavilkuma / lappušu rinda. Tukšā vieta – laukuma iekšpusē zem pēdējās rindas (balts fons, bez rindu līnijām);
+   horizontālā ritjosla – laukuma apakšā. .tc-fit – kartes augstums līdz lapas satura apakšai (fitTables). */
+.table-card{display:flex;flex-direction:column;min-height:0}
+.table-card > .tc-area{flex:1 1 auto;min-height:0;position:relative;overflow:auto;background:var(--surface)}
+.table-card > :not(.tc-area){flex:none}
+.table-card > .table-foot{margin:auto 0 0}
+.table-card > .table-foot:empty{display:none}
+.table-card > .tc-area > table > thead th{position:sticky;top:0;z-index:2}
+.table-card.tc-fit{overflow:hidden}
+.table-card.tc-fit > .tc-area{max-height:none}
+.table-card:not(.tc-fit):not(.tc-stretch) > .tc-area{max-height:min(60vh,560px)}
+/* tukšs stāvoklis: tabulas laukuma vidū, pelēks teksts; karte saglabā augstumu */
+.tc-empty{position:absolute;left:0;right:0;top:var(--tc-head,38px);bottom:0;min-height:120px;display:flex;align-items:center;justify-content:center;padding:16px;text-align:center;color:var(--text-muted);pointer-events:none}
+.tc-empty[hidden]{display:none}
+.tc-empty .empty{padding:0}
+.tc-empty h3,.tc-empty .tc-empty-t{margin:0 0 6px;font-size:var(--fs-md);font-weight:500;color:var(--text-muted)}
+.tc-empty .icon{color:var(--text-muted)}
+.tc-empty button,.tc-empty a,.tc-empty input{pointer-events:auto}
+.tc-area.is-empty{min-height:180px}
+.table-card.tc-modal{flex:1 1 auto}
+.table-card.tc-modal > .tc-area{max-height:min(62vh,600px)}
 tr.is-new td{animation:flash 2.4s ease-out}
 @keyframes flash{from{background:var(--primary-100)}to{background:transparent}}
 
@@ -860,7 +883,7 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
   .flt-row > *,.flt-adv > *,.flt-adv select,.flt-adv #hist-camp,.flt-adv #hist-nmk,.cf-kind select,.cf-creator .dd{flex:1 1 100%;width:100%}
   .flt-period .dt-field{flex:1 1 40%;min-width:120px} .flt-period .dt-field input[type="text"]{width:100%} .flt-period select{flex:1 1 100%}
   .flt-adv-btn{margin-left:0;justify-content:center} }
-.camp-scroll{max-height:60vh;overflow-y:scroll;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#9AA8AD #EEF2F3;scrollbar-gutter:stable}
+.camp-scroll{max-height:60vh;overflow-y:auto;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#9AA8AD #EEF2F3;scrollbar-gutter:stable}
 .camp-scroll::-webkit-scrollbar{width:10px;height:10px}
 .camp-scroll::-webkit-scrollbar-track{background:#EEF2F3}
 .camp-scroll::-webkit-scrollbar-thumb{background:#9AA8AD;border-radius:var(--radius-sm);border:2px solid #EEF2F3}
@@ -1863,6 +1886,18 @@ mark.v-miss,mark.v-unk{background:var(--danger-bg);color:var(--danger);border-ra
 .r-tools{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
 .r-tools .search{flex:1 1 180px}
 .r-list{max-height:360px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius-sm)}
+/* Soļi "Respondenti" un "Pārbaude": abas kolonnas vienāda augstuma */
+.r-layout{align-items:stretch}
+.r-layout:not(.rv-layout) > .r-side{position:static}
+.rv-layout > .r-side{align-self:start}
+.rv-col > .rv-main{flex:1 1 auto;display:flex;flex-direction:column}
+.rv-col > .rv-main > .preview-body{flex:1 1 auto}
+/* labā karte "Respondenti" – tabulas karte: tabulas laukums aizpilda brīvo vietu līdz kreisās kolonnas apakšai,
+   "Iekļauti N no M" un "N gatavs · N jāpārskata" – kartes apakšā; daudz rindu – ritinās laukumā (galva sticky) */
+.r-layout:not(.rv-layout) > .r-main{display:flex;flex-direction:column}
+.r-layout:not(.rv-layout) > .r-main > :not(#c-list){flex:none}
+.r-layout:not(.rv-layout) > .r-main > #c-list{flex:1 1 0;min-height:260px;max-height:none;contain:size;position:relative;background:var(--surface)}
+@media (max-width:1000px){ .r-layout:not(.rv-layout) > .r-main > #c-list{flex:none;contain:none;height:auto;max-height:65vh} }
 .r-item{display:flex;gap:10px;align-items:flex-start;padding:9px 12px;border-bottom:1px solid var(--border-light);cursor:pointer}
 .r-item:last-child{border-bottom:0}
 .r-item:hover{background:var(--primary-50)}
@@ -2327,10 +2362,10 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         <label class="flt-f"><span class="sr-only">Vēstules veids</span><select id="tpl-kind"></select></label>
       </div>
     </div>
-    <div class="card">
-      <div class="table-wrap camp-scroll" id="tpl-scroll"><table class="camp-table tpl-table">
+    <div class="card table-card tc-fit" id="tpl-card">
+      <div class="table-wrap camp-scroll tc-area" id="tpl-scroll"><table class="camp-table tpl-table">
         <thead><tr id="tpl-head"></tr></thead>
-        <tbody id="tpl-tbody"></tbody></table></div>
+        <tbody id="tpl-tbody"></tbody></table><div class="tc-empty" id="tpl-empty" hidden></div></div>
       <div class="table-foot camp-foot" id="tpl-foot"></div>
     </div>
     </div>
@@ -2354,10 +2389,10 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <label class="cf-f cf-kind"><span class="sr-only">Sagataves veids</span><select id="sag-kind" aria-label="Sagataves veids"></select></label>
         </div>
       </div>
-      <div class="card">
-        <div class="table-wrap camp-scroll" id="sag-scroll"><table class="camp-table sag-table">
+      <div class="card table-card tc-fit" id="sag-card">
+        <div class="table-wrap camp-scroll tc-area" id="sag-scroll"><table class="camp-table sag-table">
           <thead><tr id="sag-head"></tr></thead>
-          <tbody id="sag-body"></tbody></table></div>
+          <tbody id="sag-body"></tbody></table><div class="tc-empty" id="sag-empty" hidden></div></div>
         <div class="table-foot camp-foot att-count" id="sag-count" aria-live="polite"></div>
       </div>
     </div>
@@ -2400,10 +2435,10 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     </div>
     <span class="err cf-err" id="cf-err" hidden></span>
     <div class="flt-chips" id="cf-chips" hidden><span class="flt-chip-list" id="cf-chip-list" aria-label="Aktīvie filtri"></span><button type="button" class="link-btn flt-clear" id="cf-clear">Notīrīt visus</button></div>
-    <div class="card">
-      <div class="table-wrap camp-scroll" id="camp-scroll"><table class="camp-table">
+    <div class="card table-card tc-fit" id="camp-card">
+      <div class="table-wrap camp-scroll tc-area" id="camp-scroll"><table class="camp-table">
         <thead><tr><th aria-sort="none"><button type="button" class="th-sort" data-csort="name">Kampaņa<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="kind">Veids<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="num" aria-sort="none"><button type="button" class="th-sort" data-csort="n">Respondenti<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="when">Nosūtīšana<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="st">Statuss<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="res">Rezultāts<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="num c-wl" aria-sort="none"><button type="button" class="th-sort" data-csort="wl">Darba laiks<span class="sort-ic" aria-hidden="true">↕</span></button></th><th><span class="sr-only">Darbības</span></th></tr></thead>
-        <tbody id="camp-tbody"></tbody></table></div>
+        <tbody id="camp-tbody"></tbody></table><div class="tc-empty" id="camp-empty" hidden></div></div>
       <div class="table-foot camp-foot" id="camp-foot"></div>
     </div>
   </div>
@@ -2734,7 +2769,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 92</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 93</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5240,6 +5275,7 @@ function setCrumb(){
   $('#crumb-tail').innerHTML = edit ? `${sep}<a href="#kampanas">Kampaņas</a>` : `${sep}<span aria-current="page">${esc(TAB_LABELS[ui.tab] || '')}</span>`;
 }
 function showTab(name, opts = {}){
+  scheduleFit();
   if (!TABS.includes(name)) name = 'kampanas';
   $('#home-view').hidden = true; $('#module-view').hidden = false;
   document.title = 'Komunikācija – Respondentu pārvaldība – prototips';
@@ -5352,10 +5388,11 @@ function renderTemplates(){
       <td title="${esc(t.updated ? fmtDateTime(t.updated) : '')}">${esc(t.updated ? fmtShortIso(t.updated) : '—')}</td>
       <td class="actions"><button type="button" class="icon-btn camp-more" data-action="tpl-menu" data-id="${esc(t.id)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(t.name)}" title="Darbības">${ICON.dots}</button></td></tr>`; };
   const page = list.slice(0, ui.tplLimit);
-  $('#tpl-tbody').innerHTML = !state.templates.length ? `<tr><td colspan="7"><div class="empty">${ICON.file}<h3>Vēl nav nevienas veidnes</h3><button class="btn btn-primary" data-action="tpl-new">${ICON.plus}Jauna veidne</button></div></td></tr>`
-    : !list.length ? `<tr><td colspan="7"><div class="empty"><h3>${tplFiltOn() ? 'Nav veidņu, kas atbilst filtriem' : `Nav veidņu sadaļā “${esc((TPL_SUBS.find(([k]) => k === ui.tplAud) || [])[1])}”`}</h3>${tplFiltOn() ? '<button type="button" class="btn btn-secondary" data-action="tpl-filt-clear">Notīrīt filtrus</button>' : `<button class="btn btn-primary" data-action="tpl-new" data-aud="${ui.tplAud}">${ICON.plus}Jauna veidne</button>`}</div></td></tr>`
-    : page.map(row).join('');
+  $('#tpl-tbody').innerHTML = list.length ? page.map(row).join('') : '';
+  tcEmpty($('#tpl-empty'), !state.templates.length ? tcEmptyBox('Vēl nav nevienas veidnes', `<button class="btn btn-primary" data-action="tpl-new">${ICON.plus}Jauna veidne</button>`)
+    : !list.length ? tcEmptyBox(tplFiltOn() ? 'Nav veidņu, kas atbilst filtriem' : `Nav veidņu sadaļā “${(TPL_SUBS.find(([k]) => k === ui.tplAud) || [])[1]}”`, tplFiltOn() ? '<button type="button" class="btn btn-secondary btn-sm" data-action="tpl-filt-clear">Notīrīt filtrus</button>' : `<button class="btn btn-primary btn-sm" data-action="tpl-new" data-aud="${ui.tplAud}">${ICON.plus}Jauna veidne</button>`) : '');
   $('#tpl-foot').innerHTML = list.length ? `<span>Rādītas <b>${page.length}</b> no <b>${list.length}</b></span>${page.length < list.length ? '<button type="button" class="btn btn-secondary btn-sm" data-action="tpl-more-rows">Rādīt vairāk</button>' : ''}` : '';
+  fitTables();
 }
 // veidnes kopija (jauna veidne ar nosaukumu "… (kopija)"; darba laiks netiek kopēts)
 function copyTemplate(id){
@@ -6249,8 +6286,10 @@ function renderSagataves(){
   const body = SAG_GRPS.map(([k, l, ic]) => { const g = list.filter(x => grpKey(x) === k); if (!g.length) return ''; const op = !coll.has(k);
     return `<tr class="sag-grp" data-sgrp="${k}"><td colspan="${ncol}"><button type="button" class="sag-grp-btn" data-sgrp-tg="${k}" aria-expanded="${op}"><span class="chev${op ? ' is-open' : ''}" aria-hidden="true">${ICON.chev}</span>${ICON[ic] || ''}<b>${esc(l)}</b><span class="n">(${g.length})</span></button></td></tr>`
       + (op ? g.filter(x => shown.has(x)).map(att ? attRow : mailRow).join('') : ''); }).join('');
-  $('#sag-body').innerHTML = list.length ? body : `<tr><td colspan="${ncol}"><div class="empty">${ICON.file}<h3>Nav atrasta neviena sagatave</h3></div></td></tr>`;
+  $('#sag-body').innerHTML = list.length ? body : '';
+  tcEmpty($('#sag-empty'), list.length ? '' : tcEmptyBox(all.length ? 'Nav sagatavju, kas atbilst filtriem' : 'Nav atrasta neviena sagatave'));
   $('#sag-count').innerHTML = `<span>${list.length === all.length ? `Kopā <b>${all.length}</b> ${plural(all.length, 'sagatave', 'sagataves')}` : `Atrastas <b>${list.length}</b> no <b>${all.length}</b>`}${page.length < list.length ? ` · rādītas <b>${page.length}</b>` : ''}</span>${page.length < list.length ? '<button type="button" class="btn btn-secondary btn-sm" data-action="sag-more-rows">Rādīt vairāk</button>' : ''}`;
+  fitTables();
 }
 const renderAttachments = renderSagataves;
 // E-pasta satura šablona pievienošana un rediģēšana: cilnes "E-pasts" / "eAdrese", priekšskatījums
@@ -6579,11 +6618,11 @@ const periodOpts = ds => [...new Set(ds.map(d => d.period))].sort((a, b) => peri
 const dutyPill = d => { const st = dutyStatus(d); return `<span class="pill ${DUTY_ST[st].cls}">${DUTY_ST[st].label}</span>`; };
 function dutyTable(ds, active){
   if (!ds.length) return `<p class="hint duty-empty">${active ? 'Nav pienākumu, kas atbilst atlasei.' : 'Respondentam nav reģistrētu pienākumu.'}</p>`;
-  return `<table class="duty-table"><thead><tr><th>Pārskats</th><th>Periods</th><th>Termiņš</th><th>Statuss</th></tr></thead><tbody>${ds.map(d => {
+  return `<div class="table-card tc-modal"><div class="table-wrap tc-area"><table class="duty-table"><thead><tr><th>Pārskats</th><th>Periods</th><th>Termiņš</th><th>Statuss</th></tr></thead><tbody>${ds.map(d => {
     const p = repById(d.reportId), late = dutyStatus(d) === 'kavets';
     return `<tr><td><b>${esc(repTitle(p))}</b><span class="cell-sub">${esc(FREQS[p.freq])} · termiņš: ${esc(ruleLabel(p.rule))}</span></td><td>${esc(periodLabel(d.period))}</td>
       <td class="${late ? 'late' : ''}">${esc(fmtDate(d.deadline))}</td><td>${dutyPill(d)}${d.submitted ? `<span class="cell-sub">${esc(fmtDate(d.submitted))}</span>` : ''}</td></tr>`;
-  }).join('')}</tbody></table>`;
+  }).join('')}</tbody></table></div></div>`;
 }
 const contactsCell = r => {
   const none = '<span class="none">nav norādīts</span>';
@@ -6998,8 +7037,8 @@ function renderVars(){
       <td class="actions">${ed ? `<button type="button" class="btn btn-primary btn-sm" data-var-save="${id}|${k}">Saglabāt</button><button type="button" class="btn btn-ghost btn-sm" data-var-cancel>Atcelt</button>`
         : `<button type="button" class="btn btn-ghost btn-sm" data-var-edit="${id}|${k}">Mainīt šai kampaņai</button>${o != null ? `<button type="button" class="link-btn" data-var-reset="${id}|${k}">Atjaunot</button>` : ''}`}</td></tr>`;
   };
-  const table = id => `<div class="table-wrap"><table class="vars-table"><thead><tr><th>Mainīgais</th><th>Vērtība</th><th>Avots</th><th><span class="sr-only">Darbības</span></th></tr></thead>
-    <tbody>${VAR_ROWS.map(rw => row(id, rw)).join('')}</tbody></table></div>`;
+  const table = id => `<div class="table-card"><div class="table-wrap tc-area"><table class="vars-table"><thead><tr><th>Mainīgais</th><th>Vērtība</th><th>Avots</th><th><span class="sr-only">Darbības</span></th></tr></thead>
+    <tbody>${VAR_ROWS.map(rw => row(id, rw)).join('')}</tbody></table></div></div>`;
   const surveys = !sr.length ? '<p class="muted">Kampaņas tvērumā nav apsekojuma.</p>'
     : sr.length === 1 ? `<h4 class="vars-h">${esc(repTitle(repById(sr[0])))}</h4>${table(sr[0])}`
     : sr.map(id => { const p = repById(id), n = Object.keys(ov[id] || {}).length;
@@ -7324,6 +7363,7 @@ function renderStepNav(n){
   nx.title = !block ? '' : selFresh() ? 'Atbilst filtriem: 0. Mainiet tvēruma nosacījumus.' : 'Vispirms veiciet atlasi.';
 }
 function setStep(n){
+  scheduleFit();
   compose.step = Math.min(WIZ_STEPS.length, Math.max(1, n));
   renderDraftInfo();
   renderWizard(); saveDraft();
@@ -7644,8 +7684,9 @@ function renderComposeList(){
           return `<tr><td>${esc(repTitle(p))}</td><td>${esc(periodCode(d.period))} <small>${esc(periodLabel(d.period))}${d.round ? ` · ${esc(roundLabel(d.reportId, d.round))}` : ''}</small></td><td class="${dutyStatus(d) === 'kavets' ? 'late' : ''}">${esc(fmtDate(d.deadline))}</td><td>${dutyPill(d)}${d.submitted ? ` <small>${esc(fmtDate(d.submitted))}</small>` : ''}</td></tr>`;
         }).join('')}</tbody></table></td></tr>` : ''}`;
     }).join('')}</tbody></table>`
-    : `<div class="empty" style="padding:20px"><p>${!state.respondents.length ? 'Respondentu saraksts ir tukšs.' : compose.search || compose.repF || compose.acF ? 'Neviens respondents neatbilst meklēšanai vai filtram.'
-      : isReminder() && compose.remind === 'before' ? 'Nav neiesniegtu pienākumu ar aprēķināto termiņu.' : 'Atlasei neatbilst neviens respondents.'}</p></div>`;
+    : `<div class="tc-empty" style="--tc-head:0px"><div class="empty"><p class="tc-empty-t">${!state.respondents.length ? 'Respondentu saraksts ir tukšs.' : compose.search || compose.repF || compose.acF ? 'Neviens respondents neatbilst meklēšanai vai filtram.'
+      : isReminder() && compose.remind === 'before' ? 'Nav neiesniegtu pienākumu ar aprēķināto termiņu.' : 'Atlasei neatbilst neviens respondents.'}</p></div></div>`;
+  $('#c-list').classList.toggle('is-empty', !list.length);
   renderComposeCount();
 }
 function renderComposeCount(){
@@ -8378,6 +8419,29 @@ function renderCampSort(){
 // viena nepārtraukta tabula (no jaunākās uz vecāko); rādīti pirmie ui.campLimit ieraksti
 const CAMP_PAGE = 20;
 ui.campLimit = CAMP_PAGE;
+// ===== Tabulu kartes: tukšs stāvoklis un augstums =====
+// tukšs stāvoklis – tabulas laukuma vidū (galva paliek; karte nesaraujas)
+function tcEmpty(el, html){
+  if (!el) return; el.hidden = !html; el.innerHTML = html || '';
+  const area = el.closest('.tc-area'); if (area) area.classList.toggle('is-empty', !!html);
+}
+const tcEmptyBox = (title, extra = '', icon = '') => `<div class="empty">${icon}<h3>${esc(title)}</h3>${extra}</div>`;
+// .tc-fit kartes augstums: līdz lapas satura apakšai (lapa ietilpst logā; kājene / navigācijas josla – zem kartes).
+// Ar maz rindām karte nesaraujas, ar daudz – tabulas laukums ritinās; filtrējot vai pārslēdzot cilnes lapa nelec.
+const TC_MIN = 300;
+function fitTables(){
+  tcFitRaf = 0;
+  const foot = $('.app-footer'); if (!foot) return;
+  $$('.table-card.tc-fit').forEach(c => {
+    if (!c.getClientRects().length) return;
+    const cur = c.getBoundingClientRect().height, bottom = foot.getBoundingClientRect().bottom + scrollY;
+    // ja virs kartes daudz satura (piem., atskaitēs – rādītāji un grafiki), karte ir zem loga apakšas – tad fiksēts augstums (60 % no loga, ≤ 560 px)
+    const avail = Math.floor((cur + innerHeight - bottom) * 100) / 100, h = avail >= TC_MIN ? avail : Math.max(TC_MIN, Math.min(Math.round(innerHeight * .6), 560));
+    if (Math.abs(h - cur) >= .5) c.style.height = h + 'px';
+  });
+}
+let tcFitRaf = 0;
+const scheduleFit = () => { if (!tcFitRaf) tcFitRaf = requestAnimationFrame(fitTables); };
 function renderCampaigns(){
   refreshStatuses();
   if (ui.campView === 'edit') flushDraft();
@@ -8402,14 +8466,12 @@ function renderCampaigns(){
       <td class="num c-wl">${campWlMs(x) != null ? esc(fmtDur(campWlMs(x))) : '<span class="muted">—</span>'}</td>
       <td class="actions"><button type="button" class="icon-btn camp-more" data-action="camp-menu" data-id="${esc(x.key)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.name)}" title="Darbības">${ICON.dots}</button></td></tr>`;
   const page = list.slice(0, ui.campLimit), shown = page.length, html = page.map(row).join('');
-  $('#camp-tbody').innerHTML = !rows.length ? `<tr><td colspan="8"><div class="empty">${ICON.send}<h3>Vēl nav nevienas kampaņas</h3>
-      <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></td></tr>`
-    : !list.length ? (campFiltOn() ? `<tr><td colspan="8"><div class="empty"><h3>Nav kampaņu, kas atbilst filtriem</h3>
-      <button type="button" class="btn btn-secondary" data-action="camp-filt-clear">Notīrīt filtrus</button></div></td></tr>`
-      : `<tr><td colspan="8"><div class="empty"><h3>Nav kampaņu sadaļā “${esc((CAMP_SUBS.find(([k]) => k === ui.campSub) || [])[1])}”</h3>
-      <p>Izvēlieties citu sadaļu vai izveidojiet jaunu kampaņu.</p></div></td></tr>`)
-    : html;
+  $('#camp-tbody').innerHTML = list.length ? html : '';
+  tcEmpty($('#camp-empty'), !rows.length ? tcEmptyBox('Vēl nav nevienas kampaņas', `<button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button>`)
+    : !list.length ? (campFiltOn() ? tcEmptyBox('Nav kampaņu, kas atbilst filtriem', '<button type="button" class="btn btn-secondary btn-sm" data-action="camp-filt-clear">Notīrīt filtrus</button>')
+      : tcEmptyBox(`Nav kampaņu sadaļā “${(CAMP_SUBS.find(([k]) => k === ui.campSub) || [])[1]}”`, '<p>Izvēlieties citu sadaļu vai izveidojiet jaunu kampaņu.</p>')) : '');
   $('#camp-foot').innerHTML = list.length ? `<span>Rādītas <b>${shown}</b> no <b>${list.length}</b></span>${shown < list.length ? `<button type="button" class="btn btn-secondary btn-sm" data-action="camp-more-rows">Rādīt vairāk</button>` : ''}` : '';
+  fitTables();
   // atvērtā izvēlne paliek atvērta arī pēc statusu atjaunošanas
   if (menuKey){
     const btn = $$('#camp-tbody [data-action="camp-menu"]').find(b => b.dataset.id === menuKey), x = btn && list.find(y => y.key === menuKey);
@@ -8691,8 +8753,8 @@ function openRulesModal(){
   const stCell = r => { const k = RULE_MSG[r.type]; return `${msgBadge(k)}${grp(k)}${k === 'next' ? `<small class="rule-alt">ja adreses beigušās → ${msgBadge('fail')}${grp('fail')}</small>` : ''}`; };
   const row = r => `<tr${flow(r) ? ' class="is-flow"' : ''}><td>${esc(r.reason)}</td><td>${flow(r) ? '<span class="muted">—</span>' : `<span class="pill ${NDR_TYPES[r.type].cls}">${esc(NDR_TYPES[r.type].label)}</span>`}</td><td>${stCell(r)}</td><td>${esc(r.action)}</td></tr>`;
   const tbl = (ch, h) => { const rs = Object.values(RULES).filter(r => r.ch === ch), fl = rs.filter(flow), er = rs.filter(r => !flow(r));
-    return `<div class="table-wrap"><table class="rep-table rules-table"><thead><tr><th>${h}</th><th>Tips</th><th>Ziņas statuss</th><th>Automātiskā rīcība</th></tr></thead>
-    <tbody>${fl.length ? `<tr class="rule-grp"><th colspan="4">Normālā plūsma</th></tr>${fl.map(row).join('')}<tr class="rule-grp"><th colspan="4">Kļūdas</th></tr>` : ''}${er.map(row).join('')}</tbody></table></div>`; };
+    return `<div class="table-card tc-modal"><div class="table-wrap tc-area"><table class="rep-table rules-table"><thead><tr><th>${h}</th><th>Tips</th><th>Ziņas statuss</th><th>Automātiskā rīcība</th></tr></thead>
+    <tbody>${fl.length ? `<tr class="rule-grp"><th colspan="4">Normālā plūsma</th></tr>${fl.map(row).join('')}<tr class="rule-grp"><th colspan="4">Kļūdas</th></tr>` : ''}${er.map(row).join('')}</tbody></table></div></div>`; };
   openModal({title:'Klasifikācijas noteikumi', wide:true, content:`<div class="rules-modal">
     <p>Paziņojumi par neveiksmīgu piegādi – e-pasta atgriezeniskie paziņojumi (NDR) un e-adreses (DIV) kļūdu statusi – tiek automātiski piesaistīti sākotnējai ziņai un klasificēti pēc tipa. NDR klasificē MI (prototipā – simulācija ar ticamību), DIV statusi ir strukturēti.</p>
     <ul class="hint"><li>pagaidu kļūda – atkārtots mēģinājums;</li><li>pastāvīga kļūda – adrese atzīmēta kā nederīga, sūtīšana uz nākamo adresi;</li><li>sūtītāja puses kļūda (bloķēšana, noraidījums) – paziņojums administratoram;</li><li>automātiska atbilde (prombūtne) – statuss netiek mainīts;</li><li>neatpazīts – nodots darbiniekam manuālai izskatīšanai.</li></ul>
@@ -8859,10 +8921,9 @@ function renderSent(){
   const signBars = signB.map(b => { const xs = all.filter(x => x.batch === b && x.status === 'paraksts'), x0 = xs[0];
     return `<div class="card hist-sign" style="margin-bottom:10px">${ICON.edit}<span><b>${esc(x0.sessionName || `Kampaņa Nr. ${b}`)}</b> – gaida parakstu: <b>${xs.length}</b> ${plural(xs.length, 'vēstule', 'vēstules')}${x0.esign ? ` · ${esc((ESIGN_MODES[x0.esign.mode] || {}).label || '')}: ${esc(x0.esign.signers.join(x0.esign.mode === 'seciga' ? ' → ' : ', '))}` : ''}</span>
       <button type="button" class="btn btn-primary btn-sm" data-action="camp-sign" data-id="${b}">Parakstīt</button></div>`; }).join('');
-  $('#hist-body').innerHTML = !all.length ? `<div class="card"><div class="empty">${ICON.inbox}<h3>Vēl nav nosūtītu vēstuļu</h3>
-      <button class="btn btn-primary" data-action="camp-new">${ICON.plus}Jauna kampaņa</button></div></div>`
-    : !list.length ? `<div class="card"><div class="empty">${sel.length && !active ? `<h3>Nav vēstuļu ar statusu “${esc(sel.length === histGroupOf(sel[0]).sts.length ? histGroupOf(sel[0]).label : sel.map(k => HIST_FINAL[k].label).join(', '))}”</h3>` : '<h3>Nekas netika atrasts</h3>'}</div></div>`
-    : histCampInfo(h.camp) + signBars + `<div class="card"><div class="table-wrap camp-scroll hist-scroll" id="hist-scroll"><table class="camp-table hist-table">
+  const hEmpty = !all.length ? tcEmptyBox('Vēl nav nosūtītu vēstuļu', `<button class="btn btn-primary btn-sm" data-action="camp-new">${ICON.plus}Jauna kampaņa</button>`)
+    : !list.length ? tcEmptyBox(sel.length && !active ? `Nav vēstuļu ar statusu “${sel.length === histGroupOf(sel[0]).sts.length ? histGroupOf(sel[0]).label : sel.map(k => HIST_FINAL[k].label).join(', ')}”` : 'Nav ierakstu, kas atbilst filtriem') : '';
+  $('#hist-body').innerHTML = (list.length ? histCampInfo(h.camp) + signBars : '') + `<div class="card table-card tc-fit" id="hist-card"><div class="table-wrap camp-scroll hist-scroll tc-area" id="hist-scroll"><table class="camp-table hist-table">
       <thead><tr>${HIST_COLS.map(([k, l]) => `<th aria-sort="none"><button type="button" class="th-sort" data-hsort="${k}">${l}<span class="sort-ic" aria-hidden="true">↕</span></button></th>`).join('')}<th class="actions"><span class="sr-only">Darbības</span></th></tr></thead>
       <tbody>${sorted.slice(0, ui.histLimit).map(x => { const op = ui.histRow.has(x.id), f = HIST_FINAL[histFinal(x)];
         return `<tr class="hist-row ${op ? 'is-open' : ''} ${ui.newIds.has(x.id) ? 'is-new' : ''}" data-hrow="${x.id}">
@@ -8872,8 +8933,10 @@ function renderSent(){
           <td>${esc(CHANNELS[x.channel] || '')}</td>
           <td>${esc(fmtDateTime(x.sentAt))}</td>
           <td class="actions"><button type="button" class="icon-btn camp-more" data-action="hist-menu" data-id="${x.id}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.recipient)}" title="Darbības">${ICON.dots}</button></td></tr>
-          ${op ? `<tr class="hist-detail"><td colspan="6">${histDetail(x)}</td></tr>` : ''}`; }).join('')}</tbody></table></div>
-      <div class="table-foot camp-foot hist-foot2"><span>Rādītas <b>${Math.min(ui.histLimit, sorted.length)}</b> no <b>${sorted.length}</b>${sorted.length !== all.length ? ` <span class="muted">(kopā ${all.length})</span>` : ''}</span>${sorted.length > ui.histLimit ? `<button type="button" class="btn btn-secondary btn-sm" data-action="hist-more">Rādīt vairāk</button>` : ''}</div></div>`;
+          ${op ? `<tr class="hist-detail"><td colspan="6">${histDetail(x)}</td></tr>` : ''}`; }).join('')}</tbody></table><div class="tc-empty" id="hist-empty"${hEmpty ? '' : ' hidden'}>${hEmpty}</div></div>
+      ${hEmpty ? '' : `<div class="table-foot camp-foot hist-foot2"><span>Rādītas <b>${Math.min(ui.histLimit, sorted.length)}</b> no <b>${sorted.length}</b>${sorted.length !== all.length ? ` <span class="muted">(kopā ${all.length})</span>` : ''}</span>${sorted.length > ui.histLimit ? `<button type="button" class="btn btn-secondary btn-sm" data-action="hist-more">Rādīt vairāk</button>` : ''}</div>`}</div>`;
+  if (hEmpty) $('#hist-scroll').classList.add('is-empty');
+  fitTables();
   renderHistSort();
   if (campMenuBtn && campMenuBtn.dataset.action === 'hist-menu' && !campMenuBtn.isConnected){
     const nb = $(`#hist-body [data-action="hist-menu"][data-id="${campMenuBtn.dataset.id}"]`), rec = nb && state.sent.find(y => y.id === nb.dataset.id);
@@ -8972,8 +9035,8 @@ function colChart(buckets, tipFmt = b => `${b.v} ${plural(b.v, 'vēstule', 'vēs
     ${buckets.map((b, i) => `<div class="slot">${b.v && (b.v === top || i === lastI) ? `<span class="cv">${valFmt(b.v)}</span>` : ''}<span class="col" tabindex="0" style="height:${b.v / max * 92}%" data-tip="${esc(`${b.label}|${tipFmt(b)}`)}"></span></div>`).join('')}</div>
     <div class="cols-x">${buckets.map((b, i) => `<span>${i % Math.ceil(buckets.length / 8) === 0 || i === lastI ? esc(b.short) : ''}</span>`).join('')}</div>`;
 }
-const tableHtml = (head, rows, cls = 'rep-table') => `<div class="table-wrap"><table class="${cls}"><thead><tr>${head.map(h => `<th class="${/^#|skaits|%|Vēstules|Piegādātas|Nosūtītas|Neveiksmīgas|Gaida|Mēģinājumi|Parakstītas/.test(h) ? 'num' : ''}">${esc(h)}</th>`).join('')}</tr></thead>
-  <tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td class="${typeof c === 'number' || /%$/.test(String(c)) ? 'num' : ''}">${typeof c === 'object' && c && c.html ? c.html : esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+const tableHtml = (head, rows, cls = 'rep-table', empty = 'Nav ierakstu, kas atbilst filtriem') => `<div class="table-wrap tc-area${rows.length ? '' : ' is-empty'}"><table class="${cls}"><thead><tr>${head.map(h => `<th class="${/^#|skaits|%|Vēstules|Piegādātas|Nosūtītas|Neveiksmīgas|Gaida|Mēģinājumi|Parakstītas/.test(h) ? 'num' : ''}">${esc(h)}</th>`).join('')}</tr></thead>
+  <tbody>${rows.map(r => `<tr>${r.map((c, i) => `<td class="${typeof c === 'number' || /%$/.test(String(c)) ? 'num' : ''}">${typeof c === 'object' && c && c.html ? c.html : esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>${rows.length ? '' : `<div class="tc-empty">${tcEmptyBox(empty)}</div>`}</div>`;
 const groupBy = (xs, key) => { const m = new Map(); xs.forEach(x => { const k = key(x); if (!m.has(k)) m.set(k, []); m.get(k).push(x); }); return m; };
 const statusCounts = xs => Object.fromEntries(REP_SERIES.map(([k]) => [k, xs.filter(x => repStatus(x) === k).length]));
 // Atskaites skats: { html, csv: [galvene, ...rindas] }
@@ -9043,8 +9106,8 @@ function reportView(xs){
       return [g[0].sessionName || `Kampaņa Nr. ${b}`, SESS_LABELS[g[0].sessionKind] || '', fmtDateTime(g[0].sentAt), g.length, v.piegadats, v.proc, v.fail, v.paraksts, `${pct(v.piegadats, sentN)}%`]; });
     const head = ['Kampaņa', 'Veids', 'Datums', 'Vēstules', 'Piegādātas', 'Procesā', 'Neveiksmīgas', 'Gaida parakstu', 'Piegādes %'];
     const byCh = ['eadrese', 'epasts'].map(ch => { const g = xs.filter(x => x.channel === ch), v = statusCounts(g); return [CHANNELS[ch], g.length, v.piegadats, v.proc, v.fail, `${pct(v.piegadats, g.length - v.paraksts)}%`]; });
-    return {html:`<div class="card viz-card" style="margin-bottom:16px"><h3>Piegādes rezultāti pa kampaņām${tip('Piegādātas – e-adresē “Saņēmēja pieņemts”, e-pastā – 72 h laikā nav saņemts NDR. Procesā – Nosūtīta, Pieņemts DIV, Notiek piegāde, Atkārtots mēģinājums. Neveiksmīgas – Neveiksmīga, Sūtītāja puses kļūda, Neatpazīts.')}</h3>${rows.length ? tableHtml(head, rows) : '<p class="hint">Nav datu atlasītajam periodam.</p>'}</div>
-      <div class="card viz-card"><h3>Pa kanāliem</h3>${tableHtml(['Kanāls', 'Vēstules', 'Piegādātas', 'Procesā', 'Neveiksmīgas', 'Piegādes %'], byCh)}</div>`,
+    return {html:`<div class="card viz-card" style="margin-bottom:16px"><h3>Piegādes rezultāti pa kampaņām${tip('Piegādātas – e-adresē “Saņēmēja pieņemts”, e-pastā – 72 h laikā nav saņemts NDR. Procesā – Nosūtīta, Pieņemts DIV, Notiek piegāde, Atkārtots mēģinājums. Neveiksmīgas – Neveiksmīga, Sūtītāja puses kļūda, Neatpazīts.')}</h3>${tableHtml(head, rows, undefined, 'Nav datu atlasītajam periodam')}</div>
+      <div class="card viz-card tc-natural"><h3>Pa kanāliem</h3>${tableHtml(['Kanāls', 'Vēstules', 'Piegādātas', 'Procesā', 'Neveiksmīgas', 'Piegādes %'], byCh)}</div>`,
       csv:[head, ...rows]};
   }
   if (sub === 'neveiksmigas'){
@@ -9066,7 +9129,7 @@ function reportView(xs){
           <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Tips', 'Skaits'], byType.map(r => [r.label, r.v]))}</details></div>
         <div class="card viz-card"><h3>Novirzījums${tip('Kam paziņojums tiek novirzīts pēc klasifikācijas.')}</h3>${byRoute.length ? singleBars(byRoute) : '<p class="hint">Nav datu.</p>'}
           <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Novirzīts', 'Skaits'], byRoute.map(r => [r.label, r.v]))}</details></div></div>
-      <div class="card viz-card"><h3>NDR un DIV paziņojumi</h3>${rows.length ? tableHtml(head, rows) : '<p class="hint">Atlasītajā periodā NDR/DIV paziņojumu nav.</p>'}</div>`,
+      <div class="card viz-card"><h3>NDR un DIV paziņojumi</h3>${tableHtml(head, rows, undefined, 'Atlasītajā periodā NDR/DIV paziņojumu nav')}</div>`,
       csv:[head, ...rows.map(r => r.map(c => c && typeof c === 'object' ? c.text : c))]};
   }
   if (sub === 'atkartota'){
@@ -9084,7 +9147,7 @@ function reportView(xs){
         <div class="card kpi"><div class="n">${rs.length}</div><div class="l">Atkārtoti nosūtītas</div><div class="sub">${pct(rs.length, xs.length)}% no visām vēstulēm</div></div>
         <div class="card kpi"><div class="n">${okAfter}</div><div class="l">Veiksmīgas pēc atkārtojuma</div></div>
         <div class="card kpi"><div class="n">${rs.length - okAfter}</div><div class="l">Neveiksmīgas vai vēl atkārto</div></div></div>
-      <div class="card viz-card"><h3>Atkārtotā nosūtīšana</h3>${rows.length ? tableHtml(head, rows) : '<p class="hint">Atlasītajā periodā atkārtotas nosūtīšanas nav.</p>'}</div>`,
+      <div class="card viz-card"><h3>Atkārtotā nosūtīšana</h3>${tableHtml(head, rows, undefined, 'Atlasītajā periodā atkārtotas nosūtīšanas nav')}</div>`,
       csv:[head, ...rows.map(r => r.map(c => c && typeof c === 'object' ? c.text : c))]};
   }
   // Citi pārskati: parakstīšanas rezultāti
@@ -9092,7 +9155,7 @@ function reportView(xs){
   const head = ['Kampaņa', 'Parakstīšanas veids', 'Parakstītāji', 'Vēstules', 'Parakstītas', 'Gaida parakstu', 'Nodota parakstīšanai', 'Parakstīta'];
   const rows = camps.map(([b, g]) => { const s0 = g.find(x => x.signedAt); return [g[0].sessionName || `Kampaņa Nr. ${b}`, (ESIGN_MODES[g[0].esign.mode] || {}).label || '', g[0].esign.signers.join(g[0].esign.mode === 'seciga' ? ' → ' : ', '),
     g.length, g.filter(x => x.signedAt).length, g.filter(x => x.status === 'paraksts').length, fmtDateTime(g[0].sentAt), s0 ? fmtDateTime(s0.signedAt) : '—']; });
-  return {html:`<div class="card viz-card"><h3>Parakstīšanas rezultāti${tip('Kampaņas ar elektronisko parakstu (DVS NAMEJS; prototipā – simulācija).')}</h3>${rows.length ? tableHtml(head, rows) : '<p class="hint">Atlasītajā periodā nav kampaņu ar parakstu.</p>'}</div>`,
+  return {html:`<div class="card viz-card"><h3>Parakstīšanas rezultāti${tip('Kampaņas ar elektronisko parakstu (DVS NAMEJS; prototipā – simulācija).')}</h3>${tableHtml(head, rows, undefined, 'Atlasītajā periodā nav kampaņu ar parakstu')}</div>`,
     csv:[head, ...rows]};
 }
 // Nosūtīšanas kopsavilkums: rādītāji, grafiki un kārtojama kampaņu tabula
@@ -9155,10 +9218,10 @@ function summaryView(xs){
     return {b, codes:sentCodes(g, dm), name:g[0].sessionName || `Kampaņa Nr. ${b}`, date:g.reduce((m, x) => x.sentAt < m ? x.sentAt : m, g[0].sentAt), kind:SESS_LABELS[g[0].sessionKind] || '', sent:kk.sent, deliv:kk.deliv, fail:kk.fail, rate:kk.rate}; });
   const so = ui.rep.sort, dir = so.dir === 'asc' ? 1 : -1;
   rows.sort((a, b) => { const va = a[so.key], vb = b[so.key]; return (typeof va === 'number' ? va - vb : String(va).localeCompare(String(vb), 'lv')) * dir || (b.date > a.date ? 1 : -1); });
-  const tbl = `<div class="table-wrap"><table class="rep-table sum-table"><thead><tr>${SUM_COLS.map(([c, l]) => `<th class="${['sent', 'deliv', 'fail', 'rate'].includes(c) ? 'num' : ''}" aria-sort="${so.key === c ? (so.dir === 'asc' ? 'ascending' : 'descending') : 'none'}">
+  const tbl = `<div class="table-wrap tc-area${rows.length ? '' : ' is-empty'}"><table class="rep-table sum-table"><thead><tr>${SUM_COLS.map(([c, l]) => `<th class="${['sent', 'deliv', 'fail', 'rate'].includes(c) ? 'num' : ''}" aria-sort="${so.key === c ? (so.dir === 'asc' ? 'ascending' : 'descending') : 'none'}">
       <button type="button" class="sort-btn" data-action="rep-sort" data-id="${c}">${esc(l)}<span class="ar" aria-hidden="true">${so.key === c ? (so.dir === 'asc' ? '▲' : '▼') : '↕'}</span></button></th>`).join('')}</tr></thead>
     <tbody>${rows.map(r => `<tr><td>${esc(r.name)}<span class="cell-sub">Nr. ${r.b}${r.codes ? ` · ${esc(r.codes)}` : ''}</span></td><td style="white-space:nowrap">${esc(fmtDate(isoDate(new Date(r.date))))}</td><td>${esc(r.kind)}</td>
-      <td class="num">${r.sent}</td><td class="num">${r.deliv}</td><td class="num">${r.fail}</td><td class="num">${r.rate}%</td></tr>`).join('')}</tbody></table></div>`;
+      <td class="num">${r.sent}</td><td class="num">${r.deliv}</td><td class="num">${r.fail}</td><td class="num">${r.rate}%</td></tr>`).join('')}</tbody></table>${rows.length ? '' : `<div class="tc-empty">${tcEmptyBox('Atlasītajā periodā kampaņu nav')}</div>`}</div>`;
   return {html:`<div class="kpis k6">
       ${kpi(k.sent, 'Nosūtītas', delta(k.sent, kp.sent))}
       ${kpi(k.deliv, 'Piegādātas', delta(k.deliv, kp.deliv))}
@@ -9174,7 +9237,7 @@ function summaryView(xs){
       <div class="card viz-card"><h3>Ziņas pēc kampaņas veida${tip('Nosūtītās ziņas.')}</h3>${byKind.length ? singleBars(byKind) : '<p class="hint">Nav datu.</p>'}</div>
       <div class="card viz-card"><h3>NDR/DIV iemeslu sadalījums${tip('Biežākie iemesli pēc klasifikācijas noteikumiem; visi – sadaļā “Neveiksmīgās ziņas”.')}</h3><p class="viz-sub">${nd.length} ${plural(nd.length, 'paziņojums', 'paziņojumi')}</p>${byNdr.length ? singleBars(byNdr) : '<p class="hint">Nav datu.</p>'}</div>
     </div>
-    <div class="card viz-card"><h3>Kampaņas${tip('Tabulu var kārtot, uzklikšķinot uz kolonnas nosaukuma.')}</h3><p class="viz-sub">${rows.length} ${plural(rows.length, 'kampaņa', 'kampaņas')}</p>${rows.length ? tbl : '<p class="hint">Atlasītajā periodā kampaņu nav.</p>'}</div>`,
+    <div class="card viz-card"><h3>Kampaņas${tip('Tabulu var kārtot, uzklikšķinot uz kolonnas nosaukuma.')}</h3><p class="viz-sub">${rows.length} ${plural(rows.length, 'kampaņa', 'kampaņas')}</p>${tbl}</div>`,
     csv:[SUM_COLS.map(c => c[1]), ...rows.map(r => [r.name, fmtDate(isoDate(new Date(r.date))), r.kind, r.sent, r.deliv, r.fail, `${r.rate}%`])]};
 }
 // MI kopsavilkums (simulēts teksts no atlasītajiem datiem)
@@ -9247,6 +9310,10 @@ function renderReports(){
   $('#rep-ai').innerHTML = `<div class="ai-box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.6L18 9.4l-4.2 1.8L12 16l-1.8-4.8L6 9.4l4.2-1.8z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>
     <div><h3>MI kopsavilkums <span class="pill pill-ai">MI ģenerēts · simulācija</span></h3><ul>${aiSummary(xs).map(t => `<li>${esc(t)}</li>`).join('')}</ul></div></div>`;
   $('#rep-body').innerHTML = v.html;
+  // kartes ar tabulu – .table-card ar .tc-fit: līdz lapas satura apakšai vai (ja virs tās daudz satura) fiksēts augstums
+  // (kopsavilkuma tabula ar fiksētu rindu skaitu, piem., "Pa kanāliem" – dabiskā augstumā)
+  $$('#rep-body .tc-area').map(a => a.parentElement).filter(c => c.classList.contains('card')).forEach(c => c.classList.add('table-card', ...(c.classList.contains('tc-natural') ? [] : ['tc-fit'])));
+  fitTables();
 }
 // CSV eksports (semikols kā atdalītājs, UTF-8 ar BOM – atveras arī Excel)
 function exportCsv(){
@@ -9564,6 +9631,9 @@ $('#camp-scroll').addEventListener('scroll', () => hideCTip());
 $('#hist-sub').addEventListener('scroll', () => histSubFit(), {passive:true});
 $('#hist-sub').addEventListener('wheel', e => { const s = e.currentTarget; if (s.scrollWidth <= s.clientWidth || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; e.preventDefault(); s.scrollLeft += e.deltaY; }, {passive:false});
 window.addEventListener('resize', () => histSubFit());
+// tabulu karšu augstums: loga izmērs un jebkuras satura izmaiņas virs / zem kartes (filtri, birkas, papildu filtri, kājene)
+window.addEventListener('resize', scheduleFit);
+if (window.ResizeObserver) new ResizeObserver(scheduleFit).observe(document.body);
 $('#hist-sub').addEventListener('click', e => {
   const cb = e.target.closest('[data-hg-menu]');
   if (cb){ const k = cb.dataset.hgMenu; if (ui.hgMenu === k) closeHgMenu(); else { ui.hgMenu = k; renderSent(); const m = $('#hg-menu input'); if (m) m.focus(); } return; }
@@ -9961,10 +10031,10 @@ function openSharedModal(addr, opener){
   if (!rs.length) return;
   openModal({title:'Koplietojama adrese', info:'Viena e-pasta adrese vairākiem respondentiem: vēstules nonāks vienā pastkastē. Izvērtējiet katru respondentu.', content:`
     <p class="sh-addr">${ICON.mail}<b>${esc(addr)}</b> <span class="muted">– izmanto ${rs.length} ${plural(rs.length, 'respondents', 'respondenti')}</span></p>
-    <table class="sh-table"><thead><tr><th>Respondents</th><th>Lauks</th><th>Izvēle</th></tr></thead><tbody>${rs.map(r => {
+    <div class="table-card tc-modal"><div class="table-wrap tc-area"><table class="sh-table"><thead><tr><th>Respondents</th><th>Lauks</th><th>Izvēle</th></tr></thead><tbody>${rs.map(r => {
       const ks = EMAIL_KEYS.filter(k => (addrCheck(r, k).value || '').toLowerCase() === addr).map(addrShort).join(', '), d = sharedDec(addr, r.id) || 'keep';
       return `<tr><td><b>${esc(r.name)}</b>${r.nmk ? `<small>NMK ${esc(r.nmk)}</small>` : ''}</td><td>${esc(ks)}</td><td><div class="sh-opts" role="radiogroup" aria-label="Izvēle: ${esc(r.name)}" data-rid="${r.id}">${Object.entries(SHARED_DEC).map(([k, l]) => `<label><input type="radio" name="sh-${r.id}" value="${k}" ${d === k ? 'checked' : ''}>${esc(l)}</label>`).join('')}</div></td></tr>`;
-    }).join('')}</tbody></table>`,
+    }).join('')}</tbody></table></div></div>`,
     actions:[{label:'Atcelt', cls:'btn-secondary'}, {label:'Saglabāt', cls:'btn-primary', onClick: close => {
       compose.shared = compose.shared || {}; compose.exc = compose.exc || {};
       const dec = compose.shared[addr] = {};
@@ -9979,7 +10049,7 @@ function openSharedModal(addr, opener){
 function openExcModal(){
   const scope = () => state.respondents.filter(matchesFilt);
   const render = () => { const xs = scope().filter(r => (compose.exc || {})[r.id]);
-    $('#exc-list').innerHTML = xs.length ? `<table class="sh-table"><thead><tr><th>Respondents</th><th>Iemesls</th><th><span class="sr-only">Darbības</span></th></tr></thead><tbody>${xs.map(r => `<tr><td><b>${esc(r.name)}</b>${r.nmk ? `<small>NMK ${esc(r.nmk)}</small>` : ''}</td><td>${esc(compose.exc[r.id])}</td><td><button type="button" class="link-btn" data-exc-rm="${r.id}">Atjaunot</button></td></tr>`).join('')}</tbody></table>` : '<p class="muted">Izņēmumu nav.</p>'; };
+    $('#exc-list').innerHTML = `<div class="table-card tc-modal"><div class="table-wrap tc-area${xs.length ? '' : ' is-empty'}"><table class="sh-table"><thead><tr><th>Respondents</th><th>Iemesls</th><th><span class="sr-only">Darbības</span></th></tr></thead><tbody>${xs.map(r => `<tr><td><b>${esc(r.name)}</b>${r.nmk ? `<small>NMK ${esc(r.nmk)}</small>` : ''}</td><td>${esc(compose.exc[r.id])}</td><td><button type="button" class="link-btn" data-exc-rm="${r.id}">Atjaunot</button></td></tr>`).join('')}</tbody></table>${xs.length ? '' : `<div class="tc-empty">${tcEmptyBox('Izņēmumu nav')}</div>`}</div></div>`; };
   const add = (items, src) => {
     const rs = scope(), found = new Set(), miss = [];
     items.map(x => x.trim()).filter(Boolean).forEach(x => { const n = norm(x), digits = x.replace(/\D/g, '');
@@ -10138,8 +10208,8 @@ $('#c-resp-card').addEventListener('input', e => {
 function openNsCodes(){
   const cur = new Set(compose.sel.nsExcl || []);
   const m = openModal({title:'Izslēgt pēc neiesniegšanas koda', info:'Respondenti, kuru pienākumam izvēlētajā periodā ir kāds no atzīmētajiem kodiem, netiek iekļauti kampaņā.',
-    content:`<table class="ns-table"><thead><tr><th>Kods</th><th>Apraksts</th><th class="ns-c">Izslēgt</th></tr></thead><tbody>${Object.entries(NS_CODES).map(([k, l]) =>
-      `<tr><td><span class="ns-tag">${esc(k)}</span></td><td><label for="ns-${k}">${esc(l)}</label></td><td class="ns-c"><input type="checkbox" id="ns-${k}" data-ns="${k}" ${cur.has(k) ? 'checked' : ''}></td></tr>`).join('')}</tbody></table>`,
+    content:`<div class="table-card tc-modal"><div class="table-wrap tc-area"><table class="ns-table"><thead><tr><th>Kods</th><th>Apraksts</th><th class="ns-c">Izslēgt</th></tr></thead><tbody>${Object.entries(NS_CODES).map(([k, l]) =>
+      `<tr><td><span class="ns-tag">${esc(k)}</span></td><td><label for="ns-${k}">${esc(l)}</label></td><td class="ns-c"><input type="checkbox" id="ns-${k}" data-ns="${k}" ${cur.has(k) ? 'checked' : ''}></td></tr>`).join('')}</tbody></table></div></div>`,
     actions:[{label:'Atjaunot noklusējumu', cls:'btn-ghost left', onClick: () => { $$('[data-ns]', modal).forEach(c => { c.checked = NS_DEFAULT.includes(c.dataset.ns); }); }},
       {label:'Atcelt', cls:'btn-secondary'},
       {label:'Saglabāt', cls:'btn-primary', onClick: close => { compose.sel.nsExcl = $$('[data-ns]', modal).filter(c => c.checked).map(c => c.dataset.ns); close(); selChanged(); $('#c-ns-btn').focus(); }}]});
