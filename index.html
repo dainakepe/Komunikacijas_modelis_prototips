@@ -545,6 +545,42 @@ td.contacts{display:table-cell}
 .compose-grid.wiz .wiz-card.step-content{width:100%;max-width:none;box-sizing:border-box}
 .sub-h.sub-h4{font-size:var(--fs-md);margin-top:16px}
 .sign-letter[hidden]{display:none}
+/* 5. solis "Nosūtīšana": trīs kartes blakus (Saskaņošana → Paraksts → Nosūtīšana) un pārbaudes josla */
+.send3{display:grid;grid-template-columns:minmax(0,1fr) 36px minmax(0,1fr) 36px minmax(0,1fr);align-items:stretch;margin-top:6px}
+.s3-card{display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-width:0;padding:14px 16px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.s3-card > *{max-width:100%}
+.s3-card.is-off{background:#FAFBFB;border-color:var(--border-light)}
+.s3-h{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:0;font-size:var(--fs-md);color:var(--primary-darker)}
+.s3-dvs{display:inline-flex;align-items:center;gap:2px;font-size:var(--fs-xs);font-weight:600;color:var(--text-muted)}
+.s3-off{margin:2px 0 0;font-size:var(--fs-sm);color:var(--text-muted)}
+.s3-card #c-apv-box,.s3-card #c-esign-box,.s3-card .sign-letter{width:100%}
+.s3-card .form-grid{grid-template-columns:minmax(0,1fr);gap:10px}
+.s3-card .field{margin-bottom:10px}
+.s3-card .esign-modes{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.s3-card .esign-mode{padding:7px 8px;text-align:center}
+.s3-card .esign-mode small{display:none}
+.s3-card .sub-h4{margin-top:4px}
+.s3-arrow{display:flex;align-items:center;justify-content:center;color:var(--icon-muted);font-size:20px;font-weight:600}
+.s3-plan{display:flex;flex-direction:column;gap:8px;width:100%}
+.s3-pf{display:flex;align-items:center;gap:10px;font-size:var(--fs-sm)}
+.s3-pf > label{width:52px;color:var(--text-secondary);font-weight:600}
+.s3-pf .dt-field input[type="text"]{width:150px}
+.s3-pf .dt-time input[type="text"]{width:110px}
+.s3-plan .err{margin:0}
+.s3-kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;width:100%;margin:4px 0 0;padding-top:10px;border-top:1px solid var(--border-light);font-size:var(--fs-sm)}
+.s3-kv dt{color:var(--text-muted)}
+.s3-kv dd{margin:0;font-weight:600;color:var(--text-strong);overflow-wrap:anywhere}
+.s3-check{display:flex;align-items:center;gap:10px;margin-top:16px;padding:10px 14px;border-radius:var(--radius);border:1px solid;font-size:var(--fs-sm)}
+.s3-check.is-warn{background:var(--orange-bg);border-color:var(--warning-border);color:var(--orange-ink)}
+.s3-check.is-ok{background:var(--success-bg);border-color:#BFE0CD;color:var(--success)}
+.s3-check .s3-ic{flex:none;font-weight:700}
+.s3-check .s3-t{flex:1;min-width:0}
+.s3-check .s3-t b{font-weight:600}
+.s3-check .link-btn{flex:none;font-size:var(--fs-sm);padding:2px 4px}
+@media (max-width:999px){
+  .send3{grid-template-columns:minmax(0,1fr)}
+  .s3-arrow{height:30px;transform:rotate(90deg)}
+}
 /* kompakts kopsavilkums */
 .rv-checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .rv-ck{appearance:none;display:flex;align-items:flex-start;gap:8px;width:100%;padding:6px;margin:0 -6px;box-sizing:content-box;border:0;border-radius:var(--radius-sm);background:none;font:inherit;font-size:var(--fs-sm);text-align:left;color:var(--text)}
@@ -591,8 +627,6 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .apv-ro .apv-cmt{margin-top:6px;font-style:italic}
 .apv-note{margin:0 0 12px}
 .apv-note .apv-cmt{font-style:italic}
-.send-sum .ck-ok{color:var(--success);font-weight:600}
-.send-sum .ck-warn{color:var(--warning);font-weight:600}
 /* kopīgā soļu navigācijas josla (renderStepNav): visos soļos vienāda vieta, izmērs un pogas */
 .wiz-nav{display:flex;flex-wrap:wrap;align-items:center;gap:10px;box-sizing:border-box;width:100%;min-height:68px;margin-top:24px;padding:14px 0;border-top:1px solid #E0E0E0;background:var(--bg);position:sticky;bottom:0;z-index:2}
 .wiz-nav[hidden]{display:none}
@@ -2810,25 +2844,30 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         </div>
         <div class="step" data-wstep="5" hidden>
           <div class="step-title"><span class="step-num">5</span><h2>Nosūtīšana</h2></div>
-          <h3 class="sub-h">Saskaņošana <span class="tip" tabindex="0" role="note" aria-label="Ja jāsaskaņo, kampaņa tiek nodota saskaņotājam (statuss “Gaida saskaņojumu”). Saskaņotājs redz pārbaudes skatu tikai lasīšanai un kampaņu saskaņo vai atgriež labošanai. Pēc saskaņojuma – parakstīšana, ieplānošana vai nosūtīšana." data-tip="Ja jāsaskaņo, kampaņa tiek nodota saskaņotājam (statuss “Gaida saskaņojumu”). Saskaņotājs redz pārbaudes skatu tikai lasīšanai un kampaņu saskaņo vai atgriež labošanai. Pēc saskaņojuma – parakstīšana, ieplānošana vai nosūtīšana.">i</span></h3>
-          <div class="field"><div class="seg" id="c-apv" role="group" aria-label="Saskaņošana">
-            <button type="button" data-apv="0">Nav jāsaskaņo</button><button type="button" data-apv="1">Jāsaskaņo</button></div></div>
-          <div id="c-apv-box" hidden>
+          <div class="send3" id="c-send3">
+            <section class="s3-card" id="s3-apv" aria-labelledby="s3-apv-h">
+              <h3 class="s3-h" id="s3-apv-h">1. Saskaņošana <span class="tip" tabindex="0" role="note" aria-label="Ja jāsaskaņo, kampaņa tiek nodota saskaņotājam (statuss “Gaida saskaņojumu”). Saskaņotājs redz pārbaudes skatu tikai lasīšanai un kampaņu saskaņo vai atgriež labošanai. Pēc saskaņojuma – parakstīšana, ieplānošana vai nosūtīšana." data-tip="Ja jāsaskaņo, kampaņa tiek nodota saskaņotājam (statuss “Gaida saskaņojumu”). Saskaņotājs redz pārbaudes skatu tikai lasīšanai un kampaņu saskaņo vai atgriež labošanai. Pēc saskaņojuma – parakstīšana, ieplānošana vai nosūtīšana.">i</span></h3>
+              <div class="seg" id="c-apv" role="group" aria-label="Saskaņošana">
+            <button type="button" data-apv="0">Nav jāsaskaņo</button><button type="button" data-apv="1">Jāsaskaņo</button></div>
+              <p class="s3-off" id="c-apv-off">Saskaņošana netiek veikta.</p>
+              <div id="c-apv-box" hidden>
             <div class="form-grid">
               <div class="field"><label for="c-apv-who">Saskaņotājs <span class="req">*</span></label><select id="c-apv-who"></select><span class="hint" id="c-apv-def"></span></div>
               <div class="field"><label for="c-apv-cmt">Komentārs saskaņotājam <span class="muted">(neobligāts)</span></label><textarea id="c-apv-cmt" rows="2" maxlength="500"></textarea></div>
             </div>
-          </div>
-          <h3 class="sub-h">Paraksts</h3>
-          <div class="field"><span class="label">Elektroniskais paraksts <span class="muted">(DVS NAMEJS)</span><span class="tip" tabindex="0" role="note" aria-label="Ja jāparaksta, vēstules tiek nodotas parakstīšanai (DVS NAMEJS integrācija; prototipā – simulācija ar pogu “Parakstīt”). Citādi tās tiek nosūtītas bez parakstīšanas posma." data-tip="Ja jāparaksta, vēstules tiek nodotas parakstīšanai (DVS NAMEJS integrācija; prototipā – simulācija ar pogu “Parakstīt”). Citādi tās tiek nosūtītas bez parakstīšanas posma.">i</span></span>
-            <div class="seg" id="c-esign" role="group" aria-label="Elektroniskais paraksts">
+              </div>
+            </section>
+            <span class="s3-arrow" aria-hidden="true">→</span>
+            <section class="s3-card" id="s3-sign" aria-labelledby="s3-sign-h">
+              <h3 class="s3-h" id="s3-sign-h">2. Paraksts <span class="s3-dvs">DVS NAMEJS<span class="tip" tabindex="0" role="note" aria-label="Ja jāparaksta, vēstules tiek nodotas parakstīšanai (DVS NAMEJS integrācija; prototipā – simulācija ar pogu “Parakstīt”). Citādi tās tiek nosūtītas bez parakstīšanas posma." data-tip="Ja jāparaksta, vēstules tiek nodotas parakstīšanai (DVS NAMEJS integrācija; prototipā – simulācija ar pogu “Parakstīt”). Citādi tās tiek nosūtītas bez parakstīšanas posma.">i</span></span></h3>
+              <div class="seg" id="c-esign" role="group" aria-label="Elektroniskais paraksts">
               <button type="button" data-esign="0">Nav jāparaksta</button><button type="button" data-esign="1">Jāparaksta</button></div>
-</div>
-          <div id="c-esign-box" hidden>
+              <p class="s3-off" id="c-esign-off">Vēstule netiks parakstīta.</p>
+              <div id="c-esign-box" hidden>
             <div class="field"><span class="label">Parakstīšanas veids</span><div class="esign-modes" id="c-esign-mode" role="group" aria-label="Parakstīšanas veids"></div></div>
             <div class="field"><span class="label">Parakstītāji <span class="req">*</span><span class="tip" tabindex="0" role="note" aria-label="Secīgai parakstīšanai secība ir atzīmēšanas kārtībā." data-tip="Secīgai parakstīšanai secība ir atzīmēšanas kārtībā.">i</span></span><div class="chk-list" id="c-signers"></div><span class="err" id="c-signers-err" hidden></span></div>
           </div>
-          <div class="sign-letter" id="c-sign-letter" hidden>
+              <div class="sign-letter" id="c-sign-letter" hidden>
           <h4 class="sub-h sub-h4">Paraksts vēstulē <span class="tip" tabindex="0" role="note" aria-label="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu." data-tip="Tiek izmantots laukos {parakstītājs} un {amats}, kā arī PDF vēstules parakstā. Pēc noklusējuma – pirmais parakstītājs vai sadaļa “Pastāvīgās daļas”; izmaiņas attiecas tikai uz šo kampaņu.">i</span></h4>
           <div class="form-grid">
             <div class="field"><label for="cs-signer">Parakstītājs <span class="req">*</span> <span class="muted">{parakstītājs}</span></label><input type="text" id="cs-signer" data-sign="signer" aria-required="true" aria-describedby="cs-signer-err"><span class="err" id="cs-signer-err" hidden></span></div>
@@ -2836,8 +2875,25 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           </div>
           <button type="button" class="link-btn sign-reset" id="c-sign-reset" data-action="c-sign-reset" hidden>Atjaunot noklusējumu</button>
           </div>
-          <h3 class="sub-h">Nosūtīšana</h3>
-          <dl class="sum-dl send-sum" id="c-send-sum"></dl>
+            </section>
+            <span class="s3-arrow" aria-hidden="true">→</span>
+            <section class="s3-card" id="s3-send" aria-labelledby="s3-send-h">
+              <h3 class="s3-h" id="s3-send-h">3. Nosūtīšana</h3>
+              <div class="seg" id="c5-when" role="group" aria-label="Nosūtīšanas laiks"><button type="button" data-when5="now">Tūlīt</button><button type="button" data-when5="plan">Ieplānot</button></div>
+              <div class="s3-plan" id="c5-when-plan" hidden>
+                <div class="s3-pf"><label for="c5-plan-date">Datums</label>
+                  <div class="dt-field"><input type="text" id="c5-plan-date" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-describedby="c5-when-err">
+                    <button type="button" class="dt-btn" id="c5-plan-cal" aria-label="Izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+                    <input type="date" id="c5-plan-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div></div>
+                <div class="s3-pf"><label for="c5-plan-time">Laiks</label>
+                  <div class="dt-field dt-time"><input type="text" id="c5-plan-time" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off" list="c-plan-times" aria-describedby="c5-when-err">
+                    <span class="dt-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div></div>
+                <span class="err" id="c5-when-err" hidden></span>
+              </div>
+              <dl class="s3-kv" id="c5-kv"></dl>
+            </section>
+          </div>
+          <div class="s3-check" id="c-send-check" role="status"></div>
         </div>
       </div>
       <nav class="wiz-nav" id="wiz-nav" aria-label="Kampaņas soļu navigācija"></nav>
@@ -2928,7 +2984,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 100</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 101</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7951,7 +8007,7 @@ function renderEsign(){
   const es = compose.esign;
   $$('#c-esign button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.esign === +es.required)));
   $('#c-esign-box').hidden = !es.required;
-  $('#c-esign-mode').innerHTML = Object.entries(ESIGN_MODES).map(([k, m]) => `<button type="button" class="esign-mode" data-emode="${k}" aria-pressed="${es.mode === k}"><b>${esc(m.label)}</b><small>${esc(m.desc)}</small></button>`).join('');
+  $('#c-esign-mode').innerHTML = Object.entries(ESIGN_MODES).map(([k, m]) => `<button type="button" class="esign-mode" data-emode="${k}" aria-pressed="${es.mode === k}" title="${esc(m.desc)}"><b>${esc(m.label)}</b><small>${esc(m.desc)}</small></button>`).join('');
   $('#c-signers').innerHTML = SIGNERS.map(x => { const i = es.signers.indexOf(x.id);
     return `<label><input type="checkbox" data-signer="${x.id}" ${i >= 0 ? 'checked' : ''}><span>${esc(x.name)}${i >= 0 && es.mode === 'seciga' ? `<span class="signer-ord" title="Parakstīšanas secība">${i + 1}</span>` : ''}<small>${esc(x.role)}</small></span></label>`; }).join('');
 }
@@ -8331,7 +8387,8 @@ function autoChecks(){
   return out;
 }
 // pārbaudes "paraksts": kampaņas dati, kas ietekmē vēstules (bez saskaņošanas, paraksta un soļa); mainot tos, pārbaude jāiziet vēlreiz
-const reviewSig = () => { const {step, apv, review, tests, esign, sign, savedAt, wl, ...rest} = sessionSnapshot(); return JSON.stringify(rest); };
+// pārbaudes rezultāts paliek spēkā, mainot 5. solī saskaņošanu, parakstu un nosūtīšanas laiku; atgādinājumam – ja nemainās termiņš (no tā atkarīga atlase)
+const reviewSig = () => { const {step, apv, review, tests, esign, sign, savedAt, wl, when, sendTime, sel, ...rest} = sessionSnapshot(); const {sendDate, ...selRest} = sel || {}; return JSON.stringify({...rest, sel:selRest, due:isReminder() ? sendDateEff() : ''}); };
 const reviewValid = () => !!(compose.review && compose.review.sig === reviewSig());
 const apvLocked = () => !!(compose.apv && compose.apv.status === 'pending');
 const TEST_ADDR = 'testa.darbinieks@csp.example';
@@ -8391,13 +8448,38 @@ const curApprover = () => approverById(compose.apv.approver) || approverById(def
 const finalKind = () => compose.apv.required ? 'apv' : isPlanned() ? 'plan' : compose.esign.required ? 'sign' : 'send';
 function finalLabel(){
   const n = recipients().length, c = n ? ` (${n})` : '';
-  return {apv:`${ICON.users}Nodot saskaņošanai`, sign:`${ICON.edit}Nodot parakstīšanai${c}`, plan:`${ICON.calendar}Ieplānot nosūtīšanu`, send:`${ICON.send}Nosūtīt${c}`}[finalKind()];
+  return {apv:`${ICON.users}Nodot saskaņošanai →`, sign:`${ICON.edit}Nodot parakstīšanai →`, plan:`${ICON.calendar}Ieplānot nosūtīšanu`, send:`${ICON.send}Nosūtīt${c}`}[finalKind()];
 }
-function reviewLine(){
-  const rv = compose.review;
-  if (!rv || !reviewValid()) return `<span class="ck-warn">⚠ ${rv ? 'Kampaņa mainīta pēc pārbaudes' : 'Nav pārbaudīts'}</span> <button type="button" class="link-btn" data-action="wiz-go" data-id="4">Atvērt pārbaudi</button>`;
-  return rv.warn.length ? `<span class="ck-warn">⚠ Pārbaudīts ${esc(fmtStamp(rv.at))} ar ${rv.warn.length} ${plural(rv.warn.length, 'brīdinājumu', 'brīdinājumiem')}</span><br><small class="muted">${esc(rv.warn.join('; '))}</small>`
-    : `<span class="ck-ok">✓ Pārbaudīts ${esc(fmtStamp(rv.at))} – bez brīdinājumiem</span>`;
+// pārbaudes josla zem kartēm: ar brīdinājumiem – oranža, bez – zaļa
+const rvWarnText = w => { const m = /^(.*?) \((.*)\)$/.exec(w); return m ? `${m[1]}: ${m[2].replace(/ \/ /g, ', ')}` : w; };
+function renderSendCheck(){
+  const rv = compose.review, box = $('#c-send-check'), link = '<button type="button" class="link-btn" data-action="wiz-go" data-id="4">Atvērt pārbaudi</button>';
+  const ok = rv && reviewValid() && !rv.warn.length;
+  box.className = `s3-check ${ok ? 'is-ok' : 'is-warn'}`;
+  box.innerHTML = !rv || !reviewValid() ? `<span class="s3-ic" aria-hidden="true">⚠</span><span class="s3-t">${rv ? 'Kampaņa mainīta pēc pārbaudes – pārbaudiet vēlreiz.' : 'Kampaņa vēl nav pārbaudīta.'}</span>${link}`
+    : rv.warn.length ? `<span class="s3-ic" aria-hidden="true">⚠</span><span class="s3-t"><b>Pārbaudīts ${esc(fmtDateTime(rv.at))} ar ${rv.warn.length} ${plural(rv.warn.length, 'brīdinājumu', 'brīdinājumiem')}</b> · ${esc(rv.warn.map(rvWarnText).join(' · '))}</span>${link}`
+    : `<span class="s3-ic" aria-hidden="true">✓</span><span class="s3-t"><b>Pārbaudīts ${esc(fmtDateTime(rv.at))} bez kļūdām</b></span>`;
+}
+// 3. karte "Nosūtīšana": laiks (Tūlīt / Ieplānot) un kopsavilkums
+function sendTimeText(){
+  if (isPlanned()) return `${fmtDate(compose.sel.sendDate)} ${compose.sendTime || '09:00'}`;
+  if (compose.apv.required) return compose.esign.required ? 'Pēc saskaņošanas un parakstīšanas' : 'Pēc saskaņošanas';
+  return compose.esign.required ? 'Pēc parakstīšanas' : 'Tūlīt';
+}
+function renderSend3(){
+  const plan = isPlanned();
+  $$('#c5-when button').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.when5 === 'plan') === plan)));
+  $('#c5-when-plan').hidden = !plan;
+  if (document.activeElement !== $('#c5-plan-date') || !ui.planDateRaw) $('#c5-plan-date').value = ui.planDateRaw ?? dmy(compose.sel.sendDate);
+  if (document.activeElement !== $('#c5-plan-time') || !ui.planTimeRaw) $('#c5-plan-time').value = ui.planTimeRaw ?? (compose.sendTime || '09:00');
+  const msg = plan ? planError() : '';
+  $('#c5-when-err').hidden = !msg; $('#c5-when-err').textContent = msg;
+  ['date', 'time'].forEach(k => $(`#c5-plan-${k}`).setAttribute('aria-invalid', String(!!msg && msg.toLowerCase().includes(k === 'date' ? 'datum' : 'laik'))));
+  const recs = recipients(), byCh = {};
+  recs.forEach(r => { const ch = ADDR_TYPES[finalAttempt(deliveryAttempts(r)).type].ch; byCh[ch] = (byCh[ch] || 0) + 1; });
+  $('#c5-kv').innerHTML = `<dt>Kanāls</dt><dd>${Object.keys(byCh).length ? Object.entries(byCh).map(([ch, c]) => `${esc(CHANNELS[ch] || ch)} ${c}`).join(' · ') : '—'}</dd>
+    <dt>Respondenti</dt><dd>${selectedResp().length} · ${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}</dd>
+    <dt>Laiks</dt><dd id="c5-time">${esc(sendTimeText())}</dd>`;
 }
 function renderApproval(){
   const a = compose.apv, ap = curApprover(), def = approverById(defaultApprover());
@@ -8407,17 +8489,11 @@ function renderApproval(){
   $('#c-apv-def').textContent = def ? `Noklusējumā – apsekojuma vadītājs: ${def.name}` : '';
   if (document.activeElement !== $('#c-apv-cmt')) $('#c-apv-cmt').value = a.comment || '';
   renderSign();
-  // īss kopsavilkums
-  const recs = recipients(), byCh = {};
-  recs.forEach(r => { const ch = ADDR_TYPES[finalAttempt(deliveryAttempts(r)).type].ch; byCh[ch] = (byCh[ch] || 0) + 1; });
-  const es = compose.esign, next = {apv:`Nodošana saskaņošanai: ${ap ? ap.name : '—'}${es.required ? ' → parakstīšana' : ''} → ${isPlanned() ? 'ieplānošana' : 'nosūtīšana'}`, sign:'Nodošana parakstīšanai → nosūtīšana', plan:`Ieplānošana (${whenLabel()})${es.required ? ' → parakstīšana izpildes brīdī' : ''}`, send:'Nosūtīšana tūlīt'}[finalKind()];
-  $('#c-send-sum').innerHTML = `
-    <dt>Respondenti</dt><dd><b>${selectedResp().length}</b> atlasīti · <b>${recs.length}</b> ${plural(recs.length, 'vēstule', 'vēstules')}</dd>
-    <dt>Kanāli</dt><dd>${Object.keys(byCh).length ? Object.entries(byCh).map(([ch, c]) => `${esc(CHANNELS[ch] || ch)} <b>${c}</b>`).join(' · ') : '—'}</dd>
-    <dt>Nosūtīšana</dt><dd>${esc(whenText())}</dd>
-    <dt>Paraksts</dt><dd id="c-sum-sign">${esc(signSumText())}</dd>
-    <dt>Pārbaude</dt><dd>${reviewLine()}</dd>
-    <dt>Tālāk</dt><dd>${esc(next)}</dd>`;
+  // kartes: izslēgtajai kartei – pelēcīgs stāvoklis un paskaidrojums
+  $('#s3-apv').classList.toggle('is-off', !a.required); $('#c-apv-off').hidden = !!a.required;
+  $('#s3-sign').classList.toggle('is-off', !compose.esign.required); $('#c-esign-off').hidden = !!compose.esign.required;
+  renderSend3();
+  renderSendCheck();
 }
 // noslēdzošā poga: nodot saskaņošanai / nodot parakstīšanai / ieplānot / nosūtīt
 async function finalSubmit(){
@@ -10611,7 +10687,7 @@ $$('[data-sign]').forEach(inp => inp.addEventListener('input', () => {
   const k = inp.dataset.sign, v = inp.value.trim();
   compose.sign[k] = v === (state.layout[k] || '') ? '' : v;
   $('#c-sign-reset').hidden = !(compose.sign.signer || compose.sign.position);
-  const sd = $('#c-sum-sign'); if (sd) sd.textContent = signSumText();
+  const st = $('#c5-time'); if (st) st.textContent = sendTimeText();
   renderComposePreview();
 }));
 $$('[data-f]').forEach(inp => inp.addEventListener('input', () => { compose.f[inp.dataset.f] = inp.value.trim(); renderComposePreview(); }));
@@ -11119,6 +11195,45 @@ $('#c-plan-pick').addEventListener('change', e => {
   ui.planDateRaw = null; compose.sel.sendDate = e.target.value < todayIso() ? todayIso() : e.target.value;
   renderBasics(); selChanged(); renderWizard();
   $('#c-plan-date').focus();
+});
+$('#c5-when').addEventListener('click', e => {
+  const b = e.target.closest('[data-when5]'); if (!b) return;
+  compose.when = b.dataset.when5;
+  if (compose.when === 'plan' && (!compose.sel.sendDate || compose.sel.sendDate <= todayIso())){ compose.sel.sendDate = isoDate(addDays(1)); compose.sendTime = compose.sendTime || '09:00'; }
+  ui.planDateRaw = ui.planTimeRaw = null;
+  renderBasics(); selChanged(); renderWizard(); saveDraft();
+  if (compose.when === 'plan') $('#c5-plan-date').focus();
+});
+$('#c5-plan-date').addEventListener('input', e => {
+  const el = e.target, dg = el.value.replace(/\D/g, '').slice(0, 8);
+  if (!/^\d{4}-/.test(el.value) && e.inputType !== 'deleteContentBackward') el.value = [dg.slice(0, 2), dg.slice(2, 4), dg.slice(4)].filter(Boolean).join('.');
+});
+$('#c5-plan-time').addEventListener('input', e => {
+  const el = e.target, dg = el.value.replace(/\D/g, '').slice(0, 4);
+  if (e.inputType && e.inputType.startsWith('insert') && dg.length >= 3 && !el.value.includes(':')) el.value = `${dg.slice(0, 2)}:${dg.slice(2)}`;
+});
+$('#c5-plan-date').addEventListener('change', e => {
+  const iso = parseDmy(e.target.value);
+  ui.planDateRaw = iso ? null : e.target.value;
+  if (iso){ compose.sel.sendDate = iso; e.target.value = dmy(iso); }
+  renderBasics(); selChanged(); renderWizard(); saveDraft();
+});
+$('#c5-plan-time').addEventListener('change', e => {
+  const hm = parseHm(e.target.value);
+  ui.planTimeRaw = hm ? null : e.target.value;
+  if (hm){ compose.sendTime = hm; e.target.value = hm; }
+  renderBasics(); renderComposePreview(); renderWizard(); saveDraft();
+});
+$('#c5-plan-cal').addEventListener('click', () => {
+  const n = $('#c5-plan-pick');
+  n.min = todayIso(); n.value = compose.sel.sendDate || '';
+  try { n.showPicker(); } catch (err) { $('#c5-plan-date').focus(); }
+});
+$('#c5-plan-pick').addEventListener('change', e => {
+  if (!e.target.value) return;
+  ui.planDateRaw = null; compose.sel.sendDate = e.target.value < todayIso() ? todayIso() : e.target.value;
+  renderBasics(); selChanged(); renderWizard(); saveDraft();
+  $('#c5-plan-date').focus();
 });
 $('#c-apv').addEventListener('click', e => {
   const b = e.target.closest('[data-apv]'); if (!b) return;
