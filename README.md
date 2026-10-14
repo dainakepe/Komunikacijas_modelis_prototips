@@ -63,7 +63,7 @@ Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
   - Kampaņas: Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās. Atverot cilni, vienmēr aktīva ir "Visas";
   - Veidnes: adresāta filtru pogas (Visas · Fiziskām personām · Juridiskām personām · Cita komunikācija) tādā pašā stilā kā kampaņu statusa pogas. "Sagataves" ir poga augšējā labajā stūrī starp "Pastāvīgās daļas" un "+ Jauna veidne", un tā atver atsevišķu skatu ar grupu pogām "E-pasta satura šabloni" · "Pielikumu sagataves";
   - Sūtīšanas vēsture: Visas · Gaida parakstu · Piegāde procesā · Gaida atkārtojumu · Pārsūtīts uz nākamo adresi · Piegādāts · Nepiegādāts · Aizturēts · Manuālai izskatīšanai;
-  - Atskaites: Nosūtīšanas kopsavilkums · Piegādes rezultāti · Neveiksmīgās ziņas · Atkārtotā nosūtīšana · Citi pārskati · Darba laika patēriņš.
+  - Atskaites: Nosūtīšanas kopsavilkums · Piegādes rezultāti · Neveiksmīgās ziņas · Atkārtotā nosūtīšana · Citi pārskati · Darba laika patēriņš · Reakcija un iesniegšana.
 
 Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA moduļiem. Tie ir redzami kampaņas solī "Respondenti" un respondenta kartītē. Vecās saites turpina darboties: `#sagatavot` atver kampaņas redaktoru, `#nosutitas` atver cilni "Sūtīšanas vēsture", bet `#respondenti` atver cilni "Kampaņas".
 
@@ -594,6 +594,14 @@ Skati:
   - sadalījums (vidēji, min): pēc kampaņas veida, statistikas jomas, satura avota (gatava veidne / pielāgota veidne / jauns saturs) un pa soļiem (kurš solis aizņem visvairāk laika);
   - rāda kopsavilkumu (vidējos rādītājus), nevis atsevišķu darbinieku rezultātus; MI kopsavilkums – par vidējiem laikiem;
   - "Eksportēt CSV": katra kampaņa un veidne (objekts, nosaukums, veids/kategorija, joma, satura avots, pabeigts, aktīvais laiks, sesijas, kopējais ilgums, gaidīšana saskaņošanā un parakstīšanā, laiks pa soļiem).
+- **Reakcija un iesniegšana** (jauna apakšcilne – pēdējā rindā; procesa 3.4 apakšprocess; dati – vēstuļu reakcijas testa dati, sk. "Respondentu reakcija un veidlapu iesniegšana"):
+  - filtri: tie paši, kas citās apakšcilnēs (periods ar ātrajām izvēlēm, kampaņas veids, kanāls, kampaņa), un **Apsekojums** (redzams tikai šajā apakšcilnē; apsekojumi vēstulēs iekļautajās veidlapās). Kampaņas veida filtrs atgādinājumiem ietver abus apakšveidus (pirms / pēc termiņa);
+  - KPI kartītes vienā rindā: **Atvēršanas rādītājs** ("eAdrese X% · E-pasts Y% (aptuveni)"; atvērtās no nosūtītajām, izņemot nepiegādātās un aizturētās), **Iesniegšanas rādītājs** (iesniegtās veidlapas / veidlapas vēstulēs), **Vidējais laiks no vēstules līdz iesniegšanai** (dienas), **Kļūdaino veidlapu īpatsvars**;
+  - grafiki (esošie horizontālie stabiņi ar datu tabulām): **piltuve** Nosūtītas → Piegādātas → Atvērtas → Iesāktas → Iesniegtas (vēstulēm – % no nosūtītajām, veidlapām – % no veidlapām vēstulēs), **iesniegšanas % pa apsekojumiem**, **atvēršanas % pa kanāliem** un **pa kampaņu veidiem**, **vidējais laiks** atvēršana → iesākšana un iesākšana → iesniegšana (stundās, padomā – arī dienās);
+  - tabula pa kampaņām: Kampaņa (zem nosaukuma – Nr., vēstuļu un veidlapu skaits) | Veids | Nosūtīts | Atvērtas % | Iesniegtas % | Kļūdainas | Vid. laiks līdz iesniegšanai;
+  - "Eksportēt CSV" (kā citās apakšcilnēs): tabula pa kampaņām (Kampaņa, Nr., Veids, Nosūtīts, Vēstules, Veidlapas, Atvērtas %, Iesniegtas %, Kļūdainas, Vid. laiks līdz iesniegšanai, d.);
+  - apakšā pelēkā tekstā: "Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena (izsekošanas attēls).";
+  - ja visas apakšcilnes neietilpst vienā rindā (piem., 1280–1440 px platumā), jaunās apakšcilnes pogā redzams īsais nosaukums "Reakcija" (pilns – padomā), lai rinda nepārnestos un filtru josla paliktu tajā pašā līmenī kā citās cilnēs; platākā ekrānā – pilns nosaukums.
 
 ## Darba laika uzskaite
 
