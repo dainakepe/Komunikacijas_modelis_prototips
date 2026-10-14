@@ -901,7 +901,6 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .wl-steps{font-size:var(--fs-sm)}
 .wl-steps th,.wl-steps td{padding:5px 8px}
 .wl-det .hint{margin-top:6px}
-.hist-campinfo{padding:12px 16px;margin-bottom:10px}
 .proc-rep{padding:14px 16px;margin-bottom:16px}
 .proc-rep h3{margin:0 0 10px;font-size:var(--fs-base);color:var(--primary-darker)}
 .proc-rep h4{margin:0 0 6px;font-size:13px;color:var(--text-secondary)}
@@ -910,9 +909,10 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 /* informācijas sadaļas: "Nosaukums: vērtība" pa kreisi, 13 px */
 .proc-dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 10px;margin:0;font-size:13px}
 .proc-dl dt{color:var(--text-muted)} .proc-dl dd{margin:0;color:var(--text)}
-.hci-dl{margin-top:6px}
+.rep-campreact{padding:14px 16px;margin-bottom:16px}
+.rcr-h{margin-bottom:4px}
+.rcr-dl{margin-top:6px}
 .wl-cols{margin-top:20px}
-.hci-h{margin-bottom:4px}
 .kpis.k5{grid-template-columns:repeat(5,minmax(0,1fr))}
 .kpis.k4{grid-template-columns:repeat(4,minmax(0,1fr))}
 @media (max-width:700px){.kpis.k4{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -1115,6 +1115,9 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .cm-menu button:hover,.cm-menu button:focus-visible{background:var(--primary-50);outline:none}
 .cm-menu button.danger{color:var(--danger)} .cm-menu button.danger .icon{color:var(--danger)}
 .cm-menu hr{border:0;border-top:1px solid var(--border-light);margin:4px 2px}
+.cm-menu .cm-grp{display:flex;gap:8px;align-items:center;padding:6px 12px 2px;font-size:var(--fs-xs);font-weight:600;color:var(--text-muted)}
+.cm-menu .cm-grp .icon{width:16px;height:16px}
+.cm-menu .cm-grp ~ [data-action="react-remind"],.cm-menu .cm-grp ~ .is-dis{padding-left:36px}
 .pl-sum{display:grid;grid-template-columns:max-content 1fr;gap:8px 18px;margin:0}
 .pl-sum dt{color:var(--text-muted)} .pl-sum dd{margin:0;font-weight:600}
 .back-link{margin:0 0 6px -8px}
@@ -1167,7 +1170,6 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .al-link{display:inline-flex;align-items:center;gap:5px;appearance:none;border:0;background:none;padding:2px 0;font:inherit;font-size:var(--fs-xs);font-weight:600;color:var(--primary-dark);cursor:pointer;white-space:nowrap}
 .al-link .icon{width:14px;height:14px}
 .al-link:hover{text-decoration:underline;text-underline-offset:3px}
-.hci-h .al-link{float:right;margin-left:12px}
 dialog.drawer.al-drawer{width:min(420px,100vw)}
 .al-sub{margin:2px 0 0;font-size:var(--fs-sm);color:var(--text-muted)}
 .al-drawer .drawer-head h2{margin-top:2px}
@@ -3029,7 +3031,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 103</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 104</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -9116,6 +9118,11 @@ function campMenuItems(x){
   if (x.type === 'sent' && x.sign) out.push(it('camp-sign', x.id, 'edit', 'Parakstīt'));
   out.push(it('camp-copy', x.key, 'copy', 'Kopēt kā jaunu kampaņu'));
   out.push(it('audit-open', x.key, 'clock', 'Darbību vēsture'));
+  if (x.type === 'sent'){
+    const hasF = state.sent.some(y => String(y.batch) === String(x.id) && reactView(y).res.length);
+    out.push('<hr>', hasF ? `<div class="cm-grp" role="presentation">${ICON.send}Veidot atgādinājumu</div>${reactMenuItems(x.id)}`
+      : `<button type="button" role="menuitem" tabindex="-1" class="is-dis" aria-disabled="true">${ICON.send}Veidot atgādinājumu<small>Kampaņas vēstulēs nav veidlapu</small></button>`);
+  }
   if (x.type === 'draft') out.push('<hr>', it('camp-delete', x.id, 'trash', 'Dzēst', 'danger'));
   if (x.type === 'planned') out.push('<hr>', it('pl-delete', x.id, 'x', 'Atcelt kampaņu', 'danger'));
   return out.join('');
@@ -9519,11 +9526,11 @@ function reactGroups(xs){
   return {g, reps};
 }
 const RX_REMIND = [['nav', 'Neuzsākušajiem', 'neuzsākušie'], ['sak', 'Iesākušajiem, bet neiesniegušajiem', 'iesākušie, nav iesnieguši'], ['kl', 'Ar kļūdainām veidlapām', 'kļūdainas veidlapas']];
-function reactSectionHtml(batch, xs){
+function reactSectionHtml(batch, xs, rep){
   const vs = xs.map(x => ({x, v:reactView(x)})), sentXs = vs.filter(o => histFinal(o.x) !== 'sign');
   const nSent = sentXs.length, nDeliv = sentXs.filter(o => histFinal(o.x) === 'ok').length, nOpen = sentXs.filter(o => o.v.open).length;
-  const fs = vs.flatMap(o => o.v.res), nF = fs.length, nStart = fs.filter(f => f.st !== 'nav').length, nIes = fs.filter(f => f.st === 'ies').length, nKl = fs.filter(f => f.st === 'kl').length;
-  const nPre = vs.reduce((s, o) => s + o.v.forms.length - o.v.res.length, 0);
+  const inRep = fm => !rep || (fm.d && fm.d.reportId === rep), fs = vs.flatMap(o => o.v.res).filter(inRep), nF = fs.length, nStart = fs.filter(f => f.st !== 'nav').length, nIes = fs.filter(f => f.st === 'ies').length, nKl = fs.filter(f => f.st === 'kl').length;
+  const nPre = vs.reduce((s, o) => s + o.v.forms.filter(inRep).length - o.v.res.filter(inRep).length, 0);
   const pc = (a, b) => b ? Math.round(a / b * 100) : 0;
   const step = (n, l, base, unit) => `<div class="rx-step"><b>${n}</b><span>${esc(l)}${base != null ? ` · ${pc(n, base)}%` : ''}</span><span class="rx-bar" aria-hidden="true"><i style="--w:${base != null ? pc(n, base) : 100}%"></i></span></div>`;
   const arr = '<span class="rx-arr" aria-hidden="true">→</span>';
@@ -9537,6 +9544,12 @@ function reactSectionHtml(batch, xs){
     ${nF ? `<div class="table-wrap"><table class="rep-table rx-rep"><thead><tr><th>Apsekojums</th><th class="num">Veidlapas vēstulēs</th><th class="num">Iesāktas</th><th class="num">Kļūdainas</th><th class="num">Iesniegtas</th><th class="num">Iesniegšanas %</th></tr></thead><tbody>${rows}</tbody></table></div>`
       : '<p class="hint">Kampaņas vēstulēs nav iekļautu veidlapu.</p>'}
     <p class="rx-note">Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena.${nPre ? ` Iesniegtas pirms vēstules (neieskaita): ${nPre}.` : ''}${nF ? ` Veidlapas: ${nF} · procenti – no visām vēstulēs iekļautajām veidlapām; vēstulēm – no nosūtītajām.` : ''}</p></section>`;
+}
+// "Veidot atgādinājumu" izvēlne paliek atvērta, ja poga pārzīmēta (Atskaites)
+function reactMenuReattach(){
+  if (!campMenuBtn || campMenuBtn.dataset.action !== 'react-menu' || campMenuBtn.isConnected) return;
+  const nb = $(`[data-action="react-menu"][data-id="${campMenuBtn.dataset.id}"]`);
+  if (nb){ campMenuBtn = nb; nb.setAttribute('aria-expanded', 'true'); $('#cm-menu').innerHTML = reactMenuItems(nb.dataset.id); } else closeCampMenu();
 }
 function reactMenuItems(batch){
   const {g} = reactGroups(state.sent.filter(x => String(x.batch) === String(batch)));
@@ -9737,7 +9750,7 @@ function renderSent(){
       <button type="button" class="btn btn-primary btn-sm" data-action="camp-sign" data-id="${b}">Parakstīt</button></div>`; }).join('');
   const hEmpty = !all.length ? tcEmptyBox('Vēl nav nosūtītu vēstuļu', `<button class="btn btn-primary btn-sm" data-action="camp-new">${ICON.plus}Jauna kampaņa</button>`)
     : !list.length ? tcEmptyBox(sel.length && !active && !h.q && !h.camp && !h.rep ? `Nav vēstuļu ar statusu “${sel.length === histGroupOf(sel[0]).sts.length ? histGroupOf(sel[0]).label : sel.map(k => HIST_FINAL[k].label).join(', ')}”` : 'Nav ierakstu, kas atbilst filtriem') : '';
-  $('#hist-body').innerHTML = (list.length ? histCampInfo(h.camp) + signBars : '') + `<div class="card table-card tc-fit" id="hist-card"><div class="table-wrap camp-scroll hist-scroll tc-area" id="hist-scroll"><table class="camp-table hist-table"><colgroup>${HIST_W.map(w => `<col style="width:${w}%">`).join('')}</colgroup>
+  $('#hist-body').innerHTML = (list.length ? signBars : '') + `<div class="card table-card tc-fit" id="hist-card"><div class="table-wrap camp-scroll hist-scroll tc-area" id="hist-scroll"><table class="camp-table hist-table"><colgroup>${HIST_W.map(w => `<col style="width:${w}%">`).join('')}</colgroup>
       <thead><tr>${HIST_COLS.map(([k, l]) => `<th aria-sort="none"><button type="button" class="th-sort" data-hsort="${k}">${l}<span class="sort-ic" aria-hidden="true">↕</span></button></th>`).join('')}<th class="actions"><span class="sr-only">Darbības</span></th></tr></thead>
       <tbody>${sorted.slice(0, ui.histLimit).map(x => { const op = ui.histRow.has(x.id), f = HIST_FINAL[histFinal(x)];
         return `<tr class="hist-row ${op ? 'is-open' : ''} ${ui.newIds.has(x.id) ? 'is-new' : ''}" data-hrow="${x.id}">
@@ -9754,27 +9767,12 @@ function renderSent(){
   if (hEmpty) $('#hist-scroll').classList.add('is-empty');
   fitTables();
   renderHistSort();
-  if (campMenuBtn && campMenuBtn.dataset.action === 'react-menu' && !campMenuBtn.isConnected){
-    const nb = $(`#hist-body [data-action="react-menu"][data-id="${campMenuBtn.dataset.id}"]`);
-    if (nb){ campMenuBtn = nb; nb.setAttribute('aria-expanded', 'true'); $('#cm-menu').innerHTML = reactMenuItems(nb.dataset.id); } else closeCampMenu();
-  }
   if (campMenuBtn && campMenuBtn.dataset.action === 'hist-menu' && !campMenuBtn.isConnected){
     const nb = $(`#hist-body [data-action="hist-menu"][data-id="${campMenuBtn.dataset.id}"]`), rec = nb && state.sent.find(y => y.id === nb.dataset.id);
     if (nb && rec){ campMenuBtn = nb; nb.setAttribute('aria-expanded', 'true'); $('#cm-menu').innerHTML = histMenuItems(rec); } else closeCampMenu();
   }
   // admin sarakstam – skaits zem tabulas (galvenajai tabulai skaits un "Rādīt vairāk" ir tabulas apakšā)
   $('#hist-foot').textContent = '';
-}
-// atlasītās kampaņas informācija vēsturē (darba laiks; sarakstā laiks netiek rādīts)
-function histCampInfo(batch){
-  if (!batch) return '';
-  const xs = state.sent.filter(x => String(x.batch) === String(batch)); if (!xs.length) return '';
-  const x0 = xs[0], wl = (state.campWl || {})[batch] || {}, kind = wl.kind || x0.sessionKind || '', aud = wl.aud || '';
-  const c = {ok:0, fail:0, proc:0, sign:0};
-  xs.forEach(x => { const f = histFinal(x); c[f === 'ok' ? 'ok' : f === 'sign' ? 'sign' : f === 'fail' || f === 'held' ? 'fail' : 'proc']++; });
-  const parts = [`${xs.length}`, `piegādātas ${c.ok}`, `nepiegādātas ${c.fail}`, `procesā ${c.proc}`].concat(c.sign ? [`gaida parakstu ${c.sign}`] : []);
-  return `<div class="card hist-campinfo"><div class="hci-h"><button type="button" class="al-link" data-action="audit-open" data-id="sent:${esc(batch)}">${alIcon('log')}Darbību vēsture</button><b>${esc(x0.sessionName || `Kampaņa Nr. ${batch}`)}</b>${kind || aud ? ` <span class="muted">${esc([SESS_LABELS[kind] || '', aud && AUDS[aud] ? AUDS[aud].field : ''].filter(Boolean).join(' · '))}</span>` : ''}</div>
-    <dl class="proc-dl hci-dl"><dt>Nosūtīta:</dt><dd>${esc(fmtDateTime(wl.sentAt || x0.sentAt))}</dd><dt>Vēstules:</dt><dd>${esc(parts.join(' · '))}</dd></dl>${reactSectionHtml(batch, xs)}</div>`;
 }
 // Ierakstu dzēšana: tikai vecāki par 2 gadiem (pēc nosūtīšanas datuma)
 function twoYearsAgo(){ const d = new Date(); d.setFullYear(d.getFullYear() - 2); return d; }
@@ -10128,6 +10126,16 @@ function repSubFit(){
 window.addEventListener('resize', () => { if (ui.tab === 'atskaites') repSubFit(); });
 // ===== Reakcija un iesniegšana (procesa 3.4): atvēršana un veidlapu iesniegšana pēc kampaņu vēstulēm =====
 // Dati – vēstuļu reakcijas testa dati (reactView). Filtri: periods, kampaņa, veids, kanāls (kā citās apakšcilnēs) un apsekojums.
+// izvēlēta viena kampaņa: kampaņas informācija un "Reakcija un iesniegšana" (piltuve, apsekojumu tabula, piezīme) ar pogu "Veidot atgādinājumu"
+// (agrāk – informācijas karte Sūtīšanas vēsturē); vēstules – pēc atskaites filtriem (periods, veids, kanāls, joma, apsekojums)
+function repCampReact(batch, rep){
+  const xs = repLetters().filter(x => String(x.batch) === String(batch)); if (!xs.length) return '';
+  const x0 = xs[0], wl = (state.campWl || {})[batch] || {}, kind = wl.kind || x0.sessionKind || '', aud = wl.aud || '', c = {ok:0, fail:0, proc:0, sign:0};
+  xs.forEach(x => { const f = histFinal(x); c[f === 'ok' ? 'ok' : f === 'sign' ? 'sign' : f === 'fail' || f === 'held' ? 'fail' : 'proc']++; });
+  const parts = [`${xs.length}`, `piegādātas ${c.ok}`, `nepiegādātas ${c.fail}`, `procesā ${c.proc}`].concat(c.sign ? [`gaida parakstu ${c.sign}`] : []);
+  return `<div class="card rep-campreact" id="rep-campreact"><div class="rcr-h"><b>${esc(x0.sessionName || `Kampaņa Nr. ${batch}`)}</b>${kind || aud ? ` <span class="muted">${esc([SESS_LABELS[kind] || '', aud && AUDS[aud] ? AUDS[aud].field : ''].filter(Boolean).join(' · '))}</span>` : ''}</div>
+    <dl class="proc-dl rcr-dl"><dt>Nosūtīta:</dt><dd>${esc(fmtDateTime(wl.sentAt || x0.sentAt))}</dd><dt>Vēstules:</dt><dd>${esc(parts.join(' · '))}</dd></dl>${reactSectionHtml(batch, xs, rep)}</div>`;
+}
 function reactReportView(){
   const f = ui.rep, now = Date.now(), H = 3600e3, D = 864e5;
   const xs = repLetters().filter(x => histFinal(x) !== 'sign')
@@ -10163,8 +10171,8 @@ function reactReportView(){
       ${kpi(nF ? `${pct(ies.length, nF)}%` : '—', 'Iesniegšanas rādītājs', `${ies.length} no ${nF} ${plural(nF, 'veidlapas', 'veidlapām')} vēstulēs`)}
       ${kpi(ies.length ? dStr(toSub(fs)) : '—', 'Vidējais laiks no vēstules līdz iesniegšanai', `${ies.length} ${plural(ies.length, 'iesniegta veidlapa', 'iesniegtas veidlapas')}`)}
       ${kpi(nF ? `${pct(kl.length, nF)}%` : '—', 'Kļūdaino veidlapu īpatsvars', `${kl.length} ${plural(kl.length, 'kļūdaina veidlapa', 'kļūdainas veidlapas')}`)}</div>
-    <div class="card viz-card" style="margin-bottom:16px"><h3>Piltuve${tip('Vēstulēm – % no nosūtītajām; veidlapām – % no visām vēstulēs iekļautajām veidlapām (iesāktas – vismaz uzsāktas).')}</h3>${nSent ? singleBars(funnel, '%') : '<p class="hint">Nav datu.</p>'}
-      <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Posms', '%', 'Skaits'], funnel.map(r => [r.label, `${r.v}%`, r.sub]))}</details></div>
+    ${f.camp ? repCampReact(f.camp, f.rep) : `<div class="card viz-card" style="margin-bottom:16px"><h3>Piltuve${tip('Vēstulēm – % no nosūtītajām; veidlapām – % no visām vēstulēs iekļautajām veidlapām (iesāktas – vismaz uzsāktas).')}</h3>${nSent ? singleBars(funnel, '%') : '<p class="hint">Nav datu.</p>'}
+      <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Posms', '%', 'Skaits'], funnel.map(r => [r.label, `${r.v}%`, r.sub]))}</details></div>`}
     <div class="viz-grid">
       ${card('Iesniegšanas % pa apsekojumiem', byRep, '%', ['Apsekojums', 'Iesniegšanas %', 'Veidlapas'])}
       ${card('Atvēršanas % pa kanāliem', byCh, '%', ['Kanāls', 'Atvēršanas %', 'Vēstules'], 'E-pasta atvēršana ir aptuvena (izsekošanas attēls).')}
@@ -10195,7 +10203,7 @@ function aiSummaryReact(xs){
   const k = repKpis(xs), kl = xs.flatMap(x => reactView(x).res).filter(fm => fm.st === 'kl').length, out = [];
   out.push({t:k.em ? `E-pasta vēstules atvērtas ${k.openP}% gadījumu (${k.open} no ${k.em}; aptuveni – izsekošanas attēls).` : 'Atlasē nav e-pasta vēstuļu ar atvēršanas datiem (e-adresē atvēršana netiek mērīta).', go:k.open ? {f:{mr:'open'}} : null});
   if (k.nF) out.push({t:`Iesniegtas ${k.iesP}% anketu (${k.ies} no ${k.nF}), kas iekļautas vēstulēs.`, go:k.ies ? {f:{fa:'ies'}} : null});
-  if (kl) out.push({t:`${kl} ${plural(kl, 'anketa ir atgriezta', 'anketas ir atgrieztas')} labošanai (kļūdainas) – apsveriet atgādinājumu (kampaņas skatā “Veidot atgādinājumu”).`});
+  if (kl) out.push({t:`${kl} ${plural(kl, 'anketa ir atgriezta', 'anketas ir atgrieztas')} labošanai (kļūdainas) – apsveriet atgādinājumu (“Veidot atgādinājumu” – kampaņu saraksta izvēlnē ⋯ vai šeit, filtrā izvēloties kampaņu).`});
   return out.slice(0, 3);
 }
 // Darba laika atskaites MI teksts
@@ -10272,6 +10280,7 @@ function renderReports(){
   $('#rep-ai').innerHTML = `<div class="ai-box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.6L18 9.4l-4.2 1.8L12 16l-1.8-4.8L6 9.4l4.2-1.8z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>
     <div><h3>MI kopsavilkums <span class="pill pill-ai">MI ģenerēts · simulācija</span></h3><ul>${items.map(it => `<li>${esc(it.t)}${it.go ? ` <button type="button" class="link-btn ai-go" data-drill="${esc(JSON.stringify(it.go))}">→ Atvērt</button>` : ''}</li>`).join('')}</ul></div></div>`;
   $('#rep-body').innerHTML = v.html;
+  reactMenuReattach();
   // kartes ar tabulu – .table-card ar .tc-fit: līdz lapas satura apakšai vai (ja virs tās daudz satura) fiksēts augstums
   // (kopsavilkuma tabula ar fiksētu rindu skaitu, piem., "Pa kanāliem" – dabiskā augstumā)
   $$('#rep-body .tc-area').map(a => a.parentElement).filter(c => c.classList.contains('card')).forEach(c => c.classList.add('table-card', ...(c.classList.contains('tc-natural') ? [] : ['tc-fit'])));

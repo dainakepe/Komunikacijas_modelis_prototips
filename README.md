@@ -310,7 +310,7 @@ Respondentu dati nāk no Respondentu pārvaldības moduļa, bet iesniegšanas st
 - **Neveiksmīga:** ja visas adreses ir izsmeltas, vēstule ir neveiksmīga un nodota manuālai pārbaudei.
 - Adreses, kas pēc pastāvīgas kļūdas atzīmētas kā **nederīgas**, nākamajās kampaņās netiek izmantotas (kamēr adrese nav mainīta).
 - Testa datos ir arī nesen (pirms 1 min no pirmās ielādes) nosūtīta kampaņa "Informācija par datu iesniegšanas kalendāru" ar dažādiem iznākumiem un procesā esošiem statusiem, kā arī pirms 4 dienām nosūtīta kampaņa "Mēneša pārskati – uzaicinājums (oktobris)" ar ticamiem piegādes rezultātiem (12 vēstules · piegādātas 10 · nepiegādātas 1 · procesā 1). Visām testa kampaņām, kas nosūtītas pirms vairāk nekā 72 h, lielākā daļa vēstuļu ir piegādāta.
-- **Nosūtītas kampaņas kartīte** (Vēsturē atlasot kampaņu vai atverot nosūtītu kampaņu no saraksta – virs tabulas, tikai lasāma): kampaņas nosaukums (bez kampaņas numura), veids un joma; "Nosūtīta: datums laiks"; "Vēstules: 12 · piegādātas 10 · nepiegādātas 1 · procesā 1" (ja ir – arī "gaida parakstu N"). Nepiegādātas – Nepiegādāts un Aizturēts; procesā – Piegāde procesā, Gaida atkārtojumu, Pārsūtīts uz nākamo adresi, Manuālai izskatīšanai. Tikko nosūtītai kampaņai e-pasta vēstules ir "procesā" līdz 72 h logam (eAdresē – piegādātas pēc dažām minūtēm). Laika rādītāju kartītē nav.
+- **Nosūtītas kampaņas informācija** (Versija 104: vairs nav Sūtīšanas vēsturē virs tabulas – atverot nosūtītu kampaņu no saraksta, Vēsturē tiek tikai filtrēta tabula; informācija redzama Atskaitēs → "Reakcija un iesniegšana", filtrā izvēloties kampaņu): kampaņas nosaukums (bez kampaņas numura), veids un joma; "Nosūtīta: datums laiks"; "Vēstules: 12 · piegādātas 10 · nepiegādātas 1 · procesā 1" (ja ir – arī "gaida parakstu N"). Nepiegādātas – Nepiegādāts un Aizturēts; procesā – Piegāde procesā, Gaida atkārtojumu, Pārsūtīts uz nākamo adresi, Manuālai izskatīšanai. Tikko nosūtītai kampaņai e-pasta vēstules ir "procesā" līdz 72 h logam (eAdresē – piegādātas pēc dažām minūtēm). Laika rādītāju tajā nav.
 
 Priekšskatījumā redzama prioritāšu secība un paredzamais rezultāts (zināmās kļūdas), bet nosūtītajā vēstulē – katrs faktiskais mēģinājums.
 
@@ -491,7 +491,7 @@ Katrai kampaņai ir darbību žurnāls. Tas ir tikai papildinājums: esošie ska
 - **Ieejas** (abas atver vienu un to pašu sānu paneli):
   - kampaņu sarakstā rindas izvēlnē **"⋯"** – punkts **"Darbību vēsture"** (visām kampaņām neatkarīgi no statusa);
   - atvērtā kampaņā – galvenes statusa rindā blakus "Melnraksts saglabāts …" maza saite **"Darbību vēsture"** (12 px, akcenta krāsā, ar pulksteņa ikonu; arī saskaņotāja skatā);
-  - nosūtītas kampaņas skatā (Sūtīšanas vēsturē) – tā pati saite kampaņas kartītes galvenes rindā labajā pusē.
+  - (Sūtīšanas vēsturē kampaņas informācijas kartes vairs nav – nosūtītām kampaņām žurnāls pieejams kampaņu saraksta izvēlnē "⋯".)
 - **Sānu panelis** (no labās malas, ~420 px plats, virs satura ar pustumšu fonu; aizveras ar ×, Esc vai klikšķi ārpus paneļa – fokuss atgriežas uz pogu, ar kuru panelis atvērts):
   - virsraksts "Darbību vēsture" un zem tā pelēkā tekstā kampaņas nosaukums;
   - augšā filtrs ar birkām **Visas · Saturs · Atlase · Saskaņošana un paraksts · Nosūtīšana** (pie katras – ierakstu skaits);
@@ -596,10 +596,14 @@ Papildinājums esošajai sūtīšanas vēsturei un nosūtītas kampaņas skatam 
     - vairākas anketas – agrākais notikums un aiz tā "+N" (pārējo anketu skaits), piem., "Iesniegta · 14.10. 11:02 +2"; padomā – visu anketu saraksts ar to pirmo notikumu vai "Izmaiņu nav".
   - Panelī "Filtri" filtri "E-pasta reakcija" un "Anketas aktivitāte" atlasa pēc šo kolonnu vērtībām.
 - **Rindas izvēršana** (esošais mehānisms – klikšķis uz rindas vai statusa) zem esošajām detaļām parāda tabulu **Veidlapas**: Apsekojums | Periods | Termiņš | Statuss | Statusa laiks. Uzklikšķinot uz veidlapas rindas (vai Enter), zem tās izvēršas laika līnija, piem., "12.10. 09:14 Vēstule atvērta · 12.10. 10:30 Iesākta · 13.10. 14:05 Iesniegta · 13.10. 14:20 Kļūdaina (atgriezta labošanai)".
-- **Nosūtītas kampaņas skats** (kampaņas kartīte Vēsturē) – zem esošās informācijas sadaļa **"Reakcija un iesniegšana"**:
+- **Sūtīšanas vēsturē informācijas kartes nav:** izvēloties filtrā kampaņu vai apsekojumu, tiek tikai filtrēta tabula – tā sākas uzreiz zem filtru rindas (virs tās var būt tikai josla "gaida parakstu" ar pogu "Parakstīt", ja kampaņa nodota parakstīšanai). Agrākās kampaņas kartes saturs pārvietots:
+  - informācija un sadaļa "Reakcija un iesniegšana" – **Atskaitēs**, apakšcilnē "Reakcija un iesniegšana", izvēloties filtrā vienu kampaņu (sk. "Atskaites");
+  - "Darbību vēsture" – kampaņu saraksta izvēlnē "⋯" un atvērtas kampaņas galvenē;
+  - "Veidot atgādinājumu" – kampaņu saraksta izvēlnē "⋯" (nosūtītām kampaņām: grupa "Veidot atgādinājumu" ar trim izvēlēm; ja vēstulēs nav veidlapu – neaktīvs) un Atskaitēs (poga virs piltuves).
+- **Kampaņas reakcijas bloks** (Atskaites → "Reakcija un iesniegšana", filtrā izvēlēta viena kampaņa) – kampaņas nosaukums, veids un joma, "Nosūtīta", "Vēstules" (skaits · piegādātas · nepiegādātas · procesā) un sadaļa **"Reakcija un iesniegšana"**:
   - piltuve vienā rindā: Nosūtītas → Piegādātas → Atvērtas → Iesāktas veidlapas → Iesniegtas veidlapas (skaits un %; vēstulēm – no nosūtītajām, veidlapām – no visām vēstulēs iekļautajām veidlapām; "Iesāktas" – veidlapas, kuras vismaz uzsāktas) un atsevišķi "Kļūdainas: N";
   - tabula pa apsekojumiem: Apsekojums | Veidlapas vēstulēs | Iesāktas | Kļūdainas | Iesniegtas | Iesniegšanas % (pašreizējie statusi);
-  - sekundāra poga **"Veidot atgādinājumu"** ar izvēlni: "Neuzsākušajiem (N)", "Iesākušajiem, bet neiesniegušajiem (N)", "Ar kļūdainām veidlapām (N)" (N – unikāli respondenti; ar 0 – neaktīvs). Izvēle atver **jaunu kampaņu** (solis Pamatdati; esošā izveides plūsma) ar sākuma vērtībām: veids "Atgādinājums", tā pati statistikas joma un adrešu prioritāte, attiecīgie apsekojumi, respondentu saraksts ("Ielādēt sarakstu no faila" – NMK/UUK) un šodienas vēstules datums; saturs nav izvēlēts. Atgādinājuma nosacījums (esošais) – pēc vai pirms termiņa, atkarībā no tā, kurš aptver vairāk respondentu; atlase tiek veikta uzreiz;
+  - sekundāra poga **"Veidot atgādinājumu"** virs piltuves (tā pati izvēle – arī kampaņu saraksta izvēlnē "⋯") ar izvēlni: "Neuzsākušajiem (N)", "Iesākušajiem, bet neiesniegušajiem (N)", "Ar kļūdainām veidlapām (N)" (N – unikāli respondenti; ar 0 – neaktīvs). Izvēle atver **jaunu kampaņu** (solis Pamatdati; esošā izveides plūsma) ar sākuma vērtībām: veids "Atgādinājums", tā pati statistikas joma un adrešu prioritāte, attiecīgie apsekojumi, respondentu saraksts ("Ielādēt sarakstu no faila" – NMK/UUK) un šodienas vēstules datums; saturs nav izvēlēts. Atgādinājuma nosacījums (esošais) – pēc vai pirms termiņa, atkarībā no tā, kurš aptver vairāk respondentu; atlase tiek veikta uzreiz;
   - mazs pelēks teksts: "Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena."
 
 ### Sūtīšanas statusi un kļūdu apstrāde
@@ -657,6 +661,7 @@ Cilnē **Atskaites** (specifikācija F18) ir četras apakšcilnes: **Pārskats �
 - **Parakstīšanas rezultāti** (agrāk "Citi pārskati"): pa kampaņām – veids, parakstītāji, vēstules, parakstītas, gaida parakstu, laiki.
 
 **Reakcija un iesniegšana** (procesa 3.4 apakšprocess; saturs nav mainīts; dati – vēstuļu reakcijas testa dati, sk. "Respondentu reakcija un veidlapu iesniegšana"; ietver nosūtītās vēstules):
+- ja filtrā izvēlēta viena kampaņa – piltuves grafika vietā **kampaņas reakcijas bloks** (agrāk – kampaņas karte Sūtīšanas vēsturē; sk. "Respondentu reakcija un veidlapu iesniegšana"): kampaņas informācija, piltuve kartītēs ar "Kļūdainas: N", poga "Veidot atgādinājumu", tabula pa apsekojumiem un piezīme; vēstules – pēc atskaites filtriem (ja izvēlēts apsekojums – tikai tā veidlapas);
 - KPI kartītes: **Atvēršanas rādītājs** ("eAdrese X% · E-pasts Y% (aptuveni)"), **Iesniegšanas rādītājs**, **Vidējais laiks no vēstules līdz iesniegšanai**, **Kļūdaino veidlapu īpatsvars**;
 - grafiki: **piltuve** Nosūtītas → Piegādātas → Atvērtas → Iesāktas → Iesniegtas, **iesniegšanas % pa apsekojumiem**, **atvēršanas % pa kanāliem** un **pa kampaņu veidiem**, **vidējais laiks** atvēršana → iesākšana un iesākšana → iesniegšana;
 - tabula pa kampaņām: Kampaņa | Veids | Nosūtīts | Atvērtas % | Iesniegtas % | Kļūdainas | Vid. laiks līdz iesniegšanai;
