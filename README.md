@@ -91,7 +91,7 @@ Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA 
   - kārtošana darbojas kopā ar statusa pogām, filtriem un meklēšanu – izvēlētā kārtošana saglabājas, mainot filtrus.
 - **Ritināšana:** tabulai ir maksimālais augstums (~60 % no ekrāna), ritināšana notiek tabulas iekšpusē ar redzamu ritjoslu, galvene ar kolonnu nosaukumiem paliek redzama. Zem tabulas – "Rādītas 20 no 54" un poga **"Rādīt vairāk"** (vēl 20).
 - Uzklikšķinot uz rindas (vai nosaukuma), kampaņa atveras: melnraksts – rediģēšanai (saglabātajā solī), ieplānotā – pārskata logā (veids, nosūtīšana, respondenti, saturs, paraksts, adrešu prioritāte; pogas "Kopēt kā jaunu kampaņu" un "Izpildīt tagad"), nosūtītā – sūtīšanas vēsturē ar atlasītu kampaņu.
-- **Izvēlne "⋯"** rindas labajā pusē (ar tastatūru – bultiņas, Escape): **Atvērt**, **Kopēt kā jaunu kampaņu** (jauns melnraksts ar tiem pašiem iestatījumiem un nosaukumu "… (kopija)"; pagājis nosūtīšanas datums tiek aizstāts ar šodienu), **Dzēst** (tikai melnrakstiem, ar apstiprinājumu). Ieplānotajai kampaņai izvēlnē ir arī "Izpildīt tagad" un "Atcelt kampaņu" (ar apstiprinājumu), kampaņai, kas gaida parakstu, – "Parakstīt".
+- **Izvēlne "⋯"** rindas labajā pusē (ar tastatūru – bultiņas, Escape): **Atvērt**, **Kopēt kā jaunu kampaņu** (jauns melnraksts ar tiem pašiem iestatījumiem un nosaukumu "… (kopija)"; pagājis nosūtīšanas datums tiek aizstāts ar šodienu), **Darbību vēsture** (visām kampaņām – sk. "Darbību vēsture"), **Dzēst** (tikai melnrakstiem, ar apstiprinājumu). Ieplānotajai kampaņai izvēlnē ir arī "Izpildīt tagad" un "Atcelt kampaņu" (ar apstiprinājumu), kampaņai, kas gaida parakstu, – "Parakstīt".
 - **Melnraksti – viens ieraksts katrai kampaņai.** Jauna kampaņa kļūst par melnrakstu, kad tajā kaut kas mainīts (nosaukums, joma, tvērums, saturs u. c.), pārejot uz nākamo soli vai ar "Saglabāt melnrakstu"; pēc tam tas pats ieraksts tiek atjaunināts. Saglabāts melnraksts netiek automātiski dzēsts (tikai ar "Dzēst"). Noklusējuma nosaukums "Kampaņa Nr. N" ir unikāls (ņem vērā arī citus melnrakstus un ieplānotās kampaņas). Ielādējot tiek noņemti agrāk radušies dublikāti (vienāds ieraksts vai neaizpildīts melnraksts ar tādu pašu nosaukumu kā cits).
 - Var būt vairāki melnraksti vienlaikus. Katrs tiek saglabāts automātiski.
 - Testa datos ir piecas agrāk nosūtītas kampaņas (pēdējo 75 dienu laikā, viena ar parakstu), lai sūtīšanas vēsturē, atskaitēs un respondenta kartītē būtu ko redzēt.
@@ -486,6 +486,36 @@ Jaunu kampaņu sagatavo piecos soļos: **Pamatdati → Respondenti → Saturs �
 **Parakstīšana (simulācija).** Pēc "Nodot parakstīšanai" kampaņa ir sadaļā "Izpildē", un tās vēstulēm ir statuss "Gaida parakstu" (redzams arī sūtīšanas vēsturē). Poga "Parakstīt" (kampaņu sarakstā vai vēstures blokā) paraksta vēstules, un tās tiek nosūtītas. Ieplānotai kampaņai ar parakstu vēstules tiek nodotas parakstīšanai izpildes brīdī.
 
 **Melnraksts.** Kampaņa, arī tās saturs, tiek automātiski saglabāta kā melnraksts, tāpēc darbu var turpināt vēlāk, arī pēc lapas pārlādes. Melnraksti redzami kampaņu sarakstā. Poga "Dzēst melnrakstu" redaktorā to dzēš. Pēc nosūtīšanas atveras cilne "Sūtīšanas vēsture" ar šīs kampaņas bloku, bet pēc plānošanas – kampaņu saraksta sadaļa "Ieplānotās".
+
+### Darbību vēsture (procesa 3.5 apakšprocess "Darbību audita pieraksti")
+
+Katrai kampaņai ir darbību žurnāls. Tas ir tikai papildinājums: esošie skati, soļi, navigācija, kolonnas un stili nav mainīti.
+- **Ieejas** (abas atver vienu un to pašu sānu paneli):
+  - kampaņu sarakstā rindas izvēlnē **"⋯"** – punkts **"Darbību vēsture"** (visām kampaņām neatkarīgi no statusa);
+  - atvērtā kampaņā – galvenes statusa rindā blakus "Melnraksts saglabāts …" maza saite **"Darbību vēsture"** (12 px, akcenta krāsā, ar pulksteņa ikonu; arī saskaņotāja skatā);
+  - nosūtītas kampaņas skatā (Sūtīšanas vēsturē) – tā pati saite kampaņas kartītes galvenes rindā labajā pusē.
+- **Sānu panelis** (no labās malas, ~420 px plats, virs satura ar pustumšu fonu; aizveras ar ×, Esc vai klikšķi ārpus paneļa – fokuss atgriežas uz pogu, ar kuru panelis atvērts):
+  - virsraksts "Darbību vēsture" un zem tā pelēkā tekstā kampaņas nosaukums;
+  - augšā filtrs ar birkām **Visas · Saturs · Atlase · Saskaņošana un paraksts · Nosūtīšana** (pie katras – ierakstu skaits);
+  - laika līnija (jaunākie augšā), grupēta pa dienām ("Šodien", "Vakar", "12.10.2026."): ikona · laiks "14:48" · darbība treknrakstā · lietotājs pelēkā; zem tā – detaļa (12 px, pelēka) un saskaņotāja komentārs;
+  - secīgi "Saglabāja melnrakstu" ieraksti viena lietotāja 30 min laikā tiek apvienoti vienā rindā: "Saglabāja melnrakstu (5×) · 14:02–14:28";
+  - apakšā poga **"Eksportēt CSV"** (pēc izvēlētā filtra; katrs ieraksts atsevišķā rindā – arī apvienotās saglabāšanas; semikols, UTF-8 ar BOM; kolonnas Datums, Laiks, Darbība, Lietotājs, Detaļas, Komentārs, Grupa) un pelēkā tekstā: "Ieraksti tiek saglabāti audita vajadzībām un nav labojami.";
+  - žurnāls ir tikai lasāms – ierakstus nevar labot vai dzēst.
+- **Darbību veidi** (katram sava ikona; grupa filtram):
+  - Saturs: Izveidoja kampaņu (arī "Kopija no kampaņas …" / "Atgādinājums no kampaņas …") · Mainīja pamatdatus ("Veids: Uzaicinājums → Atgādinājums", "Nosaukums: “…” → “…”") · Izvēlējās veidni · Mainīja saturu · Saglabāja melnrakstu · Nosūtīja testa vēstuli ("uz j.berzins@csp.example · e-pasta versija");
+  - Atlase: Mainīja tvērumu · Veica atlasi ("9 respondenti, 8 vēstules") · Mainīja respondentu sarakstu ("Izņemti 2");
+  - Saskaņošana un paraksts: Nodeva saskaņošanai ("Saskaņotājs: …") · Saskaņoja · Atgrieza labošanai (ar komentāru) · Nodeva parakstīšanai (DVS NAMEJS) · Parakstīja;
+  - Nosūtīšana: Ieplānoja nosūtīšanu ("15.10. 09:00") · Atcēla ieplānošanu · Nosūtīja ("22 vēstules") · Izveidoja atgādinājumu no šīs kampaņas.
+  - Automātiskās darbības (nosūtīšana pēc saskaņojuma, ieplānotā nosūtīšana, nosūtīšana pēc parakstīšanas) – lietotājs "Sistēma".
+- **Reāllaika ieraksti:** prototipā veiktās darbības tiek pievienotas žurnālam uzreiz:
+  - saglabāšana – melnraksts tiek saglabāts automātiski; ja mainīti pamatdati, tvērums, respondentu saraksts vai saturs, ieraksts nosauc konkrēto izmaiņu, citādi – "Saglabāja melnrakstu" (secīgi līdzīgi labojumi viena lietotāja 30 min laikā tiek apvienoti);
+  - atlase, testa vēstule, nodošana saskaņošanai, saskaņošana / atgriešana, ieplānošana un tās atcelšana, nosūtīšana, parakstīšana, kopēšana un atgādinājuma izveide.
+  - Kad melnraksts tiek ieplānots vai nosūtīts, tā žurnāls pāriet uz ieplānoto / nosūtīto kampaņu (ceļš saglabājas pilns).
+- **Testa dati:** katrai esošajai kampaņai žurnāls tiek izveidots pirmajā atvēršanas reizē (deterministiski pēc kampaņas; tiek saglabāts pārlūkā), un tas atbilst statusam:
+  - melnrakstam – tikai izveide un labojumi (ja kampaņa nodota saskaņošanai vai atgriezta – arī šīs darbības);
+  - ieplānotai – sagatavošana un ieplānošana;
+  - nosūtītai – pilns ceļš līdz nosūtīšanai: izveide, pamatdati, tvērums, atlase, veidne, saglabāšanas, testa vēstule; daļai – saskaņošana (dažas atgrieztas labošanai ar komentāru), paraksts, ieplānošana vai atcelta ieplānošana;
+  - lietotāji – tikai izdomāti (kampaņu veidotāji, saskaņotāji, parakstītāji un "Sistēma").
 
 ## Sūtīšanas vēsture
 
