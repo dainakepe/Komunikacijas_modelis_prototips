@@ -530,6 +530,22 @@ Cilnē **Sūtīšanas vēsture** (specifikācija F16, F17) ir visas nosūtītās
   - noteikums tiek pārbaudīts arī pašā darbībā, tāpēc jaunāku ierakstu nevar izdzēst.
 - Nosūtīšana prototipā ir simulēta (vēstules reāli netiek sūtītas).
 
+### Respondentu reakcija un veidlapu iesniegšana (procesa 3.4 apakšprocess)
+
+Papildinājums esošajai sūtīšanas vēsturei un nosūtītas kampaņas skatam (esošās kolonnas, filtri, statusi, soļi un navigācija nav mainīti).
+- **Testa dati (simulācija, deterministiski pēc vēstules ID; tiek saglabāti pie vēstules):**
+  - **atvēršana** – {atvērta, laiks}: ~60–70 % piegādājamo vēstuļu atvērtas (7–22); eAdresei atvēršana ir uzticama, e-pastam – "aptuveni" (izsekošanas attēls). Nepiegādātām, aizturētām, manuālai izskatīšanai nodotām un parakstu gaidošām vēstulēm atvēršanas nav;
+  - **veidlapas** – katra vēstulē iekļautā veidlapa (vēstules pienākums: apsekojums + periods; tikai uzaicinājumiem un atgādinājumiem) ar termiņu, statusu un statusu vēsturi (datums un laiks katrai maiņai, darba laikā 8–19). Statusi: **Nav uzsākta** (○), **Iesākta** (◐), **Kļūdaina** (⚠, iesniegta, bet atgriezta labošanai), **Iesniegta** (●; atzīme "pēc termiņa", ja nokavēta);
+  - iesniegtajiem pienākumiem iesniegšanas datums ņemts no pienākuma datiem; ja veidlapa iesniegta **pirms vēstules nosūtīšanas** – atzīme "iesniegta pirms vēstules", un to neieskaita vēstules rezultātā. Iesniegšana pēc termiņa ir simulēta tikai reakcijas datos (daļai nokavēto veidlapu atgādinājumos pēc termiņa); pienākumu dati netiek mainīti;
+  - notikumi, kuru laiks vēl nav pienācis, netiek rādīti (tikko nosūtītai kampaņai reakcija parādās ar laiku).
+- **Sūtīšanas vēsture – kolonna "Reakcija"** (pēdējā pirms "⋯", ~104 px, nav kārtojama): acs ikona – aizpildīta = atvērta (padomā "Atvērta 12.10. 09:14", e-pastam "· aptuveni"), pelēka = nav atvērta; aiz tās veidlapu indikators – līdz 3 punktiem pēc statusa (● ⚠ ◐ ○; neitrāli pelēki, kļūdainai – oranža) un "iesniegtas/visas", piem., "2/3" (veidlapas, kas iesniegtas pirms vēstules, neieskaita). Padomā – vēstules kopējais stāvoklis: "Visas iesniegtas" / "Ir kļūdainas" / "Daļēji iesniegtas" / "Nav iesniegta neviena"; ja veidlapu nav – "—". Lai tabula ar jauno kolonnu ietilptu platumā, adresāta nosaukums vēstures tabulā tiek saīsināts ar "…" agrāk (līdz min(290 px, 20vw); pilns – padomā).
+- **Rindas izvēršana** (esošais mehānisms – klikšķis uz rindas vai statusa) zem esošajām detaļām parāda tabulu **Veidlapas**: Apsekojums | Periods | Termiņš | Statuss | Statusa laiks. Uzklikšķinot uz veidlapas rindas (vai Enter), zem tās izvēršas laika līnija, piem., "12.10. 09:14 Vēstule atvērta · 12.10. 10:30 Iesākta · 13.10. 14:05 Iesniegta · 13.10. 14:20 Kļūdaina (atgriezta labošanai)".
+- **Nosūtītas kampaņas skats** (kampaņas kartīte Vēsturē) – zem esošās informācijas sadaļa **"Reakcija un iesniegšana"**:
+  - piltuve vienā rindā: Nosūtītas → Piegādātas → Atvērtas → Iesāktas veidlapas → Iesniegtas veidlapas (skaits un %; vēstulēm – no nosūtītajām, veidlapām – no visām vēstulēs iekļautajām veidlapām; "Iesāktas" – veidlapas, kuras vismaz uzsāktas) un atsevišķi "Kļūdainas: N";
+  - tabula pa apsekojumiem: Apsekojums | Veidlapas vēstulēs | Iesāktas | Kļūdainas | Iesniegtas | Iesniegšanas % (pašreizējie statusi);
+  - sekundāra poga **"Veidot atgādinājumu"** ar izvēlni: "Neuzsākušajiem (N)", "Iesākušajiem, bet neiesniegušajiem (N)", "Ar kļūdainām veidlapām (N)" (N – unikāli respondenti; ar 0 – neaktīvs). Izvēle atver **jaunu kampaņu** (solis Pamatdati; esošā izveides plūsma) ar sākuma vērtībām: veids "Atgādinājums", tā pati statistikas joma un adrešu prioritāte, attiecīgie apsekojumi, respondentu saraksts ("Ielādēt sarakstu no faila" – NMK/UUK) un šodienas vēstules datums; saturs nav izvēlēts. Atgādinājuma nosacījums (esošais) – pēc vai pirms termiņa, atkarībā no tā, kurš aptver vairāk respondentu; atlase tiek veikta uzreiz;
+  - mazs pelēks teksts: "Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena."
+
 ### Sūtīšanas statusi un kļūdu apstrāde
 
 Statusi ir vienoti visā prototipā (sūtīšanas vēsture, kampaņu saraksts, atskaites, respondenta kartīte, nosūtītās vēstules skats); katram statusam ir sava krāsa un ikona:
