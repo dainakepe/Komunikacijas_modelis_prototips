@@ -637,13 +637,6 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .wiz-issues{font-size:var(--fs-sm);color:var(--warning);font-weight:600}
 .wiz-issues:empty{display:none}
 .when-opts{display:flex;gap:8px;flex-wrap:wrap}
-/* Nosūtīšanas datums un laiks: kompakts pārslēgs un (ieplānojot) datuma un laika lauki tajā pašā rindā */
-.when-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px 12px}
-.field .when-chk{display:inline-flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;min-height:38px;margin-right:8px}
-.when-chk input{width:16px;height:16px;accent-color:var(--primary)}
-.when-l{font-size:var(--fs-sm);font-weight:600;color:var(--text-muted)}
-.when-plan{display:flex;align-items:center;gap:8px}
-.when-plan[hidden]{display:none}
 .dt-field{position:relative;display:inline-flex;align-items:center}
 .dt-field input[type="text"]{width:150px;padding-right:38px;font-variant-numeric:tabular-nums}
 .dt-time input[type="text"]{width:118px}
@@ -654,7 +647,6 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .dt-ic{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;display:flex}
 .dt-native{position:absolute;right:0;bottom:0;width:1px;height:1px;opacity:0;border:0;padding:0;pointer-events:none}
 @media (max-width:640px){
-  .when-plan{flex:1 1 100%}
   .dt-field{flex:1}
   .dt-field input[type="text"],.dt-time input[type="text"]{width:100%}
 }
@@ -959,14 +951,17 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .hf-per{display:flex;align-items:center;gap:6px;flex:none}
 .hf-per-l{font-size:var(--fs-sm);color:var(--text-muted);white-space:nowrap}
 .hf-per .hf-dd{width:170px}
-.hf-list{right:auto;min-width:100%;width:max-content;max-width:min(380px,90vw);max-height:340px}
+.hf-list{right:auto;min-width:100%;width:max-content;max-width:min(380px,90vw);max-height:340px;overflow-x:hidden;overflow-y:auto;box-sizing:border-box}
 .hf-camp .hf-list{width:340px}
-.hf-rep .hf-list{width:300px}
-.hf-list [role="option"]{display:flex;align-items:baseline;gap:8px}
-.hf-list [role="option"] .hf-o{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.hf-list [role="option"] small{flex:none;color:var(--text-muted);font-weight:400}
-.hf-rep .hf-list [role="option"] b{flex:none}
-.hf-rep .hf-list [role="option"] small{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Apsekojums: ieraksts vienā rindā – indekss (treknrakstā, netiek saīsināts) · atstarpe 8 px · nosaukums (pelēks, 12 px, saīsināts ar "…"; pilns – padomā) */
+.hf-rep .hf-list{width:auto;min-width:320px;max-width:min(420px,90vw)}
+/* (pārraksta .dd-list right:0 un overflow:auto) */
+.hf-dd > .hf-list{right:auto;overflow-x:hidden;overflow-y:auto}
+.hf-dd .hf-list [role="option"]{display:flex;align-items:baseline;gap:8px;width:100%;box-sizing:border-box;white-space:nowrap;overflow:hidden}
+.hf-dd .hf-list [role="option"] .hf-o{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hf-dd .hf-list [role="option"] small{flex:none;color:var(--text-muted);font-weight:400}
+.hf-rep .hf-list [role="option"] b{flex:none;color:#1F5E69;font-weight:700}
+.hf-rep .hf-list [role="option"] small{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6B6B6B;font-size:12px}
 .hf-cust{padding:6px 6px 4px;display:flex;flex-direction:column;gap:8px;width:250px}
 .hf-cust-f{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:var(--fs-sm)}
 .hf-cust-f .dt-field input[type="text"]{width:180px;padding-top:6px;padding-bottom:6px}
@@ -2655,25 +2650,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
               <div class="rm-field" id="c-after-box" hidden><label for="c-late">Kavēts vismaz <span class="tip" tabindex="0" role="note" aria-label="Tiek atlasīti neiesniegtie pārskati, kuru termiņš ir pagājis (vismaz pirms norādītā dienu skaita). Lauks nav obligāts." data-tip="Tiek atlasīti neiesniegtie pārskati, kuru termiņš ir pagājis (vismaz pirms norādītā dienu skaita). Lauks nav obligāts.">i</span></label>
                 <input type="number" id="c-late" min="0" max="999" step="1" placeholder="—"><span>dienas</span><span class="rm-date" id="c-late-date" aria-live="polite"></span></div>
             </div></div>
-          <div class="field" role="group" aria-labelledby="c-when-l"><span class="label" id="c-when-l">Nosūtīšanas laiks</span>
-            <div class="when-row">
-              <label class="when-chk"><input type="checkbox" id="c-when-chk"> Ieplānot nosūtīšanu noteiktā laikā</label>
-              <div class="when-plan" id="c-when-plan" hidden>
-                <label class="when-l" for="c-plan-date">Datums</label>
-                <div class="dt-field">
-                  <input type="text" id="c-plan-date" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-label="Nosūtīšanas datums (DD.MM.GGGG)" aria-describedby="c-when-err">
-                  <button type="button" class="dt-btn" id="c-plan-cal" aria-label="Izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
-                  <input type="date" id="c-plan-pick" class="dt-native" tabindex="-1" aria-hidden="true">
-                </div>
-                <label class="when-l" for="c-plan-time">Laiks</label>
-                <div class="dt-field dt-time">
-                  <input type="text" id="c-plan-time" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off" list="c-plan-times" aria-label="Nosūtīšanas laiks (HH:MM, 24 stundu formātā)" aria-describedby="c-when-err">
-                  <span class="dt-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-                  <datalist id="c-plan-times"></datalist>
-                </div>
-              </div>
-            </div>
-            <span class="err" id="c-when-err" hidden></span></div>
           <div class="scope-head">
             <h3 class="sub-h scope-h">Kampaņas tvērums <span class="req">*</span><span class="tip" tabindex="0" role="note" aria-label="Atlase ir visu kartīšu kritēriju krustpunkts. Noklusējumā tiek atlasīti visi izvēlētā gada respondenti neatkarīgi no periodiskuma; izvēlnes un filtri atlasi sašaurina." data-tip="Atlase ir visu kartīšu kritēriju krustpunkts. Noklusējumā tiek atlasīti visi izvēlētā gada respondenti neatkarīgi no periodiskuma; izvēlnes un filtri atlasi sašaurina.">i</span></h3>
           </div>
@@ -2886,8 +2862,9 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                     <button type="button" class="dt-btn" id="c5-plan-cal" aria-label="Izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
                     <input type="date" id="c5-plan-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div></div>
                 <div class="s3-pf"><label for="c5-plan-time">Laiks</label>
-                  <div class="dt-field dt-time"><input type="text" id="c5-plan-time" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off" list="c-plan-times" aria-describedby="c5-when-err">
-                    <span class="dt-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div></div>
+                  <div class="dt-field dt-time"><input type="text" id="c5-plan-time" inputmode="numeric" maxlength="5" placeholder="HH:MM" autocomplete="off" list="c5-plan-times" aria-describedby="c5-when-err">
+                    <span class="dt-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+                    <datalist id="c5-plan-times"></datalist></div></div>
                 <span class="err" id="c5-when-err" hidden></span>
               </div>
               <dl class="s3-kv" id="c5-kv"></dl>
@@ -2984,7 +2961,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 101</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 102</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7806,10 +7783,11 @@ const WIZ_STEPS = ['Pamatdati', 'Respondenti', 'Saturs', 'Pārbaude', 'Nosūtī�
 function stepIssues(n){
   switch (n){
     case 1: return [compose.name.trim() ? '' : 'Norādiet nosaukumu.', hasScope() ? '' : fizMode() ? (compose.sel.reports[0] ? 'Kampaņas tvērumā nav izvēlēts periods.' : 'Kampaņas tvērumā nav izvēlēts apsekojums.') : 'Kampaņas tvērumā nav iekļauts neviens periodiskums.',
-      compose.when === 'plan' && planError() ? planError() : ''].filter(Boolean);
+      ].filter(Boolean);
     case 2: return selectedResp().length ? (recipients().length ? [] : ['Nevienam atlasītajam respondentam nav derīgas adreses pēc adrešu prioritātes.']) : ['Nav atlasīts neviens respondents.'];
     case 3: return currentTemplate() ? [] : ['Nav izvēlēts saturs.'];
-    case 5: return compose.esign.required ? [compose.esign.signers.length ? '' : 'Norādiet vismaz vienu parakstītāju.', signVal('signer') ? '' : 'Norādiet parakstītāju vēstulē.', signVal('position') ? '' : 'Norādiet amatu vēstulē.'].filter(Boolean) : [];
+    case 5: return [...(compose.esign.required ? [compose.esign.signers.length ? '' : 'Norādiet vismaz vienu parakstītāju.', signVal('signer') ? '' : 'Norādiet parakstītāju vēstulē.', signVal('position') ? '' : 'Norādiet amatu vēstulē.'] : []),
+      compose.when === 'plan' && planError() ? planError() : ''].filter(Boolean);
     default: return [];
   }
 }
@@ -7820,7 +7798,6 @@ function stepFieldErrors(){
     '#c-scope-err': [1, hasScope() || fizMode() ? '' : 'Iekļaujiet vismaz vienu periodiskumu.'],
     '#c-fz-rep-err': [1, fizMode() && !compose.sel.reports[0] ? 'Izvēlieties apsekojumu.' : ''],
     '#c-fz-per-err': [1, fizMode() && compose.sel.reports[0] && !compose.sel.fz.period ? 'Izvēlieties periodu.' : ''],
-    '#c-when-err': [1, compose.when === 'plan' ? planError() : ''],
     '#c-resp-err': [2, selectedResp().length ? (recipients().length ? '' : 'Nevienam atlasītajam respondentam nav derīgas adreses pēc adrešu prioritātes.') : 'Nav atlasīts neviens respondents.'],
     '#c-content-err': [3, currentTemplate() ? '' : 'Izvēlieties saturu.'],
     '#c-signers-err': [5, compose.esign.required && !compose.esign.signers.length ? 'Norādiet vismaz vienu parakstītāju.' : ''],
@@ -7988,19 +7965,6 @@ function planError(){
 function renderBasics(){
   $('#c-kind').innerHTML = Object.entries(SESS_KINDS).map(([k, v]) =>
     `<button type="button" class="skind-opt" data-skind="${k}" aria-pressed="${compose.kind === k}">${ICON[v.icon]}<span>${esc(v.label)}</span></button>`).join('');
-  $('#c-when-chk').checked = compose.when === 'plan';
-  $('#c-when-plan').hidden = compose.when !== 'plan';
-  // nepabeigta (nederīga) ievade attiecas tikai uz atvērto kampaņu
-  if (ui.planRawFor !== compose.draftId){ ui.planRawFor = compose.draftId; ui.planDateRaw = ui.planTimeRaw = null; }
-  if (document.activeElement !== $('#c-plan-date') || !ui.planDateRaw) $('#c-plan-date').value = ui.planDateRaw ?? dmy(compose.sel.sendDate);
-  if (document.activeElement !== $('#c-plan-time') || !ui.planTimeRaw) $('#c-plan-time').value = ui.planTimeRaw ?? (compose.sendTime || '09:00');
-  $('#c-plan-pick').min = todayIso(); $('#c-plan-pick').value = compose.sel.sendDate || '';
-  // laika ieteikumi ik pēc 30 min (šodienai – tikai nākotnes laiki)
-  const today = compose.sel.sendDate === todayIso(), nowHm = hmNow();
-  $('#c-plan-times').innerHTML = Array.from({length:48}, (_, i) => `${pad(Math.floor(i / 2))}:${i % 2 ? '30' : '00'}`).filter(t => !today || t > nowHm).map(t => `<option value="${t}"></option>`).join('');
-  const msg = compose.when === 'plan' && compose.tried.has(1) ? planError() : '';
-  $('#c-when-err').hidden = !msg; $('#c-when-err').textContent = msg;
-  ['date', 'time'].forEach(k => $(`#c-plan-${k}`).setAttribute('aria-invalid', String(!!msg && msg.toLowerCase().includes(k === 'date' ? 'datum' : 'laik'))));
 }
 // 4. solis: elektroniskais paraksts
 function renderEsign(){
@@ -8470,6 +8434,11 @@ function renderSend3(){
   const plan = isPlanned();
   $$('#c5-when button').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.when5 === 'plan') === plan)));
   $('#c5-when-plan').hidden = !plan;
+  // nepabeigta (nederīga) ievade attiecas tikai uz atvērto kampaņu
+  if (ui.planRawFor !== compose.draftId){ ui.planRawFor = compose.draftId; ui.planDateRaw = ui.planTimeRaw = null; }
+  $('#c5-plan-pick').min = todayIso();
+  const today = compose.sel.sendDate === todayIso(), nowHm = hmNow();
+  $('#c5-plan-times').innerHTML = Array.from({length:48}, (_, i) => `${pad(Math.floor(i / 2))}:${i % 2 ? '30' : '00'}`).filter(t => !today || t > nowHm).map(t => `<option value="${t}"></option>`).join('');
   if (document.activeElement !== $('#c5-plan-date') || !ui.planDateRaw) $('#c5-plan-date').value = ui.planDateRaw ?? dmy(compose.sel.sendDate);
   if (document.activeElement !== $('#c5-plan-time') || !ui.planTimeRaw) $('#c5-plan-time').value = ui.planTimeRaw ?? (compose.sendTime || '09:00');
   const msg = plan ? planError() : '';
@@ -9254,7 +9223,7 @@ function renderHistFilters(h, all){
   const cq = norm($('#hist-camp-q').value), cl = camps.filter(c => !cq || norm(`${c.name} ${c.b}`).includes(cq));
   $('#hist-camp-list').innerHTML = (cq ? '' : hfOpt('', !h.camp, '<span class="hf-o">Visas kampaņas</span>')) + cl.map(c => hfOpt(c.b, String(c.b) === String(h.camp), `<span class="hf-o">${esc(c.name)}</span><small>${esc(fmtDate(isoDate(new Date(c.at))))}</small>`, c.name)).join('') + (!cl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   const rq = norm($('#hist-rep-q').value), rl = reps.filter(r => !rq || norm(`${r.code} ${r.name}`).includes(rq));
-  $('#hist-rep-list').innerHTML = (rq ? '' : hfOpt('', !h.rep, '<span class="hf-o">Visi apsekojumi</span>')) + rl.map(r => hfOpt(r.id, r.id === h.rep, `<b>${esc(r.code)}</b><small>${esc(r.name)}</small>`, `${r.code} ${r.name}`)).join('') + (!rl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
+  $('#hist-rep-list').innerHTML = (rq ? '' : hfOpt('', !h.rep, '<span class="hf-o">Visi apsekojumi</span>')) + rl.map(r => hfOpt(r.id, r.id === h.rep, `<b>${esc(r.code)}</b> <small>${esc(r.name)}</small>`, `${r.code} – ${r.name}`)).join('') + (!rl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   $('#hist-per-list').innerHTML = HF_QUICK.map(([k, l]) => hfOpt(k, (h.quick || '') === k, `<span class="hf-o">${esc(l)}</span>${k === 'custom' && h.quick === 'custom' ? `<small>${esc(hfPerLabel(h))}</small>` : ''}`)).join('');
   const n = [h.ch, h.kind, h.mr, h.fa].filter(Boolean).length, b = $('#hist-more-n');
   b.hidden = !n; b.textContent = n || ''; $('#hist-more-f').setAttribute('aria-label', n ? `Filtri – aktīvi ${n}` : 'Filtri');
@@ -11156,46 +11125,6 @@ $('#cr-file-res').addEventListener('click', e => {
 });
 $('#c-opt-merge').addEventListener('change', e => { compose.sel.mergeNmk = e.target.checked; selChanged(); });
 // 1. solis: nosūtīšana pēc apstiprināšanas vai ieplānota (izvēles rūtiņa "Ieplānot nosūtīšanu noteiktā laikā")
-$('#c-when-chk').addEventListener('change', e => {
-  compose.when = e.target.checked ? 'plan' : 'now';
-  // noklusējums: rītdiena plkst. 09:00
-  if (compose.when === 'plan' && (!compose.sel.sendDate || compose.sel.sendDate <= todayIso())){ compose.sel.sendDate = isoDate(addDays(1)); compose.sendTime = compose.sendTime || '09:00'; }
-  ui.planDateRaw = ui.planTimeRaw = null;
-  renderBasics(); selChanged(); renderWizard();
-});
-// datuma un laika lauki: automātiska punktu / kola ievietošana; derīgu vērtību saglabā, nederīgu – parāda kļūdu
-$('#c-plan-date').addEventListener('input', e => {
-  const el = e.target, dg = el.value.replace(/\D/g, '').slice(0, 8);
-  if (!/^\d{4}-/.test(el.value) && e.inputType !== 'deleteContentBackward') el.value = [dg.slice(0, 2), dg.slice(2, 4), dg.slice(4)].filter(Boolean).join('.');
-});
-$('#c-plan-time').addEventListener('input', e => {
-  const el = e.target, dg = el.value.replace(/\D/g, '').slice(0, 4);
-  if (e.inputType && e.inputType.startsWith('insert') && dg.length >= 3 && !el.value.includes(':')) el.value = `${dg.slice(0, 2)}:${dg.slice(2)}`;
-});
-$('#c-plan-date').addEventListener('change', e => {
-  const iso = parseDmy(e.target.value);
-  ui.planDateRaw = iso ? null : e.target.value;
-  if (iso){ compose.sel.sendDate = iso; e.target.value = dmy(iso); }
-  renderBasics(); selChanged(); renderWizard();
-});
-$('#c-plan-time').addEventListener('change', e => {
-  const hm = parseHm(e.target.value);
-  ui.planTimeRaw = hm ? null : e.target.value;
-  if (hm){ compose.sendTime = hm; e.target.value = hm; }
-  renderBasics(); renderComposePreview(); renderWizard();
-});
-// kalendāra poga atver pārlūka datuma izvēli (vērtība – ISO; laukā rāda DD.MM.GGGG)
-$('#c-plan-cal').addEventListener('click', () => {
-  const n = $('#c-plan-pick');
-  n.min = todayIso(); n.value = compose.sel.sendDate || '';
-  try { n.showPicker(); } catch (err) { $('#c-plan-date').focus(); }
-});
-$('#c-plan-pick').addEventListener('change', e => {
-  if (!e.target.value) return;
-  ui.planDateRaw = null; compose.sel.sendDate = e.target.value < todayIso() ? todayIso() : e.target.value;
-  renderBasics(); selChanged(); renderWizard();
-  $('#c-plan-date').focus();
-});
 $('#c5-when').addEventListener('click', e => {
   const b = e.target.closest('[data-when5]'); if (!b) return;
   compose.when = b.dataset.when5;
