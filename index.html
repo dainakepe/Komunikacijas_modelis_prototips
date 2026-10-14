@@ -1158,6 +1158,28 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 .ms-freq{flex:none;font-size:var(--fs-2xs);color:var(--text-muted);background:var(--bg);border-radius:var(--radius-xs);padding:1px 6px;line-height:16px}
 .ms-tag-open{appearance:none;border:0;background:none;padding:0;font:inherit;color:inherit;cursor:pointer}
 .ms-tag-open:hover{text-decoration:underline}
+/* apvienotā birka "N apsekojumi ▾ ×" – vienmēr vienā rindā, tāds pats izmērs kā atsevišķām birkām */
+.ms-tag.ms-tag-n{flex:none;white-space:nowrap}
+.ms-tag-n .ms-tag-open{display:inline-flex;align-items:center;gap:4px;width:auto;height:22px;border-radius:0;white-space:nowrap;font-size:var(--fs-sm);font-weight:600;line-height:22px}
+.ms-tag-n .ms-tag-open:hover{background:transparent;text-decoration:underline}
+.ms-tag-n .ms-tag-open:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:var(--radius-xs)}
+.ms-tag-n .ms-tag-open .chev{width:13px;height:13px;transform:rotate(90deg);transition:transform .15s}
+.ms-tag-n .ms-tag-open[aria-expanded="true"] .chev{transform:rotate(-90deg)}
+/* izvēlēto apsekojumu saraksts (popover) zem apvienotās birkas */
+.rep-pop{position:absolute;z-index:70;width:min(380px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.12);font-size:var(--fs-sm)}
+.rep-pop[hidden]{display:none}
+.rp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border-bottom:1px solid var(--border-light)}
+.rp-list{list-style:none;margin:0;padding:4px 0;max-height:260px;overflow:auto}
+.rp-list li{display:flex;align-items:center;gap:8px;padding:4px 6px 4px 12px}
+.rp-list li:hover{background:var(--th-bg)}
+.rp-code{flex:none;font-weight:700;color:var(--primary-darker);white-space:nowrap}
+.rp-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary)}
+.rp-list .icon{width:14px;height:14px;color:var(--warning);flex:none}
+.rp-rm{appearance:none;border:0;background:transparent;color:var(--primary-darker);font-size:var(--fs-lg);line-height:1;width:24px;height:24px;border-radius:50%;cursor:pointer;flex:none}
+.rp-rm:hover{background:var(--hover-bg)}
+.rp-rm:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px}
+.fz-form select.is-empty{color:var(--text-muted)}
+.fz-form select.is-empty option{color:var(--text)}
 .ms-opt:last-child{border-bottom:0}
 .ms-opt:hover,.ms-opt.is-active{background:var(--primary-50)}
 .ms-opt small{display:block;color:var(--text-muted);font-size:var(--fs-xs)}
@@ -1180,8 +1202,7 @@ dialog.drawer::backdrop{background:rgba(15,30,30,.35)}
 /* "Veikt atlasi" – neitrāla, maza sekundāra poga (nav aizpildīta akcenta krāsā) */
 .btn.sel-run-btn{flex:none;height:32px;padding:0 14px;font-size:13px;font-weight:600;background:#fff;border:1px solid #A9C9CF;color:#1F5E69}
 .btn.sel-run-btn:hover:not(:disabled){background:#EEF5F6;border-color:#A9C9CF}
-.scope-res .sr-muted,.scope-res.is-stale{color:var(--text-muted)}
-.scope-res.is-stale s{color:var(--text-muted)}
+.scope-res .sr-muted{color:var(--text-muted)}
 /* "Tālāk" bez veiktas atlases – neaktīva, bet ar padomu */
 .btn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
 .btn-primary[aria-disabled="true"]:hover{background:var(--primary)}
@@ -2814,7 +2835,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 95</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 96</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7102,6 +7123,47 @@ function syncScopeInputs(){
   renderMergeOpt();
   if (['uuk', 'email', 'eaddr'].some(k => String(f[k] || '').trim()) || f.list) ui.respMore = true;
 }
+// izvēlētie apsekojumi: līdz 3 – atsevišķas birkas; vairāk – viena birka "N apsekojumi ▾ ×" ar sarakstu (popover)
+const repCount = n => `${n} ${plural(n, 'apsekojums', 'apsekojumi')}`;
+const repTagTip = ids => { const cs = ids.map(id => (repById(id) || {}).code || id); return cs.slice(0, 5).join(', ') + (cs.length > 5 ? ` +${cs.length - 5}` : ''); };
+function renderRepPop(){
+  const sel = compose.sel, ids = sel.allReports ? [] : sel.reports;
+  let pop = $('#rep-pop');
+  if (!ui.repPop || ids.length <= 3 || !$('#c-rep-tags .ms-tag-open')){ ui.repPop = false; if (pop) pop.hidden = true; return; }
+  if (!pop){ pop = document.createElement('div'); pop.id = 'rep-pop'; pop.className = 'rep-pop'; pop.setAttribute('role', 'dialog'); document.body.appendChild(pop);
+    pop.addEventListener('click', e => {
+      const rm = e.target.closest('[data-rp-rm]');
+      if (rm){ const i = $$('#rep-pop [data-rp-rm]').indexOf(rm); repToggle(rm.dataset.rpRm); const nb = $$('#rep-pop [data-rp-rm]')[Math.min(i, $$('#rep-pop [data-rp-rm]').length - 1)]; (nb || $('#c-rep-search')).focus({preventScroll:true}); return; }
+      if (e.target.closest('[data-rp-all]')) repRemoveAll();
+    });
+    pop.addEventListener('keydown', e => { if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); closeRepPop(true); } });
+  }
+  const per = periodReportIds();
+  pop.setAttribute('aria-label', `Izvēlētie apsekojumi (${ids.length})`);
+  pop.innerHTML = `<div class="rp-head"><b>${esc(repCount(ids.length))}</b><button type="button" class="link-btn" data-rp-all>Noņemt visus</button></div>
+    <ul class="rp-list">${ids.map(id => { const p = repById(id); if (!p) return ''; const off = !per.has(p.id);
+      return `<li><span class="rp-code">${esc(p.code)}</span><span class="rp-name" title="${esc(repTitle(p) + (off ? ' – neatbilst izvēlētajam periodam, netiks atlasīts' : ''))}">${esc(p.name)}</span>${off ? ICON.warn : ''}<button type="button" class="rp-rm" data-rp-rm="${p.id}" aria-label="Noņemt: ${esc(repTitle(p))}">×</button></li>`; }).join('')}</ul>`;
+  pop.hidden = false;
+  const r = $('#c-rep-tags .ms-tag-n').getBoundingClientRect(), w = pop.offsetWidth;
+  pop.style.top = `${Math.round(r.bottom + scrollY + 4)}px`;
+  pop.style.left = `${Math.round(Math.max(8, Math.min(r.left, innerWidth - w - 16)) + scrollX)}px`;
+}
+function closeRepPop(focus){ if (!ui.repPop) return; ui.repPop = false; renderRepPop(); const b = $('#c-rep-tags .ms-tag-open'); if (b){ b.setAttribute('aria-expanded', 'false'); if (focus) b.focus(); } }
+// visu noņemšana – ar īsu apstiprinājumu
+function repRemoveAll(){
+  const n = compose.sel.reports.length;
+  closeRepPop();
+  openModal({title:'Noņemt apsekojumus', content:`<p>Noņemt visus ${n} ${plural(n, 'apsekojumu', 'apsekojumus')}?</p>`,
+    actions:[{label:'Atcelt', cls:'btn-secondary'}, {label:'Noņemt visus', cls:'btn-danger', onClick: close => { close(); repToggle('**'); $('#c-rep-search').focus({preventScroll:true}); }}]});
+}
+// apsekojumu saraksts kopsavilkumos (Mērķa grupa, Pārbaude): līdz 3 – uzskaitīti; vairāk – "N apsekojumi" ar sarakstu padomā
+const repSumHtml = reps => !reps.length ? '<span class="muted">—</span>' : reps.length <= 3 ? reps.map(p => `<span class="nw" title="${esc(repTitle(p))}">${esc(p.code)}</span>`).join(', ')
+  : `<span class="nw rep-sum-n" title="${esc(reps.map(repTitle).join('\n'))}">${esc(repCount(reps.length))}</span>`;
+function campRepObjs(){
+  const sel = compose.sel, ds = state.respondents.filter(matchesFilt).flatMap(r => selDutiesOf(r));
+  const ids = ds.length ? [...new Set(ds.map(d => d.reportId))] : sel.reports;
+  return ids.map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
+}
 function renderScope(){
   const sel = compose.sel, reps = audReports();
   // "Pēc respondenta": aktīvo filtru skaits, statusa šifri, saraksts no faila
@@ -7160,8 +7222,9 @@ function renderScope(){
   const nRep = sel.reports.length, repTag = id => { const p = repById(id), off = !periodReportIds().has(p.id), t = off ? `${repTitle(p)} – neatbilst izvēlētajam periodam, netiks atlasīts` : repTip(p);
     return `<span class="ms-tag${off ? ' is-off' : ''}"><span title="${esc(t)}">${off ? ICON.warn : ''}${esc(p.code)}</span><button type="button" data-rep-rm="${p.id}" aria-label="Noņemt: ${esc(repTitle(p))}">×</button></span>`; };
   $('#c-rep-tags').innerHTML = sel.allReports ? `<span class="ms-tag"><span>Visi apsekojumi</span><button type="button" data-rep-rm="*" aria-label="Noņemt: Visi apsekojumi">×</button></span>`
-    : nRep > 3 ? `<span class="ms-tag ms-tag-n"><button type="button" class="ms-tag-open" data-rep-open title="${esc(sel.reports.map(id => repTitle(repById(id))).join('\n'))}" aria-label="${nRep} izvēlēti apsekojumi – rādīt sarakstu">${nRep} izvēlēti</button><button type="button" data-rep-rm="**" aria-label="Noņemt visus ${nRep} izvēlētos apsekojumus">×</button></span>`
+    : nRep > 3 ? `<span class="ms-tag ms-tag-n"><button type="button" class="ms-tag-open" data-rep-open aria-haspopup="dialog" aria-expanded="${!!ui.repPop}" aria-controls="rep-pop" title="${esc(repTagTip(sel.reports))}" aria-label="${nRep} ${plural(nRep, 'izvēlēts apsekojums', 'izvēlēti apsekojumi')} – rādīt sarakstu">${repCount(nRep)}${ICON.chev}</button><button type="button" data-rep-rm="**" aria-label="Noņemt visus ${nRep} izvēlētos apsekojumus">×</button></span>`
     : sel.reports.map(repTag).join('');
+  renderRepPop();
   $('#c-rep-list').classList.toggle('is-inline', repInline());
   if (repInline()){ $('#c-rep-list').hidden = false; $('#c-rep-search').setAttribute('aria-expanded', 'true'); }
   if (!$('#c-rep-list').hidden) renderRepList();
@@ -7203,7 +7266,7 @@ function scopeSig(){
   return stableStr({aud:compose.aud, kind:compose.kind, remind:isReminder() ? compose.remind : '', due:isReminder() ? sendDateEff() : '', sel, prio:compose.prio.filter(Boolean)});
 }
 // atlasi var veikt, kad izvēlēts vismaz viens apsekojums
-const selReady = (sel = compose.sel) => compose.aud === 'jur' ? sel.allReports || sel.reports.length > 0 : !!sel.reports[0];
+const selReady = (sel = compose.sel) => compose.aud === 'jur' ? sel.allReports || sel.reports.length > 0 : !!sel.reports[0] && !!(sel.fz || {}).period;
 // agrāk saglabātie melnraksti (pirms pogas "Veikt atlasi"), kas jau bija tālāk par 1. soli ('legacy') – atlase uzskatāma par veiktu;
 // rezultāts tiek nofiksēts, pirmo reizi atverot 1. soli (pēc tvēruma lauku normalizēšanas)
 const selRunNow = () => compose.selRun || null;
@@ -7217,11 +7280,11 @@ function renderScopeResult(){
   if (compose.selRun === 'legacy') compose.selRun = makeSelRun();
   const box = $('#c-scope-res'), btn = $('#c-sel-btn'), r = selRunNow(), busy = !!ui.selBusy;
   btn.disabled = busy || !selReady(); btn.textContent = busy ? 'Atlasa…' : 'Veikt atlasi'; btn.setAttribute('aria-busy', String(busy));
-  btn.title = selReady() ? '' : 'Vispirms izvēlieties vismaz vienu apsekojumu.';
-  const stale = !busy && !!r && r.sig !== scopeSig();
-  box.classList.toggle('is-stale', stale);
-  box.innerHTML = busy ? '<span class="sr-muted">Atlasa…</span>' : !r ? '<span class="sr-muted">Atlase vēl nav veikta.</span>'
-    : stale ? `<s>${esc(selText(r))}</s> Filtri mainīti, veiciet atlasi atkārtoti.` : esc(selText(r));
+  btn.title = selReady() ? '' : fizMode() && compose.sel.reports[0] ? 'Izvēlieties periodu' : 'Vispirms izvēlieties vismaz vienu apsekojumu.';
+  // mainot jebkuru tvēruma nosacījumu pēc atlases – iepriekšējais rezultāts tiek dzēsts (atkal "Atlase vēl nav veikta.")
+  if (!busy && r && r !== 'legacy' && r.sig !== scopeSig()) compose.selRun = null;
+  const cur = selRunNow();
+  box.innerHTML = busy ? '<span class="sr-muted">Atlasa…</span>' : !cur ? '<span class="sr-muted">Atlase vēl nav veikta.</span>' : esc(selText(cur));
   if (compose.step === 1 && $('#wiz-next')) renderStepNav(1);
 }
 function runSelection(){
@@ -7244,21 +7307,23 @@ function renderFz(){
   const all = repPeriodList(p), years = [...new Set(all.map(periodYear))];
   // agrāk saglabātā izvēle ārpus pieejamajiem gadiem – noklusējums
   if (fz.year && !years.includes(+fz.year)) fz.year = p ? perDefYear() : '';
-  if (p && fz.period && !all.includes(fz.period)) fz.period = fzDefPeriod(p, fz.year);
+  if (p && fz.period && !all.includes(fz.period)){ fz.period = ''; fz.rounds = null; }
   $('#c-fz-rep').innerHTML = `<option value="">Izvēlieties apsekojumu…</option>` + audReports().map(r => `<option value="${r.id}" ${r.id === id ? 'selected' : ''}>${esc(r.code)} ${esc(r.name)}</option>`).join('');
   $('#c-fz-year').innerHTML = `<option value="">Visi gadi</option>` + years.map(y => `<option value="${y}" ${String(y) === String(fz.year) ? 'selected' : ''}>${y}</option>`).join('');
   const pers = fz.year ? all.filter(k => periodYear(k) === +fz.year) : all;
-  $('#c-fz-per').innerHTML = `<option value="">Izvēlieties periodu…</option>` + pers.map(k => `<option value="${k}" ${k === fz.period ? 'selected' : ''}>${esc(periodCode(k))}</option>`).join('');
+  $('#c-fz-per').innerHTML = `<option value="">Izvēlieties periodu</option>` + pers.map(k => `<option value="${k}" ${k === fz.period ? 'selected' : ''}>${esc(periodCode(k))}</option>`).join('');
   ['#c-fz-year', '#c-fz-per'].forEach(x => { $(x).disabled = !p; });
+  $('#c-fz-per').classList.toggle('is-empty', !fz.period);
   // Cikls: izkrītošā vairākizvēle (apsekojumiem bez reizēm / cikliem – tukša un neaktīva)
-  const R = ROUNDS[id], rs = fzRounds(sel) || [], dd = $('#c-fz-cyc'), sum = $('#c-fz-cyc-sum');
-  dd.classList.toggle('is-disabled', !R);
-  if (!R) ui.cycOpen = false;
-  dd.open = !!(R && ui.cycOpen);
-  sum.setAttribute('aria-disabled', String(!R)); sum.tabIndex = R ? 0 : -1;
-  sum.innerHTML = !R ? '' : rs.length ? rs.map(n => `<span class="cyc-tag">${esc(roundLabel(id, n))}</span>`).join('') : '<span class="muted">Izvēlieties…</span>';
-  $('#c-fz-rounds').innerHTML = R ? Array.from({length:R.n}, (_, i) => i + 1).map(n => `<label><input type="checkbox" data-round="${n}" ${rs.includes(n) ? 'checked' : ''}>${esc(roundLabel(id, n))}</label>`).join('') : '';
-  $('#c-fz-rounds-hint').hidden = !R || rs.length > 0; if (R) $('#c-fz-rounds-hint').textContent = `Atzīmējiet vismaz vienu ${R.acc}.`;
+  // cikls – neaktīvs, līdz izvēlēts periods
+  const R = ROUNDS[id], rs = fzRounds(sel) || [], dd = $('#c-fz-cyc'), sum = $('#c-fz-cyc-sum'), cOn = !!R && !!fz.period;
+  dd.classList.toggle('is-disabled', !cOn);
+  if (!cOn) ui.cycOpen = false;
+  dd.open = !!(cOn && ui.cycOpen);
+  sum.setAttribute('aria-disabled', String(!cOn)); sum.tabIndex = cOn ? 0 : -1;
+  sum.innerHTML = !R ? '' : !fz.period ? '<span class="muted">Vispirms izvēlieties periodu</span>' : rs.length ? rs.map(n => `<span class="cyc-tag">${esc(roundLabel(id, n))}</span>`).join('') : '<span class="muted">Izvēlieties…</span>';
+  $('#c-fz-rounds').innerHTML = cOn ? Array.from({length:R.n}, (_, i) => i + 1).map(n => `<label><input type="checkbox" data-round="${n}" ${rs.includes(n) ? 'checked' : ''}>${esc(roundLabel(id, n))}</label>`).join('') : '';
+  $('#c-fz-rounds-hint').hidden = !cOn || rs.length > 0; if (R) $('#c-fz-rounds-hint').textContent = `Atzīmējiet vismaz vienu ${R.acc}.`;
 }
 // Atlases lauki
 function renderFilters(){
@@ -7457,7 +7522,10 @@ function renderFinalSummary(){
   recs.forEach(r => { const f = addrPlan(r)[0]; if (f) ch[ADDR_TYPES[f.type].ch]++; });
   // viena poga "Labot" virsrakstā (solis "Pamatdati"); lauki "Nosaukums: vērtība"; apakšā adrešu secība un bez adreses
   $('#c-sum-edit').hidden = apvLocked();
-  $('#c-final-sum').innerHTML = kvRow('Kampaņa', esc(compose.name), 'kv-strong') + kvRow('Veids', esc(SESS_LABELS[sessKindKey()])) +
+  const fzP = fizMode() ? repById(compose.sel.reports[0]) : null, fzPer = fizMode() ? compose.sel.fz.period : '';
+  const repsRow = fizMode() ? kvRow('Apsekojums', fzP ? `<span class="nw" title="${esc(repTitle(fzP))}">${esc(fzP.code)}</span>${fzPer ? ` · <span class="nw" title="${esc(periodLabel(fzPer))}">${esc(periodCode(fzPer))}</span>` : ''}` : '<span class="muted">—</span>')
+    : kvRow('Apsekojumi', compose.sel.allReports && !campRepObjs().length ? 'Visi apsekojumi' : repSumHtml(campRepObjs()));
+  $('#c-final-sum').innerHTML = kvRow('Kampaņa', esc(compose.name), 'kv-strong') + kvRow('Veids', esc(SESS_LABELS[sessKindKey()])) + repsRow +
     kvRow('Nosūtīšana', isPlanned() ? esc(whenLabel()) : 'Nav ieplānota') +
     kvRow('Respondenti', `${kvNw(String(st.sel))} · ${kvNw(`${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}`)}`) +
     kvRow('Kanāli', kvChannels(ch)) +
@@ -7577,7 +7645,7 @@ function renderScopeCtx(){
     // pārskati un periodi no atlasītajiem pienākumiem
     const reps = [...new Set(ds.map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
     const pers = [...new Set(ds.map(d => d.period))].sort((x, y) => periodBounds(y).end - periodBounds(x).end || String(y).localeCompare(String(x)));
-    rows.push(kvRow('Apsekojumi', reps.length ? kvList('reps', reps.map(p => p.code), reps.map(repTitle)) : esc(sel.reports.length ? sel.reports.map(id => (repById(id) || {}).code || id).join(', ') : 'Visi apsekojumi')));
+    rows.push(kvRow('Apsekojumi', reps.length ? repSumHtml(reps) : sel.reports.length ? repSumHtml(sel.reports.map(repById).filter(Boolean)) : 'Visi apsekojumi'));
     rows.push(kvRow('Periodi', kvList('pers', pers.map(periodCode), pers.map(k => `${periodCode(k)} – ${periodLabel(k)}`))));
   }
   // aktīvie filtri (bez jomas, apsekojuma un perioda)
@@ -10014,21 +10082,21 @@ function fzDefPeriod(p, y){
   const all = repPeriodList(p), def = p ? periodBack(p.freq, 1) : '', ys = y ? all.filter(k => periodYear(k) === +y) : all;
   return ys.includes(def) ? def : ys.find(k => periodStart(k) <= periodStart(def)) || ys[0] || '';
 }
-function fzDefaults(id){ const y = perDefYear(); compose.sel.fz = {year:y, period:fzDefPeriod(repById(id), y), rounds:null}; ui.cycOpen = false; }
+// izvēloties apsekojumu: gads – tekošais; periods netiek aizpildīts (obligāti jāizvēlas); cikls – pēc perioda izvēles
+function fzDefaults(id){ const y = perDefYear(); compose.sel.fz = {year:y, period:'', rounds:null}; ui.cycOpen = false; }
 $('#c-fz-rep').addEventListener('change', e => {
   const id = e.target.value;
   compose.sel.reports = id ? [id] : [];
   if (id) fzDefaults(id); else compose.sel.fz = defaultFz();
   selChanged(); $('#c-fz-rep').focus();
 });
-// mainot gadu: ja periods neatbilst – šī gada jaunākais periods
+// mainot gadu: periods un cikls atiestatās uz neizvēlētu
 $('#c-fz-year').addEventListener('change', e => {
   const fz = compose.sel.fz, y = e.target.value;
-  fz.year = y;
-  if (y && periodYear(fz.period || 'Y:0') !== +y) fz.period = fzDefPeriod(repById(compose.sel.reports[0]), y);
+  fz.year = y; fz.period = ''; fz.rounds = null; ui.cycOpen = false;
   selChanged(); $('#c-fz-year').focus();
 });
-$('#c-fz-per').addEventListener('change', e => { compose.sel.fz.period = e.target.value; selChanged(); renderStepErrors(); $('#c-fz-per').focus(); });
+$('#c-fz-per').addEventListener('change', e => { compose.sel.fz.period = e.target.value; compose.sel.fz.rounds = null; selChanged(); renderStepErrors(); $('#c-fz-per').focus(); });
 // Cikls: izvēlne paliek atvērta, atzīmējot vairākas vērtības; neaktīvu nevar atvērt
 $('#c-fz-cyc-sum').addEventListener('click', e => { if ($('#c-fz-cyc').classList.contains('is-disabled')) e.preventDefault(); });
 $('#c-fz-cyc').addEventListener('toggle', e => { if (!e.target.classList.contains('is-disabled')) ui.cycOpen = e.target.open; });
@@ -10432,13 +10500,18 @@ $('#c-rep-list').addEventListener('click', e => {
   repToggle(o.dataset.repOpt); msActive(i);
 });
 $('#c-rep-tags').addEventListener('click', e => {
-  // "N izvēlēti" – atver sarakstu (izvēlētie redzami augšā)
-  if (e.target.closest('[data-rep-open]')){ $('#c-rep-search').focus({preventScroll:true}); msOpen(true); return; }
+  // "N apsekojumi ▾" – atver / aizver izvēlēto sarakstu (popover)
+  if (e.target.closest('[data-rep-open]')){ ui.repPop = !ui.repPop; renderRepPop(); const b = $('#c-rep-tags .ms-tag-open'); if (b) b.setAttribute('aria-expanded', String(!!ui.repPop)); const f = ui.repPop && $('#rep-pop .rp-rm'); if (f) f.focus({preventScroll:true}); return; }
   const b = e.target.closest('[data-rep-rm]');
   if (!b) return;
+  if (b.dataset.repRm === '**'){ repRemoveAll(); return; }
   repToggle(b.dataset.repRm);
   $('#c-rep-search').focus({preventScroll:true});
 });
+// popover aizveras, uzklikšķinot ārpus tā
+document.addEventListener('mousedown', e => { if (ui.repPop && !e.target.closest('#rep-pop, #c-rep-tags .ms-tag-n')) closeRepPop(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && ui.repPop){ e.preventDefault(); closeRepPop(true); } });
+window.addEventListener('resize', () => { if (ui.repPop) renderRepPop(); });
 // Mainīgo vērtības: mainīt šai kampaņai / atjaunot; tēmturi un sauklis
 function varCommit(key, value){
   const [id, k] = key.split('|'), p = repById(id), o = compose.varOvr[id] = {...(compose.varOvr[id] || {})};
