@@ -1671,6 +1671,8 @@ button.ac-tag.t-risk:hover,button.ac-tag.t-risk[aria-expanded="true"]{border-col
 .rr-attn{color:var(--orange)} .rr-attn b{color:var(--text)}
 /* logi: koplietojama adrese, izņēmumi */
 .sh-addr{margin:0 0 10px;word-break:break-word}
+.sh-note{margin:-4px 0 10px;font-size:var(--fs-sm);color:var(--text-muted)}
+.ac-tag.t-shout{cursor:pointer;font:inherit;font-size:var(--fs-2xs)}
 .sh-addr .icon{width:16px;height:16px;color:var(--primary);vertical-align:-3px;margin-right:5px}
 .sh-table{width:100%;border-collapse:collapse;font-size:var(--fs-sm)}
 .sh-table th{text-align:left;font-size:var(--fs-xs);color:var(--text-muted);font-weight:600;padding:6px 8px;border-bottom:1px solid var(--border)}
@@ -1811,6 +1813,9 @@ button.ac-tag.t-risk:hover,button.ac-tag.t-risk[aria-expanded="true"]{border-col
 #c-list .cell1 > .ac-line,#c-list .cell1 > .ac-val{flex:0 20 auto;min-width:30px;overflow:hidden;text-overflow:ellipsis}
 #c-list .cell1 .ac-sub{flex:0 1 auto;min-width:0;overflow:hidden}
 #c-list .cell1 .ac-sub > .ac-tag{flex:0 1 auto;min-width:18px;overflow:hidden;text-overflow:ellipsis;display:inline-block}
+#c-list .cell1 .ac-sub > .ac-tag.t-shout{flex:none;overflow:visible;padding:0 5px}
+#c-list .cell1 .ac-sub:has(> .t-shout){flex:none;overflow:visible}
+#c-list .cell1:has(.t-shout) > .ac-val{min-width:14px}
 #c-list .cell1 .ac-sub > button:not(.ac-tag),#c-list .cell1 .ac-sub > .ac-lab,#c-list .cell1 .ac-sub > .ac-mi-acts{flex:none}
 #c-list .cell1 small.ac-msg,#c-list .cell1 small.ac-note{display:none}
 #c-list .c-other .ac-oth{display:inline;margin-right:6px}
@@ -3031,7 +3036,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 104</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 105</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4441,7 +4446,7 @@ function applySnapshot(d){
     when: d.when || (d.sel && d.sel.sendDate > todayIso() ? 'plan' : 'now'), sendTime: d.sendTime || '09:00',
     esign: {...defaultEsign(), ...(d.esign || {})}, custom: clone(d.custom || {}), step: d.wiz === 3 ? d.step || 1 : d.wiz === 2 ? ({4:5, 5:4}[d.step] || d.step || 1) : ({5:1, 6:4}[d.step] || d.step || 1), prioManual: d.wiz >= 2 ? !!d.prioManual : true,
     apv: {...defaultApv(), ...clone(d.apv || {})}, review: d.review ? clone(d.review) : null, tests: clone(d.tests || []), selRun: d.selRun ? clone(d.selRun) : (d.step || 1) > 1 ? 'legacy' : null, wl: wlOf(d), pvCh: '', tried: new Set(), varOvr: clone(d.varOvr || {}),
-    addrFix: clone(d.addrFix || {}), addrUndo: clone(d.addrUndo || {}), exc: clone(d.exc || {}), dupKeep: clone(d.dupKeep || {}), shared: clone(d.shared || {}), miRej: clone(d.miRej || {}), addrMi: clone(d.addrMi || {}), riskOk: clone(d.riskOk || {}), riskSkip: clone(d.riskSkip || {}), acF: '',
+    addrFix: clone(d.addrFix || {}), addrUndo: clone(d.addrUndo || {}), exc: excNoShared(d.exc, d.shared), dupKeep: clone(d.dupKeep || {}), shared: clone(d.shared || {}), miRej: clone(d.miRej || {}), addrMi: clone(d.addrMi || {}), riskOk: clone(d.riskOk || {}), riskSkip: clone(d.riskSkip || {}), acF: '',
   });
 }
 // Kampaņu melnraksti (agrāk – viens melnraksts state.draft)
@@ -4951,6 +4956,9 @@ function addrCheck(r, k){
       if (prev){ const of = addrShort(prev.key.split('|')[1]); if ((compose.dupKeep || {})[key]) c.dupKept = of; else c = {...c, status:'dup', msg:`Dublikāts (= ${of})`, dupOf:of}; }
     }
   }
+  // koplietojama adrese, kuru šim respondentam neizmanto ("Neizmantot šo adresi") – sūta uz nākamo derīgo adresi pēc prioritātes
+  if (EMAIL_KEYS.includes(k) && c.value && ['ok', 'fixed', 'edit', 'pot'].includes(c.status) && sharedDec(c.value.toLowerCase(), r.id) === 'out')
+    c = {...c, status:'skip', shout:true, msg:'Koplietojama adrese – neizmantot šim respondentam'};
   c.usable = ['ok', 'fixed', 'edit'].includes(c.status) || (c.status === 'pot' && !c.mi);
   return c;
 }
@@ -4974,12 +4982,15 @@ const EMAIL_KEYS = ['email1', 'email2', 'email3'];
 function sharedMap(){
   const m = new Map();
   state.respondents.filter(matchesFilt).forEach(r => EMAIL_KEYS.filter(k => compose.prio.includes(k)).forEach(k => { const c = addrCheck(r, k);
-    if (c.value && !['empty', 'dup', 'error', 'skip'].includes(c.status)){ const a = c.value.toLowerCase(); if (!m.has(a)) m.set(a, new Set()); m.get(a).add(r.id); } }));
+    if (c.value && (!['empty', 'dup', 'error', 'skip'].includes(c.status) || c.shout)){ const a = c.value.toLowerCase(); if (!m.has(a)) m.set(a, new Set()); m.get(a).add(r.id); } }));
   return new Map([...m].filter(([, ids]) => ids.size > 1).map(([a, ids]) => [a, [...ids]]));
 }
 const sharedOf = (r, sm = sharedMap()) => [...sm].filter(([, ids]) => ids.includes(r.id)).map(([a]) => a);
 const sharedDec = (a, rid) => ((compose.shared || {})[a] || {})[rid] || '';
-const SHARED_DEC = {keep:'Atstāt', out:'Izņemt no kampaņas', review:'Atzīmēt izvērtēšanai'};
+const SHARED_DEC = {keep:'Atstāt adresi', out:'Neizmantot šo adresi', review:'Atzīmēt izvērtēšanai'};
+const SHARED_TAG = {keep:'', out:'Neizmantot', review:'Izvērtēt'};
+// agrāk "Izņemt no kampaņas" pievienoja respondentu izņēmumiem – lēmums attiecas tikai uz adresi, tāpēc šie izņēmumi tiek noņemti
+function excNoShared(exc, shared){ const e = clone(exc || {}); Object.entries(shared || {}).forEach(([a, dec]) => Object.entries(dec || {}).forEach(([rid, v]) => { if (v === 'out' && e[rid] === `Koplietojama adrese ${a}`) delete e[rid]; })); return e; }
 // neizvērtētas koplietojamas adreses (kādam kampaņā iekļautam respondentam nav izvēles)
 const sharedPending = (sm = sharedMap()) => [...sm].filter(([a, ids]) => ids.some(id => { const r = state.respondents.find(x => x.id === id); return r && !isOut(r) && !sharedDec(a, id); })).map(([a]) => a);
 const usableCount = r => acKeys().filter(k => addrCheck(r, k).usable).length;
@@ -8172,6 +8183,7 @@ function renderAcBar(){
 }
 // rindas problēmas (oranža ikona pie respondenta vārda)
 function respProblems(r, addr){
+  if (!addr && acKeys().some(k => addrCheck(r, k).shout)) return ['Nav citas derīgas adreses – vēstule netiks nosūtīta'];
   const st = acState(r);
   if (st === 'none') return ['Nav nevienas adreses'];
   const out = acKeys().map(k => addrCheck(r, k)).filter(c => c.status === 'error').map(c => `${addrShort(c.key.split('|')[1])}: ${c.msg}`);
@@ -8204,6 +8216,8 @@ function renderComposeList(){
     if (ui.acEdit === key) return `<td class="c-addr">${acEditor(r, k, c)}</td>`;
     // dublikāts – noņemts automātiski (var atsaukt)
     // riskanta adrese, kas netiek izmantota (sūta uz nākamo adresi) – var atsaukt
+    if (c.shout){ const n = (sm.get(c.value.toLowerCase()) || []).length;
+      return `<td class="c-addr"><span class="ac-val is-dup" title="${esc(c.value)} – koplietojama adrese – neizmantot šim respondentam">${esc(c.value)}</span><span class="ac-sub"><button type="button" class="ac-tag t-dup t-shout" data-shared="${esc(c.value.toLowerCase())}" aria-haspopup="dialog" title="Koplietojama adrese – neizmantot šim respondentam${n ? ` (izmanto ${n} respondenti)` : ''}. Uzklikšķinot – mainīt lēmumu">Neizmantot</button></span></td>`; }
     if (c.status === 'skip') return `<td class="c-addr"><span class="ac-val is-dup" title="${esc(c.value)}">${esc(c.value)}</span><span class="ac-sub"><span class="ac-tag t-dup" title="Riskanta adrese (${esc(c.risk)}) – šajā kampaņā netiek izmantota, sūta uz nākamo adresi">Netiek izmantota</span><button type="button" class="link-btn" data-rk-undo="${key}">Atsaukt</button></span></td>`;
     if (c.status === 'dup') return `<td class="c-addr"><span class="ac-val is-dup" title="${esc(c.value)}">${esc(c.value)}</span><span class="ac-sub"><span class="ac-tag t-dup" title="${esc(c.msg)}">Dublikāts noņemts</span><button type="button" class="link-btn" data-ac-dupundo="${key}">Atsaukt</button></span></td>`;
     const shown = c.value, prim = c.usable && primOf(r) === k;
@@ -8223,7 +8237,7 @@ function renderComposeList(){
     if (c.dupKept) sub += `<span class="ac-sub"><span class="ac-tag t-dup">Dublikāts (= ${esc(c.dupKept)})</span><button type="button" class="link-btn" data-ac-dupredo="${key}">Noņemt</button></span>`;
     // koplietojama adrese – oranža birka (uzklikšķinot – logs ar respondentiem un izvēlēm)
     const sa = c.usable || c.status === 'pot' ? (c.value || '').toLowerCase() : '';
-    if (sa && sm.has(sa)){ const d = sharedDec(sa, r.id); sub += `<span class="ac-sub"><button type="button" class="ac-tag t-shared${d ? ' is-dec' : ''}" data-shared="${esc(sa)}" aria-haspopup="dialog" title="Šo adresi izmanto ${sm.get(sa).length} respondenti – izvērtēt">${d ? '' : ICON.warn}Koplietojama (${sm.get(sa).length})${d ? ` · ${esc(SHARED_DEC[d])}` : ''}</button></span>`; }
+    if (sa && sm.has(sa)){ const d = sharedDec(sa, r.id); sub += `<span class="ac-sub"><button type="button" class="ac-tag t-shared${d ? ' is-dec' : ''}" data-shared="${esc(sa)}" aria-haspopup="dialog" title="Šo adresi izmanto ${sm.get(sa).length} respondenti – izvērtēt">${d ? '' : ICON.warn}Koplietojama (${sm.get(sa).length})${SHARED_TAG[d] ? ` · ${esc(SHARED_TAG[d])}` : ''}</button></span>`; }
     return `<td class="c-addr"><span class="ac-line">${star}${btn}</span>${sub}</td>`;
   };
   // adrešu kvalitāte: krāsains aplītis un īss teksts
@@ -11183,11 +11197,13 @@ function exportContacts(){
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
   toast(`Eksportēts kontaktu saraksts: ${rows.length - 1} ${plural(rows.length - 1, 'respondents', 'respondenti')}.`);
 }
-// Koplietojama adrese: kuri respondenti to izmanto; izvēle katram – "Atstāt", "Izņemt no kampaņas", "Atzīmēt izvērtēšanai"
+// Koplietojama adrese: kuri respondenti to izmanto; izvēle katram – "Atstāt adresi", "Neizmantot šo adresi", "Atzīmēt izvērtēšanai"
+// (izvēle attiecas tikai uz šo adresi – respondents paliek kampaņā, sūta uz nākamo derīgo adresi pēc prioritātes)
 function openSharedModal(addr, opener){
   const ids = sharedMap().get(addr) || [], rs = ids.map(id => state.respondents.find(r => r.id === id)).filter(Boolean);
   if (!rs.length) return;
   openModal({title:'Koplietojama adrese', info:'Viena e-pasta adrese vairākiem respondentiem: vēstules nonāks vienā pastkastē. Izvērtējiet katru respondentu.', content:`
+    <p class="sh-note">Izvēle attiecas tikai uz šo adresi. Respondentam tiks izmantota nākamā derīgā adrese pēc prioritātes.</p>
     <p class="sh-addr">${ICON.mail}<b>${esc(addr)}</b> <span class="muted">– izmanto ${rs.length} ${plural(rs.length, 'respondents', 'respondenti')}</span></p>
     <div class="table-card tc-modal"><div class="table-wrap tc-area"><table class="sh-table"><thead><tr><th>Respondents</th><th>Lauks</th><th>Izvēle</th></tr></thead><tbody>${rs.map(r => {
       const ks = EMAIL_KEYS.filter(k => (addrCheck(r, k).value || '').toLowerCase() === addr).map(addrShort).join(', '), d = sharedDec(addr, r.id) || 'keep';
@@ -11197,8 +11213,8 @@ function openSharedModal(addr, opener){
       compose.shared = compose.shared || {}; compose.exc = compose.exc || {};
       const dec = compose.shared[addr] = {};
       $$('.sh-opts', modal).forEach(g => { const rid = g.dataset.rid, v = ($('input:checked', g) || {}).value || 'keep'; dec[rid] = v;
-        const why = `Koplietojama adrese ${addr}`;
-        if (v === 'out') compose.exc[rid] = why; else if (compose.exc[rid] === why) delete compose.exc[rid]; });
+        // respondents netiek izņemts no kampaņas (agrāko versiju izņēmums – noņem)
+        if (compose.exc[rid] === `Koplietojama adrese ${addr}`) delete compose.exc[rid]; });
       close(); acChanged(); toast('Koplietojamās adreses izvērtējums saglabāts.');
       if (opener && opener.isConnected) opener.focus();
     }}]});
@@ -11231,7 +11247,7 @@ function openExcModal(){
   $('#exc-add').onclick = () => { add($('#exc-in').value.split(/[\n,;]+/)); $('#exc-in').value = ''; };
   $('#exc-file-btn').onclick = () => $('#exc-file').click();
   $('#exc-file').onchange = e => { const f = e.target.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = () => { const lines = String(rd.result).split(/[\r\n,;]+/).map(x => x.replace(/^"|"$/g, '').trim()).filter(Boolean); add(lines.filter((x, i) => i > 0 || /\d{8}/.test(x) || lines.length === 1), f.name); }; rd.readAsText(f); e.target.value = ''; };
-  $('#exc-list').addEventListener('click', e => { const b = e.target.closest('[data-exc-rm]'); if (!b) return; delete compose.exc[b.dataset.excRm]; Object.values(compose.shared || {}).forEach(d => { if (d[b.dataset.excRm] === 'out') delete d[b.dataset.excRm]; }); render(); acChanged(); });
+  $('#exc-list').addEventListener('click', e => { const b = e.target.closest('[data-exc-rm]'); if (!b) return; delete compose.exc[b.dataset.excRm]; render(); acChanged(); });
 }
 $('#c-ctx').addEventListener('click', e => { if (e.target.closest('#c-ctx-more')){ ui.ctxAll = !ui.ctxAll; renderScopeCtx(); const b = $('#c-ctx-more'); if (b) b.focus(); } });
 // Solis "Respondenti": kampaņas veids, atgādinājums, atlases lauki
