@@ -902,6 +902,12 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .wl-steps th,.wl-steps td{padding:5px 8px}
 .wl-det .hint{margin-top:6px}
 .proc-rep{padding:14px 16px;margin-bottom:16px}
+/* Patērētais laiks (KPI): daļu pārslēgs */
+.tp-bar{display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px;margin:0 0 14px}
+.tp-seg button{min-width:110px}
+.tp-obj{display:inline-flex;align-items:center;gap:8px}
+.tp-obj-l{font-size:var(--fs-sm);color:var(--text-muted)}
+.hf-dd.is-dis > summary{opacity:.5;cursor:not-allowed;background:var(--surface-2,#F4F6F7)}
 .proc-rep h3{margin:0 0 10px;font-size:var(--fs-base);color:var(--primary-darker)}
 .proc-rep h4{margin:0 0 6px;font-size:13px;color:var(--text-secondary)}
 .proc-rep-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px 28px}
@@ -3028,6 +3034,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       </div>
     </div>
     <div class="flt-chips" id="rep-chipbar" hidden><span class="flt-chip-list" id="rep-chips" aria-label="Aktīvie filtri"></span><button type="button" class="link-btn flt-clear" id="rep-clear">Notīrīt visus</button></div>
+    <div id="rep-part" hidden></div>
     <div id="rep-ai"></div>
     <div id="rep-body" class="viz"></div>
   </section>
@@ -3036,7 +3043,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 105</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 106</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -6216,7 +6223,7 @@ function openTemplateEditor(id, preset = {}){
   });
 
   // darba laika uzskaite veidnes redaktorā (kampaņas satura logā laiks pieskaitās kampaņai)
-  if (!sess){ ui.tplWl = {key:'tpl:' + (existing ? existing.id : 'new-' + uid()), wl:wlNew()}; modal.addEventListener('close', () => { ui.tplWl = null; }, {once:true}); }
+  if (!sess) wlEditorStart('tpl:' + (existing ? existing.id : 'new-' + uid()));
   const subj = $('#te-subject');
   const aud = () => $('#te-aud').value;
   function showErr(fid, msg){ const e = $('#' + fid); e.hidden = false; e.textContent = msg; }
@@ -6898,11 +6905,14 @@ function openMailSampleForm(id){
             ex.versions = [{body:ex.body, ea:clone(ex.ea || null), replaced:new Date().toISOString(), by:CURRENT_USER}, ...(ex.versions || [])].slice(0, 5);
           Object.assign(ex, d, {updated:new Date().toISOString(), updatedBy:CURRENT_USER});
         } else state.mailSamples.push({id:'ms-' + uid(), ...d});
+        // darba laika uzskaite (fonā; redaktorā netiek rādīta) – summējas pa sesijām
+        sagWlSave(ex ? ex.id : state.mailSamples[state.mailSamples.length - 1].id);
         save(); renderSagataves(); close();
         const w = !msEa(d) ? ' Nav eAdreses versijas.' : !msEp(d) ? ' Nav e-pasta versijas.' : '';
         toast((ex ? 'Sagatave saglabāta.' : 'Sagatave pievienota.') + w, !!w);
       }},
     ]});
+  sagWlStart('ms:' + (ex ? ex.id : 'new-' + uid()));
   const cur = () => ({name:$('#ms-name').value.trim(), aud:$('#ms-aud').value, cat:$('#ms-cat').value, body:ed.getHTML(),
     ea:{body:$('#ms-ea-body').value.replace(/[ \t]+$/gm, '').replace(/\s+$/, '')}});
   const sampleOf = aud => state.respondents.find(r => respAttrs(r).veids === (AUDS[aud].veids || 'privatpersona')) || state.respondents[0] || {name:'Vārds Uzvārds', email:'vards@pasts.example', eaddress:'_PRIVATE@00000000000'};
@@ -7001,11 +7011,13 @@ function openAttForm(id){
           Object.assign(existing, d);
           state.templates.forEach(t => (t.files || []).forEach(f => { if (f.lib === existing.id){ f.name = existing.fileName; f.size = existing.size; } }));
         } else state.attachments.push({id:'att-' + uid(), added:new Date().toISOString(), ...d});
+        sagWlSave(existing ? existing.id : state.attachments[state.attachments.length - 1].id);
         save(); renderAttachments(); renderCounts(); close();
         toast(existing ? 'Pielikums saglabāts.' : 'Pielikums pievienots sagatavēm.');
       }},
     ],
   });
+  sagWlStart('att:' + (existing ? existing.id : 'new-' + uid()));
   $$('[data-ver]', modal).forEach(b => b.addEventListener('click', () => {
     const v = existing.versions[+b.dataset.ver];
     if (v && v.data) window.open(URL.createObjectURL(dataUrlToBlob(v.data)), '_blank', 'noopener');
@@ -9821,8 +9833,8 @@ function resendLetter(id){
 }
 
 // ===== Atskaites (F18) =====
-// 4 apakšcilnes: Pārskats · Piegāde (piegādes rezultāti, neveiksmīgās ziņas, atkārtotā nosūtīšana, parakstīšana) · Reakcija un iesniegšana · Darba laiks
-const REP_SUBS = [['kopsavilkums', 'Pārskats'], ['piegade', 'Piegāde'], ['reakcija', 'Reakcija un iesniegšana'], ['laiks', 'Darba laiks']];
+// 4 apakšcilnes: Pārskats · Piegāde (piegādes rezultāti, neveiksmīgās ziņas, atkārtotā nosūtīšana, parakstīšana) · Reakcija un iesniegšana · Patērētais laiks (KPI)
+const REP_SUBS = [['kopsavilkums', 'Pārskats'], ['piegade', 'Piegāde'], ['reakcija', 'Reakcija un iesniegšana'], ['laiks', 'Patērētais laiks (KPI)']];
 const REP_SUB_OLD = {neveiksmigas:'piegade', atkartota:'piegade', citi:'piegade'};
 const REP_QUICK = [['month', 'Šis mēnesis'], ['3m', 'Pēdējie 3 mēneši'], ['year', 'Šis gads'], ['12m', 'Pēdējie 12 mēneši'], ['custom', 'Cits periods…']];
 const REP_AUD_L = {fiz:'Iedzīvotāju statistika', jur:'Uzņēmumu statistika'};
@@ -9894,18 +9906,34 @@ const tableHtml = (head, rows, cls = 'rep-table', empty = 'Nav ierakstu, kas atb
 const groupBy = (xs, key) => { const m = new Map(); xs.forEach(x => { const k = key(x); if (!m.has(k)) m.set(k, []); m.get(k).push(x); }); return m; };
 const statusCounts = xs => Object.fromEntries(REP_SERIES.map(([k]) => [k, xs.filter(x => repStatus(x) === k).length]));
 // Atskaites skats: { html, csv: [galvene, ...rindas] }
-// ===== Darba laika patēriņš: kampaņu un veidņu sagatavošanas laiks (kopsavilkums, bez atsevišķu darbinieku rezultātiem) =====
+// ===== Patērētais laiks (KPI): kampaņu un veidņu / sagatavju sagatavošanas laiks (kopsavilkums, bez atsevišķu darbinieku rezultātiem) =====
+// divas daļas (pārslēgs augšā): Kampaņas | Veidnes; daļā "Veidnes" – arī sagataves (e-pasta satura šabloni, pielikumu sagataves)
+ui.repTime = {part:'camp', obj:''};
+const TP_OBJ = {tpl:'Veidne', ms:'E-pasta satura šablons', att:'Pielikuma sagatave'};
+const sagWl = id => (state.sagWl || {})[id];
 function timeData(){
   const f = ui.rep, inP = iso => { const d = iso ? isoDate(new Date(iso)) : ''; return (!f.from || d >= f.from) && (!f.to || d <= f.to); };
-  const camps = Object.keys(state.campWl || {}).map(b => campWork(b)).filter(o => o && o.done && inP(o.sentAt) && (!f.camp || String(o.batch) === String(f.camp)) && (!f.kind || baseKind(o.kind) === f.kind) && (!f.aud || o.aud === f.aud));
-  const tpls = f.camp ? [] : (state.templates || []).filter(t => t.wl && t.wl.active && inP(t.wl.lastSavedAt || t.updated) && (!f.kind || t.cat === f.kind) && (!f.aud || t.aud === f.aud || t.aud === 'visi'));
-  return {camps, tpls};
+  // kampaņas: kampaņa, apsekojums (vēstuļu pienākumi), veids, joma, periods (pēc nosūtīšanas datuma)
+  const camps = Object.keys(state.campWl || {}).map(b => campWork(b)).filter(o => o && o.done && inP(o.sentAt) && (!f.camp || String(o.batch) === String(f.camp)) && (!f.kind || baseKind(o.kind) === f.kind) && (!f.aud || o.aud === f.aud)
+    && (!f.rep || state.sent.some(x => String(x.batch) === String(o.batch) && histReps(x).includes(f.rep))));
+  // veidnes un sagataves: periods (pēc pēdējās saglabāšanas), veids (kategorija), joma (adresāts); kampaņas un apsekojuma filtri neattiecas
+  const items = [...(state.templates || []).filter(t => t.wl && t.wl.active).map(t => ({obj:'tpl', id:t.id, name:t.name, aud:t.aud, cat:t.cat, wl:t.wl})),
+    ...(state.mailSamples || []).filter(m => sagWl(m.id)).map(m => ({obj:'ms', id:m.id, name:m.name, aud:m.aud, cat:m.cat, wl:sagWl(m.id)})),
+    ...allAtts().filter(x => sagWl(x.id)).map(x => ({obj:'att', id:x.id, name:x.name, aud:x.aud, cat:x.cat, wl:sagWl(x.id)}))]
+    .map(o => ({...o, saved:o.wl.lastSavedAt || o.wl.lastAt || ''}))
+    .filter(o => inP(o.saved) && (!f.kind || o.cat === f.kind) && (!f.aud || o.aud === f.aud || o.aud === 'visi'));
+  const obj = ui.repTime.obj, tpls = items.filter(o => !obj || (obj === 'tpl' ? o.obj === 'tpl' : o.obj !== 'tpl'));
+  return {camps, tpls, items};
 }
 const avgMs = xs => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0;
-function timeView(){
-  const {camps, tpls} = timeData(), f = ui.rep;
+const tpSpan = o => o.wl.createdAt ? Math.max(0, Date.parse(o.saved) - Date.parse(o.wl.createdAt)) : 0;
+const kpiBox = (n, l, sub) => `<div class="card kpi"><div class="n">${n}</div><div class="l">${esc(l)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}</div>`;
+const hrsOf = ms => Math.round(ms / 360000) / 10;
+function timeView(){ return ui.repTime.part === 'tpl' ? tplTimeView() : campTimeView(); }
+function campTimeView(){
+  const {camps} = timeData(), f = ui.rep;
   const apv = camps.filter(o => o.hadApv), sgn = camps.filter(o => o.signing);
-  const kpi = (n, l, sub) => `<div class="card kpi"><div class="n">${n}</div><div class="l">${esc(l)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}</div>`;
+  const kpi = kpiBox;
   const grp = (key, label) => [...groupBy(camps, key)].map(([k, g]) => ({label:label(k), v:wlMin(avgMs(g.map(o => o.wl.active))), sub:`${g.length} ${plural(g.length, 'kampaņa', 'kampaņas')}`, n:g.length})).sort((a, b) => b.v - a.v);
   const byKind = grp(o => SESS_LABELS[o.kind] ? o.kind : 'cits', k => SESS_LABELS[k] || 'Cits');
   const byAud = grp(o => o.aud || '—', k => AUDS[k] ? AUDS[k].field : '—');
@@ -9921,10 +9949,10 @@ function timeView(){
   }
   const card = (title, rows, tipTxt) => `<div class="card viz-card"><h3>${esc(title)}${tipTxt ? tip(tipTxt) : ''}</h3>${rows.length ? singleBars(rows, ' min') : '<p class="hint">Nav datu.</p>'}
     <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([title.replace(/^.*pēc /, '').replace(/^Pa /, ''), 'Vidēji, min', 'Kampaņas'], rows.map(r => [r.label, r.v, r.n ?? camps.length]))}</details></div>`;
-  const head = ['Objekts', 'Nosaukums', 'Nr.', 'Veids / kategorija', 'Statistikas joma', 'Satura avots', 'Pabeigts', 'Aktīvais laiks, min', 'Sesijas', 'Kopējais ilgums, st.', 'Gaida saskaņojumu, st.', 'Gaida parakstu, st.', ...WL_STEPS.map((l, i) => `${i + 1}. ${l}, min`)];
-  const hrs = ms => Math.round(ms / 360000) / 10;
-  const rows = [...camps.map(o => ['Kampaņa', o.name, o.batch, SESS_LABELS[o.kind] || '', AUDS[o.aud] ? AUDS[o.aud].field : '', WL_SRC[o.source] || '', fmtDateTime(o.sentAt), wlMin(o.wl.active), o.wl.sessions || 0, hrs(o.total), hrs(o.waitApv), hrs(o.waitSign), ...WL_STEPS.map((l, i) => wlMin((o.wl.steps || {})[i + 1]))]),
-    ...tpls.map(t => ['Veidne', t.name, '', (CAT_BY_KEY[t.cat] || {}).one || t.cat, AUDS[t.aud] ? AUDS[t.aud].label : '', '', fmtDateTime(t.wl.lastSavedAt || t.updated), wlMin(t.wl.active), t.wl.sessions || 0, t.wl.createdAt ? hrs(Date.parse(t.wl.lastSavedAt || t.updated) - Date.parse(t.wl.createdAt)) : '', '', '', ...WL_STEPS.map(() => '')])];
+  const head = ['Kampaņa', 'Nr.', 'Veids', 'Statistikas joma', 'Satura avots', 'Nosūtīta', 'Aktīvais laiks, min', 'Sesijas', 'Kopējais ilgums, st.', 'Gaida saskaņojumu, st.', 'Gaida parakstu, st.', ...WL_STEPS.map((l, i) => `${i + 1}. ${l}, min`)];
+  const sorted = [...camps].sort((x, y) => String(y.sentAt).localeCompare(String(x.sentAt)));
+  const rows = sorted.map(o => [o.name, o.batch, SESS_LABELS[o.kind] || '', AUDS[o.aud] ? AUDS[o.aud].field : '', WL_SRC[o.source] || '', fmtDateTime(o.sentAt), wlMin(o.wl.active), o.wl.sessions || 0, hrsOf(o.total), hrsOf(o.waitApv), hrsOf(o.waitSign), ...WL_STEPS.map((l, i) => wlMin((o.wl.steps || {})[i + 1]))]);
+  const tRows = sorted.map(o => [{html:`${esc(o.name)}<span class="cell-sub">Nr. ${esc(o.batch)}</span>`}, SESS_LABELS[o.kind] || '—', WL_SRC[o.source] || '—', fmtDur(o.wl.active), o.wl.sessions || 0, o.hadApv ? fmtDur(o.waitApv) : '—', fmtDur(o.total), fmtDate(isoDate(new Date(o.sentAt)))]);
   // bloks "Procesa laiks": vidējais darba laiks pa kampaņu veidiem, vidēji saskaņošanā, vidējais kopējais ilgums
   const k4 = k => k && k.startsWith('atg') ? 'atgadinajums' : SESS_KINDS[k] ? k : 'cits';
   const procRows = Object.entries(SESS_KINDS).map(([k, s]) => { const g = camps.filter(o => k4(o.kind) === k); return [s.label === 'Informatīvs ziņojums' ? 'Informatīvs' : s.label, g.length ? fmtDur(avgMs(g.map(o => o.wl.active))) : '—', g.length]; });
@@ -9933,9 +9961,8 @@ function timeView(){
       <div><h4>Vidēji</h4><dl class="proc-dl"><dt>Saskaņošanā:</dt><dd>${apv.length ? esc(fmtDur(avgMs(apv.map(o => o.waitApv)))) : '—'} <span class="muted">(${apv.length} ${plural(apv.length, 'kampaņa', 'kampaņas')} ar saskaņošanu)</span></dd>
         <dt>Kopējais ilgums:</dt><dd>${camps.length ? esc(fmtDur(avgMs(camps.map(o => o.total)))) : '—'} <span class="muted">(no izveides līdz nosūtīšanai)</span></dd></dl></div></div>
     <p class="proc-note">Laiks tiek uzskaitīts automātiski procesa uzlabošanai.</p></div>`;
-  return {html:`${procBlock}<div class="kpis k5">
-      ${kpi(fmtDur(avgMs(camps.map(o => o.wl.active))), 'Vidējais aktīvais laiks kampaņai', `${camps.length} ${plural(camps.length, 'kampaņa', 'kampaņas')}`)}
-      ${kpi(fmtDur(avgMs(tpls.map(t => t.wl.active))), 'Vidējais aktīvais laiks veidnei', `${tpls.length} ${plural(tpls.length, 'veidne', 'veidnes')}`)}
+  return {html:`${procBlock}<div class="kpis k4">
+      ${kpi(fmtDur(avgMs(camps.map(o => o.wl.active))), 'Vidējais aktīvais laiks uz kampaņu', `${camps.length} ${plural(camps.length, 'kampaņa', 'kampaņas')}`)}
       ${kpi(apv.length ? fmtDur(avgMs(apv.map(o => o.waitApv))) : '—', 'Vidēji gaida saskaņojumu', `${apv.length} ${plural(apv.length, 'kampaņa', 'kampaņas')} ar saskaņošanu`)}
       ${kpi(sgn.length ? fmtDur(avgMs(sgn.map(o => o.waitSign))) : '—', 'Vidēji gaida parakstu', `${sgn.length} ${plural(sgn.length, 'kampaņa', 'kampaņas')} ar parakstu`)}
       ${kpi(fmtDur(avgMs(camps.map(o => o.total))), 'Vidējais kopējais ilgums', 'no izveides līdz nosūtīšanai')}</div>
@@ -9948,12 +9975,47 @@ function timeView(){
       ${card('Vidējais laiks pēc satura avota', bySrc, 'Gatava veidne – izmantota bez izmaiņām; pielāgota veidne – veidne labota kampaņai; jauns saturs – noformēts kampaņā.')}
       ${card('Vidējais laiks pa soļiem', bySteps, 'Kurš kampaņas solis aizņem visvairāk aktīvā laika (vidēji vienai kampaņai).')}
     </div>
+    <div class="card viz-card" id="tp-camp-table"><h3>Pa kampaņām</h3>${tableHtml(['Kampaņa', 'Veids', 'Satura avots', 'Aktīvais laiks', 'Sesijas', 'Saskaņošanā', 'Kopējais ilgums', 'Nosūtīta'], tRows, undefined, 'Atlasītajā periodā nav kampaņu')}</div>
     <p class="hint">Rādīts kopsavilkums (vidējie rādītāji), nevis atsevišķu darbinieku rezultāti. Visvairāk laika vidēji aizņem solis “${esc(topStep ? topStep.label.replace(/^\d+\. /, '') : '—')}”.</p>`,
     csv:[head, ...rows]};
 }
+function tplTimeView(){
+  const {tpls} = timeData(), n = tpls.length, nT = tpls.filter(o => o.obj === 'tpl').length;
+  const grp = (key, label) => [...groupBy(tpls, key)].map(([k, g]) => ({label:label(k), v:wlMin(avgMs(g.map(o => o.wl.active))), sub:`${g.length} ${plural(g.length, 'objekts', 'objekti')} · vidēji ${(avgMs(g.map(o => o.wl.sessions || 0))).toFixed(1).replace('.', ',')} sesijas`, n:g.length})).sort((a, b) => b.v - a.v);
+  const byCat = grp(o => o.cat || 'cits', k => (CAT_BY_KEY[k] || {}).one || 'Cits');
+  const byAud = grp(o => o.aud || 'visi', k => (AUDS[k] || {}).group || k);
+  const byObj = grp(o => o.obj, k => TP_OBJ[k]);
+  const card = (title, rows, col, tipTxt) => `<div class="card viz-card"><h3>${esc(title)}${tipTxt ? tip(tipTxt) : ''}</h3>${rows.length ? singleBars(rows, ' min') : '<p class="hint">Nav datu.</p>'}
+    <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([col, 'Vidēji, min', 'Skaits'], rows.map(r => [r.label, r.v, r.n]))}</details></div>`;
+  const sorted = [...tpls].sort((a, b) => String(b.saved).localeCompare(String(a.saved)));
+  const tRows = sorted.map(o => [{html:`${esc(o.name)}${o.obj !== 'tpl' ? `<span class="cell-sub">Sagatave · ${esc(TP_OBJ[o.obj])}</span>` : ''}`}, (AUDS[o.aud] || {}).group || '—', (CAT_BY_KEY[o.cat] || {}).one || '—', fmtDur(o.wl.active), o.wl.sessions || 0, fmtDateTime(o.saved)]);
+  const head = ['Objekts', 'Nosaukums', 'Adresāts', 'Kategorija', 'Aktīvais laiks, min', 'Sesijas', 'No izveides līdz pēdējai saglabāšanai, st.', 'Pēdējās izmaiņas'];
+  const rows = sorted.map(o => [TP_OBJ[o.obj], o.name, (AUDS[o.aud] || {}).group || '', (CAT_BY_KEY[o.cat] || {}).one || '', wlMin(o.wl.active), o.wl.sessions || 0, hrsOf(tpSpan(o)), fmtDateTime(o.saved)]);
+  const objL = {'':'veidnes un sagataves', tpl:'veidnes', sag:'sagataves'}[ui.repTime.obj];
+  return {html:`<div class="kpis k4">
+      ${kpiBox(fmtDur(avgMs(tpls.map(o => o.wl.active))), 'Vidējais aktīvais laiks (izveide / labošana)', `${n} ${plural(n, 'objekts', 'objekti')} · ${objL}`)}
+      ${kpiBox(n ? (avgMs(tpls.map(o => o.wl.sessions || 0))).toFixed(1).replace('.', ',') : '—', 'Vidējais sesiju skaits', 'redaktora sesijas uz objektu')}
+      ${kpiBox(n ? fmtDur(avgMs(tpls.map(tpSpan))) : '—', 'No izveides līdz pēdējai saglabāšanai', 'vidēji')}
+      ${kpiBox(String(n), 'Veidnes un sagataves', `${nT} ${plural(nT, 'veidne', 'veidnes')} · ${n - nT} ${plural(n - nT, 'sagatave', 'sagataves')}`)}</div>
+    <div class="viz-grid">
+      ${card('Vidējais laiks pēc veida', byCat, 'Veids', 'Veidnes / sagataves kategorija (uzaicinājums, atgādinājums, informatīvais ziņojums, cits).')}
+      ${card('Vidējais laiks pēc adresātiem', byAud, 'Adresāti')}
+      ${card('Vidējais laiks pēc objekta', byObj, 'Objekts', 'Veidne, e-pasta satura šablons vai pielikuma sagatave.')}
+    </div>
+    <div class="card viz-card" id="tp-tpl-table"><h3>Pa veidnēm</h3>${tableHtml(['Veidne', 'Adresāts', 'Kategorija', 'Aktīvais laiks', 'Sesijas', 'Pēdējās izmaiņas'], tRows, undefined, 'Atlasītajā periodā nav veidņu')}</div>
+    <p class="hint">Aktīvais laiks redaktorā, summēts pa sesijām; pēc 3 min bez aktivitātes laiks netiek skaitīts. Rādīts kopsavilkums, nevis atsevišķu darbinieku rezultāti.</p>`,
+    csv:[head, ...rows]};
+}
+// pārslēgs "Kampaņas | Veidnes" (un daļā "Veidnes" – "Visas · Veidnes · Sagataves")
+function renderTimePart(){
+  const box = $('#rep-part'), on = ui.repSub === 'laiks', t = ui.repTime; box.hidden = !on; if (!on){ box.innerHTML = ''; return; }
+  const b = (attr, k, l, cur) => `<button type="button" ${attr}="${k}" aria-pressed="${cur === k}">${esc(l)}</button>`;
+  box.innerHTML = `<div class="tp-bar"><span class="seg tp-seg" role="group" aria-label="Atskaites daļa">${b('data-tpart', 'camp', 'Kampaņas', t.part)}${b('data-tpart', 'tpl', 'Veidnes', t.part)}</span>
+    ${t.part === 'tpl' ? `<span class="tp-obj"><span class="tp-obj-l" id="tp-obj-l">Objekti:</span><span class="seg" role="group" aria-labelledby="tp-obj-l">${b('data-tpobj', '', 'Veidnes un sagataves', t.obj)}${b('data-tpobj', 'tpl', 'Veidnes', t.obj)}${b('data-tpobj', 'sag', 'Sagataves', t.obj)}</span></span>` : ''}</div>`;
+}
 function reportView(xs){
   const sub = ui.repSub;
-  if (sub === 'laiks'){ const d = timeData(); return d.camps.length || d.tpls.length ? timeView() : {empty:true}; }
+  if (sub === 'laiks'){ const d = timeData(); return (ui.repTime.part === 'tpl' ? d.tpls.length : d.camps.length) ? timeView() : {empty:true}; }
   if (!xs.length) return {empty:true};
   if (sub === 'reakcija') return reactReportView();
   if (sub === 'piegade') return deliveryView(xs);
@@ -10220,16 +10282,26 @@ function aiSummaryReact(xs){
   if (kl) out.push({t:`${kl} ${plural(kl, 'anketa ir atgriezta', 'anketas ir atgrieztas')} labošanai (kļūdainas) – apsveriet atgādinājumu (“Veidot atgādinājumu” – kampaņu saraksta izvēlnē ⋯ vai šeit, filtrā izvēloties kampaņu).`});
   return out.slice(0, 3);
 }
-// Darba laika atskaites MI teksts
+// Patērētā laika (KPI) MI teksts – izvēlētajai daļai (Kampaņas / Veidnes)
 function aiSummaryTime(){
   const {camps, tpls} = timeData();
-  if (!camps.length && !tpls.length) return ['Atlasītajā periodā nav kampaņu vai veidņu ar darba laika datiem.'];
+  if (ui.repTime.part === 'tpl'){
+    if (!tpls.length) return ['Atlasītajā periodā nav veidņu vai sagatavju ar laika datiem.'];
+    const out = [], by = k => tpls.filter(o => k === 'tpl' ? o.obj === 'tpl' : o.obj !== 'tpl');
+    const t = by('tpl'), sg = by('sag');
+    out.push(`Vienas ${t.length && sg.length ? 'veidnes vai sagataves' : t.length ? 'veidnes' : 'sagataves'} izveide / labošana vidēji aizņēma ${fmtDur(avgMs(tpls.map(o => o.wl.active)))} aktīva darba (${tpls.length} ${plural(tpls.length, 'objekts', 'objekti')}, vidēji ${(avgMs(tpls.map(o => o.wl.sessions || 0))).toFixed(1).replace('.', ',')} sesijas).`);
+    if (t.length && sg.length) out.push(`Veidne vidēji prasa ${fmtDur(avgMs(t.map(o => o.wl.active)))}, sagatave – ${fmtDur(avgMs(sg.map(o => o.wl.active)))}.`);
+    const cats = [...groupBy(tpls, o => o.cat || 'cits')].map(([k, g]) => [k, avgMs(g.map(o => o.wl.active))]).sort((a, b) => b[1] - a[1]);
+    if (cats.length > 1) out.push(`Visvairāk laika prasa kategorija “${(CAT_BY_KEY[cats[0][0]] || {}).one || 'Cits'}” (vidēji ${fmtDur(cats[0][1])}).`);
+    return out.slice(0, 3);
+  }
+  if (!camps.length) return ['Atlasītajā periodā nav kampaņu ar darba laika datiem.'];
   const out = [], src = k => camps.filter(o => (o.source === 'custom' ? 'custom' : o.source === 'tplmod' ? 'tplmod' : 'tpl') === k);
-  out.push(`Vienas kampaņas sagatavošana vidēji aizņēma ${fmtDur(avgMs(camps.map(o => o.wl.active)))} aktīva darba (${camps.length} ${plural(camps.length, 'kampaņa', 'kampaņas')}), vienas veidnes – ${fmtDur(avgMs(tpls.map(t => t.wl.active)))}.`);
+  out.push(`Vienas kampaņas sagatavošana vidēji aizņēma ${fmtDur(avgMs(camps.map(o => o.wl.active)))} aktīva darba (${camps.length} ${plural(camps.length, 'kampaņa', 'kampaņas')}).`);
   const t1 = src('tpl'), t3 = src('custom');
   if (t1.length && t3.length) out.push(`Kampaņa no gatavas veidnes vidēji prasa ${fmtDur(avgMs(t1.map(o => o.wl.active)))}, ar jaunu saturu – ${fmtDur(avgMs(t3.map(o => o.wl.active)))}.`);
   const st = WL_STEPS.map((l, i) => [l, avgMs(camps.map(o => (o.wl.steps || {})[i + 1] || 0))]).sort((a, b) => b[1] - a[1]);
-  if (camps.length) out.push(`Visvairāk laika aizņem solis “${st[0][0]}” (vidēji ${fmtDur(st[0][1])}).`);
+  out.push(`Visvairāk laika aizņem solis “${st[0][0]}” (vidēji ${fmtDur(st[0][1])}).`);
   const apv = camps.filter(o => o.hadApv);
   if (apv.length) out.push(`Saskaņojums vidēji jāgaida ${fmtDur(avgMs(apv.map(o => o.waitApv)))} (${apv.length} ${plural(apv.length, 'kampaņa', 'kampaņas')}).`);
   return out.slice(0, 4);
@@ -10266,6 +10338,9 @@ function renderRepFilters(){
   $('#rep-rep-list').innerHTML = (rq ? '' : hfOpt('', !f.rep, '<span class="hf-o">Visi apsekojumi</span>')) + rl.map(r => hfOpt(r.id, r.id === f.rep, `<b>${esc(r.code)}</b> <small>${esc(r.name)}</small>`, `${r.code} – ${r.name}`)).join('') + (!rl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   $('#rep-per-list').innerHTML = REP_QUICK.map(([k, l]) => hfOpt(k, (f.quick || '') === k, `<span class="hf-o">${esc(l)}</span>${k === 'custom' && f.quick === 'custom' ? `<small>${esc(repPerLabel(f))}</small>` : ''}`)).join('');
   $('#rep-kind').innerHTML = kindOpts(f.kind);
+  // Patērētais laiks → Veidnes: kampaņas un apsekojuma filtri neattiecas (pelēki, nav atverami); periods, veids un joma darbojas
+  const noCR = ui.repSub === 'laiks' && ui.repTime.part === 'tpl';
+  ['camp', 'rep'].forEach(k => { const dd = $(`#rep-${k}-dd`), sm = $(`#rep-${k}-sum`); dd.classList.toggle('is-dis', noCR); if (noCR){ dd.open = false; sm.title = 'Neattiecas uz veidnēm'; } sm.setAttribute('aria-disabled', noCR ? 'true' : 'false'); });
   const n = [f.ch, f.aud].filter(Boolean).length, b = $('#rep-more-n');
   b.hidden = !n; b.textContent = n || ''; $('#rep-more-f').setAttribute('aria-label', n ? `Filtri – aktīvi ${n}` : 'Filtri');
   const chips = repChips(f);
@@ -10281,6 +10356,7 @@ function renderReports(){
   if (!ui.repInit){ Object.assign(f, repFilterDefaults()); ui.repInit = true; }
   $('#rep-sub').innerHTML = subnavHtml(REP_SUBS, ui.repSub, 'rsub');
   repSubFit();
+  renderTimePart();
   renderRepFilters();
   const xs = repLetters(), v = reportView(xs);
   repLast = v;
@@ -10301,11 +10377,11 @@ function renderReports(){
   fitTables();
 }
 // Eksports: CSV (semikols, UTF-8 ar BOM – atveras arī Excel) vai Excel (.xlsx; katrai sadaļai – sava lapa)
-const repSheets = () => { const v = repLast || {}; return v.sheets || (v.csv ? [{name:(REP_SUBS.find(([k]) => k === ui.repSub) || [, 'Atskaite'])[1], rows:v.csv}] : []); };
+const repSheets = () => { const v = repLast || {}; return v.sheets || (v.csv ? [{name:ui.repSub === 'laiks' ? `Patērētais laiks – ${ui.repTime.part === 'tpl' ? 'veidnes' : 'kampaņas'}` : (REP_SUBS.find(([k]) => k === ui.repSub) || [, 'Atskaite'])[1], rows:v.csv}] : []); };
 function exportCsv(){ repExport('csv'); }
 function repExport(fmt){
   const sheets = repSheets(); if (!sheets.length) return;
-  const n = sheets.reduce((a, sh) => a + Math.max(0, sh.rows.length - 1), 0), base = `atskaite_${ui.repSub}_${todayIso()}`;
+  const n = sheets.reduce((a, sh) => a + Math.max(0, sh.rows.length - 1), 0), base = `atskaite_${ui.repSub === 'laiks' ? `pateretais_laiks_${ui.repTime.part === 'tpl' ? 'veidnes' : 'kampanas'}` : ui.repSub}_${todayIso()}`;
   let blob, name;
   if (fmt === 'xlsx'){ blob = xlsxBlob(sheets); name = `${base}.xlsx`; }
   else {
@@ -10779,8 +10855,10 @@ $('#tab-vesture').addEventListener('click', e => {
 // ---- Atskaites: filtru rinda (tie paši komponenti kā Sūtīšanas vēsturē)
 function repDd(key, pick){
   const dd = $(`#rep-${key}-dd`), q = $(`#rep-${key}-q`), list = $(`#rep-${key}-list`), sum = $(`#rep-${key}-sum`);
+  sum.addEventListener('click', e => { if (dd.classList.contains('is-dis')) e.preventDefault(); });
   dd.addEventListener('toggle', () => {
     if (!dd.open) return;
+    if (dd.classList.contains('is-dis')){ dd.open = false; return; }
     $$('.hf-dd[open]').forEach(o => { if (o !== dd) o.open = false; }); repPanel(false); repExpMenu(false);
     if (q) q.value = '';
     if (key === 'per'){ $('#rep-cust').hidden = true; list.hidden = false; }
@@ -10844,6 +10922,9 @@ $('#rep-exp-menu').addEventListener('keydown', e => { const its = $$('#rep-exp-m
 document.addEventListener('click', e => { if (!e.target.closest('#tab-atskaites .hf-more')) repPanel(false); if (!e.target.closest('#tab-atskaites .hf-expw')) repExpMenu(false); });
 // birkas, "Notīrīt visus", tukšais stāvoklis, grafika režīms, klikšķis uz rādītāja (drill-down)
 $('#tab-atskaites').addEventListener('click', e => {
+  const tp = e.target.closest('[data-tpart], [data-tpobj]');
+  if (tp){ const isP = tp.hasAttribute('data-tpart'); if (isP) ui.repTime.part = tp.dataset.tpart; else ui.repTime.obj = tp.dataset.tpobj;
+    renderReports(); const nb = $(isP ? `[data-tpart="${ui.repTime.part}"]` : `[data-tpobj="${ui.repTime.obj}"]`); if (nb) nb.focus(); return; }
   const cal = e.target.closest('[data-rcal]');
   if (cal){ const k = cal.dataset.rcal, n = $(`#rep-${k}-pick`); n.value = parseDmy($(`#rep-${k}`).value) || ui.rep[k] || ''; try { n.showPicker(); } catch (err) { $(`#rep-${k}`).focus(); } return; }
   const chip = e.target.closest('[data-rchip]');
@@ -11596,6 +11677,11 @@ function campWork(batch, now = Date.now()){
     total:Math.max(0, end - Date.parse(wl.createdAt || x0.createdAt || x0.sentAt)), waitApv:wl.waitApv || 0, hadApv:!!wl.hadApv || (wl.waitApv || 0) > 0,
     waitSign:signing ? Math.max(0, (signedAt ? Date.parse(signedAt) : now) - sentAt) : 0, signing, pendSign, done:!pendSign};
 }
+// sagatavju (e-pasta satura šablonu, pielikumu sagatavju) redaktors: tāda pati fona uzskaite kā veidnēm (state.sagWl[id]); laiks lietotājam netiek rādīts
+// (aizvēršanas klausītājs – pēc iepriekšējā loga aizvēršanas notikuma, kas pienāk asinhroni)
+function wlEditorStart(key){ const o = ui.tplWl = {key, wl:wlNew()}; setTimeout(() => modal.addEventListener('close', () => { if (ui.tplWl === o) ui.tplWl = null; }, {once:true}), 0); }
+const sagWlStart = wlEditorStart;
+function sagWlSave(id){ state.sagWl = state.sagWl || {}; state.sagWl[id] = wlMergeTpl(state.sagWl[id], ui.tplWl && ui.tplWl.wl, new Date().toISOString()); if (ui.tplWl) ui.tplWl.wl = wlNew(); }
 function wlMergeTpl(old, cur, at){
   const o = old || {}, c = cur || {}, users = {...(o.users || {})};
   Object.entries(c.users || {}).forEach(([n, v]) => { users[n] = (users[n] || 0) + v; });
@@ -11628,6 +11714,15 @@ function seedWorkLog(){
     if (t.wl) return;
     const r = wlRnd('veidne-' + t.id), act = Math.round((10 + r() * 30) * 60000), upd = t.updated || new Date().toISOString();
     t.wl = {active:act, sessions:1 + Math.floor(r() * 3), users:{[t.updatedBy || CURRENT_USER]:act}, createdAt:new Date(Date.parse(upd) - (1 + Math.floor(r() * 20)) * 864e5).toISOString(), lastSavedAt:upd, lastAt:upd, seed:true};
+    ch = true;
+  });
+  // sagataves: e-pasta satura šabloni 5–25 min, pielikumu sagataves 4–20 min (1–2 sesijas)
+  state.sagWl = state.sagWl || {};
+  [...(state.mailSamples || []).map(x => ['ms', x]), ...allAtts().map(x => ['att', x])].forEach(([k, x]) => {
+    if (state.sagWl[x.id]) return;
+    const r = wlRnd('sagatave-' + x.id), act = Math.round(((k === 'ms' ? 5 : 4) + r() * (k === 'ms' ? 20 : 16)) * 60000);
+    const upd = x.updated || x.added || new Date(Date.now() - Math.round((5 + r() * 150) * 864e5)).toISOString();
+    state.sagWl[x.id] = {active:act, sessions:1 + Math.floor(r() * 2), users:{[x.updatedBy || CURRENT_USER]:act}, createdAt:new Date(Date.parse(upd) - (1 + Math.floor(r() * 14)) * 864e5).toISOString(), lastSavedAt:upd, lastAt:upd, seed:true};
     ch = true;
   });
   (state.drafts || []).forEach(d => {
