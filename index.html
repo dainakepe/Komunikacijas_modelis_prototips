@@ -902,6 +902,16 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .wl-steps th,.wl-steps td{padding:5px 8px}
 .wl-det .hint{margin-top:6px}
 .proc-rep{padding:14px 16px;margin-bottom:16px}
+/* nepublicēti apsekojumi: brīdinājuma josla, birka, logs */
+.pub-warn{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;margin:0 0 12px;border:1px solid var(--warning-border);background:var(--orange-bg);border-radius:var(--radius-sm);font-size:var(--fs-sm);color:var(--text)}
+.pub-warn[hidden]{display:none}
+.pub-warn .pub-ic{color:var(--orange-ink);flex:none;display:inline-flex}
+.pub-warn .pub-ic .icon{width:16px;height:16px}
+#c-send-pub{margin:8px 0 0}
+.pub-tag{display:inline-flex;align-items:center;gap:3px;margin-left:6px;padding:0 7px;border-radius:var(--radius-xl);border:1px solid var(--warning-border);background:var(--orange-bg);color:var(--orange-ink);font-size:var(--fs-2xs);font-weight:600;white-space:nowrap;vertical-align:1px}
+.pub-tag .icon{width:12px;height:12px}
+.pub-dlg .pub-list{margin:6px 0 12px;padding-left:20px}
+.pub-dlg .pub-list li{margin:2px 0}
 /* Patērētais laiks (KPI): daļu pārslēgs */
 .tp-bar{display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px;margin:0 0 14px}
 .tp-seg button{min-width:110px}
@@ -2830,6 +2840,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         <div class="step" data-wstep="4" hidden>
           <div class="step-title"><span class="step-num">4</span><h2>Pārbaude</h2></div>
           <div class="apv-ro" id="c-apv-ro" hidden></div>
+          <div class="pub-warn" id="c-rv-pub" role="status" hidden></div>
           <div class="r-layout rv-layout">
             <aside class="r-side" aria-label="Kopsavilkums un pārbaudes">
               <section class="scope-card r-card rv-card kv-card" aria-labelledby="c-sum-h">
@@ -2931,6 +2942,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
             </section>
           </div>
           <div class="s3-check" id="c-send-check" role="status"></div>
+          <div class="pub-warn" id="c-send-pub" role="status" hidden></div>
         </div>
       </div>
       <nav class="wiz-nav" id="wiz-nav" aria-label="Kampaņas soļu navigācija"></nav>
@@ -3043,7 +3055,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 106</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 107</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4559,6 +4571,7 @@ const AL_T = {
   signSub:{l:'Nodeva parakstīšanai', c:'saskan', i:'pen'}, sign:{l:'Parakstīja', c:'saskan', i:'shield', k:'ok'},
   plan:{l:'Ieplānoja nosūtīšanu', c:'nos', i:'calendar'}, unplan:{l:'Atcēla ieplānošanu', c:'nos', i:'calX', k:'warn'}, send:{l:'Nosūtīja', c:'nos', i:'send', k:'pri'},
   remind:{l:'Izveidoja atgādinājumu no šīs kampaņas', c:'nos', i:'bell'},
+  pubWarn:{l:'Turpināja, neskatoties uz brīdinājumu', c:'nos', i:'bell', k:'warn'},
 };
 const AL_SYS = 'Sistēma';
 const AL_USERS = ['Testa Darbinieks', 'Rūta Testa', 'Mārtiņš Paraudziņš', 'Elīna Izdomāta'];
@@ -5793,15 +5806,15 @@ function openButtonDialog(data, onDone){
   $$('input[type=text]', submodal).forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('.modal-foot .btn-primary', submodal).click(); } }));
   preview();
 }
-function confirmDialog({title, message, okLabel = 'Apstiprināt', danger = false}){
+function confirmDialog({title, message, okLabel = 'Apstiprināt', danger = false, html = '', focusCancel = false}){
   return new Promise(resolve => {
     let result = false;
-    openModal({title, content:`<p>${message}</p>`, actions:[
+    openModal({title, content:html || `<p>${message}</p>`, actions:[
       {label:'Atcelt', cls:'btn-secondary'},
       {label:okLabel, cls: danger ? 'btn-danger' : 'btn-primary', onClick: c => { result = true; c(); }},
     ]});
     modal.addEventListener('close', () => resolve(result), {once:true});
-    $('.modal-foot .btn:last-child', modal).focus();
+    $(focusCancel ? '.modal-foot .btn:first-child' : '.modal-foot .btn:last-child', modal).focus();
   });
 }
 
@@ -7157,6 +7170,39 @@ function matchesResp(r, q){
   return norm([r.name, r.contact, r.regNr, r.eaddress, r.email, r.email2].join(' ')).includes(norm(q));
 }
 const repById = id => (state.reports || []).find(p => p.id === id);
+// Apsekojuma publicēšana (pieejams datu ievadei): apsekojumam – published / pubDate (ISO vai null – nav zināms); periodam – periodPub[periods]
+const PUB_SEED = {'p-x04':{published:false, pubDate:'2026-10-20'}, 'a-dsa':{periodPub:{'Q:2026-4':{published:false, pubDate:null}}}};
+function seedPubData(){
+  if ((state.reports || []).every(p => 'published' in p)) return;
+  (state.reports || []).forEach(p => { const d = PUB_SEED[p.id] || {}; Object.assign(p, {published:d.published ?? true, pubDate:d.pubDate ?? null, periodPub:clone(d.periodPub || {})}); });
+  save();
+}
+// publicēšanas stāvoklis apsekojumam un periodam
+function repPub(id, period){
+  const p = repById(id); if (!p) return {published:true, pubDate:null};
+  if (p.published === false) return {published:false, pubDate:p.pubDate || null, level:'rep'};
+  const pp = (p.periodPub || {})[period];
+  return pp && pp.published === false ? {published:false, pubDate:pp.pubDate || null, level:'period'} : {published:true, pubDate:null};
+}
+// nepublicētie apsekojumi no pāru saraksta ["apsekojums|periods", ...]: grupēti pa apsekojumiem (ja nepublicēts viss apsekojums) vai periodiem
+function pubIssues(pairs){
+  const out = new Map();
+  [...new Set(pairs)].forEach(k => { const [id, period] = k.split('|'), st = repPub(id, period); if (st.published) return;
+    const p = repById(id), key = st.level === 'rep' ? id : k;
+    if (!out.has(key)) out.set(key, {id, code:p ? p.code : id, period:st.level === 'rep' ? '' : period, periods:[], pubDate:st.pubDate});
+    out.get(key).periods.push(period); });
+  return [...out.values()].map(x => ({...x, periods:[...new Set(x.periods)].sort()})).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
+}
+const pubDateTxt = d => d ? dmy(d) : '';
+const pubName = x => x.period ? `${x.code} · ${periodCode(x.period)}` : x.code;
+// īsais teksts joslām: "1 apsekojums vēl nav publicēts: 2-enerģija (plānots 20.10.2026). Respondenti nevarēs …"
+function pubWarnText(xs){
+  const n = xs.length, one = n === 1;
+  return `${n} ${one ? 'apsekojums vēl nav publicēts' : 'apsekojumi vēl nav publicēti'}: ${xs.map(x => `${pubName(x)} (${x.pubDate ? `plānots ${pubDateTxt(x.pubDate)}` : 'datums nav zināms'})`).join(', ')}. Respondenti nevarēs uzsākt datu ievadi, līdz ${one ? 'apsekojums tiks publicēts' : 'apsekojumi tiks publicēti'}.`;
+}
+// saraksts (logam un padomam): "indekss · periods – plānotā publicēšana DD.MM.GGGG / datums nav zināms"
+const pubLines = xs => xs.flatMap(x => (x.period ? [x.period] : x.periods).map(pr => `${x.code} · ${periodCode(pr)} – ${x.pubDate ? `plānotā publicēšana ${pubDateTxt(x.pubDate)}` : 'datums nav zināms'}`));
+const pubLogText = xs => `${xs.length} ${xs.length === 1 ? 'apsekojums nav publicēts' : 'apsekojumi nav publicēti'} (${xs.map(pubName).join(', ')})`;
 const respType = r => respAttrs(r).veids === 'uznemums' ? 'jur' : 'fiz';
 const dutiesOf = rid => (state.duties || []).filter(d => d.respondentId === rid).sort((a, b) => a.deadline.localeCompare(b.deadline));
 const DUTY_KEYS = ['report', 'freq', 'period', 'status', 'from', 'to'];
@@ -7533,6 +7579,9 @@ const selDutiesOf = r => { const g = nmkGroup(r); return g.length > 1 && g[0] ==
 const matchesFilt = r => baseMatch(r) && (!selOpt('mergeNmk') || !r.nmk || nmkGroup(r)[0] === r);
 const selectedResp = () => state.respondents.filter(r => !isOut(r) && matchesFilt(r));
 function recipients(){ return selectedResp().filter(r => addrPlan(r).length); }
+// kampaņā iekļautie apsekojumi un periodi (pēc saņēmēju vēstulēs iekļautajiem pienākumiem)
+const campRepPairs = () => [...new Set(recipients().flatMap(r => selDutiesOf(r)).map(d => `${d.reportId}|${d.period}`))];
+const campPubIssues = () => pubIssues(campRepPairs());
 function selStats(){
   const m = state.respondents.filter(matchesFilt), sel = m.filter(r => !isOut(r));
   return {match:m.length, sel:sel.length, excl:m.length - sel.length, noAddr:sel.filter(r => !addrPlan(r).length).length, outFilt:0};
@@ -8462,7 +8511,13 @@ function pvRecs(){
   if (!xs.length){ ui.pvF = null; return all; }
   return xs;
 }
+// nepublicēto apsekojumu josla (Pārbaude, Nosūtīšana) – tikai brīdinājums, nebloķē
+function renderPubWarn(id){
+  const el = $(id); if (!el) return; const xs = campPubIssues();
+  el.hidden = !xs.length; el.innerHTML = xs.length ? `<span class="pub-ic" aria-hidden="true">${ICON.warn}</span><span>${esc(pubWarnText(xs))}</span>` : '';
+}
 function renderChecks(){
+  renderPubWarn('#c-rv-pub');
   const box = $('#c-checks'), cks = autoChecks(), lk = apvLocked(), last = (compose.tests || [])[0], fk = pvFilterKey();
   // ⚠ – uzklikšķinot: priekšskatījuma filtrs uz problemātiskajām vēstulēm vai pāreja uz labošanu
   box.innerHTML = cks.map(c => {
@@ -8513,6 +8568,7 @@ function finalLabel(){
 // pārbaudes josla zem kartēm: ar brīdinājumiem – oranža, bez – zaļa
 const rvWarnText = w => { const m = /^(.*?) \((.*)\)$/.exec(w); return m ? `${m[1]}: ${m[2].replace(/ \/ /g, ', ')}` : w; };
 function renderSendCheck(){
+  renderPubWarn('#c-send-pub');
   const rv = compose.review, box = $('#c-send-check'), link = '<button type="button" class="link-btn" data-action="wiz-go" data-id="4">Atvērt pārbaudi</button>';
   const ok = rv && reviewValid() && !rv.warn.length;
   box.className = `s3-check ${ok ? 'is-ok' : 'is-warn'}`;
@@ -8561,11 +8617,21 @@ function renderApproval(){
   renderSendCheck();
 }
 // noslēdzošā poga: nodot saskaņošanai / nodot parakstīšanai / ieplānot / nosūtīt
+// nepublicēti apsekojumi: pirms sūtīšanas / ieplānošanas / nodošanas – apstiprinājuma logs ("Atcelt" – paliek solī; "Turpināt" – esošā plūsma)
+async function pubGate(){
+  const xs = campPubIssues(); if (!xs.length) return true;
+  const ok = await confirmDialog({title:'Apsekojums nav publicēts', okLabel:'Turpināt', focusCancel:true,
+    html:`<div class="pub-dlg"><p>Šie apsekojumi vēl nav pieejami datu ievadei:</p><ul class="pub-list">${pubLines(xs).map(l => `<li>${esc(l)}</li>`).join('')}</ul>
+      <p>Ja turpināsiet, respondenti saņems vēstuli, bet nevarēs uzsākt datu ievadi, līdz apsekojums tiks publicēts. Vai turpināt?</p></div>`});
+  if (ok) alAddC('pubWarn', pubLogText(xs));
+  return ok;
+}
 async function finalSubmit(){
   markTried(5);
   const t = currentTemplate(), recs = recipients();
   if (composeIssues(t, recs).length){ [1, 2, 3, 4, 5].forEach(markTried); renderComposePreview(); toast('Kampaņu nevar nodot – novērsiet kļūdas.', true); return; }
   if (!reviewValid()){ toast('Pirms nodošanas jāiziet solis “Pārbaude”.', true); setStep(4); return; }
+  if (!(await pubGate())) return;
   if (finalKind() !== 'apv'){ await send(); return; }
   const ap = curApprover(), es = compose.esign;
   if (!(await confirmDialog({title:'Nodot saskaņošanai?', okLabel:'Nodot saskaņošanai',
@@ -8634,7 +8700,7 @@ async function send({skipConfirm = false, approved = false} = {}){
     if (!ok) return;
     state.planned = state.planned || [];
     state.planned.unshift({id:'pl' + uid(), name:compose.name, kindKey:sessKindKey(), sendDate:compose.sel.sendDate, sendTime:compose.sendTime, target:remindTarget(),
-      contentName:contentName(t), contentLabel:contentLabel(), esign:compose.esign.required, prio:compose.prio.filter(Boolean), count:n, createdAt:compose.createdAt || new Date().toISOString(), createdBy:CURRENT_USER, snap:sessionSnapshot()});
+      contentName:contentName(t), contentLabel:contentLabel(), esign:compose.esign.required, prio:compose.prio.filter(Boolean), count:n, createdAt:compose.createdAt || new Date().toISOString(), createdBy:CURRENT_USER, snap:sessionSnapshot(), reps:campRepPairs()});
     alMove(alKeyC(), 'planned:' + state.planned[0].id);
     alAdd('planned:' + state.planned[0].id, alE('plan', approved ? AL_SYS : CURRENT_USER, `${alWhen(compose.sel.sendDate, compose.sendTime)}${approved ? ' · automātiski pēc saskaņojuma' : ''}`));
     removeDraft(compose.draftId);
@@ -9083,6 +9149,13 @@ function fitTables(){
 }
 let tcFitRaf = 0;
 const scheduleFit = () => { if (!tcFitRaf) tcFitRaf = requestAnimationFrame(fitTables); };
+// ieplānotā kampaņa ar nepublicētu apsekojumu – brīdinājuma birka (padomā – saraksts)
+function campPubTag(x){
+  if (x.type !== 'planned') return '';
+  const xs = pubIssues((x.pl && x.pl.reps) || ((x.pl && x.pl.snap && x.pl.snap.sel && x.pl.snap.sel.reports) || []).map(id => `${id}|`)); if (!xs.length) return '';
+  const tipT = 'Apsekojums nav publicēts:\n' + pubLines(xs).join('\n');
+  return `<span class="pub-tag" tabindex="0" title="${esc(tipT)}" aria-label="${esc(tipT)}">${ICON.warn}Apsekojums nav publicēts</span>`;
+}
 function renderCampaigns(){
   refreshStatuses();
   if (ui.campView === 'edit') flushDraft();
@@ -9102,7 +9175,7 @@ function renderCampaigns(){
       <td>${campKindCell(x.kind)}</td>
       <td class="num">${x.n}</td>
       <td>${esc(x.when)}</td>
-      <td><span class="cst ${CAMP_ST[x.st].cls}"><i aria-hidden="true"></i>${CAMP_ST[x.st].label}</span></td>
+      <td><span class="cst ${CAMP_ST[x.st].cls}"><i aria-hidden="true"></i>${CAMP_ST[x.st].label}</span>${campPubTag(x)}</td>
       <td>${campResult(x)}</td>
       <td class="num c-wl">${campWlMs(x) != null ? esc(fmtDur(campWlMs(x))) : '<span class="muted">—</span>'}</td>
       <td class="actions"><button type="button" class="icon-btn camp-more" data-action="camp-menu" data-id="${esc(x.key)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.name)}" title="Darbības">${ICON.dots}</button></td></tr>`;
@@ -11744,6 +11817,7 @@ state.sent.forEach(migrateSentRec);
 if (!state.histSeeded) seedHistory();
 assignCreators();
 seedWorkLog();
+seedPubData();
 setInterval(wlTick, WL_TICK);
 state.tasks = state.tasks || [];
 refreshStatuses();
