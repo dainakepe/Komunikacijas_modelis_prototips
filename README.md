@@ -490,6 +490,16 @@ Jaunu kampaņu sagatavo piecos soļos: **Pamatdati → Respondenti → Saturs �
 
 **Melnraksts.** Kampaņa, arī tās saturs, tiek automātiski saglabāta kā melnraksts, tāpēc darbu var turpināt vēlāk, arī pēc lapas pārlādes. Melnraksti redzami kampaņu sarakstā. Poga "Dzēst melnrakstu" redaktorā to dzēš. Pēc nosūtīšanas atveras cilne "Sūtīšanas vēsture" ar šīs kampaņas bloku, bet pēc plānošanas – kampaņu saraksta sadaļa "Ieplānotās".
 
+### Apsekojuma publicēšanas pārbaude (pirms nosūtīšanas)
+
+Kampaņas nosūtīšanai pievienota pārbaude, vai kampaņā iekļautie apsekojumi ir **publicēti** (pieejami datu ievadei). Esošo soļu izkārtojums, navigācija un nosūtīšanas plūsma nav mainīta – pārbaude tikai brīdina.
+- **Dati:** katram apsekojumam lauks "publicēts" (`published`) un, ja nav publicēts, "plānotais publicēšanas datums" (`pubDate`; var būt nezināms); periodam – tas pats laukā `periodPub[periods]`. Testa datos visi publicēti, izņemot **2-enerģija** (Uzņēmumu statistika; plānots 20.10.2026) un **1-DSA periodu 2026C4** (Iedzīvotāju statistika; datums nav zināms). Kampaņas apsekojumi un periodi – pēc saņēmēju vēstulēs iekļautajiem pienākumiem.
+- **Pārbaude (4. solis):** ja ir nepublicēti apsekojumi, kopsavilkuma augšā brīdinājuma josla (oranža ikona, gaiši oranžs fons), piem., "1 apsekojums vēl nav publicēts: 2-enerģija (plānots 20.10.2026). Respondenti nevarēs uzsākt datu ievadi, līdz apsekojums tiks publicēts." (periodam – "1-DSA · 2026C4 (datums nav zināms)"). Josla pāreju tālāk nebloķē.
+- **Nosūtīšana (5. solis):** tā pati josla zem pārbaudes joslas.
+- **Apstiprinājuma logs:** nospiežot galveno pogu ("Nosūtīt", "Ieplānot nosūtīšanu", "Nodot saskaņošanai", "Nodot parakstīšanai"), ja ir nepublicēti apsekojumi, vispirms atveras logs **"Apsekojums nav publicēts"** ar sarakstu (indekss · periods – plānotā publicēšana DD.MM.GGGG / datums nav zināms) un jautājumu "Vai turpināt?". Pogas: **"Atcelt"** (noklusējuma fokuss; aizver logu, lietotājs paliek solī) un **"Turpināt"** (turpina esošo plūsmu – tālāk tas pats apstiprinājums kā agrāk). Ja visi apsekojumi publicēti, logs neparādās.
+- **Darbību vēsture:** izvēloties "Turpināt", ieraksts "Turpināja, neskatoties uz brīdinājumu: 1 apsekojums nav publicēts (2-enerģija)".
+- **Kampaņu saraksts:** ieplānotai kampaņai ar nepublicētu apsekojumu statusa kolonnā oranža birka **"Apsekojums nav publicēts"** (padomā – saraksts). Kad apsekojums tiek publicēts, birka pazūd (ieplānotajai kampaņai saglabāti tās apsekojumi un periodi).
+
 ### Darbību vēsture (procesa 3.5 apakšprocess "Darbību audita pieraksti")
 
 Katrai kampaņai ir darbību žurnāls. Tas ir tikai papildinājums: esošie skati, soļi, navigācija, kolonnas un stili nav mainīti.
