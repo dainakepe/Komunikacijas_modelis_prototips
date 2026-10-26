@@ -1590,6 +1590,8 @@ dialog.drawer.al-drawer{width:min(420px,100vw)}
 .kv-order{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .kv-noaddr{flex:none;color:var(--orange-ink);font-weight:600}
 .kv-pop{max-width:300px;padding:10px 12px}
+.name-reset{align-self:flex-start;margin-top:4px;padding:0 2px;font-size:var(--fs-xs);font-weight:600}
+.name-reset[hidden]{display:none}
 /* "Mērķa grupa" (2. solis) – vienkāršota: tikai Joma, Apsekojumi, Periodi, Respondenti (un Ieraksti → Vēstules); 13 px */
 .r-target .kv{font-size:13px;line-height:18px}
 .r-target .kv .link-btn{font-size:13px}
@@ -2721,7 +2723,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <div class="step-title"><span class="step-num">1</span><h2>Pamatdati</h2></div>
           <div class="form-grid">
             <div class="field"><label for="c-aud">Statistikas joma <span class="tip" tabindex="0" role="note" aria-label="Uzņēmumu statistika – tvērums pēc perioda, apsekojuma un respondenta. Iedzīvotāju statistika – tvērums pēc apsekojuma (un, ja vajag, perioda / viļņa)." data-tip="Uzņēmumu statistika – tvērums pēc perioda, apsekojuma un respondenta. Iedzīvotāju statistika – tvērums pēc apsekojuma (un, ja vajag, perioda / viļņa).">i</span></label><select id="c-aud"></select></div>
-            <div class="field"><label for="c-name">Kampaņas nosaukums <span class="req">*</span></label><input type="text" id="c-name" maxlength="120"><span class="err" id="c-name-err" hidden></span></div>
+            <div class="field"><label for="c-name">Kampaņas nosaukums <span class="req">*</span> <span class="tip" tabindex="0" role="note" aria-label="Nosaukums veidojas automātiski no kampaņas veida, apsekojuma un perioda. To var mainīt." data-tip="Nosaukums veidojas automātiski no kampaņas veida, apsekojuma un perioda. To var mainīt.">i</span></label><input type="text" id="c-name" maxlength="120" placeholder="Tiks izveidots automātiski pēc apsekojuma izvēles"><span class="err" id="c-name-err" hidden></span><button type="button" class="link-btn name-reset" id="c-name-reset" data-action="c-name-auto" hidden>Atjaunot automātisko nosaukumu</button></div>
           </div>
           <div class="field"><span class="label">Komunikācijas veids <span class="req">*</span></span>
             <div class="skind-opts" id="c-kind" role="group" aria-label="Komunikācijas veids"></div>
@@ -3044,7 +3046,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 113</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 114</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4340,6 +4342,39 @@ const defaultSessionName = () => {
   const used = [...(state.drafts || []).filter(d => d.id !== compose.draftId), ...(state.planned || [])].map(x => (/^Kampaņa Nr\. (\d+)$/.exec(x.name || '') || [])[1]).filter(Boolean).map(Number);
   return `Kampaņa Nr. ${Math.max(state.seq || 0, ...used) + 1}`;
 };
+// Automātiskais kampaņas nosaukums: "{veids} · {apsekojuma indekss un nosaukums} · {periods}", piem., "Uzaicinājums · 1-DSA Darbaspēka apsekojums · 2026C3";
+// vairāki apsekojumi – pirmais + skaits ("1-tirdzniecība +3"), vairāki periodi – pirmais–pēdējais ("2026M07–2026M09"); bez perioda – bez perioda daļas;
+// bez apsekojuma – '' (laukā pelēks paraugs). Unikāls: ja tāds nosaukums jau ir citai kampaņai – " (2)", " (3)" …
+function autoCampName(){
+  const sel = compose.sel, kind = (SESS_KINDS[compose.kind] || {}).label || 'Kampaņa';
+  let reps = sel.reports.map(repById).filter(Boolean), pers = [];
+  const scopeDs = () => state.respondents.filter(matchesFilt).flatMap(r => selDutiesOf(r));
+  if (fizMode()){ if (sel.fz.period) pers = [sel.fz.period]; }
+  else {
+    if (!reps.length && sel.allReports) reps = [...new Set(scopeDs().map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
+    // periods – tikai konkrēti izvēlētie periodi (piem., 2026M07, 2026M08, 2026M09); "visi" – bez perioda daļas
+    const pf = sel.pf || {}; pers = PF_KEYS.flatMap(k => pfVals(pf[k]).map(n => pfCode(k, +sel.year, n)));
+  }
+  if (!reps.length) return '';
+  const rep = reps.length === 1 ? `${reps[0].code} ${reps[0].name}`.trim() : `${reps[0].code} +${reps.length - 1}`;
+  const code = x => fizMode() ? periodCode(x) : x;
+  const per = !pers.length ? '' : pers.length === 1 ? code(pers[0]) : `${code(pers[0])}–${code(pers[pers.length - 1])}`;
+  return uniqueCampName([kind, rep, per].filter(Boolean).join(' · '));
+}
+function uniqueCampName(base){
+  const used = new Set([...(state.drafts || []).filter(d => d.id !== compose.draftId).map(d => d.name), ...(state.planned || []).map(p => p.name), ...(state.sent || []).map(x => x.sessionName)].filter(Boolean));
+  if (!used.has(base)) return base;
+  let i = 2; while (used.has(`${base} (${i})`)) i++;
+  return `${base} (${i})`;
+}
+// kamēr lietotājs nosaukumu nav mainījis – tas atjaunojas līdzi veidam, apsekojumam un periodam (bez apsekojuma – iekšēji "Kampaņa Nr. N")
+function syncAutoName(){
+  if (compose.nameAuto){ const a = autoCampName(); compose.autoEmpty = !a; compose.name = a || defaultSessionName(); }
+  const inp = $('#c-name'); if (!inp) return;
+  if (document.activeElement !== inp) inp.value = compose.nameAuto && compose.autoEmpty ? '' : compose.name;
+  const rs = $('#c-name-reset'); if (rs) rs.hidden = compose.nameAuto || !autoCampName();
+  const t = $('#c-title'); if (t) t.textContent = compose.name;
+}
 // atlase (1. solis "Ko attiecina kampaņa"): periodiskumi un periodi un/vai apsekojumi (pārskati)
 const defaultResp = () => ({name:'', nmk:'', nmkps:'', uuk:'', email:'', eaddr:'', list:null, listName:'', listMissing:[]});
 const defaultFz = () => ({year:'', period:'', rounds:null});
@@ -7887,6 +7922,7 @@ function renderSelSummary(){
 function renderCompose(){
   renderBasics();
   $('#c-name').value = compose.name;
+  syncAutoName();
   $('#c-title').textContent = compose.name;
   renderDraftInfo();
   $('#c-aud').innerHTML = Object.entries(AUDS).filter(([k]) => CAMP_AUDS.includes(k)).map(([k, a]) => `<option value="${k}" ${compose.aud === k ? 'selected' : ''}>${esc(a.field)}</option>`).join('');
@@ -8333,6 +8369,7 @@ function pvSamples(recs = pvRecs()){
 // pašlaik priekšskatījumā atvērtais paraugs (to sūta arī testa vēstule)
 function pvCurrent(){ const xs = pvSamples(); return xs[Math.min(compose.index, xs.length - 1)] || null; }
 function renderComposePreview(){
+  syncAutoName();
   renderContent();
   saveDraft();
   const t = currentTemplate();
@@ -10523,6 +10560,7 @@ const actions = {
   'c-fix-content': () => { setStep(3); if (compose.content) actions['c-edit-content'](); },
   'wiz-go': id => { if (apvLocked()) return; if (+id > 1 && !selCanGo()){ if (compose.step !== 1) setStep(1); toast('Vispirms veiciet atlasi.', true); const b = $('#c-sel-btn'); if (b) b.focus(); return; } if (+id > compose.step){ markTried(compose.step); if (fzBlocks() || acBlocks(+id)) return; } setStep(+id); },
   'wiz-prev': () => setStep(compose.step - 1),
+  'c-name-auto': () => { compose.nameAuto = true; syncAutoName(); setCrumb(); saveDraft(); $('#c-name').focus(); },
   // uz sarakstu: ja kampaņā kas mainīts – vispirms saglabā melnrakstu (kā automātiskā saglabāšana); neaizpildīta jauna kampaņa melnrakstu neveido
   'wiz-list': () => { const dirty = sessionDirty(); showTab('kampanas'); if (dirty && state.drafts.some(x => x.id === compose.draftId)) toast(`Melnraksts “${compose.name}” saglabāts.`); },
   'wiz-next': () => { if (compose.step === 1 && !selCanGo()) return; if (compose.step === 4) return reviewContinue(); if (compose.step === 5) return finalSubmit(); markTried(compose.step); if (fzBlocks() || acBlocks(compose.step + 1)) return; setStep(compose.step + 1); },
@@ -10974,8 +11012,9 @@ $('#tpl-sub').addEventListener('click', e => { const b = e.target.closest('[data
 $('#tpl-adv-btn').addEventListener('click', () => { const row = $('#tpl-adv'), b = $('#tpl-adv-btn'); row.hidden = !row.hidden; b.setAttribute('aria-expanded', String(!row.hidden)); if (!row.hidden) $('#tpl-kind').focus(); });
 $('#tpl-head').addEventListener('click', e => { const b = e.target.closest('[data-tsort]'); if (!b) return; const k = b.dataset.tsort; ui.tplSort = nextSort(ui.tplSort, k); renderTemplates(); const nb = $(`#tpl-head [data-tsort="${k}"]`); if (nb) nb.focus(); });
 $('#sag-head').addEventListener('click', e => { const b = e.target.closest('[data-ssort]'); if (!b) return; const k = b.dataset.ssort; ui.sagSort = nextSort(ui.sagSort, k); renderSagataves(); const nb = $(`#sag-head [data-ssort="${k}"]`); if (nb) nb.focus(); });
-$('#c-name').addEventListener('input', e => { compose.nameAuto = !e.target.value.trim(); compose.name = e.target.value.trim() || defaultSessionName(); $('#c-title').textContent = compose.name; setCrumb(); saveDraft(); });
-$('#c-name').addEventListener('blur', e => { e.target.value = compose.name; });
+// manuāls labojums izslēdz automātisko atjaunošanu (tukšs lauks – atkal automātiskais nosaukums)
+$('#c-name').addEventListener('input', e => { const v = e.target.value.trim(); compose.nameAuto = !v; if (v) compose.name = v; syncAutoName(); setCrumb(); saveDraft(); });
+$('#c-name').addEventListener('blur', () => { compose.nameAuto && compose.autoEmpty ? ($('#c-name').value = '') : ($('#c-name').value = compose.name); });
 // Kampaņas adresāts: nosaka piedāvātās veidnes un atlasa atbilstošos respondentus
 // Mainot statistikas jomu: tvēruma vērtības, kas jaunajā jomā neder, tiek notīrītas (ar īsu paziņojumu)
 $('#c-aud').addEventListener('change', e => {
