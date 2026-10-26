@@ -628,8 +628,10 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .wiz-nav{display:flex;flex-wrap:wrap;align-items:center;gap:10px;box-sizing:border-box;width:100%;min-height:68px;margin-top:24px;padding:14px 0;border-top:1px solid #E0E0E0;background:var(--bg);position:sticky;bottom:0;z-index:2}
 .wiz-nav[hidden]{display:none}
 .wiz-nav .btn{height:40px;padding:0 16px;font-size:var(--fs-md)}
-.wiz-nav #wiz-prev{min-width:116px}
-.wiz-nav #wiz-prev.is-void{visibility:hidden}
+.wiz-nav #wiz-prev{min-width:116px;display:inline-grid;justify-items:center}
+/* abi teksti vienā šūnā – poga vienmēr garākā teksta platumā (josla nelec, pārslēdzot soļus) */
+.wiz-nav #wiz-prev > span{grid-area:1/1}
+.wiz-nav #wiz-prev > span[aria-hidden]{visibility:hidden}
 .wiz-nav .spacer{flex:1}
 .wiz-issues{font-size:var(--fs-sm);color:var(--warning);font-weight:600}
 .wiz-issues:empty{display:none}
@@ -3028,7 +3030,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 109</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 110</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7966,15 +7968,17 @@ function renderStepNav(n){
   const nav = $('#wiz-nav');
   nav.hidden = apvLocked();
   // josla tiek izveidota vienreiz (fokuss saglabājas), pēc tam atjaunināts tikai soļa stāvoklis
-  if (!nav.firstElementChild) nav.innerHTML = `<button type="button" class="btn btn-secondary" data-action="wiz-prev" id="wiz-prev">← Atpakaļ</button>
+  if (!nav.firstElementChild) nav.innerHTML = `<button type="button" class="btn btn-secondary" data-action="wiz-prev" id="wiz-prev"><span data-l="list">← Uz kampaņu sarakstu</span><span data-l="prev">← Atpakaļ</span></button>
     <button type="button" class="btn btn-ghost" data-action="wiz-save" id="wiz-save">Saglabāt melnrakstu</button>
     <button type="button" class="btn btn-ghost wiz-del" data-action="c-restart" id="wiz-del" hidden>${ICON.trash}Dzēst melnrakstu</button>
     <span class="spacer"></span>
     <span class="wiz-issues" id="wiz-issues" aria-live="polite"></span>
     <button type="button" class="btn btn-primary" data-action="wiz-next" id="wiz-next"></button>`;
   $('#wiz-del').hidden = !state.drafts.some(x => x.id === compose.draftId) || apvLocked();
+  // 1. solī – "← Uz kampaņu sarakstu" (tajā pašā vietā un stilā kā "← Atpakaļ" pārējos soļos)
   const prev = $('#wiz-prev'), first = n <= 1;
-  prev.classList.toggle('is-void', first); prev.disabled = first; prev.toggleAttribute('aria-hidden', first); prev.tabIndex = first ? -1 : 0;
+  prev.dataset.action = first ? 'wiz-list' : 'wiz-prev';
+  prev.querySelectorAll('[data-l]').forEach(s => s.toggleAttribute('aria-hidden', (s.dataset.l === 'list') !== first));
   $('#wiz-issues').textContent = '';
   $('#wiz-next').innerHTML = stepNextLabel(n);
   const nx = $('#wiz-next'), block = n === 1 && !selCanGo();
@@ -10493,6 +10497,8 @@ const actions = {
   'c-fix-content': () => { setStep(3); if (compose.content) actions['c-edit-content'](); },
   'wiz-go': id => { if (apvLocked()) return; if (+id > 1 && !selCanGo()){ if (compose.step !== 1) setStep(1); toast('Vispirms veiciet atlasi.', true); const b = $('#c-sel-btn'); if (b) b.focus(); return; } if (+id > compose.step){ markTried(compose.step); if (fzBlocks() || acBlocks(+id)) return; } setStep(+id); },
   'wiz-prev': () => setStep(compose.step - 1),
+  // uz sarakstu: ja kampaņā kas mainīts – vispirms saglabā melnrakstu (kā automātiskā saglabāšana); neaizpildīta jauna kampaņa melnrakstu neveido
+  'wiz-list': () => { const dirty = sessionDirty(); showTab('kampanas'); if (dirty && state.drafts.some(x => x.id === compose.draftId)) toast(`Melnraksts “${compose.name}” saglabāts.`); },
   'wiz-next': () => { if (compose.step === 1 && !selCanGo()) return; if (compose.step === 4) return reviewContinue(); if (compose.step === 5) return finalSubmit(); markTried(compose.step); if (fzBlocks() || acBlocks(compose.step + 1)) return; setStep(compose.step + 1); },
   'wiz-save': () => { markTried(compose.step); flushDraft(true); renderWizard(); toast(`Melnraksts “${compose.name}” saglabāts.`); },
   'c-customize': id => openLetterCustomizer(id),
