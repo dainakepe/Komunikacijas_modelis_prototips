@@ -902,6 +902,15 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .wl-steps th,.wl-steps td{padding:5px 8px}
 .wl-det .hint{margin-top:6px}
 .proc-rep{padding:14px 16px;margin-bottom:16px}
+/* navigācijas josla: "Dzēst melnrakstu" – sarkanīgs teksts ar miskastes ikonu */
+#wiz-nav .wiz-del{color:#B3261E}
+#wiz-nav .wiz-del .icon{width:15px;height:15px;color:#B3261E}
+#wiz-nav .wiz-del:hover{background:#FCEEEE;color:#8C1D18}
+#wiz-nav .wiz-del[hidden]{display:none}
+/* veidnes redaktors: "Noformējums" (tēmturi, sauklis banerī) */
+.te-design{margin-top:10px;padding-top:10px;border-top:1px solid var(--border-light)}
+.te-design[hidden]{display:none}
+.te-design-h{margin:0 0 6px;font-size:13px;color:var(--text-secondary)}
 /* nepublicēti apsekojumi: brīdinājuma josla, birka, logs */
 .pub-warn{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;margin:0 0 12px;border:1px solid var(--warning-border);background:var(--orange-bg);border-radius:var(--radius-sm);font-size:var(--fs-sm);color:var(--text)}
 .pub-warn[hidden]{display:none}
@@ -3055,7 +3064,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 107</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 108</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -3805,7 +3814,7 @@ function seedData(){
       {id:'t1', aud:'fiz', cat:'uzaicinajums', kind:'pielikums', name:'Uzaicinājums piedalīties aptaujā (vēstule pielikumā)', updated:ago(14), files:[],
        subject:'Uzaicinājums piedalīties aptaujā “{apsekojums}”',
        body:`<p>Labdien, ${F('vārds')}!</p><p>Centrālā statistikas pārvalde aicina Jūs piedalīties aptaujā “${F('apsekojums')}”. Uzaicinājuma vēstule ar visu informāciju par dalību ir pievienota pielikumā.</p>${C('dalibas_veids', 'eanketa', `<p>E-anketu var aizpildīt līdz <strong>${F('termiņš')}</strong> vietnē <a href="{e-anketa}">${F('e-anketa')}</a>.</p>`)}${C('dalibas_veids', 'telefons,klatiene', '<p>Tuvākajā laikā ar Jums sazināsies mūsu intervētājs, lai vienotos par intervijas laiku.</p>')}<p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`,
-       doc:{title:'Uzaicinājums piedalīties aptaujā', fileName:'CSP_uzaicinajums_{dok_nr}.pdf', banner:true, conf:true, info:true,
+       doc:{title:'Uzaicinājums piedalīties aptaujā', fileName:'CSP_uzaicinajums_{dok_nr}.pdf', banner:true, conf:true, info:true, tags:'#aptauja #tūrisms', slogan:'Pastāsti, kā Tu ceļo!',
          body:`<p><strong>Labdien!</strong></p>${C('ieprieks', 'piedalijas', '<p>Pateicamies par Jūsu dalību iepriekšējā aptaujā un sniegtajām atbildēm!</p>')}<p>Centrālā statistikas pārvalde (turpmāk – CSP) ir valsts iestāde, kas Latvijā apkopo oficiālo statistiku un katru gadu veic vairākas iedzīvotāju aptaujas. Šogad aicinām piedalīties aptaujā “${F('apsekojums')}”. Šāda aptauja notiek visās Eiropas Savienības valstīs pēc vienotas metodes, kas ļauj sekot līdzi izmaiņām Latvijā un salīdzināt datus ar citām valstīm.</p>${C('veids', 'privatpersona', '<p>Jūsu mājsaimniecība ir atlasīta no kopējā adrešu saraksta, izmantojot nejaušas gadījuma izlases metodi.</p>')}${C('veids', 'uznemums', `<p>Respondents ${F('uzņēmums')} ir iekļauts apsekojuma izlasē, izmantojot nejaušas gadījuma izlases metodi. Lūdzam nodot šo vēstuli personai, kura ir atbildīga par datu sniegšanu.</p>`)}<h3>Kāpēc tieši Jūsu dalība ir svarīga?</h3><p>Jūsu atsaucība ir ļoti svarīga, lai dati objektīvi atspoguļotu to, kā dzīvo mūsu valsts iedzīvotāji. Lūdzam piedalīties aptaujā arī tad, ja šķiet, ka jautājumi uz Jums neattiecas – arī šīs atbildes palīdz izveidot patiesu kopainu.</p>${C('dalibas_veids', 'eanketa', `<h3>Kā piedalīties aptaujā?</h3><ul><li>E-anketu jebkurā Jums ērtā laikā no <strong>${F('sākums')}</strong> līdz <strong>${F('termiņš')}</strong> varat atvērt vietnē <a href="{e-anketa}">${F('e-anketa')}</a>.</li><li>Autorizēties iespējams ar internetbanku, Smart-ID, e-parakstu vai e-identifikācijas karti.</li><li>E-anketu var aizpildīt <u>tikai tā persona</u>, kurai adresēta šī vēstule.</li></ul><p>Ja norādītajā laikā Jums nav iespējas aizpildīt e-anketu, ar Jums sazināsies mūsu intervētājs un vienosies par telefoninterviju.</p>`)}${C('dalibas_veids', 'telefons', `<h3>Kā piedalīties telefonaptaujā?</h3><p>Ar Jums sazināsies mūsu intervētājs un vienosies par telefoninterviju. Informējam, ka intervētājs ar Jums var sazināties darbdienu vakaros (pēc plkst. 17.00) vai arī brīvdienās (sestdienās, svētdienās). Intervētāja identitāti var pārbaudīt, zvanot uz bezmaksas tālruni ${F('tālrunis')}.</p>`)}${C('dalibas_veids', 'klatiene', `<h3>Aicinām piedalīties klātienes intervijā</h3><p>Lai veiktu interviju, ar Jums sazināsies mūsu intervētājs un vienosies par tikšanās laiku. Ierodoties klātienē, intervētājs uzrādīs CSP darbinieka apliecību ar fotogrāfiju. Intervētāja identitāti var pārbaudīt, zvanot uz bezmaksas tālruni ${F('tālrunis')}.</p>`)}${C('ieprieks', 'nepiedalijas', '<p>Ja iepriekš neesat atbildējis uz aptaujas jautājumiem, aicinām piedalīties šoreiz, lai nodrošinātu datus, kas ir svarīgi valsts līmeņa lēmumu pieņemšanā.</p>')}`}},
       {id:'t2', aud:'fiz', cat:'uzaicinajums', kind:'epasts', name:'Uzaicinājums piedalīties aptaujā (īsā vēstule)', updated:ago(10), files:[], doc:null,
        subject:'Uzaicinājums piedalīties aptaujā “{apsekojums}”',
@@ -3828,7 +3837,7 @@ function seedData(){
       {id:'t8', aud:'jur', cat:'uzaicinajums', kind:'pielikums', name:'Uzaicinājums sniegt datus apsekojumā (vēstule pielikumā)', updated:ago(13), files:[],
        subject:'Uzaicinājums sniegt datus apsekojumā “{apsekojums}”',
        body:`<p>Labdien!</p><p>Centrālā statistikas pārvalde informē, ka respondents ${F('uzņēmums')} ir iekļauts apsekojuma “${F('apsekojums')}” izlasē. Uzaicinājuma vēstule ar informāciju par datu iesniegšanu ir pievienota pielikumā.</p><p>Dati jāiesniedz līdz <strong>${F('termiņš')}</strong> vietnē <a href="{e-anketa}">${F('e-anketa')}</a>.</p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`,
-       doc:{title:'Uzaicinājums sniegt datus apsekojumā', fileName:'CSP_uzaicinajums_{dok_nr}.pdf', banner:true, conf:true, info:true,
+       doc:{title:'Uzaicinājums sniegt datus apsekojumā', fileName:'CSP_uzaicinajums_{dok_nr}.pdf', banner:true, conf:true, info:true, tags:'', slogan:'',
          body:`<p><strong>Labdien!</strong></p><p>Centrālā statistikas pārvalde (turpmāk – CSP) informē, ka respondents ${F('uzņēmums')} izlases kārtā ir iekļauts apsekojumā “${F('apsekojums')}”. Sniegtā informācija tiks izmantota tikai statistikas vajadzībām.</p>${C('ieprieks', 'piedalijas', '<p>Pateicamies, ka iepriekšējā apsekojumā dati tika iesniegti savlaicīgi!</p>')}<h3>Kā iesniegt datus?</h3><ul><li>Veidlapu aizpildiet CSP e-vidē <a href="{e-anketa}">${F('e-anketa')}</a> no <strong>${F('sākums')}</strong> līdz <strong>${F('termiņš')}</strong>.</li><li>Autorizēties var ar internetbanku, Smart-ID, e-parakstu vai e-identifikācijas karti.</li><li>Ja datus sniedz cita persona (piemēram, grāmatvedis), lūdzam nodot šo vēstuli tai.</li></ul><p>Ja Jums rodas jautājumi par veidlapas aizpildīšanu, sazinieties ar mums, izmantojot zemāk norādīto kontaktinformāciju.</p>`}},
       {id:'t9', aud:'jur', cat:'atgadinajums', kind:'epasts', name:'Atgādinājums par datu iesniegšanas termiņu', updated:ago(4), files:[], doc:null,
        subject:'Atgādinājums: {uzņēmums} – apsekojums “{apsekojums}”, termiņš {termiņš}',
@@ -4325,6 +4334,7 @@ function loadState(){
       if (!s.msEaSeeded){ s.mailSamples.forEach(x => { if (x.builtin && !x.ea) x.ea = msSeedEa(x); }); s.msEaSeeded = true; }
       // sagatavēm vairs nav temata (vienreiz)
       if (!s.msNoSubj){ msDropSubj(s.mailSamples); s.msNoSubj = true; }
+      if (!s.bannerTpl){ migrateBannerToTpl(s); s.bannerTpl = 1; }
       // uzņēmumu pārskatu pienākumi 2024. gads – tekošais (pienākumi tiek izveidoti no jauna attiecībā pret šodienu)
       if (!s.dutyHist){ seedDutyData(s); s.dutyHist = 1; }
       // pienākumiem – neiesniegšanas kodi (testa dati, vienreiz)
@@ -4522,8 +4532,9 @@ function renderDraftInfo(){
   const box = $('#c-draft'), d = state.drafts.find(x => x.id === compose.draftId);
   // kampaņa, kas gaida saskaņojumu, nav rediģējama un dzēšama saskaņotāja skatā; laika rādītāji kampaņas veidošanā netiek rādīti (uzskaite turpinās fonā)
   box.hidden = !d || apvLocked();
-  box.innerHTML = d ? `${ICON.check}<span>Melnraksts saglabāts ${esc(fmtDateTime(d.savedAt))}</span>
-    <button type="button" class="btn btn-ghost btn-sm" data-action="c-restart">Dzēst melnrakstu</button>` : '';
+  box.innerHTML = d ? `${ICON.check}<span>Melnraksts saglabāts ${esc(fmtDateTime(d.savedAt))}</span>` : '';
+  // "Dzēst melnrakstu" – apakšējā navigācijas joslā aiz "Saglabāt melnrakstu" (tikai saglabātam melnrakstam)
+  const del = $('#wiz-del'); if (del) del.hidden = !d || apvLocked();
 }
 // Jauna kampaņa (pēc nosūtīšanas – saglabā apsekojuma datus un adrešu prioritāti)
 function newSession(full){
@@ -5219,7 +5230,7 @@ function docHtml(t, ctx, mark, attrs, f = compose.f, L = state.layout){
       <div class="doc-org">${esc(L.org)}</div>
       <div class="doc-addr">${esc(L.address)}</div><div class="doc-city">${esc(L.city)}</div></div>
     <div class="doc-meta">${R('{datums} Nr. {dok_nr}')}</div>
-    ${d.banner ? `<div class="doc-banner"><b>${R('{apsekojums}')}</b>${f.tags ? `<small>${esc(f.tags)}</small>` : ''}</div>${f.slogan && (L.lang || 'lv') === 'lv' ? `<div class="doc-slogan">${esc(f.slogan)}</div>` : ''}` : ''}
+    ${d.banner ? `<div class="doc-banner"><b>${R('{apsekojums}')}</b>${d.tags ? `<small>${esc(d.tags)}</small>` : ''}</div>${d.slogan && (L.lang || 'lv') === 'lv' ? `<div class="doc-slogan">${esc(d.slogan)}</div>` : ''}` : ''}
     ${d.title ? `<div class="doc-title">${R(esc(d.title))}</div>` : ''}
     <div class="rich">${R(d.body)}</div>
     ${d.conf ? `<div class="rich"><h3>${esc(L.confTitle)}</h3>${R(L.confHtml)}</div>` : ''}
@@ -6174,6 +6185,9 @@ function openTemplateEditor(id, preset = {}){
                 <label><input type="checkbox" id="te-doc-conf" ${t.doc.conf ? 'checked' : ''}> Konfidencialitāte</label>
                 <label><input type="checkbox" id="te-doc-info" ${t.doc.info ? 'checked' : ''}> Plašāka informācija</label>
               </div></div>
+            <div class="te-design" id="te-design" ${t.doc.banner ? '' : 'hidden'}><h4 class="te-design-h">Noformējums ${tip('Tēmturi un sauklis apsekojuma banerī. Kampaņa izmanto veidnes vērtības; vienai kampaņai tās var mainīt ar “Labot saturu”.')}</h4>
+              <div class="form-grid"><div class="field"><label for="te-doc-tags">Tēmturi banerī</label><input type="text" id="te-doc-tags" value="${esc(t.doc.tags || '')}" placeholder="piem., #aptauja #tūrisms"></div>
+                <div class="field"><label for="te-doc-slogan">Sauklis zem banera</label><input type="text" id="te-doc-slogan" value="${esc(t.doc.slogan || '')}" placeholder="piem., Pastāsti, kā Tu ceļo!"></div></div></div>
           </fieldset>
         </div>
         <section class="te-extra">
@@ -6297,7 +6311,8 @@ function openTemplateEditor(id, preset = {}){
       name: $('#te-name').value.trim(), aud: aud(), cat: $('#te-cat').value, kind: k, subject: lv.subject, body: lv.body, files: t.files,
       main: k === 'pielikums' && main && main !== 'gen' ? {lib:main.lib, name:main.name, size:main.size} : null,
       doc: {title: lv.docTitle, fileName: lv.fileName || 'vestule.pdf', body: lv.docBody,
-        banner: $('#te-doc-banner').checked, conf: $('#te-doc-conf').checked, info: $('#te-doc-info').checked},
+        banner: $('#te-doc-banner').checked, conf: $('#te-doc-conf').checked, info: $('#te-doc-info').checked,
+        tags: $('#te-doc-tags').value.trim(), slogan: $('#te-doc-slogan').value.trim()},
       tr: {},
       ea: {subject: $('#te-ea-subject').value.trim(), body: $('#te-ea-body').value.replace(/[ \t]+$/gm, '').replace(/\s+$/, '')},
       fromSample,
@@ -6578,6 +6593,8 @@ function openTemplateEditor(id, preset = {}){
   });
   ['te-subject', 'te-doc-file'].forEach(fid => $('#' + fid).addEventListener('input', update));
   ['te-doc-banner', 'te-doc-conf', 'te-doc-info'].forEach(fid => $('#' + fid).addEventListener('change', update));
+  $('#te-doc-banner').addEventListener('change', e => { $('#te-design').hidden = !e.target.checked; });
+  ['te-doc-tags', 'te-doc-slogan'].forEach(fid => $('#' + fid).addEventListener('input', update));
   $('#te-name').addEventListener('input', () => { $('#te-name-err').hidden = true; });
   renderFiles();
   syncExtra();
@@ -7171,10 +7188,35 @@ function matchesResp(r, q){
 }
 const repById = id => (state.reports || []).find(p => p.id === id);
 // Apsekojuma publicēšana (pieejams datu ievadei): apsekojumam – published / pubDate (ISO vai null – nav zināms); periodam – periodPub[periods]
-const PUB_SEED = {'p-x04':{published:false, pubDate:'2026-10-20'}, 'a-dsa':{periodPub:{'Q:2026-4':{published:false, pubDate:null}}}};
+// testa dati relatīvi pret šodienu: 2-enerģija – plānots pēc 7 dienām (ja testa datums pagājis – tiek pārcelts)
+const pubSeedDate = () => isoDate(addDays(7));
+const PUB_SEED = {'p-x04':{published:false, pubDate:'seed'}, 'a-dsa':{periodPub:{'Q:2026-4':{published:false, pubDate:null}}}};
+// "Kampaņas noformējums" (tēmturi, sauklis) pārcelts uz veidni: veidnēm ar baneri – līdzšinējās vērtības;
+// melnrakstiem / ieplānotajām kampaņām, kurās tās bija mainītas, – kampaņas individuālais pielāgojums (veidne, pielāgota kampaņai)
+// (izsauc ielādes laikā – tāpēc bez ārējām const vērtībām, kas definētas vēlāk)
+function migrateBannerToTpl(s){
+  const BANNER_SEED = {t1:{tags:'#aptauja #tūrisms', slogan:'Pastāsti, kā Tu ceļo!'}};
+  (s.templates || []).forEach(t => { if (t.doc && t.doc.banner && !('tags' in t.doc)) Object.assign(t.doc, BANNER_SEED[t.id] || {tags:'', slogan:''}); });
+  const fix = c => { if (!c) return c; const f = c.f || {}, ct = c.content;
+    if (!ct) return c;
+    const base = ct.templateId && (s.templates || []).find(t => t.id === ct.templateId);
+    if (ct.source === 'tpl'){
+      if (f.bannerEdited && base && base.doc && base.doc.banner && (f.tags !== base.doc.tags || f.slogan !== base.doc.slogan)){
+        const tpl = clone(base); delete tpl.id; tpl.doc = {...tpl.doc, tags:f.tags || '', slogan:f.slogan || ''};
+        c.content = {source:'tplmod', templateId:base.id, tpl};
+      }
+    } else if (ct.tpl && ct.tpl.doc && ct.tpl.doc.banner && !('tags' in ct.tpl.doc))
+      Object.assign(ct.tpl.doc, f.bannerEdited ? {tags:f.tags || '', slogan:f.slogan || ''} : base && base.doc ? {tags:base.doc.tags || '', slogan:base.doc.slogan || ''} : {tags:'', slogan:''});
+    return c; };
+  (s.drafts || []).forEach(fix); (s.planned || []).forEach(pl => { if (pl.snap) fix(pl.snap); });
+}
 function seedPubData(){
-  if ((state.reports || []).every(p => 'published' in p)) return;
-  (state.reports || []).forEach(p => { const d = PUB_SEED[p.id] || {}; Object.assign(p, {published:d.published ?? true, pubDate:d.pubDate ?? null, periodPub:clone(d.periodPub || {})}); });
+  if ((state.reports || []).every(p => 'published' in p)){
+    // testa plānotais datums, kas jau pagājis, tiek pārcelts uz nākotni
+    const x = repById('p-x04'); if (x && x.published === false && (x.pubSeed || x.pubDate === '2026-10-20') && x.pubDate < todayIso()){ x.pubDate = pubSeedDate(); x.pubSeed = true; save(); }
+    return;
+  }
+  (state.reports || []).forEach(p => { const d = PUB_SEED[p.id] || {}; Object.assign(p, {published:d.published ?? true, pubDate:d.pubDate === 'seed' ? pubSeedDate() : d.pubDate ?? null, periodPub:clone(d.periodPub || {})}, d.pubDate === 'seed' ? {pubSeed:true} : {}); });
   save();
 }
 // publicēšanas stāvoklis apsekojumam un periodam
@@ -7656,11 +7698,8 @@ function renderVars(){
     : sr.length === 1 ? `<h4 class="vars-h">${esc(repTitle(repById(sr[0])))}</h4>${table(sr[0])}`
     : sr.map(id => { const p = repById(id), n = Object.keys(ov[id] || {}).length;
         return `<details class="vars-grp" data-var-grp="${id}" ${ui.varOpen.has(id) ? 'open' : ''}><summary><b>${esc(repTitle(p))}</b>${n ? `<span class="pill pill-mod">Mainīts: ${n}</span>` : ''}</summary>${table(id)}</details>`; }).join('');
-  box.innerHTML = surveys + `<h4 class="vars-h">Kampaņas noformējums</h4>
-    <div class="form-grid">
-      <div class="field"><label for="cf-tags">Tēmturi banerī</label><input type="text" id="cf-tags" data-fv="tags" value="${esc(compose.f.tags || '')}"></div>
-      <div class="field"><label for="cf-slogan">Sauklis zem banera</label><input type="text" id="cf-slogan" data-fv="slogan" value="${esc(compose.f.slogan || '')}"></div>
-    </div>`;
+  // (tēmturi un sauklis banerī – veidnes sadaļā "Noformējums"; vienai kampaņai – caur "Labot saturu")
+  box.innerHTML = surveys;
 }
 // "Pēc respondenta" lauku vērtības (iestata, atverot kampaņu, lietojot saglabātu filtru vai notīrot)
 function syncScopeInputs(){
@@ -7997,7 +8036,7 @@ function acBlocks(target){
   return true;
 }
 // Kopīgā soļu navigācijas josla – vienīgā navigācija visos soļos (soļa satura apakšā, ārpus kartēm).
-// Pa kreisi: "← Atpakaļ" (1. solī vieta paliek tukša) un "Saglabāt melnrakstu"; pa labi – viena primārā poga ar soļa tekstu.
+// Pa kreisi: "← Atpakaļ" (1. solī vieta paliek tukša), "Saglabāt melnrakstu" un "Dzēst melnrakstu" (sarkanīga, ar miskastes ikonu); pa labi – viena primārā poga ar soļa tekstu.
 function stepNextLabel(n){
   if (n === 2) return 'Apstiprināt atlasi un turpināt →';
   if (n === 5) return finalLabel();
@@ -8009,9 +8048,11 @@ function renderStepNav(n){
   // josla tiek izveidota vienreiz (fokuss saglabājas), pēc tam atjaunināts tikai soļa stāvoklis
   if (!nav.firstElementChild) nav.innerHTML = `<button type="button" class="btn btn-secondary" data-action="wiz-prev" id="wiz-prev">← Atpakaļ</button>
     <button type="button" class="btn btn-ghost" data-action="wiz-save" id="wiz-save">Saglabāt melnrakstu</button>
+    <button type="button" class="btn btn-ghost wiz-del" data-action="c-restart" id="wiz-del" hidden>${ICON.trash}Dzēst melnrakstu</button>
     <span class="spacer"></span>
     <span class="wiz-issues" id="wiz-issues" aria-live="polite"></span>
     <button type="button" class="btn btn-primary" data-action="wiz-next" id="wiz-next"></button>`;
+  $('#wiz-del').hidden = !state.drafts.some(x => x.id === compose.draftId) || apvLocked();
   const prev = $('#wiz-prev'), first = n <= 1;
   prev.classList.toggle('is-void', first); prev.disabled = first; prev.toggleAttribute('aria-hidden', first); prev.tabIndex = first ? -1 : 0;
   $('#wiz-issues').textContent = '';
@@ -10598,8 +10639,7 @@ const actions = {
   },
     'c-sign-reset': () => { compose.sign = {signer:'', position:''}; renderWizard(); renderComposePreview(); },
   'c-restart': async () => {
-    const ok = await confirmDialog({title:'Dzēst melnrakstu?', okLabel:'Dzēst', danger:true,
-      message:`Kampaņas <b>${esc(compose.name)}</b> melnraksts (respondentu atlase, saturs, paraksts un adreses) tiks dzēsts.`});
+    const ok = await confirmDialog({title:`Dzēst melnrakstu “${compose.name}”?`, okLabel:'Dzēst', danger:true, message:'Šo darbību nevar atsaukt.'});
     if (!ok) return;
     removeDraft(compose.draftId); newSession(true); save(); renderCounts();
     showTab('kampanas'); toast('Melnraksts dzēsts.');
@@ -11520,11 +11560,6 @@ $('#c-vars-body').addEventListener('keydown', e => {
   if (e.target.id !== 'var-in') return;
   if (e.key === 'Enter'){ e.preventDefault(); const k = e.target.dataset.var; varCommit(k, e.target.value.trim()); varsChanged(k); }
   if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); varsChanged(e.target.dataset.var); }
-});
-$('#c-vars-body').addEventListener('input', e => {
-  const k = e.target.dataset.fv;
-  if (!k) return;
-  compose.f[k] = e.target.value.trim(); compose.f.bannerEdited = true; renderComposePreview();
 });
 $('#c-vars-body').addEventListener('toggle', e => {
   const g = e.target.closest && e.target.closest('[data-var-grp]');
