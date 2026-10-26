@@ -1597,6 +1597,10 @@ dialog.drawer.al-drawer{width:min(420px,100vw)}
 .kv-order{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .kv-noaddr{flex:none;color:var(--orange-ink);font-weight:600}
 .kv-pop{max-width:300px;padding:10px 12px}
+/* "Mērķa grupa" (2. solis) – vienkāršota: tikai Joma, Apsekojumi, Periodi, Respondenti (un Ieraksti → Vēstules); 13 px */
+.r-target .kv{font-size:13px;line-height:18px}
+.r-target .kv .link-btn{font-size:13px}
+.r-count .link-btn{padding:0 2px;font-size:inherit;font-weight:600}
 .kv-pop .kv-pop-h{margin:0 0 6px;font-weight:600;word-break:normal}
 .kv-pop-list{list-style:none;margin:0;padding:0;max-height:240px;overflow:auto;font-size:var(--fs-xs);line-height:1.5}
 .kv-pop-list:focus-visible{outline:2px solid var(--focus-ring)}
@@ -2817,7 +2821,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
               <section class="scope-card r-card r-target kv-card" id="c-ctx" aria-labelledby="c-tg-h">
                 <div class="kv-head"><h4 id="c-tg-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.7"/></svg></span>Mērķa grupa</h4><button type="button" class="link-btn kv-act" data-action="wiz-go" data-id="1" aria-label="Labot tvērumu (solis “Pamatdati”)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Labot</button></div>
                 <dl class="kv" id="c-ctx-kv"></dl>
-                <div class="kv-foot" id="c-ctx-foot"></div>
               </section>
               <section class="scope-card r-card r-quality" id="c-ac" aria-labelledby="c-q-h"></section>
             </aside>
@@ -3049,7 +3052,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 111</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 112</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -8131,16 +8134,16 @@ function scopeCtxTags(){
   if (f.list) add('Saraksts no faila', f.listName || 'fails');
   return tags;
 }
-// Tvēruma kopsavilkums (2. solis): statistikas joma; apsekojums / pārskati un periodi; aktīvie filtri; respondentu skaits
+// Tvēruma kopsavilkums (2. solis, karte "Mērķa grupa"): joma, apsekojumi, periodi, respondentu skaits (apvienojot pēc NMK – ieraksti → vēstules)
+// (kanāli un adrešu kvalitāte – kartē "Kontaktu kvalitāte" un tabulā; izņēmumi – tabulā; adrešu prioritāte – Pamatdatos)
 const CTX_SHOW = 6;
 function renderScopeCtx(){
   const sel = compose.sel, rs = state.respondents.filter(matchesFilt), ds = rs.flatMap(r => selDutiesOf(r)), rows = [];
   rows.push(kvRow('Joma', esc(AUDS[compose.aud].field)));
-  if (isReminder()) rows.push(kvRow('Atgādinājums', esc(scopeCtxTags()[0].val)));
   if (fizMode()){
     const p = repById(sel.reports[0]), per = sel.fz.period, R = ROUNDS[sel.reports[0]], rn = fzRounds(sel);
-    rows.push(kvRow('Apsekojums', p || per ? [p ? `<span title="${esc(repTitle(p))}">${esc(p.code)}</span>` : '', per ? `<span title="${esc(periodLabel(per))}">${esc(periodCode(per))}</span>` : ''].filter(Boolean).join(' · ') : '<span class="muted">—</span>'));
-    if (R) rows.push(kvRow(R.label, rn.length ? esc(`${rn.map(n => `${n}.`).join(', ')} ${R.word}`) : '—'));
+    rows.push(kvRow('Apsekojumi', p ? `<span title="${esc(repTitle(p))}">${esc(p.code)}</span>` : '<span class="muted">—</span>'));
+    rows.push(kvRow('Periodi', per ? `<span title="${esc(periodLabel(per))}">${esc(periodCode(per))}</span>${R && rn.length && rn.length < R.n ? ` <span class="muted">(${esc(`${rn.map(n => `${n}.`).join(', ')} ${R.word}`)})</span>` : ''}` : '<span class="muted">—</span>'));
   } else {
     // pārskati un periodi no atlasītajiem pienākumiem
     const reps = [...new Set(ds.map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
@@ -8148,22 +8151,10 @@ function renderScopeCtx(){
     rows.push(kvRow('Apsekojumi', reps.length ? repSumHtml(reps) : sel.reports.length ? repSumHtml(sel.reports.map(repById).filter(Boolean)) : 'Visi apsekojumi'));
     rows.push(kvRow('Periodi', kvList('pers', pers.map(periodCode), pers.map(k => `${periodCode(k)} – ${periodLabel(k)}`))));
   }
-  // aktīvie filtri (bez jomas, apsekojuma un perioda)
-  const skip = new Set(['Statistikas joma', 'Gads', 'Apsekojums']), flt = scopeCtxTags().filter(t => !t.cls && !skip.has(t.label) && t.label !== (ROUNDS[sel.reports[0]] || {}).label && !/^Visi /.test(t.val) && !(t.label === '' && (PF_KEYS.some(k => PF_LABELS[k] === t.val))));
-  const fx = compose.aud === 'fiz' ? [] : PF_KEYS.filter(k => pfOf(sel)[k] !== 'all' && pfOf(sel)[k] !== 'none').map(k => ({label:PF_LABELS[k], val:pfSpan(k, +sel.year, pfOf(sel)[k])}));
-  const fl = [...fx, ...flt.filter(t => !PF_KEYS.some(k => PF_LABELS[k] === t.label))].map(t => t.label ? `${t.label}: ${t.val}` : t.val);
-  if (fl.length) rows.push(kvRow('Filtri', kvList('flt', fl)));
-  // respondentu skaits un skaits pa kanāliem (pēc primārās adreses – pirmā pieejamā pēc adrešu prioritātes; kampaņā iekļautie)
-  const ch = {eadrese:0, epasts:0, none:0};
-  acActive().forEach(r => { const f = addrPlan(r)[0]; ch[f ? ADDR_TYPES[f.type].ch : 'none']++; });
-  const nx = Object.keys(compose.exc || {}).filter(id => rs.some(r => r.id === id)).length;
   rows.push(kvRow('Respondenti', String(rs.length), 'kv-strong'));
-  // apvienojot pēc NMK: apsekojumu respondenti (vienības) → vēstules
-  if (selOpt('mergeNmk')) rows.push(`<dt class="sr-only">Apvienot pēc NMK</dt><dd class="kv-span">Ieraksti: ${scopeResult().n} → Vēstules: ${rs.length} (apvienots pēc NMK)</dd>`);
-  rows.push(kvRow('Kanāli', kvChannels(ch)),
-    kvRow('Izņēmumi', `${nx} · <button type="button" class="link-btn kv-link" data-action="c-exc-open" aria-haspopup="dialog">${nx ? 'Skatīt / pievienot' : 'Pievienot'}</button>`));
+  // apvienojot pēc NMK: apsekojumu respondenti (ieraksti) → vēstules
+  if (selOpt('mergeNmk')) rows.push(kvRow('Ieraksti → Vēstules', `<span title="Apvienots pēc NMK">${scopeResult().n} → ${rs.length}</span>`));
   $('#c-ctx-kv').innerHTML = rows.join('');
-  $('#c-ctx-foot').innerHTML = kvFoot(ch.none);
 }
 // apsekojuma filtrs tabulā: tvērumā esošie apsekojumi ar respondentu skaitu
 function renderRepFilter(){
@@ -8310,9 +8301,10 @@ function renderComposeCount(){
   renderSelSummary();
   const st = selStats();
   const shown = compose.search || compose.repF || compose.acF ? visibleResp().length : null;
-  $('#c-count').textContent = `Iekļauti ${st.sel} no ${st.match}` + (shown != null ? ` · parādīti ${shown}` : '') +
-    (st.excl ? ` · izņemti ${st.excl}` : '') +
-    (st.noAddr ? ` · ${st.noAddr} bez atbilstošas adreses – netiks nosūtīti` : '');
+  // tabulas apakšā: iekļauti / izņemti (izņemto saraksts – logā "Izņēmumi")
+  $('#c-count').innerHTML = esc(`Iekļauti ${st.sel} no ${st.match}` + (shown != null ? ` · parādīti ${shown}` : '')) +
+    (st.excl ? ` · <button type="button" class="link-btn" data-action="c-exc-open" aria-haspopup="dialog" title="Skatīt izņemtos respondentus">izņemti ${st.excl}</button>` : '') +
+    esc(st.noAddr ? ` · ${st.noAddr} bez atbilstošas adreses – netiks nosūtīti` : '');
   // kopsavilkums: gatavi nosūtīšanai / nepieciešama uzmanība (kampaņā iekļautie)
   const sm = sharedMap(), act = acActive(), attn = act.filter(r => needsAttn(r, sm)).length, ready = act.length - attn;
   $('#c-ready').innerHTML = `<span class="rr-ok">${ICON.check}<b>${ready}</b> ${plural(ready, 'gatavs', 'gatavi')}</span><span class="rr-sep" aria-hidden="true">·</span><span class="${attn ? 'rr-attn' : 'rr-ok'}">${attn ? ICON.warn : ''}<b>${attn}</b> jāpārskata</span>`;
