@@ -603,25 +603,18 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .rv-test-l{font-weight:600;font-size:var(--fs-sm)}
 .rv-test input{width:100%;box-sizing:border-box;padding:6px 8px;font-size:var(--fs-sm)}
 .rv-test .btn{width:100%;justify-content:center}
-.rv-test-info{color:var(--text-muted);font-size:12px;line-height:1.4}
 .rv-test-done{color:var(--success);font-size:12px;font-weight:600}
-.rv-test-info:empty,.rv-test-done:empty{display:none}
+.rv-test-done:empty{display:none}
 .rv-test .err{margin:0}
 .rv-test-card[hidden]{display:none}
 /* paraugvēstuļu josla: skaitītājs, birka (kāpēc izvēlēts), saite uz citu respondentu */
-.pv-bar{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;padding:6px 14px;border-bottom:1px solid var(--border-light);font-size:var(--fs-sm)}
-.pv-bar .preview-nav .pos{font-size:var(--fs-sm);min-width:44px}
-.pv-bar .preview-nav[hidden]{display:none}
-.pv-tag{display:inline-flex;align-items:center;padding:1px 8px;border-radius:var(--radius-pill);background:var(--primary-100);color:var(--primary-darker);font-size:var(--fs-xs);font-weight:600;white-space:nowrap}
-.pv-tag[hidden],.pv-pick-name[hidden]{display:none}
-.pv-pick-name{font-weight:600}
-.pv-pick{margin-left:auto;font-size:var(--fs-xs)}
-.pv-res{list-style:none;margin:8px 0 0;padding:0;max-height:min(52vh,420px);overflow:auto;border:1px solid var(--border-light);border-radius:var(--radius-sm)}
-.pv-res li + li{border-top:1px solid var(--border-light)}
-.pv-res button{display:flex;align-items:baseline;gap:10px;width:100%;padding:7px 10px;border:0;background:none;font:inherit;text-align:left;cursor:pointer}
-.pv-res button:hover,.pv-res button:focus-visible{background:var(--hover-bg)}
-.pv-res small{color:var(--text-muted);margin-left:auto;white-space:nowrap}
-.pv-res .empty-li{padding:10px;color:var(--text-muted)}
+.pv-tag{display:inline-flex;align-items:center;padding:1px 8px;border-radius:var(--radius-pill);background:var(--primary-100);color:var(--primary-darker);font-size:var(--fs-xs);font-weight:600;white-space:nowrap;line-height:18px}
+/* priekšskatījuma galvene vienā rindā: virsraksts · E-pasts / eAdrese · Iezīmēt laukus · ‹ 1 / 3 › */
+.rv-main .preview-head{flex-wrap:nowrap;gap:10px}
+.rv-main .preview-head .toolbar{flex-wrap:nowrap;gap:10px;margin-left:auto}
+.rv-main .preview-head .r-main-h{white-space:nowrap}
+.rv-main .preview-nav .pos{font-size:var(--fs-sm);min-width:40px}
+.rv-main .preview-opts{white-space:nowrap}
 /* automātiskās pārbaudes virs priekšskatījuma */
 .pv-checks{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 20px;border-bottom:1px solid var(--border-light);font-size:var(--fs-sm)}
 .pv-checks:empty{display:none}
@@ -2151,9 +2144,14 @@ mark.v-miss,mark.v-unk{background:var(--danger-bg);color:var(--danger);border-ra
 /* Soļi "Respondenti" un "Pārbaude": abas kolonnas vienāda augstuma */
 .r-layout{align-items:stretch}
 .r-layout:not(.rv-layout) > .r-side{position:static}
-.rv-layout > .r-side{align-self:start}
-.rv-col > .rv-main{flex:1 1 auto;display:flex;flex-direction:column}
-.rv-col > .rv-main > .preview-body{flex:1 1 auto}
+.rv-layout > .r-side{align-self:start;position:static}
+/* priekšskatījuma augstumu nosaka kreisā kolonna (pārbaudes + Testa vēstule; vismaz ~480 px): kartes apakšējās malas sakrīt,
+   vēstule ritinās priekšskatījuma iekšpusē, galvene paliek augšā */
+.rv-col{position:relative;min-height:480px}
+.rv-col > .rv-main{position:absolute;inset:0;display:flex;flex-direction:column}
+.rv-col > .rv-main > :not(.preview-body){flex:none}
+.rv-col > .rv-main > .preview-body{flex:1 1 0;min-height:0;max-height:none;overflow:auto}
+@media (max-width:1000px){ .rv-col{position:static;min-height:0} .rv-col > .rv-main{position:static} .rv-col > .rv-main > .preview-body{flex:none;max-height:70vh;min-height:320px} .rv-main .preview-head{flex-wrap:wrap} .rv-main .preview-head .toolbar{flex-wrap:wrap} }
 /* labā karte "Respondenti" – tabulas karte: tabulas laukums aizpilda brīvo vietu līdz kreisās kolonnas apakšai,
    "Iekļauti N no M" un "N gatavs · N jāpārskata" – kartes apakšā; daudz rindu – ritinās laukumā (galva sticky) */
 .r-layout:not(.rv-layout) > .r-main{display:flex;flex-direction:column}
@@ -2870,10 +2868,9 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                 <h4 id="c-test-h"><span class="scope-ic" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></span>Testa vēstule</h4>
                 <div class="rv-test">
                   <label class="rv-test-l" for="c-test-to">E-pasta adrese</label>
-                  <input type="email" id="c-test-to" autocomplete="email" aria-describedby="c-test-info c-test-err">
+                  <input type="email" id="c-test-to" autocomplete="email" aria-describedby="c-test-err">
                   <span class="err" id="c-test-err" role="alert" hidden></span>
                   <button type="button" class="btn btn-secondary btn-sm" data-action="c-test-send" id="c-test-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>Nosūtīt testa vēstuli</button>
-                  <small class="rv-test-info" id="c-test-info"></small>
                   <small class="rv-test-done" id="c-test-done" aria-live="polite"></small>
                 </div>
               </section>
@@ -2887,17 +2884,12 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                       <button type="button" data-pvch="epasts">E-pasts</button><button type="button" data-pvch="eadrese">eAdrese</button>
                     </div>
                     <label class="preview-opts"><input type="checkbox" id="c-hl" checked> Iezīmēt laukus</label>
+                    <div class="preview-nav" id="c-nav">
+                      <button class="icon-btn" data-action="prev" id="c-prev" aria-label="Iepriekšējais paraugs"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
+                      <span class="pos" id="c-pos" aria-live="polite">0 / 0</span>
+                      <button class="icon-btn" data-action="next" id="c-next" aria-label="Nākamais paraugs"><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
+                    </div>
                   </div>
-                </div>
-                <div class="pv-bar" id="c-pv-bar">
-                  <div class="preview-nav" id="c-nav">
-                    <button class="icon-btn" data-action="prev" id="c-prev" aria-label="Iepriekšējais paraugs"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
-                    <span class="pos" id="c-pos" aria-live="polite">0 / 0</span>
-                    <button class="icon-btn" data-action="next" id="c-next" aria-label="Nākamais paraugs"><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
-                  </div>
-                  <span class="pv-pick-name" id="c-pv-picked" hidden></span>
-                  <span class="pv-tag" id="c-pv-tag" hidden></span>
-                  <button type="button" class="link-btn pv-pick" id="c-pv-pick" data-action="pv-pick">Skatīt citu respondentu…</button>
                 </div>
                 <div class="pv-filter" id="c-pv-filter" hidden></div>
                 <div class="preview-body hl" id="c-preview"></div>
@@ -3052,7 +3044,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 112</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 113</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -8338,41 +8330,23 @@ function pvSamples(recs = pvRecs()){
   while (out.length < Math.min(PV_SAMPLES, recs.length) && pick(() => true, '')){ const o = out[out.length - 1]; o.tag = ch(o.r) === 'eadrese' ? 'eAdrese' : 'E-pasts'; }
   return out;
 }
-// konkrēts respondents ("Skatīt citu respondentu…") – tikai šim melnrakstam
-const pvPicked = () => { const p = ui.pvPick; if (!p || p.id !== compose.draftId) return null; return recipients().find(r => r.id === p.rid) || null; };
-// pašlaik priekšskatījumā atvērtā vēstule (to sūta arī testa vēstule)
-function pvCurrent(){ const pk = pvPicked(); if (pk) return {r:pk, tag:''}; const xs = pvSamples(); return xs[Math.min(compose.index, xs.length - 1)] || null; }
-function openPvPicker(){
-  const all = recipients();
-  openModal({title:'Skatīt citu respondentu', info:'Atrodiet jebkuru kampaņas respondentu pēc nosaukuma vai NMK un apskatiet viņa vēstuli.', content:`
-    <div class="field"><label for="pv-q">Nosaukums vai NMK</label><input type="search" id="pv-q" autocomplete="off" placeholder="Piem., Kalēja vai 40000000101"></div>
-    <ul class="pv-res" id="pv-res" aria-label="Kampaņas respondenti"></ul>`, actions:[{label:'Atcelt', cls:'btn-secondary'}]});
-  const draw = () => { const q = $('#pv-q').value.trim().toLowerCase(), xs = all.filter(r => !q || String(r.name).toLowerCase().includes(q) || String(r.nmk || r.uuk || '').toLowerCase().includes(q));
-    $('#pv-res').innerHTML = xs.length ? xs.slice(0, 50).map(r => `<li><button type="button" data-pv-rid="${esc(r.id)}"><span>${esc(r.name)}</span><small>${esc(r.nmk || r.uuk || '')}</small></button></li>`).join('') + (xs.length > 50 ? `<li class="empty-li">… vēl ${xs.length - 50} – precizējiet meklēšanu</li>` : '')
-      : '<li class="empty-li">Nav atrasts neviens kampaņas respondents.</li>'; };
-  draw(); $('#pv-q').addEventListener('input', draw); $('#pv-q').focus();
-  $('#pv-res').addEventListener('click', e => { const b = e.target.closest('[data-pv-rid]'); if (!b) return; ui.pvPick = {id:compose.draftId, rid:b.dataset.pvRid}; modal.close(); renderComposePreview(); $('#c-pv-pick').focus(); });
-}
+// pašlaik priekšskatījumā atvērtais paraugs (to sūta arī testa vēstule)
+function pvCurrent(){ const xs = pvSamples(); return xs[Math.min(compose.index, xs.length - 1)] || null; }
 function renderComposePreview(){
   renderContent();
   saveDraft();
   const t = currentTemplate();
-  // priekšskatījumā – paraugvēstules (filtrs no pārbaudēm – no problemātiskajām) vai izvēlēts konkrēts respondents
-  const recs = pvRecs(), fk = pvFilterKey(), samples = pvSamples(recs), picked = pvPicked();
+  // priekšskatījumā – paraugvēstules (filtrs no pārbaudēm – no problemātiskajām)
+  const recs = pvRecs(), fk = pvFilterKey(), samples = pvSamples(recs);
   const n = samples.length;
   if (compose.index >= n) compose.index = Math.max(0, n - 1);
-  const cur = picked ? {r:picked, tag:''} : samples[compose.index] || null; ui.pvCur = cur;
+  const cur = samples[compose.index] || null; ui.pvCur = cur;
   { const box = $('#c-pv-filter'), c = fk && autoChecks().find(x => x.key === fk);
     box.hidden = !c;
     box.innerHTML = c ? `${ICON.warn}<span>Paraugi no vēstulēm ar problēmām – <b>${esc(c.label)}</b>: ${recs.length} no ${recipients().length} (${esc(c.detail)})</span>${apvLocked() ? '' : `<button type="button" class="link-btn" data-action="wiz-go" data-id="${c.step}">Labot</button>`}<button type="button" class="link-btn" data-pvf-clear>Rādīt visas vēstules</button>` : ''; }
-  $('#c-nav').hidden = !!picked;
   $('#c-pos').textContent = n ? `${compose.index + 1} / ${n}` : '0 / 0';
   $('#c-prev').disabled = compose.index <= 0;
   $('#c-next').disabled = compose.index >= n - 1;
-  { const tg = $('#c-pv-tag'), pn = $('#c-pv-picked'), lk = $('#c-pv-pick');
-    tg.hidden = !!picked || !(cur && cur.tag); tg.textContent = cur && cur.tag || ''; tg.title = cur && cur.tag ? 'Kāpēc izvēlēts šis paraugs' : '';
-    pn.hidden = !picked; pn.textContent = picked ? `Izvēlēts: ${picked.name}` : '';
-    lk.hidden = !recs.length; lk.dataset.action = picked ? 'pv-samples' : 'pv-pick'; lk.textContent = picked ? 'Atpakaļ pie paraugiem' : 'Skatīt citu respondentu…'; }
   // kanāla pārslēgs: pēc noklusējuma – kanāls, pa kuru vēstule tiks sūtīta pašreizējam respondentam
   { const r0 = cur && cur.r, f0 = r0 && finalAttempt(deliveryAttempts(r0)), ch0 = compose.pvCh || (f0 ? ADDR_TYPES[f0.type].ch : 'epasts');
     $$('#c-pvch button').forEach(b => b.setAttribute('aria-pressed', b.dataset.pvch === ch0)); }
@@ -8387,7 +8361,7 @@ function renderComposePreview(){
   } else if (!cur){
     pv.innerHTML = `<div class="empty">${ICON.users}<h3>Nav neviena adresāta</h3></div>`;
   } else {
-    const one = (r, inlineDoc) => {
+    const one = (r, inlineDoc, tag = '') => {
       const msg = buildMessage(letterTpl(t, r), r, true);
       const atts = msg.attachments.map(a => { const i = previewDocs.push(a) - 1; return {name:a.name, src:'pv:' + i}; });
       // vēstule tiek parādīta tā, kā to saņems pa paredzamo (veiksmīgo) adresi
@@ -8402,16 +8376,16 @@ function renderComposePreview(){
         (c => verNote(c, ch) + mailView({toName:r.name, toAddr, channel:ch, subjectHtml:c.subjectHtml,
         bodyHtml:c.bodyHtml, bodyTextHtml:c.bodyTextHtml, footerHtml:msg.footer, atts, main:msg.main, files:msg.files, variant:msg.variant,
         org:msg.org, lang:msg.lang, wantLang:msg.wantLang, fallback:msg.fallback,
-        extraMeta:`<dt>Versija</dt><dd><span class="pill pill-ch">${VER_LABEL[c.ver]}</span></dd><dt>Adreses</dt><dd>${attemptsHtml(tries, compose.prio, 'plan')}</dd>`}))(chMsg(msg, ch));
+        extraMeta:`${tag ? `<dt>Paraugs</dt><dd><span class="pv-tag" title="Kāpēc izvēlēts šis paraugs">${esc(tag)}</span></dd>` : ''}<dt>Versija</dt><dd><span class="pill pill-ch">${VER_LABEL[c.ver]}</span></dd><dt>Adreses</dt><dd>${attemptsHtml(tries, compose.prio, 'plan')}</dd>`}))(chMsg(msg, ch));
       if (inlineDoc && msg.attachments.length){
         html += `<div class="doc-inline"><div class="doc-inline-head"><span>${ICON.clip} Pielikums: ${esc(msg.attachments[0].name)}</span>
           <button class="btn btn-secondary btn-sm" data-action="open-doc" data-src="${atts[0].src}">${ICON.eye}Atvērt pilnā izmērā</button></div>${msg.attachments[0].html}</div>`;
       }
       return html;
     };
-    pv.innerHTML = one(cur.r, true);
+    pv.innerHTML = one(cur.r, true, cur.tag);
   }
-  renderTestInfo(cur);
+  renderTestInfo();
   renderWizard();
 }
 // Individuāli pielāgota vēstule (F5): teksts un pielikumi konkrētam adresātam
@@ -8524,16 +8498,15 @@ function renderChecks(){
   const inp = $('#c-test-to');
   if (ui.testFor !== compose.draftId){ ui.testFor = compose.draftId; inp.value = last ? last.to : TEST_ADDR; $('#c-test-err').hidden = true; inp.removeAttribute('aria-invalid'); }
   $('#c-test-btn').disabled = !(currentTemplate() && recipients().length);
-  renderTestInfo(ui.pvCur);
+  renderTestInfo();
 }
-// testa vēstules kartē: atvērtā parauga vārds un pēdējās nosūtīšanas apstiprinājums
-function renderTestInfo(cur){
+// testa vēstules kartē: pēdējās nosūtīšanas apstiprinājums
+function renderTestInfo(){
   const last = (compose.tests || [])[0];
-  $('#c-test-info').textContent = cur ? `Tiks nosūtīts atvērtais paraugs (${cur.r.name})` : '';
   $('#c-test-done').textContent = last ? `✓ Nosūtīts ${fmtShortIso(last.at)}` : '';
   $('#c-test-done').title = last ? `Uz ${last.to} · respondents ${last.resp || '—'}` : '';
 }
-// testa vēstule sev (simulācija): priekšskatījumā atvērtais paraugs (vai izvēlētais respondents) uz lietotāja adresi
+// testa vēstule sev (simulācija): priekšskatījumā atvērtais paraugs uz lietotāja adresi
 function testSend(){
   const cur = pvCurrent(), r = cur && cur.r; if (!r || !currentTemplate()) return;
   const inp = $('#c-test-to'), err = $('#c-test-err'), to = inp.value.trim();
@@ -10680,8 +10653,6 @@ const actions = {
   },
   'prev': () => { compose.index = Math.max(0, compose.index - 1); renderComposePreview(); },
   'next': () => { compose.index++; renderComposePreview(); },
-  'pv-pick': () => openPvPicker(),
-  'pv-samples': () => { ui.pvPick = null; renderComposePreview(); $('#c-pv-pick').focus(); },
   'send': () => send(),
   'c-test-send': () => testSend(),
   'apv-approve': () => apvApprove(),
@@ -11595,7 +11566,7 @@ document.addEventListener('click', e => {
   if (!b || !b.closest('#wiz')) return;
   const k = b.dataset.pvf || '';
   ui.pvF = k && pvFilterKey() !== k ? {id:compose.draftId, key:k} : null;
-  compose.index = 0; ui.pvPick = null; renderComposePreview();
+  compose.index = 0; renderComposePreview();
   const el = k ? $(`#c-checks [data-pvf="${k}"]`) : $('#c-checks button') ; if (el) el.focus();
 });
 $('#c-test-to').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); testSend(); } });
