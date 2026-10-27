@@ -1105,6 +1105,21 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .rcr-dl{margin-top:6px}
 .wl-cols{margin-top:20px}
 .kpis.k5{grid-template-columns:repeat(5,minmax(0,1fr))}
+/* Nepiegāžu apstrāde */
+.ndr-base{padding:12px 16px;margin-bottom:12px}
+.ndr-base-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-bottom:8px}
+.ndr-base-h h3{font-size:var(--fs-sm);margin:0}
+.ndr-base-h .muted{font-size:12px}
+.ndr-base-f{display:flex;flex-wrap:wrap;gap:8px 16px}
+.ndr-base-f label{display:flex;flex-direction:column;gap:3px;font-size:var(--fs-xs);color:var(--text-muted)}
+.ndr-base-f input,.ndr-base-f select{width:150px;height:32px;padding:4px 8px;font-size:var(--fs-sm)}
+.ndr-kpis .kpi .n{font-size:24px}
+.kpi.is-save .n{color:var(--success)}
+.kpi.is-loss .n{color:var(--danger)}
+.ndr-cmp td .d-good{color:var(--success);font-weight:600}
+.ndr-cmp td .d-bad{color:var(--danger);font-weight:600}
+.ndr-hbar{grid-template-columns:minmax(120px,48%) minmax(0,1fr) 92px;cursor:pointer}
+.ndr-hbar:hover .lbl{color:var(--primary-dark)}
 .kpis.k4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .kpis.k3{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:700px){.kpis.k4{grid-template-columns:repeat(2,minmax(0,1fr))} .kpis.k3{grid-template-columns:minmax(0,1fr)}}
@@ -3272,7 +3287,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 126</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 127</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4947,6 +4962,7 @@ const AL_T = {
   tpl:{l:'Izvēlējās veidni', c:'saturs', i:'doc'}, edit:{l:'Mainīja saturu', c:'saturs', i:'docEdit'}, save:{l:'Saglabāja melnrakstu', c:'saturs', i:'save'},
   test:{l:'Nosūtīja testa vēstuli', c:'saturs', i:'mail'},
   apvSub:{l:'Nodeva saskaņošanai', c:'saskan', i:'handoff'}, approve:{l:'Saskaņoja', c:'saskan', i:'check', k:'ok'}, return:{l:'Atgrieza labošanai', c:'saskan', i:'undo', k:'warn'},
+  ndrFix:{l:'Apstrādāja nepiegādātu vēstuli', c:'nos', i:'check'},
   apvFwd:{l:'Pārsūtīja saskaņošanu', c:'saskan', i:'handoff'}, apvRemind:{l:'Nosūtīja atgādinājumu saskaņotājiem', c:'saskan', i:'bell'}, apvSubst:{l:'Nodots aizvietotājam', c:'saskan', i:'users'},
  
   plan:{l:'Ieplānoja nosūtīšanu', c:'nos', i:'calendar'}, unplan:{l:'Atcēla ieplānošanu', c:'nos', i:'calX', k:'warn'}, send:{l:'Nosūtīja', c:'nos', i:'send', k:'pri'},
@@ -9593,7 +9609,7 @@ function doSend(meta = {}){
     const force = fq && first ? fq[ADDR_TYPES[first.type].ch].shift() : undefined;
     const attempts = deliveryAttempts(r, compose.prio, `${batch}|${r.id}|${now}`, force), fin = finalAttempt(attempts);
     stampAttempts(attempts, now);
-    const rec = {id:'s' + uid(), batch, seed:!!meta.seed, createdBy:meta.seed ? '' : CURRENT_USER, createdAt:meta.seed ? '' : (compose.createdAt || now), sessionName:compose.name, sessionDesc:compose.desc || '', campBase:cb, sessionKind:sessKindKey(), plannedFor:meta.plannedFor || '', contentSource:compose.content.source, sentAt:now,
+    const rec = {id:'s' + uid(), batch, seed:!!meta.seed, createdBy:meta.seed ? '' : CURRENT_USER, createdAt:meta.seed ? '' : (compose.createdAt || now), sessionName:compose.name, sessionDesc:compose.desc || '', campBase:cb, aiFix:!!(compose.addrMi || {})[`${r.id}|${fin.type}`], sessionKind:sessKindKey(), plannedFor:meta.plannedFor || '', contentSource:compose.content.source, sentAt:now,
       templateId:compose.content.templateId || '', templateName:contentName(t), kind:t.kind, respondentId:r.id,
       recipient:r.name, address:fin.address, addrType:fin.type, channel:ADDR_TYPES[fin.type].ch, prio:compose.prio.filter(Boolean), attempts, docNr:compose.f.docNr,
       duties:msgDuties(r).map(d => d.id),
@@ -9737,6 +9753,21 @@ function seedHistoryAll(){
   state.sent.sort((a, b) => String(b.sentAt).localeCompare(String(a.sentAt)));
   ui.newIds = new Set();
   assignCampNames(); state.campNameV = 2;
+  seedNdrWork();
+}
+// Testa dati (fiktīvi): nepiegāžu manuālā apstrāde pēdējiem 12 mēnešiem – 2–15 min aktīva darba gadījumam; pēdējo 3 dienu gadījumi vēl gaida
+const NDR_HOW = ['Adrese izlabota un vēstule nosūtīta', 'Nodots kontaktu pārbaudei', 'Kontakts nav atrodams', 'Atzīmēta kā izskatīta'];
+function seedNdrWork(){
+  state.ndrWork = state.ndrWork || {};
+  const lim = Date.now() - 3 * 864e5, from = Date.now() - 366 * 864e5;
+  state.sent.filter(x => x.seed && isNondeliv(x) && isManualCase(x) && !state.ndrWork[x.id]).forEach(x => {
+    const t = Date.parse(x.sentAt); if (t > lim || t < from) return;
+    const h = hashRoll('ndr|' + x.id), mins = 2 + h % 14 + (ruleOf(ndrReasonOf(x)).type === 'manual' ? 4 : 0), at = new Date(Math.min(Date.now() - 864e5, t + (1 + h % 4) * 864e5)).toISOString();
+    const how = NDR_HOW[h % NDR_HOW.length];
+    state.ndrWork[x.id] = {active:Math.min(15, mins) * 60000 + (h % 50) * 1000, sessions:1 + h % 2, startedAt:at, resolvedAt:at, how, by:AL_USERS[h % AL_USERS.length], seed:true};
+    if (x.status === 'manuali' && !x.reviewed) x.reviewed = {by:state.ndrWork[x.id].by, at, how};
+  });
+  state.ndrSeedV = 1;
 }
 // Agrāk izveidotā testa vēsture tiek aizstāta ar jauno (ja tajā ir tikai testa ieraksti)
 if (state.histSeeded && state.histVer !== 9 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
@@ -10355,7 +10386,8 @@ function histDetail(x){
         <span class="err" id="mr-err-${x.id}" hidden></span>
         <p class="hint" style="margin:2px 0 0">Adrese tiks saglabāta kā respondenta E-pasts 3.</p>
         ${x.reviewed ? '' : `<div class="mb-actions"><button type="button" class="btn btn-secondary btn-sm" data-action="hist-reviewed" data-id="${x.id}">Atzīmēt kā izskatītu</button>
-          <button type="button" class="btn btn-secondary btn-sm" data-action="hist-handover" data-id="${x.id}">Nodot kontaktu aktualizēšanai</button></div>`}</div>` : ''}
+          <button type="button" class="btn btn-secondary btn-sm" data-action="hist-handover" data-id="${x.id}">Nodot kontaktu aktualizēšanai</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-action="hist-notfound" data-id="${x.id}">Kontakts nav atrodams</button></div>`}</div>` : ''}
       ${x.status === 'admin' ? `<div class="admin-box"><h4>Paziņojums administratoram${tip('Sūtītāja puses kļūda (bloķēšana, noraidījums): adrese netiek mainīta, vēstule netiek sūtīta atkārtoti.')}</h4>
         ${x.adminResolved ? `<p class="hint">Atrisināta: ${esc(x.adminResolved.by)}, ${esc(fmtDateTime(x.adminResolved.at))}.</p>`
           : `<p class="hint">${esc((ndrsOf(x).filter(n => ruleOf(n.rule).type === 'sender').pop() || {}).text || '')}</p><button type="button" class="btn btn-secondary btn-sm" data-action="hist-resolve" data-id="${x.id}">Atzīmēt kā atrisinātu</button>`}</div>` : ''}
@@ -10731,6 +10763,17 @@ function deleteRecords(ids){
   save(); renderSent(); renderCounts(); refreshCard();
 }
 // Manuāla atkārtota nosūtīšana uz jaunu e-pastu (F10)
+// Nepiegādes apstrāde: atvērta "Jārisina" vēstule – laika uzskaites mērķis; atrisināšana – ieraksts apstrādē un Darbību vēsturē
+function ndrTrack(id){
+  const x = state.sent.find(y => y.id === id);
+  if (ui.histRow.has(id) && x && isTodo(x)) ui.ndrCur = id; else if (ui.ndrCur === id && !ui.histRow.has(id)) ui.ndrCur = '';
+}
+function ndrResolve(x, how){
+  const w = (state.ndrWork = state.ndrWork || {})[x.id] || (state.ndrWork[x.id] = {active:0, sessions:0, startedAt:new Date().toISOString()});
+  if (w.resolvedAt) { w.how = how; return; }
+  Object.assign(w, {resolvedAt:new Date().toISOString(), how, by:CURRENT_USER});
+  alAdd('sent:' + x.batch, alE('ndrFix', CURRENT_USER, `${x.recipient}: ${how}`));
+}
 function resendLetter(id){
   const x = state.sent.find(y => y.id === id), inp = $('#mr-' + id), e = $('#mr-err-' + id);
   if (!x || !inp) return;
@@ -10747,6 +10790,7 @@ function resendLetter(id){
   x.manual = x.manual || [];
   const ok = attKind(added[0]) === 'ok';
   x.manual.push({at:new Date(now).toISOString(), by:CURRENT_USER, action:'resend', email:val, ok});
+  ndrResolve(x, val !== x.address ? 'Adrese izlabota un vēstule nosūtīta' : 'Vēstule nosūtīta atkārtoti');
   finalizeStatus(x);
   save(); renderSent(); refreshCard();
   toast(ok ? `Vēstule nosūtīta uz ${val}.` : `${ruleOf(added[0].rule).reason}: ${added[0].note}.`, !ok && attKind(added[0]) !== 'temp');
@@ -10925,15 +10969,136 @@ function tplTimeView(){
     <p class="hint">Aktīvais laiks redaktorā, summēts pa sesijām; pēc 3 min bez aktivitātes laiks netiek skaitīts. Rādīts kopsavilkums, nevis atsevišķu darbinieku rezultāti.</p>`,
     csv:[head, ...rows]};
 }
+// ===== Patērētais laiks → Nepiegāžu apstrāde: cik darba laika patērē nepiegādāto vēstuļu apstrāde un cik to ietaupa jaunais risinājums =====
+// nepiegāde – vēstule ar neveiksmīgu piegādes mēģinājumu (NDR / DIV kļūda), nederīga adrese izlaista pirms sūtīšanas vai pieņemts MI labojums;
+// manuāls gadījums – nonāca pie darbinieka ("Jārisina" vai apstrādāts); pārējās – atrisinātas automātiski (nākamā adrese, atkārtots mēģinājums u. c.)
+const NDR_FAIL_T = ['perm', 'config', 'temp', 'content', 'sender', 'manual'];
+const ndrFails = x => ndrsOf(x).filter(n => NDR_FAIL_T.includes(ruleOf(n.rule).type));
+const isNondeliv = x => ndrFails(x).length > 0 || (x.attempts || []).some(a => attKind(a) === 'skip') || !!x.aiFix;
+const ndrWorkOf = id => (state.ndrWork || {})[id];
+const isManualCase = x => isTodo(x) || !!x.reviewed || !!x.adminResolved || !!ndrWorkOf(x.id);
+// iemesls – pēdējā neveiksmīgā paziņojuma klasifikācija ("Piegādes statusi un kļūdas")
+const ndrReasonOf = x => { const f = ndrFails(x); return f.length ? f[f.length - 1].rule : ''; };
+// bāzes līnija (esošais process) – aptuvenas vērtības no darbinieku aptaujas; saglabājas pārlūkā
+const NDR_CYCLES = {men:['mēnesis', 1], cet:['ceturksnis', 3], gads:['gads', 12]};
+const NDR_BASE_DEF = {n:400, share:100, min:10, cycle:'cet'};
+function ndrBase(){ try { return {...NDR_BASE_DEF, ...JSON.parse(localStorage.getItem('csp-ndr-base') || '{}')}; } catch (e) { return {...NDR_BASE_DEF}; } }
+function ndrBaseSet(o){ try { localStorage.setItem('csp-ndr-base', JSON.stringify({...ndrBase(), ...o})); } catch (e) {} }
+const fmtN1 = v => (Math.round(v * 10) / 10).toLocaleString('lv-LV', {maximumFractionDigits:1});
+ui.ndrGran = 'm';
+function ndrData(xs){
+  const nd = xs.filter(isNondeliv), man = nd.filter(isManualCase), auto = nd.filter(x => !isManualCase(x));
+  const ms = man.map(x => (ndrWorkOf(x.id) || {}).active || 0), worked = ms.filter(v => v > 0);
+  const avgMin = worked.length ? worked.reduce((a, b) => a + b, 0) / worked.length / 60000 : 0, totMin = ms.reduce((a, b) => a + b, 0) / 60000;
+  return {nd, man, auto, worked:worked.length, avgMin, totMin};
+}
+function ndrView(xs){
+  const B = ndrBase(), d = ndrData(xs), N = d.nd.length, M = d.man.length, A = d.auto.length, [cycL, cycM] = NDR_CYCLES[B.cycle] || NDR_CYCLES.cet;
+  // ietaupījums: bāzes līnija tādam pašam nepiegāžu skaitam pret faktisko manuālo laiku
+  const baseMin = N * B.share / 100 * B.min, saveMin = baseMin - d.totMin, saveP = baseMin ? Math.round(saveMin / baseMin * 100) : 0;
+  const bs = monthBuckets(xs), nCyc = Math.max(1, bs.length / cycM);
+  const kpi = (n, l, sub, o = {}) => o.drill ? `<button type="button" class="card kpi rk-kpi${o.cls ? ' ' + o.cls : ''}"${drillAttr(o.drill).replace(' role="button"', '')} title="${esc(o.title || '')}"><span class="go" aria-hidden="true">Atvērt →</span><span class="n">${n}</span><span class="l">${esc(l)}</span>${sub ? `<span class="sub">${esc(sub)}</span>` : ''}</button>`
+    : `<div class="card kpi${o.cls ? ' ' + o.cls : ''}"${o.title ? ` title="${esc(o.title)}"` : ''}><div class="n">${n}</div><div class="l">${esc(l)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}</div>`;
+  const baseCard = `<div class="card ndr-base"><div class="ndr-base-h"><h3>Bāzes līnija (esošais process)</h3><span class="muted">Aptuvenas vērtības no darbinieku aptaujas – var labot.</span></div>
+    <div class="ndr-base-f">
+      <label><span>Nepiegādes vienā ciklā</span><input type="number" min="0" step="1" data-ndrb="n" value="${B.n}"></label>
+      <label><span>Daļa, kas nonāk pie darbinieka, %</span><input type="number" min="0" max="100" step="1" data-ndrb="share" value="${B.share}"></label>
+      <label><span>Vidējais laiks vienam gadījumam, min</span><input type="number" min="0" step="0.5" data-ndrb="min" value="${B.min}"></label>
+      <label><span>Cikls</span><select data-ndrb="cycle">${Object.entries(NDR_CYCLES).map(([k, [l]]) => `<option value="${k}" ${B.cycle === k ? 'selected' : ''}>${l}</option>`).join('')}</select></label></div></div>`;
+  const kpis = `<div class="kpis k6 ndr-kpis">
+      ${kpi(N, 'Nepiegādes kopā', 'neveiksmīga piegāde vai novērsta pirms sūtīšanas')}
+      ${kpi(`${pct(A, N)}%`, 'Atrisinātas automātiski', `${A} – nākamā adrese, atkārtots mēģinājums, izlaista nederīgā adrese, MI labojums`)}
+      ${kpi(`${pct(M, N)}%`, 'Nonākušas pie darbinieka', `${M} ${plural(M, 'gadījums', 'gadījumi')}`, {drill:{g:'todo'}, title:'Atvērt Sūtīšanas vēsturi ar “Jārisina” un šiem filtriem'})}
+      ${kpi(d.worked ? `${fmtN1(d.avgMin)} min` : '—', 'Vidējais laiks vienam manuālajam gadījumam', `${d.worked} ${plural(d.worked, 'apstrādāts gadījums', 'apstrādāti gadījumi')}`)}
+      ${kpi(`${fmtN1(d.totMin / 60)} h`, 'Patērētais laiks kopā', 'aktīvais apstrādes laiks')}
+      ${kpi(`${fmtN1(saveMin / 60)} h`, 'Ietaupījums pret bāzes līniju', `${saveP}% · bāzes līnija ${fmtN1(baseMin / 60)} h ${N} nepiegādēm`, {cls:saveMin >= 0 ? 'is-save' : 'is-loss', title:'(bāzes gadījumi × bāzes min) − (faktiskie manuālie gadījumi × faktiskās vid. min); bāzes gadījumi = nepiegādes × daļa, kas nonāk pie darbinieka'})}</div>`;
+  // Pirms / Tagad (vienam ciklam)
+  const nowN = N / nCyc, nowM = M / nCyc, nowH = d.totMin / 60 / nCyc, baseM = B.n * B.share / 100, baseH = baseM * B.min / 60;
+  const dl = (a, b, good, unit = '') => { const v = Math.round((a - b) * 10) / 10, cls = !v ? '' : (v < 0) === good ? 'd-good' : 'd-bad'; return {html:`<span class="${cls}">${v > 0 ? '+' : v < 0 ? '−' : ''}${fmtN1(Math.abs(v))}${unit}</span>`, text:`${v > 0 ? '+' : v < 0 ? '-' : ''}${fmtN1(Math.abs(v))}${unit}`}; };
+  const cmp = [['Nepiegādes ciklā', fmtN1(B.n), fmtN1(nowN), dl(nowN, B.n, true)], ['Līdz darbiniekam', fmtN1(baseM), fmtN1(nowM), dl(nowM, baseM, true)],
+    ['Vid. laiks vienam, min', fmtN1(B.min), d.worked ? fmtN1(d.avgMin) : '—', d.worked ? dl(d.avgMin, B.min, true) : '—'], ['Kopā stundas ciklā', fmtN1(baseH), fmtN1(nowH), dl(nowH, baseH, true, ' h')]];
+  const cmpCard = `<div class="card viz-card tc-natural ndr-cmp"><h3>Pirms / Tagad${tip(`Viens cikls – ${cycL}. “Tagad” – atlasītā perioda vidējais vienā ciklā (${fmtN1(nCyc)} ${plural(Math.round(nCyc), 'cikls', 'cikli')}).`)}</h3>
+    ${tableHtml(['', 'Bāzes līnija', 'Tagad', 'Starpība'], cmp)}</div>`;
+  // pa mēnešiem vai cikliem: atrisinātas automātiski / manuāli (sakrauti) + patērētās stundas (līnija)
+  let bk = bs.map(b => { const g = d.nd.filter(x => String(x.sentAt).slice(0, 7) === b.key), m = g.filter(isManualCase);
+    return {...b, auto:g.length - m.length, man:m.length, h:m.reduce((a, x) => a + ((ndrWorkOf(x.id) || {}).active || 0), 0) / 3600000}; });
+  if (ui.ndrGran === 'c' && cycM > 1){
+    const gr = groupBy(bk, b => { const [y, mo] = b.key.split('-').map(Number); return B.cycle === 'gads' ? `${y}` : `${y}C${Math.floor((mo - 1) / 3) + 1}`; });
+    bk = [...gr].map(([k, g]) => ({key:k, label:B.cycle === 'gads' ? `${k}. gads` : `${k.slice(0, 4)}. g. ${k.slice(5)}. ceturksnis`, short:B.cycle === 'gads' ? k : `${k.slice(4)} ${k.slice(2, 4)}`,
+      partial:g[g.length - 1].partial || g.length < cycM, end:g[g.length - 1].end, from:g[0].from, to:g[g.length - 1].to, auto:g.reduce((a, b) => a + b.auto, 0), man:g.reduce((a, b) => a + b.man, 0), h:g.reduce((a, b) => a + b.h, 0)}));
+  }
+  const part = bk.length && bk[bk.length - 1].partial;
+  const chartCard = `<div class="card viz-card" style="margin-bottom:16px"><div class="rk-chart-h"><h3>Nepiegādes un patērētais laiks ${ui.ndrGran === 'c' && cycM > 1 ? 'pa cikliem' : 'pa mēnešiem'}${tip('Stabiņi – nepiegādes (atrisinātas automātiski / manuāli), līnija – manuālai apstrādei patērētās stundas (labā ass). Periods – pēc vēstules nosūtīšanas datuma.')}</h3>
+      <span class="seg" role="group" aria-label="Grupēt"><button type="button" data-ndr-gran="m" aria-pressed="${ui.ndrGran !== 'c' || cycM === 1}">Mēneši</button><button type="button" data-ndr-gran="c" aria-pressed="${ui.ndrGran === 'c' && cycM > 1}" ${cycM === 1 ? 'disabled title="Cikls – mēnesis"' : ''}>Cikli (${cycL})</button></span></div>
+    ${bk.length ? ndrChart(bk) : '<p class="hint">Nav datu.</p>'}
+    ${part ? `<p class="rk-note">Raustītā līnija – nepabeigts periods (dati līdz ${esc(bk[bk.length - 1].end)}).</p>` : ''}
+    <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Periods', 'Atrisinātas automātiski', 'Manuāli', 'Patērētās stundas'], bk.map(b => [b.label, b.auto, b.man, fmtN1(b.h)]))}</details></div>`;
+  // pa nepiegādes iemesliem: manuālo gadījumu skaits, vidējais un kopējais laiks
+  const byR = [...groupBy(d.man, ndrReasonOf)].map(([k, g]) => { const t = g.map(x => (ndrWorkOf(x.id) || {}).active || 0), w = t.filter(v => v > 0), tot = t.reduce((a, b) => a + b, 0) / 60000;
+    const r = k ? ruleOf(k) : null; return {k, label:r ? `${CHANNELS[r.ch]}: ${r.reason}` : 'Bez NDR (sūtītāja puse / cits)', n:g.length, avg:w.length ? tot / w.length : 0, tot}; }).sort((a, b) => b.tot - a.tot || b.n - a.n);
+  const mx = Math.max(1, ...byR.map(r => r.tot));
+  const reasonCard = `<div class="card viz-card ndr-reasons"><h3>Manuālie gadījumi pēc nepiegādes iemesla${tip('Iemesls – pēdējā neveiksmīgā paziņojuma klasifikācija (“Piegādes statusi un kļūdas”). Josla – patērētais laiks kopā. Uzklikšķinot – atver Sūtīšanas vēsturi (“Jārisina”, šis iemesls).')}</h3>
+    ${byR.length ? byR.map(r => `<div class="hbar ndr-hbar"${r.k ? drillAttr({g:'todo', f:{rule:r.k}}) + ` aria-label="${esc(`${r.label}: ${r.n} gadījumi, vidēji ${fmtN1(r.avg)} min – atvērt Sūtīšanas vēsturē`)}"` : ''}><span class="lbl" title="${esc(r.label)}">${esc(r.label)}</span>
+      <span class="track"><span class="seg" tabindex="0" style="width:${r.tot / mx * 100}%;background:var(--s2)" data-tip="${esc(`${r.label}|${r.n} ${plural(r.n, 'gadījums', 'gadījumi')} · vidēji ${fmtN1(r.avg)} min · kopā ${fmtN1(r.tot / 60)} h`)}"></span></span>
+      <span class="val">${r.n} · ${r.avg ? `${fmtN1(r.avg)} min` : '—'}</span></div>`).join('') : '<p class="hint">Nav manuālu gadījumu.</p>'}
+    <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Iemesls', 'Gadījumi', 'Vidēji, min', 'Kopā, h'], byR.map(r => [r.label, r.n, fmtN1(r.avg), fmtN1(r.tot / 60)]))}</details></div>`;
+  const sheets = [
+    {name:'Nepiegāžu apstrāde – rādītāji', rows:[['Rādītājs', 'Vērtība'], ['Nepiegādes kopā', N], ['Atrisinātas automātiski', A], ['Atrisinātas automātiski, %', pct(A, N)], ['Nonākušas pie darbinieka', M], ['Nonākušas pie darbinieka, %', pct(M, N)],
+      ['Vidējais laiks vienam manuālajam gadījumam, min', Math.round(d.avgMin * 10) / 10], ['Patērētais laiks kopā, h', Math.round(d.totMin / 6) / 10], ['Bāzes līnija tādam pašam nepiegāžu skaitam, h', Math.round(baseMin / 6) / 10],
+      ['Ietaupījums, h', Math.round(saveMin / 6) / 10], ['Ietaupījums, %', saveP], ['Bāzes līnija: nepiegādes ciklā', B.n], ['Bāzes līnija: daļa līdz darbiniekam, %', B.share], ['Bāzes līnija: vid. laiks, min', B.min], ['Cikls', cycL]]},
+    {name:'Pirms – Tagad', rows:[['Rādītājs', 'Bāzes līnija', 'Tagad', 'Starpība'], ...cmp.map(r => r.map(c => c && typeof c === 'object' ? c.text : c))]},
+    {name:'Pa periodiem', rows:[['Periods', 'Atrisinātas automātiski', 'Manuāli', 'Patērētās stundas'], ...bk.map(b => [b.label, b.auto, b.man, Math.round(b.h * 10) / 10])]},
+    {name:'Pa iemesliem', rows:[['Iemesls', 'Gadījumi', 'Vidēji, min', 'Kopā, h'], ...byR.map(r => [r.label, r.n, Math.round(r.avg * 10) / 10, Math.round(r.tot / 6) / 10])]},
+  ];
+  return {html:`${baseCard}${kpis}${chartCard}<div class="viz-grid">${cmpCard}${reasonCard}</div>
+    <p class="hint">Aktīvais apstrādes laiks tiek uzskaitīts automātiski (vēstules detaļas vai respondenta kartīte Sūtīšanas vēsturē ar statusu grupā “Jārisina”), un tas netiek rādīts darbiniekam. Rādīts kopsavilkums, nevis atsevišķu darbinieku rezultāti.</p>`, sheets};
+}
+// sakrautie stabiņi (automātiski / manuāli) + līnija (stundas, labā ass); nepabeigtais periods – raustīta līnija
+function ndrChart(bk){
+  const W = Math.max(300, Math.round((($('#rep-body') || {}).clientWidth || 720) - 40)), H = 262, L = 38, R = 52, T = 14, Bm = 44, iw = W - L - R, ih = H - T - Bm;
+  const mx = Math.max(1, ...bk.map(b => b.auto + b.man)), step = mx <= 5 ? 1 : mx <= 20 ? 5 : mx <= 50 ? 10 : mx <= 200 ? 25 : 100, top = Math.ceil(mx / step) * step;
+  const hm = Math.max(0.1, ...bk.map(b => b.h)), hTop = hm <= 1 ? 1 : Math.ceil(hm);
+  const bw = iw / bk.length, x = i => L + bw * i + bw / 2, y = v => T + ih - v / top * ih, yh = v => T + ih - v / hTop * ih, cw = Math.max(4, Math.min(34, bw * .6));
+  const ticks = []; for (let v = 0; v <= top; v += step) ticks.push(v);
+  const every = Math.ceil(bk.length / Math.max(2, Math.floor(iw / 58))), last = bk.length - 1, part = bk[last].partial;
+  const pt = i => `${x(i).toFixed(1)},${yh(bk[i].h).toFixed(1)}`;
+  const solid = part ? bk.slice(0, -1) : bk;
+  const line = (solid.length > 1 ? `<path d="M${solid.map((b, i) => pt(i)).join(' L')}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round"/>` : '')
+    + (part && bk.length > 1 ? `<path d="M${pt(last - 1)} L${pt(last)}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-dasharray="5 4"/>` : '')
+    + bk.map((b, i) => `<circle cx="${x(i)}" cy="${yh(b.h)}" r="3" fill="var(--s1)"/>`).join('');
+  return legendHtml([[, 'Atrisinātas automātiski', 's3'], [, 'Manuāli', 's2'], [, 'Patērētās stundas (labā ass)', 's1']]) + `<svg class="line-chart ndr-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Nepiegādes (automātiski / manuāli) un patērētās stundas">
+    ${ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${v ? 'var(--grid)' : 'var(--axis)'}" stroke-width="1"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`).join('')}
+    ${[0, .5, 1].map(f => `<text x="${W - R + 6}" y="${yh(hTop * f) + 4}" text-anchor="start">${fmtN1(hTop * f)} h</text>`).join('')}
+    ${bk.map((b, i) => `<rect x="${x(i) - cw / 2}" y="${y(b.auto)}" width="${cw}" height="${Math.max(0, T + ih - y(b.auto))}" fill="var(--s3)"${b.partial ? ' opacity=".6"' : ''}/>
+      <rect x="${x(i) - cw / 2}" y="${y(b.auto + b.man)}" width="${cw}" height="${Math.max(0, y(b.auto) - y(b.auto + b.man))}" fill="var(--s2)"${b.partial ? ' opacity=".6"' : ''}/>`).join('')}
+    ${line}
+    ${bk.map((b, i) => (last - i) % every === 0 ? `<text x="${x(i)}" y="${H - 24}" text-anchor="middle">${esc(b.short)}</text>` : '').join('')}
+    ${part ? `<text class="lbl-part" x="${x(last)}" y="${H - 8}" text-anchor="middle">līdz ${esc(bk[last].end)}</text>` : ''}
+    ${bk.map((b, i) => `<g class="xh"><rect x="${x(i) - bw / 2}" y="${T}" width="${bw}" height="${ih}" tabindex="0" data-tip="${esc(`${b.label}|Automātiski ${b.auto} · Manuāli ${b.man} · ${fmtN1(b.h)} h`)}"/></g>`).join('')}
+  </svg>`;
+}
+// MI kopsavilkums (maks. 3 punkti)
+function ndrAi(xs){
+  const B = ndrBase(), d = ndrData(xs), N = d.nd.length, M = d.man.length, baseMin = N * B.share / 100 * B.min;
+  if (!N) return [{t:'Atlasītajā periodā nepiegāžu nav.'}];
+  const per = {month:'Šajā mēnesī', '3m':'Pēdējos 3 mēnešos', year:'Šajā gadā', '12m':'Pēdējos 12 mēnešos'}[ui.rep.quick] || 'Atlasītajā periodā';
+  const out = [{t:`${per} ${pct(N - M, N)}% nepiegāžu atrisinātas automātiski; manuālai apstrādei patērētas ${fmtN1(d.totMin / 60)} h (bāzes līnija – ${fmtN1(baseMin / 60)} h).`}];
+  const byR = [...groupBy(d.man, ndrReasonOf)].map(([k, g]) => [k, g.reduce((a, x) => a + ((ndrWorkOf(x.id) || {}).active || 0), 0)]).filter(([k]) => k).sort((a, b) => b[1] - a[1]);
+  if (byR.length) out.push({t:`Visvairāk laika prasa “${ruleOf(byR[0][0]).reason}” (${fmtN1(byR[0][1] / 3600000)} h).`, go:{g:'todo', f:{rule:byR[0][0]}}});
+  const open = d.man.filter(x => isTodo(x) && !(ndrWorkOf(x.id) || {}).resolvedAt).length;
+  if (open) out.push({t:`${open} ${plural(open, 'gadījums vēl gaida', 'gadījumi vēl gaida')} apstrādi (“Jārisina”).`, go:{g:'todo'}});
+  return out.slice(0, 3);
+}
 // pārslēgs "Kampaņas | Veidnes" (un daļā "Veidnes" – "Visas · Veidnes · Sagataves")
 function renderTimePart(){
   const box = $('#rep-part'), on = ui.repSub === 'laiks', t = ui.repTime; box.hidden = !on; if (!on){ box.innerHTML = ''; return; }
   const b = (attr, k, l, cur) => `<button type="button" ${attr}="${k}" aria-pressed="${cur === k}">${esc(l)}</button>`;
-  box.innerHTML = `<div class="tp-bar"><span class="seg tp-seg" role="group" aria-label="Atskaites daļa">${b('data-tpart', 'camp', 'Kampaņas', t.part)}${b('data-tpart', 'tpl', 'Veidnes', t.part)}</span>
+  box.innerHTML = `<div class="tp-bar"><span class="seg tp-seg" role="group" aria-label="Atskaites daļa">${b('data-tpart', 'camp', 'Kampaņas', t.part)}${b('data-tpart', 'tpl', 'Veidnes', t.part)}${b('data-tpart', 'ndr', 'Nepiegāžu apstrāde', t.part)}</span>
     ${t.part === 'tpl' ? `<span class="tp-obj"><span class="tp-obj-l" id="tp-obj-l">Objekti:</span><span class="seg" role="group" aria-labelledby="tp-obj-l">${b('data-tpobj', '', 'Veidnes un sagataves', t.obj)}${b('data-tpobj', 'tpl', 'Veidnes', t.obj)}${b('data-tpobj', 'sag', 'Sagataves', t.obj)}</span></span>` : ''}</div>`;
 }
 function reportView(xs){
   const sub = ui.repSub;
+  if (sub === 'laiks' && ui.repTime.part === 'ndr') return xs.length ? ndrView(xs) : {empty:true};
   if (sub === 'laiks'){ const d = timeData(); return (ui.repTime.part === 'tpl' ? d.tpls.length : d.camps.length) ? timeView() : {empty:true}; }
   if (!xs.length) return {empty:true};
   if (sub === 'reakcija') return reactReportView();
@@ -11175,6 +11340,7 @@ function reactReportView(){
 }
 // MI kopsavilkums (simulēts teksts no atlasītajiem datiem)
 function aiSummary(xs){
+  if (ui.repSub === 'laiks' && ui.repTime.part === 'ndr') return ndrAi(xs);
   if (ui.repSub === 'laiks') return aiSummaryTime().slice(0, 3).map(t => ({t}));
   if (ui.repSub === 'kopsavilkums') return aiSummaryMain(xs);
   if (ui.repSub === 'reakcija') return aiSummaryReact(xs);
@@ -11260,6 +11426,11 @@ function renderRepFilters(){
   $('#rep-chipbar').hidden = !chips.length;
   $('#rep-chips').innerHTML = chips.map(([k, l]) => `<span class="ms-tag"><span>${esc(l)}</span><button type="button" data-rchip="${k}" aria-label="Noņemt filtru: ${esc(l)}">×</button></span>`).join('');
 }
+// Nepiegāžu apstrāde: bāzes līnijas lauki un grupēšana (mēneši / cikli)
+document.addEventListener('change', e => { const el = e.target.closest && e.target.closest('[data-ndrb]'); if (!el) return;
+  const k = el.dataset.ndrb, v = k === 'cycle' ? el.value : Math.max(0, k === 'share' ? Math.min(100, +el.value || 0) : +el.value || 0);
+  ndrBaseSet({[k]:v}); renderReports(); const n = $(`#rep-body [data-ndrb="${k}"]`); if (n) n.focus(); });
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-ndr-gran]'); if (!b || b.disabled) return; ui.ndrGran = b.dataset.ndrGran; renderReports(); const n = $(`#rep-body [data-ndr-gran="${ui.ndrGran}"]`); if (n) n.focus(); });
 function renderReports(){
   refreshStatuses();
   repW = ($('#rep-body') || {}).clientWidth || 0;
@@ -11290,11 +11461,11 @@ function renderReports(){
   fitTables();
 }
 // Eksports: CSV (semikols, UTF-8 ar BOM – atveras arī Excel) vai Excel (.xlsx; katrai sadaļai – sava lapa)
-const repSheets = () => { const v = repLast || {}; return v.sheets || (v.csv ? [{name:ui.repSub === 'laiks' ? `Patērētais laiks – ${ui.repTime.part === 'tpl' ? 'veidnes' : 'kampaņas'}` : (REP_SUBS.find(([k]) => k === ui.repSub) || [, 'Atskaite'])[1], rows:v.csv}] : []); };
+const repSheets = () => { const v = repLast || {}; return v.sheets || (v.csv ? [{name:ui.repSub === 'laiks' ? `Patērētais laiks – ${{tpl:'veidnes', ndr:'nepiegāžu apstrāde'}[ui.repTime.part] || 'kampaņas'}` : (REP_SUBS.find(([k]) => k === ui.repSub) || [, 'Atskaite'])[1], rows:v.csv}] : []); };
 function exportCsv(){ repExport('csv'); }
 function repExport(fmt){
   const sheets = repSheets(); if (!sheets.length) return;
-  const n = sheets.reduce((a, sh) => a + Math.max(0, sh.rows.length - 1), 0), base = `atskaite_${ui.repSub === 'laiks' ? `pateretais_laiks_${ui.repTime.part === 'tpl' ? 'veidnes' : 'kampanas'}` : ui.repSub}_${todayIso()}`;
+  const n = sheets.reduce((a, sh) => a + Math.max(0, sh.rows.length - 1), 0), base = `atskaite_${ui.repSub === 'laiks' ? `pateretais_laiks_${{tpl:'veidnes', ndr:'nepiegazu_apstrade'}[ui.repTime.part] || 'kampanas'}` : ui.repSub}_${todayIso()}`;
   let blob, name;
   if (fmt === 'xlsx'){ blob = xlsxBlob(sheets); name = `${base}.xlsx`; }
   else {
@@ -11444,7 +11615,8 @@ const actions = {
     showTab('kampanas'); toast('Melnraksts dzēsts.');
   },
   'layout-edit': () => openLayoutEditor(),
-  'resp-card': id => openRespCard(id),
+  'resp-card': (id, el) => { const tr = el && el.closest && el.closest('tr'), hid = tr && (tr.dataset.hrow || (tr.classList.contains('hist-detail') && tr.previousElementSibling ? tr.previousElementSibling.dataset.hrow : ''));
+    if (ui.tab === 'vesture' && hid){ const x = state.sent.find(y => y.id === hid); if (x && isTodo(x)) ui.ndrCur = hid; } openRespCard(id); },
   'camp-new': () => { if (ui.campView === 'edit') flushDraft(); newSession(true); openEditor(); },
   'camp-open': id => openEditor(id),
   'camp-back': () => showTab('kampanas'),
@@ -11471,16 +11643,18 @@ const actions = {
     if (compose.draftId === id) newSession(true);
     save(); renderCampaigns(); renderCounts(); toast('Melnraksts dzēsts.');
   },
-  'hist-row': id => { ui.histRow.has(id) ? ui.histRow.delete(id) : ui.histRow.add(id); renderSent(); const b = $(`.hist-table .hist-st[data-id="${id}"]`) || $(`.hl-table [data-action="hist-row"][data-id="${id}"]`); if (b) b.focus(); },
+  'hist-row': id => { ui.histRow.has(id) ? ui.histRow.delete(id) : ui.histRow.add(id); ndrTrack(id); renderSent(); const b = $(`.hist-table .hist-st[data-id="${id}"]`) || $(`.hl-table [data-action="hist-row"][data-id="${id}"]`); if (b) b.focus(); },
   'hist-resend': id => resendLetter(id),
   'hist-reviewed': id => { const x = state.sent.find(y => y.id === id); if (!x) return; const at = new Date().toISOString();
-    x.reviewed = {by:CURRENT_USER, at}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'reviewed'}); save(); renderSent(); toast('Vēstule atzīmēta kā izskatīta.'); },
+    x.reviewed = {by:CURRENT_USER, at}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'reviewed'}); ndrResolve(x, 'Atzīmēta kā izskatīta'); save(); renderSent(); toast('Vēstule atzīmēta kā izskatīta.'); },
+  'hist-notfound': id => { const x = state.sent.find(y => y.id === id); if (!x) return; const at = new Date().toISOString();
+    x.reviewed = {by:CURRENT_USER, at, how:'Kontakts nav atrodams'}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'notfound'}); ndrResolve(x, 'Kontakts nav atrodams'); save(); renderSent(); toast('Atzīmēts: kontakts nav atrodams.'); },
   'hist-handover': id => { const x = state.sent.find(y => y.id === id), r = x && state.respondents.find(y => y.id === x.respondentId); if (!x || !r) return; const at = new Date().toISOString();
     addContactTask(r, x.addrType, x.address, `Manuāla pārbaude: ${STATUSES[x.status].label.toLowerCase()} vēstule`, CURRENT_USER, x.id, at);
     x.reviewed = {by:CURRENT_USER, at, how:'Nodota kontaktu aktualizēšanai'}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'handover'});
-    save(); renderSent(); refreshCard(); toast('Izveidots uzdevums “Kontaktu aktualizēšana”.'); },
+    ndrResolve(x, 'Nodots kontaktu pārbaudei'); save(); renderSent(); refreshCard(); toast('Izveidots uzdevums “Kontaktu aktualizēšana”.'); },
   'hist-resolve': id => { const x = state.sent.find(y => y.id === id); if (!x) return; const at = new Date().toISOString();
-    x.adminResolved = {by:CURRENT_USER, at}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'resolved'}); save(); renderSent(); toast('Sūtītāja puses kļūda atzīmēta kā atrisināta.'); },
+    x.adminResolved = {by:CURRENT_USER, at}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'resolved'}); ndrResolve(x, 'Sūtītāja puses kļūda atrisināta'); save(); renderSent(); toast('Sūtītāja puses kļūda atzīmēta kā atrisināta.'); },
   'rules-open': () => openRulesModal(),
   'rep-csv': () => exportCsv(),
   'rep-sort': key => { const so = ui.rep.sort; ui.rep.sort = {key, dir: so.key === key && so.dir === 'desc' ? 'asc' : so.key === key ? 'desc' : (['name', 'kind'].includes(key) ? 'asc' : 'desc')}; renderReports();
@@ -12562,6 +12736,11 @@ let wlLastAct = Date.now(), wlCtxKey = '', wlLastAcc = 0, wlPrevTick = Date.now(
 // kur šobrīd tiek strādāts: veidnes redaktors (ne kampaņas satura logs) vai kampaņas izveides / rediģēšanas skats
 function wlTarget(){
   if (ui.tplWl && modal.open) return {key:ui.tplWl.key, wl:ui.tplWl.wl, step:0};
+  // nepiegādātas vēstules apstrāde Sūtīšanas vēsturē (atvērtas detaļas vai respondenta kartīte) – lietotājam netiek rādīts
+  if (ui.tab === 'vesture' && ui.ndrCur && (ui.histRow.has(ui.ndrCur) || drawer.open)){
+    const w = (state.ndrWork = state.ndrWork || {})[ui.ndrCur] || (state.ndrWork[ui.ndrCur] = {active:0, sessions:0, startedAt:new Date().toISOString()});
+    return {key:'ndr:' + ui.ndrCur, wl:w, step:0, ndr:true};
+  }
   if (ui.tab === 'kampanas' && ui.campView === 'edit' && !$('#camp-edit').hidden && !apvLocked()){
     if (!compose.wl) compose.wl = wlNew(compose.createdAt);
     return {key:'camp:' + compose.draftId, wl:compose.wl, step:compose.step};
@@ -12581,6 +12760,7 @@ function wlTick(){
   tg.wl.lastAt = new Date(now).toISOString();
   // kampaņas laiks saglabājas melnrakstā (ik pēc 15 s, ja melnraksts jau ir)
   if (tg.step && now - wlSavedAt > WL_SAVE){ wlSavedAt = now; if (state.drafts.some(d => d.id === compose.draftId)) flushDraft(); }
+  if (tg.ndr && now - wlSavedAt > WL_SAVE){ wlSavedAt = now; save(); }
 }
 // ilgums: "< 1 min", "18 min", "2 st. 5 min", "1 d. 4 st."
 function fmtDur(ms){
@@ -12680,6 +12860,7 @@ seedPubData();
 seedApvData(state);
 // kampaņu nosaukumi formātā {indekss}_{gads}_{periods}_{veids} (līdzšinējais – apraksts); vienreiz agrāk saglabātajiem datiem
 if (state.campNameV !== 2){ assignCampNames(); state.campNameV = 2; save(); }
+if (state.ndrSeedV !== 1){ seedNdrWork(); save(); }
 setInterval(wlTick, WL_TICK);
 state.tasks = state.tasks || [];
 refreshStatuses();
