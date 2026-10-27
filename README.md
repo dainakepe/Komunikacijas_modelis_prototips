@@ -155,8 +155,14 @@ Ja pēc satura ievadīšanas nomaina vēstules veidu, sistēma brīdina: "Mainot
 **Priekšskatījums:**
 - Zem ziņojuma teksta ar saspraudes ikonu redzami pielikumi.
 - Ja galvenā vēstule ir PDF dokuments, zem pavadteksta uzreiz redzams pats dokuments, kura lapas var ritināt. Telefonā redzama pirmās lapas sīkbilde.
-- DOCX failam redzama faila kartīte ar nosaukumu, izmēru un pogu "Atvērt".
+- DOCX failam redzama faila kartīte ar nosaukumu un izmēru.
 - Pielikumi redzami arī kampaņas redaktorā un nosūtītajās vēstulēs.
+
+**Pielikumu apskate** (Versija 121) – visur, kur redzama pielikuma kartīte ("Vēstule pielikumā · CSP_uzaicinajums_….pdf · ģenerēts katram adresātam") vai papildu pielikuma čips: logā "Izmantot veidni", kampaņas solī "Saturs" (kartīte zem veidnes informācijas – ar pašreizējā parauga datiem), "Pārbaude" (paraugu priekšskatījums), veidņu redaktora priekšskatījumā (arī cilnē "Pielikums" – ikonas virsrakstā), nosūtītajā vēstulē un Sūtīšanas vēstures detaļās ("Statusu ceļš" – rinda "Pielikumi").
+- Visa kartīte ir klikšķināma (rokas kursors, uzbraucot – izcelts rāmis); labajā pusē ikonas **"Skatīt"** (acs) un **"Lejupielādēt"**.
+- **"Skatīt"** atver apskates logu (~80 % ekrāna, virs pārējiem logiem): galvenē – faila nosaukums, birka **"Paraugs: Laura Kalēja"** (ģenerētam pielikumam – parauga respondents; veidnes priekšskatījumā bez konkrēta respondenta – **"Paraugs: testa dati"**; nosūtītai vēstulei – "Adresāts: …"), poga "Lejupielādēt" un ×. Saturā – A4 lapa (balta lapa ar ēnu uz pelēka fona, ritināma): CSP veidlapas galvene, datums, dokumenta Nr., adresāts (fiziskai personai – vārds; uzņēmumam – nosaukums un kontaktpersona), teksts un aizpildīti mainīgie tieši šim respondentam (tie paši dati, kas e-pasta priekšskatījumā). Statisks fails (piem., instrukcija no pielikumu sagatavēm) – PDF skatītājā tajā pašā logā. Ja priekšskatījumā ieslēgts "Iezīmēt laukus", mainīgie iezīmēti arī pielikumā. Logs aizveras ar ×, Esc vai klikšķi ārpus tā; fokuss atgriežas uz kartītes.
+- **"Lejupielādēt"**: statisks fails – lejupielādē failu (sagataves – no mapes `pielikumi/`); ģenerēts pielikums – pārlūka drukas logs ar to pašu A4 skatu (izvēle "Saglabāt kā PDF"; bez ārējām bibliotēkām).
+- Ģenerētajā vēstulē zem datuma un numura labajā pusē ir adresāta bloks (`{adresāts}`, uzņēmumam arī `{vārds}`).
 
 Veidnēm ar veidu "E-pasta saturs" redaktorā var pievienot:
 - **attēlus** (poga **Attēls**). Attēlu var augšupielādēt no datora (PNG, JPG vai GIF, ne lielāku par 1 MB) vai norādīt `https://` saiti. Obligāti jānorāda alternatīvais teksts, un var izvēlēties platumu (mazs, vidējs, pilns) un novietojumu (pa kreisi, centrā vai pa labi). Augšupielādētie attēli glabājas pārlūkā kā data URL;

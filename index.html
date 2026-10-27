@@ -2143,6 +2143,34 @@ a.att:hover,button.att:hover{border-color:var(--primary)}
 .main-att{display:flex;align-items:center;gap:12px;border:1px solid var(--primary-300);background:var(--surface);border-radius:var(--radius);padding:10px 12px;flex-wrap:wrap}
 .main-att .ext{background:var(--danger);color:var(--on-primary);font-size:var(--fs-2xs);font-weight:700;border-radius:var(--radius-xs);padding:8px 4px;min-width:42px;text-align:center;flex:none}
 .main-att .ext.gen{background:var(--info)}
+/* klikšķināma pielikuma kartīte: rokas kursors, uzbraucot – izcelts rāmis; labajā pusē "Skatīt" / "Lejupielādēt" */
+.main-att.is-view{cursor:pointer;transition:border-color .12s,box-shadow .12s,background .12s}
+.main-att.is-view:hover{border-color:var(--primary);background:var(--primary-50);box-shadow:0 0 0 1px var(--primary)}
+.ma-acts{display:inline-flex;gap:2px;margin-left:auto;flex:none}
+.ma-acts .icon-btn{width:30px;height:30px;color:var(--primary-darker)}
+.ma-acts .icon-btn:hover{background:var(--primary-100)}
+.main-att.sm{padding:6px 8px;gap:8px}
+.main-att.sm .ext{padding:5px 3px;min-width:34px}
+.main-att.sm .ma-txt b{font-size:var(--fs-sm)}
+.att.is-view{cursor:pointer;padding-right:4px}
+.att.is-view:hover{border-color:var(--primary);background:var(--primary-50)}
+.att .ma-acts .icon-btn{width:24px;height:24px}
+.att .ma-acts .icon{width:14px;height:14px}
+.cs-att{flex:0 0 100%;margin-top:2px}
+.cs-att .main-att{max-width:520px}
+/* pielikuma apskates logs (~80 % ekrāna): A4 lapa uz pelēka fona vai PDF skatītājs */
+dialog.av{width:min(1100px,80vw);height:85vh;max-width:none;max-height:none;padding:0;border:0;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);background:var(--surface);overflow:hidden}
+dialog.av[open]{display:flex;flex-direction:column}
+dialog.av::backdrop{background:rgba(16,40,44,.55)}
+.av-head{display:flex;align-items:center;gap:10px;padding:10px 12px 10px 18px;border-bottom:1px solid var(--border)}
+.av-head h2{margin:0;font-size:var(--fs-lg);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.av-tag{background:var(--primary-50);color:var(--primary-darker);border:1px solid var(--primary-200);white-space:nowrap}
+.av-acts{margin-left:auto;display:flex;align-items:center;gap:6px;flex:none}
+.av-body{flex:1;min-height:0;overflow:auto;background:#E9EEEF}
+.av-stage{padding:24px}
+.av-stage .doc{max-width:794px}
+.av-pdf{display:block;width:100%;height:100%;border:0;background:#fff}
+@media (max-width:700px){ dialog.av{width:100vw;height:100vh;border-radius:0} .av-stage{padding:10px} }
 .ma-txt{flex:1 1 180px;min-width:0;display:flex;flex-direction:column}
 .ma-txt small{font-size:var(--fs-2xs);font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--text-muted)}
 .ma-txt b{font-size:var(--fs-md);overflow-wrap:anywhere}
@@ -2169,6 +2197,8 @@ mark.v-miss,mark.v-unk{background:var(--danger-bg);color:var(--danger);border-ra
 .doc-addr{display:inline-block;border-top:1px solid var(--doc-ink);margin-top:8px;padding:3px 24px 0;font-size:10px}
 .doc-city{font-size:10px;margin-top:2px}
 .doc-meta{font-size:10.5px;margin:22px 0 16px}
+.doc-to{margin:-6px 0 14px auto;max-width:55%;text-align:right;font-weight:600}
+.doc-to span{font-weight:400}
 .doc-banner{margin-left:-56px;width:72%;background:var(--primary);color:#fff;clip-path:polygon(0 0,100% 0,94% 100%,0 100%);padding:18px 48px 16px 56px;text-align:right}
 .doc-banner b{display:block;font-size:17px;line-height:1.25}
 .doc-banner small{display:block;font-weight:600;font-size:11.5px;opacity:.85;margin-top:2px}
@@ -3186,7 +3216,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 120</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 121</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5411,7 +5441,7 @@ function templateText(t, channel){
   Object.values(t.tr || {}).forEach(v => { s += v.subject + v.body + (gen ? v.docTitle + v.docBody + v.fileName : ''); });
   if (gen){
     const L = state.layout;
-    s += t.doc.title + t.doc.body + t.doc.fileName + '{datums}{dok_nr}' + (t.doc.banner ? '{apsekojums}' : '') +
+    s += t.doc.title + t.doc.body + t.doc.fileName + '{datums}{dok_nr}{adresāts}' + (t.doc.banner ? '{apsekojums}' : '') +
       (t.doc.conf ? L.confHtml : '') + (t.doc.info ? L.infoHtml : '');
   }
   if (channel === 'epasts') s += state.layout.emailFooter;
@@ -5429,6 +5459,7 @@ function docHtml(t, ctx, mark, attrs, f = compose.f, L = state.layout){
       <div class="doc-org">${esc(L.org)}</div>
       <div class="doc-addr">${esc(L.address)}</div><div class="doc-city">${esc(L.city)}</div></div>
     <div class="doc-meta">${R('{datums} Nr. {dok_nr}')}</div>
+    <div class="doc-to">${R('{adresāts}')}${ctx && ctx['vārds'] && ctx['vārds'] !== ctx['adresāts'] ? `<br><span>${R('{vārds}')}</span>` : ''}</div>
     ${d.banner ? `<div class="doc-banner"><b>${R('{apsekojums}')}</b>${d.tags ? `<small>${esc(d.tags)}</small>` : ''}</div>${d.slogan && (L.lang || 'lv') === 'lv' ? `<div class="doc-slogan">${esc(d.slogan)}</div>` : ''}` : ''}
     ${d.title ? `<div class="doc-title">${R(esc(d.title))}</div>` : ''}
     <div class="rich">${R(d.body)}</div>
@@ -5516,13 +5547,7 @@ function mailView({toName, toAddr, channel, subjectHtml, bodyHtml, bodyTextHtml,
          <div class="mail-body mail-plain">${bodyTextHtml}</div>${attHtml}`}
   </article>`;
 }
-function openDocModal(doc, back){
-  const actions = [];
-  if (back) actions.push({label:'← Atpakaļ', cls:'btn-ghost left', onClick: () => back()});
-  actions.push({label:`${ICON.print}Drukāt / saglabāt PDF`, cls:'btn-secondary', onClick: () => printDoc(doc.print || doc.html, doc.name)});
-  actions.push({label:'Aizvērt', cls:'btn-primary'});
-  openModal({title:doc.name, wide:true, content:`<div class="doc-stage">${doc.html}</div>`, actions});
-}
+function openDocModal(doc, opener){ openAttViewer({kind:'gen', name:doc.name, html:doc.html, print:doc.print, tag:doc.tag || ''}, opener); }
 // Drukāšana (pārlūkā var izvēlēties "Saglabāt kā PDF")
 function printDoc(html, name){
   const css = document.querySelector('style').textContent;
@@ -6685,10 +6710,11 @@ function openTemplateEditor(id, preset = {}){
     const pvAttrs = respAttrs(sample);
     const msg = buildMessage(cur, sample, true, pvAttrs);
     let html;
-    if (pv === 'doc' && msg.attachments.length) html = `<div class="doc-inline-head"><span>${ICON.clip} ${esc(msg.attachments[0].name)}</span></div>${msg.attachments[0].html}`;
+    if (pv === 'doc' && msg.attachments.length){ const d = msg.attachments[0];
+      html = `<div class="doc-inline-head"><span>${ICON.clip} ${esc(d.name)}</span><span data-attv="${attViewReg({kind:'gen', name:d.name, html:d.html, print:d.print, tag:sessRecs.length ? `Paraugs: ${sample.name}` : 'Paraugs: testa dati'})}">${attViewActs(d.name)}</span></div>${d.html}`; }
     else { const c = chMsg(msg, pv);
       html = verNote(c, pv) + mailView({toName:sample.name, toAddr:addrFor(sample, pv) || '', channel:pv, subjectHtml:c.subjectHtml || '<span class="none">bez temata</span>',
-      bodyHtml:c.bodyHtml, bodyTextHtml:c.bodyTextHtml, footerHtml:msg.footer, atts:msg.attachments.map(a => ({name:a.name, teDoc:true})), main:msg.main,
+      bodyHtml:c.bodyHtml, bodyTextHtml:c.bodyTextHtml, footerHtml:msg.footer, atts:msg.attachments.map(a => ({name:a.name, doc:a, tag:sessRecs.length ? `Paraugs: ${sample.name}` : 'Paraugs: testa dati'})), main:msg.main,
       files:msg.files, variant:msg.variant, org:msg.org, lang:msg.lang, wantLang:msg.wantLang, fallback:msg.fallback}); }
     const unknown = usedVars(templateText(cur, 'epasts')).filter(k => !FIELD_KEYS.has(k));
     if (unknown.length) html = `<div class="alert alert-warn" style="margin:0 0 10px">${ICON.warn}<span>Nezināmi lauki: ${unknown.map(k => `<b>{${esc(k)}}</b>`).join(', ')}. Tie netiks aizpildīti.</span></div>` + html;
@@ -6901,18 +6927,72 @@ function openLibPicker({title, onlySag = false, aud = '', back, onPick, intro = 
   renderList();
   $('#lp-q').focus();
 }
-// Galvenās vēstules (pielikuma) kartīte zem ziņojuma teksta
-function mainAttCard(m){
+// Galvenās vēstules (pielikuma) kartīte zem ziņojuma teksta: visa kartīte klikšķināma (atver apskates logu), labajā pusē – "Skatīt" un "Lejupielādēt"
+// m.gen – ģenerēta vēstule (m.doc = {name, html, print}; m.tag – parauga birka), m.lib – fails no bibliotēkas
+function mainAttCard(m, cls = ''){
   const a = !m.gen && m.lib && attById(m.lib);
   const name = m.gen ? m.name : a ? a.fileName : m.name;
   const ext = m.gen ? 'PDF' : (String(name).split('.').pop() || '').toUpperCase().slice(0, 4);
-  const btn = attrs => `<button type="button" class="btn btn-secondary btn-sm" ${attrs}>${ICON.eye}Atvērt</button>`;
-  const open = m.gen ? (m.src ? btn(`data-action="open-doc" data-src="${esc(m.src)}"`) : m.teDoc ? btn('data-te-doc') : '')
-    : a && a.lib ? `<a class="btn btn-secondary btn-sm ma-open" href="${esc(attHref(a))}" target="_blank" rel="noopener">${ICON.eye}Atvērt</a>`
-    : a && a.data ? btn(`data-action="att-open" data-id="${esc(a.id)}"`) : '';
-  return `<div class="main-att"><span class="ext${m.gen ? ' gen' : ''}">${esc(ext)}</span>
-    <span class="ma-txt"><small>Vēstule pielikumā</small><b>${esc(name)}</b><span>${m.gen ? 'ģenerēts katram adresātam' : a ? fmtSize(a.size) : `${fmtSize(m.size || 0)} · fails bibliotēkā nav atrasts`}</span></span>${open}</div>`;
+  const v = m.gen ? (m.doc && m.doc.html ? {kind:'gen', name, html:m.doc.html, print:m.doc.print, tag:m.tag || ''} : null) : attViewOf(a);
+  const txt = `<span class="ext${m.gen ? ' gen' : ''}">${esc(ext)}</span>
+    <span class="ma-txt"><small>Vēstule pielikumā</small><b>${esc(name)}</b><span>${m.gen ? 'ģenerēts katram adresātam' : a ? fmtSize(a.size) : `${fmtSize(m.size || 0)} · fails bibliotēkā nav atrasts`}</span></span>`;
+  return v ? `<div class="main-att is-view${cls ? ' ' + cls : ''}" data-attv="${attViewReg(v)}" title="Skatīt pielikumu">${txt}${attViewActs(name)}</div>`
+    : `<div class="main-att${cls ? ' ' + cls : ''}">${txt}</div>`;
 }
+// Pielikumu apskate: kartītes reģistrē, ko atvērt (ģenerēta vēstule vai fails); reģistrs ierobežots (priekšskatījumi pārzīmējas bieži)
+const attViews = new Map();
+let attViewSeq = 0;
+function attViewReg(v){ const id = ++attViewSeq; attViews.set(id, v); if (attViews.size > 400) attViews.delete(attViews.keys().next().value); return id; }
+const attViewOf = a => a && (a.lib || a.data) ? {kind:'file', id:a.id, name:a.fileName} : null;
+const DL_IC = () => ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5');
+const attViewActs = name => `<span class="ma-acts"><button type="button" class="icon-btn" data-attv-act="view" aria-label="Skatīt: ${esc(name)}" title="Skatīt">${ICON.eye}</button><button type="button" class="icon-btn" data-attv-act="dl" aria-label="Lejupielādēt: ${esc(name)}" title="Lejupielādēt">${DL_IC()}</button></span>`;
+let attViewer = null, attViewCur = null, attViewOpener = null;
+// Apskates logs (~80 % ekrāna) virs pārējiem logiem: galvenē – faila nosaukums, parauga birka, "Lejupielādēt" un ×;
+// ģenerētai vēstulei – A4 lapa (tie paši dati, kas e-pasta priekšskatījumā), failam – PDF skatītājs; Esc / × aizver
+function openAttViewer(v, opener, hl = false){
+  if (!v) return;
+  if (v.kind === 'file' && !attById(v.id)){ toast('Dokuments bibliotēkā nav atrasts.', true); return; }
+  if (!attViewer){
+    attViewer = document.createElement('dialog'); attViewer.className = 'av'; attViewer.id = 'att-viewer'; attViewer.setAttribute('aria-labelledby', 'av-title');
+    document.body.append(attViewer);
+    attViewer.addEventListener('close', () => { attViewer.innerHTML = ''; attViewCur = null; if (attViewOpener && attViewOpener.isConnected) attViewOpener.focus(); attViewOpener = null; });
+    attViewer.addEventListener('click', e => {
+      if (e.target === attViewer || e.target.closest('[data-av-close]')) attViewer.close();
+      else if (e.target.closest('[data-av-dl]')) attViewDownload(attViewCur);
+    });
+  }
+  if (attViewer.open) attViewer.close();
+  attViewCur = v; attViewOpener = opener || null;
+  const a = v.kind === 'file' ? attById(v.id) : null;
+  const body = v.kind === 'gen' ? `<div class="av-stage${hl ? ' hl' : ''}">${v.html}</div>`
+    : attExt(a.fileName) === 'pdf' ? `<iframe class="av-pdf" src="${esc(attUrl(a))}#view=FitH" title="${esc(a.fileName)}"></iframe>`
+    : `<div class="av-stage"><div class="lp-noprev">${ICON.file}<p><b>${esc(attExt(a.fileName).toUpperCase())}</b> faila priekšskatījums pārlūkā nav pieejams.</p></div></div>`;
+  attViewer.innerHTML = `<div class="av-head"><h2 id="av-title">${esc(v.name)}</h2>${v.tag ? `<span class="pill av-tag">${esc(v.tag)}</span>` : ''}
+      <span class="av-acts"><button type="button" class="btn btn-secondary btn-sm" data-av-dl title="${v.kind === 'gen' ? 'Saglabāt kā PDF (pārlūka drukas logā)' : 'Lejupielādēt failu'}">${DL_IC()}Lejupielādēt</button>
+      <button type="button" class="icon-btn" data-av-close aria-label="Aizvērt">${ICON.x}</button></span></div>
+    <div class="av-body">${body}</div>`;
+  attViewer.showModal();
+  $('[data-av-close]', attViewer).focus();
+}
+// lejupielāde: fails – no mapes pielikumi/ (vai pārlūkā saglabātais saturs); ģenerēta vēstule – PDF no tā paša A4 skata (drukas logs → "Saglabāt kā PDF")
+function attViewDownload(v){
+  if (!v) return;
+  if (v.kind === 'file') downloadAtt(v.id);
+  else {
+    printDoc(v.print || v.html, v.name);
+    // pēc drukas loga fokuss atpakaļ apskates logā (lai Esc to aizver)
+    setTimeout(() => { const b = attViewer && attViewer.open && $('[data-av-dl]', attViewer); if (b) b.focus(); }, 1500);
+  }
+}
+document.addEventListener('click', e => {
+  const el = e.target.closest && e.target.closest('[data-attv]');
+  if (!el) return;
+  const v = attViews.get(+el.dataset.attv); if (!v) return;
+  e.preventDefault();
+  const act = e.target.closest('[data-attv-act]');
+  if (act && act.dataset.attvAct === 'dl') attViewDownload(v);
+  else openAttViewer(v, act || el, !!el.closest('.hl'));
+});
 const mainNameOf = t => t.kind !== 'pielikums' ? '' : t.main ? ((attById(t.main.lib) || {}).fileName || t.main.name) : t.doc ? t.doc.fileName : '';
 function dataUrlToBlob(url){
   const [head, b64] = url.split(',');
@@ -6935,13 +7015,11 @@ function downloadAtt(id){
   const l = document.createElement('a');
   l.href = url; l.download = a.fileName; document.body.append(l); l.click(); l.remove();
 }
-// Pielikuma "čips" vēstules priekšskatījumā – bibliotēkas pielikumu var atvērt
+// Pielikuma "čips" vēstules priekšskatījumā – statisku failu (piem., instrukciju) atver apskates logā; "Skatīt" / "Lejupielādēt"
 function fileChip(f){
-  const a = f.lib && attById(f.lib);
+  const a = f.lib && attById(f.lib), v = attViewOf(a);
   const inner = `<span class="ext">${esc((f.name.split('.').pop() || '').toUpperCase().slice(0, 4))}</span><span class="nm">${esc(f.name)}</span><small>${fmtSize(f.size)}</small>`;
-  if (a && a.lib) return `<a class="att" href="${esc(attHref(a))}" target="_blank" rel="noopener" title="Atvērt pielikumu">${inner}</a>`;
-  if (a && a.data) return `<button type="button" class="att" data-action="att-open" data-id="${esc(a.id)}" title="Atvērt pielikumu">${inner}</button>`;
-  return `<span class="att">${inner}</span>`;
+  return v ? `<span class="att is-view" data-attv="${attViewReg(v)}" title="Skatīt pielikumu">${inner}${attViewActs(f.name)}</span>` : `<span class="att">${inner}</span>`;
 }
 function attMatches(a){
   const f = ui.sag;
@@ -7654,11 +7732,11 @@ function openTemplatePicker(){
     foot.forEach(b => b.disabled = !t);
     $$('#tp-ch button').forEach(b => b.setAttribute('aria-pressed', b.dataset.tpch === ch));
     if (!t){ $('#tp-pv').innerHTML = `<div class="empty">${ICON.file}<h3>Priekšskatījums</h3><p>Izvēlieties veidni sarakstā.</p></div>`; return; }
-    const r = recipients()[0] || state.respondents.find(x => respAttrs(x).veids === AUDS[compose.aud].veids) || state.respondents[0];
+    const r0 = recipients()[0], r = r0 || state.respondents.find(x => respAttrs(x).veids === AUDS[compose.aud].veids) || state.respondents[0];
     const msg = buildMessage(t, r, true), c = chMsg(msg, ch);
     $('#tp-pv').innerHTML = `<div class="pills">${catPill(t.cat)}${kindPill(t.kind)}${verOnly(t) ? `<span class="pill pill-veronly">${esc(verOnly(t))}</span>` : ''}</div>
       <h3 class="tp-name">${esc(t.name)}</h3>` + verNote(c, ch) + mailView({toName:r.name, toAddr:addrFor(r, ch) || '', channel:ch, subjectHtml:c.subjectHtml || '<span class="none">bez temata</span>',
-      bodyHtml:c.bodyHtml, bodyTextHtml:c.bodyTextHtml, footerHtml:msg.footer, atts:msg.attachments.map(a => ({name:a.name})), main:msg.main, files:msg.files, org:msg.org,
+      bodyHtml:c.bodyHtml, bodyTextHtml:c.bodyTextHtml, footerHtml:msg.footer, atts:msg.attachments.map(a => ({name:a.name, doc:a, tag:r0 ? `Paraugs: ${r.name}` : 'Paraugs: testa dati'})), main:msg.main, files:msg.files, org:msg.org,
       extraMeta:`<dt>Versija</dt><dd><span class="pill pill-ch">${VER_LABEL[c.ver]}</span></dd>`});
   }
   $('#tp-groups').addEventListener('click', e => {
@@ -8639,8 +8717,13 @@ function renderComposePreview(){
   { const r0 = cur && cur.r, f0 = r0 && finalAttempt(preAttempts(r0)), ch0 = compose.pvCh || (f0 ? ADDR_TYPES[f0.type].ch : 'epasts');
     $$('#c-pvch button').forEach(b => b.setAttribute('aria-pressed', b.dataset.pvch === ch0)); }
   const audVeids = t ? AUDS[t.aud].veids : null;
-  if (t) $('#c-tpl-info').innerHTML = jomaPill(t.aud) + catPill(t.cat) + kindPill(t.kind) + (mainNameOf(t) ? `<span>${ICON.clip} ${esc(mainNameOf(t))}</span>` : '') +
-    ((t.files || []).length ? `<span>+ ${t.files.length} ${plural(t.files.length, 'fails', 'faili')}</span>` : '');
+  if (t){
+    // pielikuma kartīte (ģenerēta – ar pašreizējā parauga datiem, kā solī "Pārbaude"; fails – no bibliotēkas)
+    const r0 = cur && cur.r, m0 = mainNameOf(t) && r0 ? buildMessage(letterTpl(t, r0), r0, true) : null;
+    const card = !m0 ? '' : m0.main ? mainAttCard(m0.main, 'sm') : m0.attachments[0] ? mainAttCard({gen:true, name:m0.attachments[0].name, doc:m0.attachments[0], tag:`Paraugs: ${r0.name}`}, 'sm') : '';
+    $('#c-tpl-info').innerHTML = jomaPill(t.aud) + catPill(t.cat) + kindPill(t.kind) + (mainNameOf(t) && !card ? `<span>${ICON.clip} ${esc(mainNameOf(t))}</span>` : '') +
+      ((t.files || []).length ? `<span>+ ${t.files.length} ${plural(t.files.length, 'fails', 'faili')}</span>` : '') + (card ? `<div class="cs-att">${card}</div>` : '');
+  }
 
   previewDocs = [];
   const pv = $('#c-preview');
@@ -8651,7 +8734,7 @@ function renderComposePreview(){
   } else {
     const one = (r, inlineDoc, tag = '') => {
       const msg = buildMessage(letterTpl(t, r), r, true);
-      const atts = msg.attachments.map(a => { const i = previewDocs.push(a) - 1; return {name:a.name, src:'pv:' + i}; });
+      const atts = msg.attachments.map(a => { previewDocs.push(a); return {name:a.name, doc:a, tag:`Paraugs: ${r.name}`}; });
       // vēstule tiek parādīta tā, kā to saņems pa paredzamo (veiksmīgo) adresi
       // (fiziskām personām – bez e-adreses: tā tiks noteikta sūtīšanas brīdī)
       const tries = preAttempts(r), fin = finalAttempt(tries), eaL = eaLater();
@@ -8669,7 +8752,7 @@ function renderComposePreview(){
         extraMeta:`${tag ? `<dt>Paraugs</dt><dd><span class="pv-tag" title="Kāpēc izvēlēts šis paraugs">${esc(tag)}</span></dd>` : ''}<dt>Versija</dt><dd><span class="pill pill-ch">${VER_LABEL[c.ver]}</span></dd><dt>Adreses</dt><dd>${eaL ? `<div class="muted ea-later-row" title="${esc(EA_LATER_TIP)}">eAdrese – tiks noteikta sūtīšanas brīdī</div>` : ''}${attemptsHtml(tries, compose.prio, 'plan')}</dd>`}))(chMsg(msg, ch));
       if (inlineDoc && msg.attachments.length){
         html += `<div class="doc-inline"><div class="doc-inline-head"><span>${ICON.clip} Pielikums: ${esc(msg.attachments[0].name)}</span>
-          <button class="btn btn-secondary btn-sm" data-action="open-doc" data-src="${atts[0].src}">${ICON.eye}Atvērt pilnā izmērā</button></div>${msg.attachments[0].html}</div>`;
+          <button type="button" class="btn btn-secondary btn-sm" data-attv="${attViewReg({kind:'gen', name:atts[0].name, html:atts[0].doc.html, print:atts[0].doc.print, tag:atts[0].tag})}">${ICON.eye}Atvērt pilnā izmērā</button></div>${msg.attachments[0].html}</div>`;
       }
       return html;
     };
@@ -10010,7 +10093,8 @@ function histDetail(x){
     ${row('Kampaņa', `${esc(x.sessionName || `Kampaņa Nr. ${x.batch}`)} <span class="muted">· ${esc(SESS_LABELS[x.sessionKind] || '')} · Nr. ${x.batch}${codes ? ` · ${esc(codes)}` : ''}</span>`)}
     ${row('Temats', `${esc(sentVer(x).subject)}${x.customized ? ' <span class="pill pill-custom">Pielāgota</span>' : ''}`)}
     ${row('NMK', esc(r.nmk || ''))}
-    ${row('Nosūtīts', esc(fmtDateTime(x.sentAt)))}</dl>`;
+    ${row('Nosūtīts', esc(fmtDateTime(x.sentAt)))}
+    ${row('Pielikumi', [...(x.attachments || []).filter(a => a.html).map(a => mainAttCard({gen:true, name:a.name, doc:a, tag:`Adresāts: ${x.recipient}`}, 'sm')), ...(x.main ? [mainAttCard(x.main, 'sm')] : []), ...((x.files || []).length ? [`<div class="att-list">${x.files.map(fileChip).join('')}</div>`] : [])].join(''))}</dl>`;
   return `<div class="hd-grid">
     <div>${meta}<h4>Statusu ceļš un mēģinājumi</h4><ol class="timeline">${letterTimeline(x).map(evHtml).join('')}</ol></div>
     <div>
@@ -11031,7 +11115,7 @@ function viewSent(id){
     toName:x.recipient, toAddr:x.address, channel:x.channel,
     subjectHtml:esc(v.subject), bodyHtml: x.archived ? '<p class="hint">Saturs arhīvā nav saglabāts.</p>' : v.text != null ? `<div class="mail-plain">${esc(v.text)}</div>` : resolveImages(x.bodyHtml),
     bodyTextHtml: x.archived ? 'Vēstules saturs testa datu arhīvā nav saglabāts.' : esc(v.text != null ? v.text : x.bodyText), footerHtml:esc(x.footer || ''),
-    atts:(x.attachments || []).map((a, j) => ({name:a.name, src:`sent:${x.id}:${j}`})), main:x.main || null, files:x.files || [], variant:x.variant || '',
+    atts:(x.attachments || []).map(a => ({name:a.name, doc:a, tag:`Adresāts: ${x.recipient}`})), main:x.main || null, files:x.files || [], variant:x.variant || '',
     org:x.org || state.layout.org, lang:x.lang || '', wantLang:x.wantLang || '', fallback:!!x.fallback,
     extraMeta:`<dt>Versija</dt><dd><span class="pill pill-ch">${esc(sentVerLabel(x))}</span></dd><dt>Nosūtīts</dt><dd>${fmtDateTime(x.sentAt)} · Kampaņa Nr. ${x.batch}${x.docNr ? ` · Dok. Nr. ${esc(x.docNr)}` : ''}</dd>
       ${x.sessionName ? `<dt>Kampaņa</dt><dd>${esc(x.sessionName)}${x.sessionKind ? ` · ${esc(SESS_LABELS[x.sessionKind] || '')}` : ''}${x.plannedFor ? ` · plānota ${esc(fmtDate(x.plannedFor))}` : ''}</dd>` : ''}
@@ -11045,7 +11129,7 @@ function openDocSrc(src){
   if (kind === 'pv'){ const d = previewDocs[+a]; if (d) openDocModal(d); }
   else if (kind === 'sent'){
     const x = state.sent.find(s => s.id === a), d = x && x.attachments[+b];
-    if (d) openDocModal(d, () => viewSent(a));
+    if (d) openDocModal({...d, tag:`Adresāts: ${x.recipient}`});
   }
 }
 
