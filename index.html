@@ -745,6 +745,28 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .apv-mv{display:inline-flex;gap:2px;margin-left:4px}
 .apv-mv .icon-btn{width:24px;height:24px;font-size:13px}
 .apv-steps-acts{display:flex;flex-wrap:wrap;gap:4px 14px;margin-bottom:6px}
+.apv-steps-acts .link-btn{padding:2px 0}
+.apv-steps-acts .apv-save-r{margin-left:auto}
+/* 5. solis: kompakts soļu saraksts – līnija kreisajā pusē rāda secību */
+#c-apv-steps{display:block;margin:6px 0 2px}
+.apv-cs{list-style:none;margin:0 0 0 6px;padding:0 0 0 12px;border-left:2px solid var(--primary-200);display:flex;flex-direction:column;gap:8px}
+.apv-cs-step{position:relative}
+.apv-cs-step::before{content:"";position:absolute;left:-17px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--surface);border:2px solid var(--primary)}
+.apv-cs-row{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:var(--fs-sm);line-height:1.35}
+.apv-cs-n{font-weight:700;color:var(--primary-dark);min-width:16px}
+.apv-cs-it{display:inline-flex;align-items:center;gap:5px}
+.apv-cs-it b{font-weight:700}
+.apv-cs-rule{color:var(--text-muted);font-size:var(--fs-xs)}
+.apv-cs-plus{color:var(--text-muted);font-weight:600}
+.apv-cs-step.is-one .apv-cs-it{flex:1;min-width:0}
+.apv-cs-step.is-one .apv-cs-it .apv-x{margin-left:auto}
+.apv-cs-who,.apv-cs-abs{font-size:12px;color:var(--text-muted);line-height:1.4;padding-left:22px}
+.apv-cs-abs{display:flex;align-items:flex-start;gap:4px}
+.apv-cs-abs .icon{flex:none;width:13px;height:13px;margin-top:2px;color:#E08A1E}
+.apv-cs-abs.is-warn{color:var(--orange-ink)}
+.apv-cs-abs .apv-sub-pick{vertical-align:baseline}
+.apv-cs-none{color:var(--text-muted);font-style:italic}
+.apv-more{color:var(--primary-dark);font-weight:600;cursor:help}
 .apv-f2{margin-top:6px}
 .am-rsteps{flex-direction:column;align-items:stretch}
 .am-rsteps .apv-arr{display:none}
@@ -3101,7 +3123,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                   <span class="hint" id="c-apv-custom" hidden>Pielāgots šai kampaņai – saglabātais maršruts netiek mainīts.</span></div>
                 <div class="apv-steps" id="c-apv-steps" aria-label="Saskaņošanas soļi"></div>
                 <span class="err" id="c-apv-err" hidden></span>
-                <div class="apv-steps-acts"><button type="button" class="link-btn" data-action="apv-step-add">+ Pievienot soli</button><button type="button" class="link-btn" data-action="apv-save-route">Saglabāt kā jaunu maršrutu</button></div>
+                <div class="apv-steps-acts"><button type="button" class="link-btn" data-action="apv-item-add">+ Pievienot grupu vai personu</button><button type="button" class="link-btn" data-action="apv-step-add">+ Pievienot soli</button><button type="button" class="link-btn apv-save-r" data-action="apv-save-route">Saglabāt kā jaunu maršrutu</button></div>
                 <div class="form-grid apv-f2">
                   <div class="field"><label for="c-apv-due">Saskaņot līdz</label><input type="date" id="c-apv-due"></div>
                   <div class="field"><label for="c-apv-cmt">Komentārs saskaņotājiem <span class="muted">(neobligāts)</span></label><textarea id="c-apv-cmt" rows="2" maxlength="500"></textarea></div>
@@ -3245,7 +3267,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 124</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 125</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -9105,6 +9127,43 @@ function apvAddSelect(ctx, i, st){
     <optgroup label="Grupas">${apvGroups().filter(g => !used.has('g:' + g.id)).map(g => `<option value="g:${esc(g.id)}">${esc(g.name)} (${g.members.length})</option>`).join('')}</optgroup>
     <optgroup label="Personas">${EMPLOYEES.filter(e => e.id !== ME_ID && !used.has('p:' + e.id)).map(e => `<option value="p:${esc(e.id)}">${esc(e.name)} – ${esc(e.role)}</option>`).join('')}</optgroup></select>`;
 }
+// 5. solis: kompakts soļu saraksts – katrs solis vienā rindā ("1." · nosaukums · noteikums · ×), zem tā – kas saskaņos un prombūtnes (HORIZON)
+const apvNames = ids => ids.length > 4 ? `${ids.slice(0, 3).map(m => esc(empName(m))).join(', ')} <span class="apv-more" tabindex="0" title="${esc(ids.slice(3).map(empName).join(', '))}" aria-label="un vēl: ${esc(ids.slice(3).map(empName).join(', '))}">+${ids.length - 3}</span>` : ids.map(m => esc(empName(m))).join(', ');
+function apvWhoHtml(a, it, many){
+  const [f, t] = apvWin(a), rule = itemRule(it), mem = itemMembers(it), abs = mem.filter(m => absOf(m, f, t));
+  const list = rule === 'any' ? mem.filter(m => !abs.includes(m)) : mem;
+  const pre = many ? `${esc(itemLabel(it))} – ` : '', w = rule === 'any' ? 'saskaņos jebkurš no: ' : 'saskaņos: ';
+  const who = `<div class="apv-cs-who">${pre}${many ? w : w[0].toUpperCase() + w.slice(1)}${list.length ? apvNames(list) : '<span class="apv-cs-none">nav klātesošu dalībnieku</span>'}</div>`;
+  const lines = abs.map(m => { const ab = absOf(m, f, t), own = (a.subs || {})[m] || '', sub = own || ab.sub, head = `${esc(empName(m))} prombūtnē līdz ${esc(dmShort(ab.to))} (${ABS_SRC})`;
+    const pick = `<button type="button" class="link-btn apv-sub-pick" data-apv-sub="${esc(m)}">${own ? 'Mainīt' : 'Izvēlēties citu'}</button>`;
+    const txt = sub ? `${head} → ${own ? `saskaņos: ${esc(empName(sub))} (izvēlēts šai kampaņai)` : `aizvieto: ${esc(empName(sub))}`}${own ? ' ' + pick : ''}`
+      : rule === 'any' ? `${head} → saskaņos citi grupas dalībnieki` : `${head} – aizvietotājs nav norādīts ${pick}`;
+    return `<div class="apv-cs-abs${!sub && rule !== 'any' ? ' is-warn' : ''}" title="${esc(`${empName(m)} prombūtnē ${fmtDate(ab.from)}–${fmtDate(ab.to)} (dati no ${ABS_SRC})`)}">${ICON.warn}<span>${txt}</span></div>`; }).join('');
+  return who + lines;
+}
+function apvCampStepsHtml(a){
+  return `<ol class="apv-cs">${a.steps.map((st, i) => { const many = st.items.length > 1;
+    const its = st.items.map((it, j) => `${j ? '<span class="apv-cs-plus" aria-hidden="true">+</span>' : ''}<span class="apv-cs-it"><b>${esc(itemLabel(it))}</b>${it.t === 'g' ? ` <span class="apv-cs-rule">${esc(APV_RULES[itemRule(it)].toLowerCase())}</span>` : ''}<button type="button" class="apv-x" data-c-rm="${i}|${j}" aria-label="Noņemt ${esc(itemLabel(it))} no ${i + 1}. soļa">×</button></span>`).join('');
+    return `<li class="apv-cs-step${many ? '' : ' is-one'}" data-si="${i}"><div class="apv-cs-row"><span class="apv-cs-n">${i + 1}.</span>${its || `<span class="apv-cs-none">nav saskaņotāju</span><button type="button" class="apv-x" data-c-rmstep="${i}" aria-label="Dzēst ${i + 1}. soli">×</button>`}</div>
+      ${st.items.map(it => apvWhoHtml(a, it, many)).join('')}</li>`; }).join('')}</ol>`;
+}
+// "+ Pievienot grupu vai personu" / "+ Pievienot soli": izvēle – grupa vai persona un solis (esošs vai jauns)
+function apvAddPicker(newStep){
+  const a = apvEnsure(compose.apv), n = a.steps.length, def = newStep ? n : Math.max(0, n - 1);
+  openSubModal({title:newStep ? 'Pievienot soli' : 'Pievienot grupu vai personu', content:`
+    <div class="field"><label for="apv-ap-it">Grupa vai persona</label><select id="apv-ap-it">
+      <optgroup label="Grupas">${apvGroups().map(g => `<option value="g:${esc(g.id)}">${esc(g.name)} (${g.members.length}) – ${esc(APV_RULES[g.rule].toLowerCase())}</option>`).join('')}</optgroup>
+      <optgroup label="Personas">${EMPLOYEES.filter(e => e.id !== ME_ID).map(e => `<option value="p:${esc(e.id)}">${esc(e.name)} – ${esc(e.role)}</option>`).join('')}</optgroup></select></div>
+    <div class="field"><label for="apv-ap-st">Solis</label><select id="apv-ap-st">${a.steps.map((st, i) => `<option value="${i}" ${i === def ? 'selected' : ''}>${i + 1}. solis${st.items.length ? ` (${esc(st.items.map(itemLabel).join(' + '))}) – paralēli` : ''}</option>`).join('')}<option value="${n}" ${def === n ? 'selected' : ''}>Jauns solis (${n + 1}.)</option></select></div>`,
+    actions:[{label:'Atcelt', cls:'btn-secondary'}, {label:'Pievienot', cls:'btn-primary', onClick: close => {
+      const [t, id] = $('#apv-ap-it', submodal).value.split(':'), si = +$('#apv-ap-st', submodal).value;
+      if (si >= a.steps.length) a.steps.push({items:[]});
+      const st = a.steps[si];
+      if (st.items.some(x => x.t === t && x.id === id)){ toast(`${itemLabel({t, id})} jau ir ${si + 1}. solī.`, true); return; }
+      st.items.push({t, id}); a.custom = !!a.routeId; close(); renderWizard(); saveDraft();
+    }}]});
+  setTimeout(() => { const el = $('#apv-ap-it', submodal); if (el) el.focus(); }, 30);
+}
 function apvStepsHtml(steps, ctx, ro = false){
   return steps.map((st, i) => `${i ? '<span class="apv-arr" aria-hidden="true">→</span>' : ''}<div class="apv-step" data-si="${i}"><span class="apv-sn">${i + 1}.</span>
     ${st.items.map((it, j) => `<span class="apv-it"><b>${esc(itemLabel(it))}</b>${it.t === 'g' ? ` <small>· ${esc(APV_RULES[itemRule(it)].toLowerCase())}</small>` : ''}${ctx === 'c' ? absTags(it, compose.apv, !ro) : absTags(it)}${ro ? '' : `<button type="button" class="apv-x" data-${ctx}-rm="${i}|${j}" aria-label="Noņemt ${esc(itemLabel(it))} no ${i + 1}. soļa">×</button>`}</span>`).join('')}
@@ -9118,7 +9177,7 @@ function renderApproval(){
   if (a.routeId && !routeById(a.routeId)) a.routeId = '';
   renderRouteSel(a);
   $('#c-apv-custom').hidden = !(a.routeId && a.custom);
-  $('#c-apv-steps').innerHTML = apvStepsHtml(a.steps, 'c');
+  $('#c-apv-steps').innerHTML = apvCampStepsHtml(a);
   const err = compose.tried.has(5) && a.required && !apvItems(a).length;
   $('#c-apv-err').hidden = !err; $('#c-apv-err').textContent = err ? 'Norādiet vismaz vienu saskaņotāju vai izvēlieties maršrutu.' : '';
   if (document.activeElement !== $('#c-apv-due')) $('#c-apv-due').value = a.due || '';
@@ -11449,7 +11508,8 @@ const actions = {
   'apv-remind': () => apvRemind(),
   'apv-fwd': id => apvForward(id || 0),
   'apv-manage': () => openApvManager(),
-  'apv-step-add': () => { const a = apvEnsure(compose.apv); a.steps.push({items:[]}); a.custom = !!a.routeId; renderWizard(); saveDraft(); const sl = $$('#c-apv-steps [data-c-add]').pop(); if (sl) sl.focus(); },
+  'apv-step-add': () => apvAddPicker(true),
+  'apv-item-add': () => apvAddPicker(false),
   'apv-save-route': () => apvSaveAsRoute(),
   'apv-return': () => apvReturn(),
   'open-doc': (id, el) => openDocSrc(el.dataset.src),
@@ -12378,6 +12438,7 @@ $('#c-apv-steps').addEventListener('change', e => { const sl = e.target.closest(
   renderWizard(); saveDraft(); const n = $(`#c-apv-steps [data-c-add="${sl.dataset.cAdd}"]`); if (n) n.focus(); });
 $('#c-apv-steps').addEventListener('click', e => {
   const sp = e.target.closest('[data-apv-sub]'); if (sp){ apvPickSub(sp.dataset.apvSub); return; }
+  const rs = e.target.closest('[data-c-rmstep]'); if (rs){ const a = apvEnsure(compose.apv); if (a.steps.length > 1) a.steps.splice(+rs.dataset.cRmstep, 1); a.custom = !!a.routeId; renderWizard(); saveDraft(); return; }
   const b = e.target.closest('[data-c-rm]'); if (!b) return;
   const a = apvEnsure(compose.apv), [i, j] = b.dataset.cRm.split('|').map(Number);
   a.steps[i].items.splice(j, 1); if (!a.steps[i].items.length && a.steps.length > 1) a.steps.splice(i, 1);
