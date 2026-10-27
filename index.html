@@ -1256,6 +1256,11 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .camp-table tbody tr.camp-row:hover td{background:var(--row-hover)}
 .camp-name{appearance:none;border:0;background:none;padding:0;font:inherit;font-size:var(--fs-md);font-weight:600;color:var(--text);text-align:left;cursor:pointer;max-width:min(330px,26vw);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
 .camp-name:hover{color:var(--primary-dark);text-decoration:underline}
+/* līdzšinējais nosaukums – apraksts zem jaunā nosaukuma (sarakstā) un aiz tā (galvenē) */
+.camp-desc{display:block;font-size:12px;color:var(--text-muted);font-weight:400;line-height:1.3;max-width:min(330px,26vw);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#camp-scroll .camp-desc{max-width:min(276px,21vw)}
+#c-title .c-desc{font-size:var(--fs-md);font-weight:400;color:var(--text-muted)}
+.hf-desc{display:block;font-size:11px;color:var(--text-muted);font-weight:400}
 .camp-name:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:var(--radius-xs)}
 .camp-table th:first-child{width:27%}
 .camp-table th.c-wl{width:70px;white-space:normal;line-height:1.15}
@@ -1274,7 +1279,7 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .ck-sub{color:var(--text-muted);margin-left:6px;font-size:var(--fs-sm)}
 /* kampaņu sarakstā: "pirms / pēc termiņa" – otrā rindā zem veida (tabula ietilpst platumā arī ar kolonnu "Darba laiks") */
 #camp-scroll .ck-sub{display:block;margin:1px 0 0 22px;font-size:var(--fs-xs);line-height:1.2}
-#camp-scroll .camp-name{max-width:min(236px,17vw)}
+#camp-scroll .camp-name{max-width:min(276px,21vw)}
 #camp-scroll .camp-table th:first-child{width:auto}
 #camp-scroll .camp-table th,#camp-scroll .camp-table td{padding-left:8px;padding-right:8px}
 .ck,.ck-sub{vertical-align:middle}
@@ -3267,7 +3272,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 125</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 126</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4663,10 +4668,12 @@ function perCodeList(codes){
   const nums = same ? m.map(x => +x[2]) : [], seq = same && nums.every((n, i) => !i || n === nums[i - 1] + 1);
   return seq ? `${codes[0]}-${codes[codes.length - 1]}` : codes.join(',');
 }
-function campCodeBase(c = compose){
+// scope – bez izvēlēta apsekojuma izmantot tvēruma apsekojumus (nosūtot; melnrakstā – tikai pēc veiktas atlases)
+function campCodeBase(c = compose, scope = false){
   const sel = c.sel, fiz = c.aud === 'fiz';
   let reps = (sel.reports || []).map(repById).filter(Boolean);
-  if (!reps.length && sel.allReports && c === compose) reps = [...new Set(state.respondents.filter(matchesFilt).flatMap(r => selDutiesOf(r)).map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
+  // bez izvēlēta apsekojuma (uzņēmumu statistikā – tvērums pēc perioda): tvērumā esošie apsekojumi
+  if (!reps.length && !fiz && c === compose && (scope || c.selRun) && hasScope(sel)) reps = [...new Set(baseDuties().map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
   if (!reps.length) return null;
   const idx = reps.length === 1 ? reps[0].code : `${reps[0].code}+${reps.length - 1}`;
   let year, per;
@@ -4693,6 +4700,40 @@ function uniqueCampCode(base, kind, used = usedCampNames()){
   let i = 2; while (used.has(`${base}_${kind}${i}`)) i++;
   return `${base}_${kind}${i}`;
 }
+// kampaņa bez apsekojuma: {veids}_{gads}_{kārtas nr.}, piem., "CI_2026_01"
+const CAMP_NR_RE = /^(UZ|AT|IN|CI)_\d{4}_\d{2,}$/, CAMP_CODE_RE = /^[^\s_]+_\d{4}_[^\s_]+_(UZ|AT|IN|CI)\d*$/;
+const kindCodeOf = k => KIND_CODE[k && k.startsWith('atg') ? 'atgadinajums' : k] || 'CI';
+function uniqueCampNr(kind, year, used){ let i = 1; const nm = n => `${kind}_${year}_${String(n).padStart(2, '0')}`; while (used.has(nm(i))) i++; return nm(i); }
+// nosūtītai kampaņai bez saglabātas bāzes – pēc vēstuļu pienākumiem (apsekojumi, periodi)
+function campBaseFromDuties(xs){
+  const dm = new Map((state.duties || []).map(d => [d.id, d])), ds = xs.flatMap(x => (x.duties || []).map(id => dm.get(id)).filter(Boolean));
+  const reps = [...new Set(ds.map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
+  if (!reps.length) return null;
+  const pers = [...new Set(ds.map(d => d.period))].sort((a, b) => periodStart(a) - periodStart(b)), ys = pers.map(periodYear);
+  const year = ys.sort((a, b) => ys.filter(v => v === b).length - ys.filter(v => v === a).length)[0] || new Date().getFullYear();
+  const codes = pers.filter(k => periodYear(k) === year).map(k => perNoYear(periodCode(k)));
+  return {base:`${reps.length === 1 ? reps[0].code : `${reps[0].code}+${reps.length - 1}`}_${year}_${codes.length > 3 || new Set(codes.map(c => c[0])).size > 1 ? 'VISI' : perCodeList(codes)}`, kind:kindCodeOf(xs[0].sessionKind)};
+}
+// Visām kampaņām (nosūtītajām, ieplānotajām, melnrakstiem, saskaņošanā) – nosaukums pēc tvēruma datiem izveides secībā (dublikātiem – "AT2", "AT3");
+// līdzšinējais nosaukums – apraksts (desc); bez apsekojuma – {veids}_{gads}_{kārtas nr.}
+function assignCampNames(){
+  const items = [], by = new Map();
+  state.sent.forEach(x => { if (!by.has(x.batch)) by.set(x.batch, []); by.get(x.batch).push(x); });
+  by.forEach(xs => { const x0 = xs[0], at = xs.reduce((m, x) => x.sentAt < m ? x.sentAt : m, x0.sentAt);
+    items.push({at:x0.createdAt || at, cb:x0.campBase !== undefined ? x0.campBase : campBaseFromDuties(xs), kind:kindCodeOf(x0.sessionKind), old:x0.sessionName, desc:x0.sessionDesc,
+      set:(n, d) => xs.forEach(x => { x.sessionName = n; x.sessionDesc = d; })}); });
+  (state.planned || []).forEach(pl => items.push({at:pl.createdAt || pl.sendDate, cb:pl.snap ? withSnap(pl.snap, () => campCodeBase()) : null, kind:kindCodeOf(pl.kindKey), old:pl.name, desc:pl.desc,
+    set:(n, d) => { pl.name = n; pl.desc = d; if (pl.snap){ pl.snap.name = n; pl.snap.desc = d; pl.snap.nameAuto = false; } }}));
+  (state.drafts || []).forEach(d => items.push({at:d.createdAt || d.savedAt, cb:withSnap(d, () => campCodeBase()), kind:kindCodeOf(d.kind), old:d.name, desc:d.desc,
+    set:(n, ds) => { d.name = n; d.desc = ds; }}));
+  const used = new Set();
+  items.sort((a, b) => String(a.at || '').localeCompare(String(b.at || ''))).forEach(it => {
+    const n = it.cb ? uniqueCampCode(it.cb.base, it.cb.kind, used) : uniqueCampNr(it.kind, new Date(it.at || Date.now()).getFullYear(), used);
+    used.add(n);
+    const old = it.old && !CAMP_CODE_RE.test(it.old) && !CAMP_NR_RE.test(it.old) ? it.old : '';
+    it.set(n, it.desc || old);
+  });
+}
 function uniqueCampName(base){
   const used = usedCampNames();
   if (!used.has(base)) return base;
@@ -4702,12 +4743,15 @@ function uniqueCampName(base){
 // kamēr lietotājs nosaukumu nav mainījis – tas atjaunojas līdzi veidam, apsekojumam un periodam (bez apsekojuma – iekšēji "Kampaņa Nr. N")
 // pēc nodošanas saskaņošanai vai nosūtīšanas nosaukums vairs automātiski nemainās
 function syncAutoName(){
-  if (compose.nameAuto && !(compose.apv && ['pending', 'approved'].includes(compose.apv.status))){ const a = autoCampName(); compose.autoEmpty = !a; compose.name = a || defaultSessionName(); }
+  if (compose.nameAuto && !(compose.apv && ['pending', 'approved'].includes(compose.apv.status))){ const a = autoCampName(); compose.autoEmpty = !a;
+    compose.name = a || (CAMP_NR_RE.test(compose.name || '') ? compose.name : defaultSessionName()); if (!a && CAMP_NR_RE.test(compose.name)) compose.autoEmpty = false; }
   const inp = $('#c-name'); if (!inp) return;
   if (document.activeElement !== inp) inp.value = compose.nameAuto && compose.autoEmpty ? '' : compose.name;
   const rs = $('#c-name-reset'); if (rs) rs.hidden = compose.nameAuto || !autoCampName();
-  const t = $('#c-title'); if (t) t.textContent = compose.name;
+  renderCampTitle();
 }
+// galvene: nosaukums un pelēks apraksts (līdzšinējais nosaukums)
+function renderCampTitle(){ const t = $('#c-title'); if (t) t.innerHTML = esc(compose.name) + (compose.desc ? ` <span class="c-desc">${esc(compose.desc)}</span>` : ''); }
 // atlase (1. solis "Ko attiecina kampaņa"): periodiskumi un periodi un/vai apsekojumi (pārskati)
 const defaultResp = () => ({name:'', nmk:'', nmkps:'', uuk:'', email:'', eaddr:'', list:null, listName:'', listMissing:[]});
 const defaultFz = () => ({year:'', period:'', rounds:null});
@@ -4787,10 +4831,10 @@ const compose = {
 const sessionSnapshot = () => ({wl:clone(compose.wl || wlNew(compose.createdAt)), name:compose.name, aud:compose.aud, kind:compose.kind, remind:compose.remind, sel:clone(compose.sel),
   excluded:[...compose.excluded], surveyIdx:compose.surveyIdx, f:{...compose.f}, prio:[...compose.prio], filt:{...compose.filt},
   content: compose.content ? clone(compose.content) : null, when:compose.when, sendTime:compose.sendTime,
-  custom:clone(compose.custom), step:compose.step, wiz:3, apv:clone(compose.apv || defaultApv()), review:compose.review ? clone(compose.review) : null, tests:clone(compose.tests || []), selRun:compose.selRun === 'legacy' ? 'legacy' : compose.selRun ? clone(compose.selRun) : null, prioManual:!!compose.prioManual, varOvr:clone(compose.varOvr), addrFix:clone(compose.addrFix || {}), addrUndo:clone(compose.addrUndo || {}), exc:clone(compose.exc || {}), dupKeep:clone(compose.dupKeep || {}), shared:clone(compose.shared || {}), miRej:clone(compose.miRej || {}), addrMi:clone(compose.addrMi || {}), riskOk:clone(compose.riskOk || {}), riskSkip:clone(compose.riskSkip || {}), regSent:clone(compose.regSent || {}), nameAuto:!!compose.nameAuto, createdAt:compose.createdAt || ''});
+  custom:clone(compose.custom), step:compose.step, wiz:3, apv:clone(compose.apv || defaultApv()), review:compose.review ? clone(compose.review) : null, tests:clone(compose.tests || []), selRun:compose.selRun === 'legacy' ? 'legacy' : compose.selRun ? clone(compose.selRun) : null, prioManual:!!compose.prioManual, varOvr:clone(compose.varOvr), addrFix:clone(compose.addrFix || {}), addrUndo:clone(compose.addrUndo || {}), exc:clone(compose.exc || {}), dupKeep:clone(compose.dupKeep || {}), shared:clone(compose.shared || {}), miRej:clone(compose.miRej || {}), addrMi:clone(compose.addrMi || {}), riskOk:clone(compose.riskOk || {}), riskSkip:clone(compose.riskSkip || {}), regSent:clone(compose.regSent || {}), nameAuto:!!compose.nameAuto, desc:compose.desc || '', createdAt:compose.createdAt || ''});
 function applySnapshot(d){
   Object.assign(compose, {
-    name: d.name || defaultSessionName(), nameAuto: !d.name || !!d.nameAuto, createdAt: d.createdAt || d.savedAt || '', aud: campAud(d.aud),
+    name: d.name || defaultSessionName(), nameAuto: !d.name || !!d.nameAuto, desc: d.desc || '', createdAt: d.createdAt || d.savedAt || '', aud: campAud(d.aud),
     kind: SESS_KINDS[d.kind] ? d.kind : 'uzaicinajums', remind: d.remind === 'after' ? 'after' : 'before',
     sel: migrateSel(d.sel), excluded: new Set(d.excluded || []), surveyIdx: d.surveyIdx || 0,
     f: {...compose.f, ...(d.f || {})}, prio: Array.isArray(d.prio) && d.prio[0] ? [...d.prio] : [...DEFAULT_PRIO],
@@ -4864,7 +4908,7 @@ function renderDraftInfo(){
 function newSession(full){
   Object.assign(compose, {draftId:'k' + uid(), nameAuto:true, createdAt:new Date().toISOString(), content:null, excluded:new Set(), open:new Set(), index:0, noneOpen:false});
   // jaunai kampaņai – noklusējuma veids un atlase; pēc nosūtīšanas saglabājas adresāts, apsekojuma dati un adrešu prioritāte
-  Object.assign(compose, {kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', repF:'', when:'now', sendTime:'09:00', apv:defaultApv(), review:null, tests:[], selRun:null, wl:wlNew(), custom:{}, step:1, pvCh:'', tried:new Set(), varOvr:{}, addrFix:{}, addrUndo:{}, exc:{}, dupKeep:{}, shared:{}, miRej:{}, addrMi:{}, riskOk:{}, riskSkip:{}, regSent:{}, acF:''});
+  Object.assign(compose, {desc:'', kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', repF:'', when:'now', sendTime:'09:00', apv:defaultApv(), review:null, tests:[], selRun:null, wl:wlNew(), custom:{}, step:1, pvCh:'', tried:new Set(), varOvr:{}, addrFix:{}, addrUndo:{}, exc:{}, dupKeep:{}, shared:{}, miRej:{}, addrMi:{}, riskOk:{}, riskSkip:{}, regSent:{}, acF:''});
   if (full) Object.assign(compose, {aud:'fiz', surveyIdx:0, prio:prioDefault('fiz'), prioManual:false, filt:{},
     f:{...SURVEYS[0], start:isoDate(addDays(3)), deadline:isoDate(addDays(30)), date:isoDate(new Date())}});
   // jaunai kampaņai uzņēmumu statistikā – "Apvienot pēc NMK" ieslēgts (melnrakstā saglabātā izvēle netiek pārrakstīta)
@@ -8337,7 +8381,7 @@ function renderCompose(){
   renderBasics();
   $('#c-name').value = compose.name;
   syncAutoName();
-  $('#c-title').textContent = compose.name;
+  renderCampTitle();
   renderDraftInfo();
   $('#c-aud').innerHTML = Object.entries(AUDS).filter(([k]) => CAMP_AUDS.includes(k)).map(([k, a]) => `<option value="${k}" ${compose.aud === k ? 'selected' : ''}>${esc(a.field)}</option>`).join('');
   syncScopeInputs();
@@ -9505,7 +9549,7 @@ async function send({skipConfirm = false, approved = false} = {}){
     if (!ok) return;
     compose.nameAuto = false;
     state.planned = state.planned || [];
-    state.planned.unshift({id:'pl' + uid(), name:compose.name, kindKey:sessKindKey(), sendDate:compose.sel.sendDate, sendTime:compose.sendTime, target:remindTarget(),
+    state.planned.unshift({id:'pl' + uid(), name:compose.name, desc:compose.desc || '', kindKey:sessKindKey(), sendDate:compose.sel.sendDate, sendTime:compose.sendTime, target:remindTarget(),
       contentName:contentName(t), contentLabel:contentLabel(), prio:compose.prio.filter(Boolean), count:n, createdAt:compose.createdAt || new Date().toISOString(), createdBy:CURRENT_USER, snap:sessionSnapshot(), reps:campRepPairs()});
     alMove(alKeyC(), 'planned:' + state.planned[0].id);
     alAdd('planned:' + state.planned[0].id, alE('plan', approved ? AL_SYS : CURRENT_USER, `${alWhen(compose.sel.sendDate, compose.sendTime)}${approved ? ' · automātiski pēc saskaņojuma' : ''}`));
@@ -9542,12 +9586,14 @@ function doSend(meta = {}){
   if (!meta.final) ui.newIds = new Set();
   // testa datiem: pirmās adreses iznākums pēc kanāla (klasifikācijas noteikums)
   const fq = meta.force ? {epasts:[...meta.force.epasts], eadrese:[...meta.force.eadrese]} : null;
+  // nosaukuma bāze ({indekss}_{gads}_{periods}, veids) – vienotai nosaukumu piešķiršanai
+  const cb = campCodeBase(compose, true);
   const created = recs.map(r => {
     const msg = buildMessage(letterTpl(t, r), r, false), first = addrPlan(r)[0];
     const force = fq && first ? fq[ADDR_TYPES[first.type].ch].shift() : undefined;
     const attempts = deliveryAttempts(r, compose.prio, `${batch}|${r.id}|${now}`, force), fin = finalAttempt(attempts);
     stampAttempts(attempts, now);
-    const rec = {id:'s' + uid(), batch, seed:!!meta.seed, createdBy:meta.seed ? '' : CURRENT_USER, createdAt:meta.seed ? '' : (compose.createdAt || now), sessionName:compose.name, sessionKind:sessKindKey(), plannedFor:meta.plannedFor || '', contentSource:compose.content.source, sentAt:now,
+    const rec = {id:'s' + uid(), batch, seed:!!meta.seed, createdBy:meta.seed ? '' : CURRENT_USER, createdAt:meta.seed ? '' : (compose.createdAt || now), sessionName:compose.name, sessionDesc:compose.desc || '', campBase:cb, sessionKind:sessKindKey(), plannedFor:meta.plannedFor || '', contentSource:compose.content.source, sentAt:now,
       templateId:compose.content.templateId || '', templateName:contentName(t), kind:t.kind, respondentId:r.id,
       recipient:r.name, address:fin.address, addrType:fin.type, channel:ADDR_TYPES[fin.type].ch, prio:compose.prio.filter(Boolean), attempts, docNr:compose.f.docNr,
       duties:msgDuties(r).map(d => d.id),
@@ -9617,11 +9663,14 @@ const SEED_HIST = [
     force:{epasts:[], eadrese:['d-ok', 'd-ok', 'd-rejdiv', 'd-ok', 'd-transit']}},
 ];
 const OLD_SEED_NAMES = ['Darbaspēka apsekojums – uzaicinājums', 'Nokavētie pārskati – atgādinājums'];
-// arhīva kampaņas nosaukums – kods pēc apsekojuma un iepriekšējā perioda (ceturksnis vai mēnesis pirms 2 mēnešiem); unikāls (AT2 …)
-const archCode = (idx, per, kind) => at => {
-  const d = per === 'cet' ? new Date(at.getFullYear(), at.getMonth() - 3, 1) : new Date(at.getFullYear(), at.getMonth() - 2, 1);
-  const pc = per === 'cet' ? `C${Math.floor(d.getMonth() / 3) + 1}` : `M${pad(d.getMonth() + 1)}`;
-  return uniqueCampCode(`${idx}_${d.getFullYear()}_${pc}`, kind, new Set((state.sent || []).map(x => x.sessionName)));
+// arhīva kampaņas nosaukuma bāze: apsekojums(-i) (indeksi vai periodiskums uzņēmumu statistikā), gads un periods pēc nosūtīšanas datuma
+const jurRepCodes = freq => (state.reports || []).filter(p => p.aud === 'jur' && (!freq || p.freq === freq)).map(p => p.code).sort((a, b) => a.localeCompare(b, 'lv'));
+const archBase = (codes, per, kind) => at => {
+  const cs = typeof codes === 'function' ? codes() : codes; if (!cs.length) return null;
+  const idx = cs.length === 1 ? cs[0] : `${cs[0]}+${cs.length - 1}`;
+  const d = per === 'cet' ? new Date(at.getFullYear(), at.getMonth() - 3, 1) : per === 'men2' ? new Date(at.getFullYear(), at.getMonth() - 2, 1) : per === 'men' ? new Date(at.getFullYear(), at.getMonth() - 1, 1) : per === 'gads' ? new Date(at.getFullYear() - 1, 0, 1) : at;
+  const pc = per === 'cet' ? `C${Math.floor(d.getMonth() / 3) + 1}` : per === 'gads' ? 'G' : per === 'visi' ? 'VISI' : `M${pad(d.getMonth() + 1)}`;
+  return {base:`${idx}_${d.getFullYear()}_${pc}`, kind};
 };
 // Testa arhīvs: kampaņas par pēdējiem 12 mēnešiem un dažas, kas vecākas par 2 gadiem (vēstules bez satura – tikai piegādes dati)
 function seedArchive(){
@@ -9629,15 +9678,16 @@ function seedArchive(){
   const tplOf = id => state.templates.find(t => t.id === id);
   const plan = [];
   [31, 28, 25].forEach((m, i) => plan.push({m, day:[12, 9, 16][i], name:['Gada pārskati – atgādinājums', 'Darbaspēka apsekojums – uzaicinājums', 'Mēneša pārskati – atgādinājums'][i],
-    kind:['atg-pec', 'uzaicinajums', 'atg-pirms'][i], tpl:['t9', 't2', 't9'][i], list:[jur, fiz, jur][i], share:55, prio:DEFAULT_PRIO, code:i === 1 ? archCode('1-DSA', 'cet', 'UZ') : null}));
+    kind:['atg-pec', 'uzaicinajums', 'atg-pirms'][i], tpl:['t9', 't2', 't9'][i], list:[jur, fiz, jur][i], share:55, prio:DEFAULT_PRIO,
+    base:[archBase(() => jurRepCodes('gads'), 'gads', 'AT'), archBase(['1-DSA'], 'cet', 'UZ'), archBase(() => jurRepCodes('men'), 'men', 'AT')][i]}));
   for (let m = 23; m >= 3; m--){
     // pēdējos mēnešos biežāk izmanto e-pastu (lai redzētu tendences)
     const emailFirst = m <= 6 ? ['email1', 'email2', 'eadrese'] : DEFAULT_PRIO;
-    plan.push({m, day:10, name:'Mēneša pārskati – pirmstermiņa atgādinājums', kind:'atg-pirms', tpl:'t9', list:jur, share:60 + (m % 4) * 8, prio:DEFAULT_PRIO});
-    plan.push({m, day:20, name:'Nokavētie pārskati – atgādinājums', kind:'atg-pec', tpl:'t9', list:jur, share:30 + (m % 3) * 10, prio:emailFirst});
-    if (m % 3 === 0) plan.push({m, day:4, name:'Darbaspēka apsekojums – uzaicinājums', kind:'uzaicinajums', tpl:'t2', list:fiz, share:85, prio:DEFAULT_PRIO, code:archCode('1-DSA', 'cet', 'UZ')});
-    if (m % 3 === 1) plan.push({m, day:14, name:'Ceļotāju apsekojums – atgādinājums', kind:'atg-pec', tpl:'t3', list:fiz, share:55, prio:emailFirst, code:archCode('1-C', 'men2', 'AT')});
-    if (m % 4 === 2) plan.push({m, day:25, name:'Rezultātu publicēšana', kind:'info', tpl:m % 8 === 2 ? 't10' : 't5', list:m % 8 === 2 ? jur : fiz, share:90, prio:['email1', 'email2', 'eadrese']});
+    plan.push({m, day:10, name:'Mēneša pārskati – pirmstermiņa atgādinājums', kind:'atg-pirms', tpl:'t9', list:jur, share:60 + (m % 4) * 8, prio:DEFAULT_PRIO, base:archBase(() => jurRepCodes('men'), 'men', 'AT')});
+    plan.push({m, day:20, name:'Nokavētie pārskati – atgādinājums', kind:'atg-pec', tpl:'t9', list:jur, share:30 + (m % 3) * 10, prio:emailFirst, base:archBase(() => jurRepCodes(), 'visi', 'AT')});
+    if (m % 3 === 0) plan.push({m, day:4, name:'Darbaspēka apsekojums – uzaicinājums', kind:'uzaicinajums', tpl:'t2', list:fiz, share:85, prio:DEFAULT_PRIO, base:archBase(['1-DSA'], 'cet', 'UZ')});
+    if (m % 3 === 1) plan.push({m, day:14, name:'Ceļotāju apsekojums – atgādinājums', kind:'atg-pec', tpl:'t3', list:fiz, share:55, prio:emailFirst, base:archBase(['1-C'], 'men2', 'AT')});
+    if (m % 4 === 2) plan.push({m, day:25, name:'Rezultātu publicēšana', kind:'info', tpl:m % 8 === 2 ? 't10' : 't5', list:m % 8 === 2 ? jur : fiz, share:90, prio:['email1', 'email2', 'eadrese'], base:m % 8 === 2 ? archBase(() => jurRepCodes(), 'visi', 'IN') : null});
     if (m % 12 === 9) plan.push({m, day:27, name:'Pateicība par datu iesniegšanu', kind:'cits', tpl:'t11', list:jur, share:70, prio:DEFAULT_PRIO});
   }
   const now = new Date();
@@ -9646,13 +9696,13 @@ function seedArchive(){
       const t = tplOf(c.tpl);
       if (!t) return;
       state.seq = (state.seq || 0) + 1;
-      // apsekojuma kampaņām – kods ({indekss}_{gads}_{periods}_{veids}), pārējām – nosaukums ar mēnesi
-      const sname = c.code ? c.code(c.at) : `${c.name} (${MONTHS[c.at.getMonth()]})`;
+      // nosaukums – pēc visu testa kampaņu izveides (assignCampNames); līdzšinējais nosaukums ar mēnesi – apraksts
+      const sname = `${c.name} (${MONTHS[c.at.getMonth()]})`, cb = c.base ? c.base(c.at) : null;
       const batch = state.seq, sentAt = c.at.toISOString(), f = {...compose.f, date:isoDate(c.at), start:isoDate(addDaysTo(c.at, -10)), deadline:isoDate(addDaysTo(c.at, c.kind === 'atg-pec' ? -5 : 10))};
       c.list.filter(r => hashRoll(`${batch}|${c.name}|${r.id}`) < c.share && addrPlan(r, c.prio, false).length).forEach(r => {
         const attempts = deliveryAttempts(r, c.prio, `arch|${batch}|${r.id}`, undefined, false), fin = finalAttempt(attempts);
         stampAttempts(attempts, sentAt);
-        const rec = {id:'s' + uid(), batch, seed:true, archived:true, sessionName:sname, sessionKind:c.kind, plannedFor:'', contentSource:'tpl', sentAt,
+        const rec = {id:'s' + uid(), batch, seed:true, archived:true, sessionName:sname, sessionDesc:sname, campBase:cb, sessionKind:c.kind, plannedFor:'', contentSource:'tpl', sentAt,
           templateId:t.id, templateName:t.name, kind:t.kind, respondentId:r.id, recipient:r.name, address:fin.address, addrType:fin.type, channel:ADDR_TYPES[fin.type].ch,
           prio:c.prio.filter(Boolean), attempts, docNr:`${state.layout.docPrefix}${c.at.getFullYear()}/${batch}`, subject:fillText(t.subject, ctxFor(r, f)), bodyHtml:'', bodyText:'', footer:'',
           lang:'lv', wantLang:'lv', fallback:false, org:state.layout.org, attachments:[], main:null, files:[], status:'rinda', note:'', manual:[]};
@@ -9668,14 +9718,13 @@ function seedHistory(){
   try { seedHistoryAll(); } finally { state.respondents = allR; }
 }
 function seedHistoryAll(){
-  state.histSeeded = true; state.histVer = 8;
+  state.histSeeded = true; state.histVer = 9;
   if (state.sent.length) return;
   seedArchive();
   const keep = sessionSnapshot(), keepId = compose.draftId, wasDefault = compose.nameAuto;
   SEED_HIST.forEach(x => {
     if (!state.templates.some(t => t.id === x.snap.content.templateId)) return;
-    applySnapshot({...x.snap, f:{...keep.f, date:isoDate(addDays(x.days || 0)), dateManual:true}});
-    { const b = campCodeBase(); if (b) compose.name = uniqueCampCode(b.base, b.kind); }
+    applySnapshot({...x.snap, desc:x.snap.name, f:{...keep.f, date:isoDate(addDays(x.days || 0)), dateManual:true}});
     compose.f.docNr = nextDocNr();
     const at = x.minsAgo ? new Date(Date.now() - x.minsAgo * 60e3) : addDays(x.days);
     if (!x.minsAgo) at.setHours(x.h, 5, 0, 0);
@@ -9687,9 +9736,10 @@ function seedHistoryAll(){
   // jaunākās vēstules – saraksta sākumā
   state.sent.sort((a, b) => String(b.sentAt).localeCompare(String(a.sentAt)));
   ui.newIds = new Set();
+  assignCampNames(); state.campNameV = 2;
 }
 // Agrāk izveidotā testa vēsture tiek aizstāta ar jauno (ja tajā ir tikai testa ieraksti)
-if (state.histSeeded && state.histVer !== 8 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
+if (state.histSeeded && state.histVer !== 9 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
   state.sent = []; state.seq = 0; state.histSeeded = false; state.tasks = [];
   state.respondents.forEach(r => { delete r.invalidAddr; });
 }
@@ -9876,17 +9926,17 @@ function campKindCell(k){
 function campRows(){
   const rows = [
     ...(state.drafts || []).map(d => { const as = (d.apv || {}).status, ap = approverById((d.apv || {}).approver);
-      return {key:'draft:' + d.id, type:'draft', id:d.id, name:d.name, kind:sessKindKey(d), ts:as === 'pending' ? d.apv.at : d.savedAt, st:as === 'pending' ? 'appr' : as === 'returned' ? 'ret' : 'draft', created:d.createdAt || d.savedAt, creator:d.createdBy || CURRENT_USER,
+      return {key:'draft:' + d.id, type:'draft', id:d.id, name:d.name, desc:d.desc || '', kind:sessKindKey(d), ts:as === 'pending' ? d.apv.at : d.savedAt, st:as === 'pending' ? 'appr' : as === 'returned' ? 'ret' : 'draft', created:d.createdAt || d.savedAt, creator:d.createdBy || CURRENT_USER,
       apvShort:as === 'pending' ? apvShortText(d.apv) : '', meta:as === 'pending' ? apvProgText(d.apv) : as === 'returned' ? `Atgriezta labošanai ${fmtStamp(d.apv.returnedAt)} · ${d.apv.returnComment || ''}` : `Saglabāta ${fmtStamp(d.savedAt)}`, when: d.when === 'plan' ? `Plānota ${fmtWhen(d.sel.sendDate, d.sendTime || '09:00')}` : 'Pēc apstiprināšanas',
       n:withSnap(d, () => selectedResp().length), d}; }),
-    ...(state.planned || []).map(pl => ({key:'planned:' + pl.id, type:'planned', id:pl.id, name:pl.name, kind:pl.kindKey, ts:pl.createdAt || pl.sendDate, st:'planned', created:pl.createdAt || pl.sendDate, creator:pl.createdBy || CURRENT_USER,
+    ...(state.planned || []).map(pl => ({key:'planned:' + pl.id, type:'planned', id:pl.id, name:pl.name, desc:pl.desc || '', kind:pl.kindKey, ts:pl.createdAt || pl.sendDate, st:'planned', created:pl.createdAt || pl.sendDate, creator:pl.createdBy || CURRENT_USER,
       meta:`Izveidoja: ${pl.createdBy || CURRENT_USER}${pl.createdAt ? `, ${fmtDate(isoDate(new Date(pl.createdAt)))}` : ''}`,
       when:`Plānota ${fmtWhen(pl.sendDate, pl.sendTime || '09:00')}`, n:pl.count ?? '—', pl})),
     ...[...new Set(state.sent.map(x => x.batch))].map(b => {
       const xs = state.sent.filter(x => x.batch === b), x0 = xs[0];
       const ok = xs.filter(x => x.status === 'piegadats').length, fail = xs.filter(x => ST_FAIL.includes(x.status)).length;
       const st = xs.some(x => ST_PROC.includes(x.status)) ? 'active' : fail ? 'part' : 'done';
-      return {key:'sent:' + b, type:'sent', id:b, name:x0.sessionName || `Kampaņa Nr. ${b}`, kind:x0.sessionKind || '', ts:x0.sentAt, st,
+      return {key:'sent:' + b, type:'sent', id:b, name:x0.sessionName || `Kampaņa Nr. ${b}`, desc:x0.sessionDesc || '', kind:x0.sessionKind || '', ts:x0.sentAt, st,
         created:x0.createdAt || x0.sentAt, creator:x0.createdBy || '',
         meta:`Izveidoja: ${x0.createdBy || '—'}, ${fmtDate(isoDate(new Date(x0.createdAt || x0.sentAt)))}`,
         when:`Nosūtīta ${fmtShortIso(x0.sentAt)}`, n:xs.length, xs, ok, fail};
@@ -9981,11 +10031,11 @@ function renderCampaigns(){
   const q = norm(ui.camp.q);
   hideCTip();
   const c = ui.camp;
-  const list = campSorted(rows.filter(x => (ui.campSub === 'all' || CAMP_ST[x.st].sub === ui.campSub) && (!c.kind || baseKind(x.kind) === c.kind) && (!q || norm(x.name).includes(q)) &&
+  const list = campSorted(rows.filter(x => (ui.campSub === 'all' || CAMP_ST[x.st].sub === ui.campSub) && (!c.kind || baseKind(x.kind) === c.kind) && (!q || norm(`${x.name} ${x.desc || ''}`).includes(q)) &&
     (!c.creator || x.creator === c.creator) && (!c.from || campCreated(x) >= c.from) && (!c.to || campCreated(x) <= c.to)));
   renderCampSort();
   const row = x => `<tr class="camp-row" data-action="camp-row" data-id="${esc(x.key)}">
-      <td><button type="button" class="camp-name" data-action="camp-row" data-id="${esc(x.key)}" data-ctip="${esc(x.name + '\n' + x.meta)}" aria-description="${esc(x.meta)}">${esc(x.name)}</button></td>
+      <td><button type="button" class="camp-name" data-action="camp-row" data-id="${esc(x.key)}" data-ctip="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + x.meta)}" aria-description="${esc((x.desc ? x.desc + ' · ' : '') + x.meta)}">${esc(x.name)}</button>${x.desc ? `<small class="camp-desc" aria-hidden="true">${esc(x.desc)}</small>` : ''}</td>
       <td>${campKindCell(x.kind)}</td>
       <td class="num">${x.n}</td>
       <td>${esc(x.when)}</td>
@@ -10196,7 +10246,7 @@ function histChips(h){
 }
 // kampaņas (jaunākās augšā) un apsekojumi (kuriem ir vēstules)
 function histCampList(all){
-  const m = new Map(); all.forEach(x => { const c = m.get(x.batch); if (!c) m.set(x.batch, {b:x.batch, name:x.sessionName || `Kampaņa Nr. ${x.batch}`, at:x.sentAt}); else if (x.sentAt > c.at) c.at = x.sentAt; });
+  const m = new Map(); all.forEach(x => { const c = m.get(x.batch); if (!c) m.set(x.batch, {b:x.batch, name:x.sessionName || `Kampaņa Nr. ${x.batch}`, desc:x.sessionDesc || '', at:x.sentAt}); else if (x.sentAt > c.at) c.at = x.sentAt; });
   return [...m.values()].sort((a, b) => String(b.at).localeCompare(String(a.at)) || b.b - a.b);
 }
 function histRepList(all){
@@ -10210,8 +10260,8 @@ function renderHistFilters(h, all){
   sum('#hist-camp-sum', cur ? cur.name : 'Visas kampaņas', !!h.camp);
   sum('#hist-rep-sum', rp ? rp.code : 'Visi apsekojumi', !!h.rep, rp ? `${rp.code} ${rp.name}` : '');
   sum('#hist-per-sum', hfPerLabel(h), !!(h.quick || h.from || h.to));
-  const cq = norm($('#hist-camp-q').value), cl = camps.filter(c => !cq || norm(`${c.name} ${c.b}`).includes(cq));
-  $('#hist-camp-list').innerHTML = (cq ? '' : hfOpt('', !h.camp, '<span class="hf-o">Visas kampaņas</span>')) + cl.map(c => hfOpt(c.b, String(c.b) === String(h.camp), `<span class="hf-o">${esc(c.name)}</span><small>${esc(fmtDate(isoDate(new Date(c.at))))}</small>`, c.name)).join('') + (!cl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
+  const cq = norm($('#hist-camp-q').value), cl = camps.filter(c => !cq || norm(`${c.name} ${c.desc || ''} ${c.b}`).includes(cq));
+  $('#hist-camp-list').innerHTML = (cq ? '' : hfOpt('', !h.camp, '<span class="hf-o">Visas kampaņas</span>')) + cl.map(c => hfOpt(c.b, String(c.b) === String(h.camp), `<span class="hf-o">${esc(c.name)}${c.desc ? `<span class="hf-desc">${esc(c.desc)}</span>` : ''}</span><small>${esc(fmtDate(isoDate(new Date(c.at))))}</small>`, c.name + (c.desc ? `\n${c.desc}` : ''))).join('') + (!cl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   const rq = norm($('#hist-rep-q').value), rl = reps.filter(r => !rq || norm(`${r.code} ${r.name}`).includes(rq));
   $('#hist-rep-list').innerHTML = (rq ? '' : hfOpt('', !h.rep, '<span class="hf-o">Visi apsekojumi</span>')) + rl.map(r => hfOpt(r.id, r.id === h.rep, `<b>${esc(r.code)}</b> <small>${esc(r.name)}</small>`, `${r.code} – ${r.name}`)).join('') + (!rl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   $('#hist-per-list').innerHTML = HF_QUICK.map(([k, l]) => hfOpt(k, (h.quick || '') === k, `<span class="hf-o">${esc(l)}</span>${k === 'custom' && h.quick === 'custom' ? `<small>${esc(hfPerLabel(h))}</small>` : ''}`)).join('');
@@ -10651,7 +10701,7 @@ function renderSent(){
       <tbody>${sorted.slice(0, ui.histLimit).map(x => { const op = ui.histRow.has(x.id), f = HIST_FINAL[histFinal(x)];
         return `<tr class="hist-row ${op ? 'is-open' : ''} ${ui.newIds.has(x.id) ? 'is-new' : ''}" data-hrow="${x.id}">
           <td><span class="hist-name" title="${esc(x.recipient)}">${respLink(x.respondentId, x.recipient)}</span></td>
-          <td><span class="hist-camp" title="${esc(x.sessionName || `Kampaņa Nr. ${x.batch}`)}">${esc(x.sessionName || `Kampaņa Nr. ${x.batch}`)}</span></td>
+          <td><span class="hist-camp" title="${esc((x.sessionName || `Kampaņa Nr. ${x.batch}`) + (x.sessionDesc ? `\n${x.sessionDesc}` : ''))}">${esc(x.sessionName || `Kampaņa Nr. ${x.batch}`)}</span></td>
           <td><button type="button" class="cst hist-st ${f.cls}" data-action="hist-row" data-id="${x.id}" aria-expanded="${op}" title="${esc(f.label)}\n${esc(histStTip(x))}\nKlikšķis – detaļas: adrese, mēģinājumi, starpstatusi, NDR/DIV" aria-label="${esc(f.label)}">${'<i aria-hidden="true"></i>'}${esc(histShort(histFinal(x)))}</button></td>
           <td>${esc(x.channel === 'eadrese' ? 'eAdrese' : CHANNELS[x.channel] || '')}</td>
           <td title="${esc(fmtDateTime(x.sentAt))}">${esc(hxDate(x.sentAt))}</td>
@@ -11195,8 +11245,8 @@ function renderRepFilters(){
   sum('#rep-camp-sum', cur ? cur.name : 'Visas kampaņas', !!f.camp);
   sum('#rep-rep-sum', rp ? rp.code : 'Visi apsekojumi', !!f.rep, rp ? `${rp.code} – ${rp.name}` : '');
   sum('#rep-per-sum', repPerLabel(f), true);
-  const cq = norm($('#rep-camp-q').value), cl = camps.filter(c => !cq || norm(`${c.name} ${c.b}`).includes(cq));
-  $('#rep-camp-list').innerHTML = (cq ? '' : hfOpt('', !f.camp, '<span class="hf-o">Visas kampaņas</span>')) + cl.map(c => hfOpt(c.b, String(c.b) === String(f.camp), `<span class="hf-o">${esc(c.name)}</span><small>${esc(fmtDate(isoDate(new Date(c.at))))}</small>`, c.name)).join('') + (!cl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
+  const cq = norm($('#rep-camp-q').value), cl = camps.filter(c => !cq || norm(`${c.name} ${c.desc || ''} ${c.b}`).includes(cq));
+  $('#rep-camp-list').innerHTML = (cq ? '' : hfOpt('', !f.camp, '<span class="hf-o">Visas kampaņas</span>')) + cl.map(c => hfOpt(c.b, String(c.b) === String(f.camp), `<span class="hf-o">${esc(c.name)}${c.desc ? `<span class="hf-desc">${esc(c.desc)}</span>` : ''}</span><small>${esc(fmtDate(isoDate(new Date(c.at))))}</small>`, c.name + (c.desc ? `\n${c.desc}` : ''))).join('') + (!cl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   const rq = norm($('#rep-rep-q').value), rl = reps.filter(r => !rq || norm(`${r.code} ${r.name}`).includes(rq));
   $('#rep-rep-list').innerHTML = (rq ? '' : hfOpt('', !f.rep, '<span class="hf-o">Visi apsekojumi</span>')) + rl.map(r => hfOpt(r.id, r.id === f.rep, `<b>${esc(r.code)}</b> <small>${esc(r.name)}</small>`, `${r.code} – ${r.name}`)).join('') + (!rl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   $('#rep-per-list').innerHTML = REP_QUICK.map(([k, l]) => hfOpt(k, (f.quick || '') === k, `<span class="hf-o">${esc(l)}</span>${k === 'custom' && f.quick === 'custom' ? `<small>${esc(repPerLabel(f))}</small>` : ''}`)).join('');
@@ -12628,6 +12678,8 @@ assignCreators();
 seedWorkLog();
 seedPubData();
 seedApvData(state);
+// kampaņu nosaukumi formātā {indekss}_{gads}_{periods}_{veids} (līdzšinējais – apraksts); vienreiz agrāk saglabātajiem datiem
+if (state.campNameV !== 2){ assignCampNames(); state.campNameV = 2; save(); }
 setInterval(wlTick, WL_TICK);
 state.tasks = state.tasks || [];
 refreshStatuses();
