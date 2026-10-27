@@ -2908,7 +2908,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <div class="step-title"><span class="step-num">1</span><h2>Pamatdati</h2></div>
           <div class="form-grid">
             <div class="field"><label for="c-aud">Statistikas joma <span class="tip" tabindex="0" role="note" aria-label="Uzņēmumu statistika – tvērums pēc perioda, apsekojuma un respondenta. Iedzīvotāju statistika – tvērums pēc apsekojuma (un, ja vajag, perioda / viļņa)." data-tip="Uzņēmumu statistika – tvērums pēc perioda, apsekojuma un respondenta. Iedzīvotāju statistika – tvērums pēc apsekojuma (un, ja vajag, perioda / viļņa).">i</span></label><select id="c-aud"></select></div>
-            <div class="field"><label for="c-name">Kampaņas nosaukums <span class="req">*</span> <span class="tip" tabindex="0" role="note" aria-label="Nosaukums veidojas automātiski no kampaņas veida, apsekojuma un perioda. To var mainīt." data-tip="Nosaukums veidojas automātiski no kampaņas veida, apsekojuma un perioda. To var mainīt.">i</span></label><input type="text" id="c-name" maxlength="120" placeholder="Tiks izveidots automātiski pēc apsekojuma izvēles"><span class="err" id="c-name-err" hidden></span><button type="button" class="link-btn name-reset" id="c-name-reset" data-action="c-name-auto" hidden>Atjaunot automātisko nosaukumu</button></div>
+            <div class="field"><label for="c-name">Kampaņas nosaukums <span class="req">*</span> <span class="tip" tabindex="0" role="note" aria-label="Nosaukums veidojas automātiski: apsekojums_gads_periods_veids (piem., 1-DSA_2026_C3_UZ). To var mainīt." data-tip="Nosaukums veidojas automātiski: apsekojums_gads_periods_veids (piem., 1-DSA_2026_C3_UZ). To var mainīt.">i</span></label><input type="text" id="c-name" maxlength="120" placeholder="Tiks izveidots automātiski pēc apsekojuma izvēles"><span class="err" id="c-name-err" hidden></span><button type="button" class="link-btn name-reset" id="c-name-reset" data-action="c-name-auto" hidden>Atjaunot automātisko nosaukumu</button></div>
           </div>
           <div class="field"><span class="label">Komunikācijas veids <span class="req">*</span></span>
             <div class="skind-opts" id="c-kind" role="group" aria-label="Komunikācijas veids"></div>
@@ -3245,7 +3245,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 123</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 124</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4628,34 +4628,59 @@ const defaultSessionName = () => {
   const used = [...(state.drafts || []).filter(d => d.id !== compose.draftId), ...(state.planned || [])].map(x => (/^Kampaņa Nr\. (\d+)$/.exec(x.name || '') || [])[1]).filter(Boolean).map(Number);
   return `Kampaņa Nr. ${Math.max(state.seq || 0, ...used) + 1}`;
 };
-// Automātiskais kampaņas nosaukums: "{veids} · {apsekojuma indekss un nosaukums} · {periods}", piem., "Uzaicinājums · 1-DSA Darbaspēka apsekojums · 2026C3";
-// vairāki apsekojumi – pirmais + skaits ("1-tirdzniecība +3"), vairāki periodi – pirmais–pēdējais ("2026M07–2026M09"); bez perioda – bez perioda daļas;
-// bez apsekojuma – '' (laukā pelēks paraugs). Unikāls: ja tāds nosaukums jau ir citai kampaņai – " (2)", " (3)" …
-function autoCampName(){
-  const sel = compose.sel, kind = (SESS_KINDS[compose.kind] || {}).label || 'Kampaņa';
-  let reps = sel.reports.map(repById).filter(Boolean), pers = [];
-  const scopeDs = () => state.respondents.filter(matchesFilt).flatMap(r => selDutiesOf(r));
-  if (fizMode()){ if (sel.fz.period) pers = [sel.fz.period]; }
-  else {
-    if (!reps.length && sel.allReports) reps = [...new Set(scopeDs().map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
-    // periods – tikai konkrēti izvēlētie periodi (piem., 2026M07, 2026M08, 2026M09); "visi" – bez perioda daļas
-    const pf = sel.pf || {}; pers = PF_KEYS.flatMap(k => pfVals(pf[k]).map(n => pfCode(k, +sel.year, n)));
+// Automātiskais kampaņas nosaukums – īss kods {indekss}_{gads}_{periods}_{veids}, piem., "1-DSA_2026_C3_UZ", "1-DSA_2026_VISI_AT":
+// indekss – apsekojuma indekss (vairāki – pirmais + skaits: "1-tirdzniecība+3"); gads – vākšanas gads; periods – bez gada (C3, M09, P1, N12; gada pārskats – G),
+// vairāki – diapazons ("M07-M09") vai saraksts ("C1,C3"), visi gada periodi / nav precizēts – "VISI"; veids – UZ / AT / IN / CI.
+// Ja tāds nosaukums jau ir citai kampaņai – veidam kārtas numurs ("AT2", "AT3"). Bez apsekojuma – '' (laukā pelēks paraugs).
+const KIND_CODE = {uzaicinajums:'UZ', atgadinajums:'AT', info:'IN', cits:'CI'};
+const perNoYear = code => String(code || '').slice(4) || 'G';
+// vairāki periodi: viena periodiskuma secīgi – diapazons, citādi – saraksts
+function perCodeList(codes){
+  if (codes.length < 2) return codes[0] || 'VISI';
+  const m = codes.map(c => /^([A-Z])(\d+)$/.exec(c)), same = m.every(x => x && x[1] === m[0][1]);
+  const nums = same ? m.map(x => +x[2]) : [], seq = same && nums.every((n, i) => !i || n === nums[i - 1] + 1);
+  return seq ? `${codes[0]}-${codes[codes.length - 1]}` : codes.join(',');
+}
+function campCodeBase(c = compose){
+  const sel = c.sel, fiz = c.aud === 'fiz';
+  let reps = (sel.reports || []).map(repById).filter(Boolean);
+  if (!reps.length && sel.allReports && c === compose) reps = [...new Set(state.respondents.filter(matchesFilt).flatMap(r => selDutiesOf(r)).map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
+  if (!reps.length) return null;
+  const idx = reps.length === 1 ? reps[0].code : `${reps[0].code}+${reps.length - 1}`;
+  let year, per;
+  if (fiz){
+    const fz = sel.fz || {};
+    year = fz.year || (fz.period ? periodYear(fz.period) : '') || 'VISI';
+    per = fz.period ? perNoYear(periodCode(fz.period)) : 'VISI';
+  } else {
+    year = sel.year || new Date().getFullYear();
+    const pf = sel.pf || {}, spec = PF_KEYS.flatMap(k => pfVals(pf[k]).sort((a, b) => a - b).map(n => perNoYear(pfCode(k, +year, n))));
+    // ieslēgtās rindas ar pārskatiem izvēlētajā gadā: tikai gada pārskati – "G"
+    const on = PF_KEYS.filter(k => (pfOf(sel)[k] || 'all') !== 'none' && pfYearFreqs(year).has(k));
+    per = spec.length ? perCodeList(spec) : on.length === 1 && on[0] === 'gads' ? 'G' : 'VISI';
   }
-  if (!reps.length) return '';
-  const rep = reps.length === 1 ? `${reps[0].code} ${reps[0].name}`.trim() : `${reps[0].code} +${reps.length - 1}`;
-  const code = x => fizMode() ? periodCode(x) : x;
-  const per = !pers.length ? '' : pers.length === 1 ? code(pers[0]) : `${code(pers[0])}–${code(pers[pers.length - 1])}`;
-  return uniqueCampName([kind, rep, per].filter(Boolean).join(' · '));
+  return {base:`${idx}_${year}_${per}`, kind:KIND_CODE[c.kind] || 'CI'};
+}
+function autoCampName(){
+  const b = campCodeBase();
+  return b ? uniqueCampCode(b.base, b.kind) : '';
+}
+const usedCampNames = () => new Set([...(state.drafts || []).filter(d => d.id !== compose.draftId).map(d => d.name), ...(state.planned || []).map(p => p.name), ...(state.sent || []).map(x => x.sessionName)].filter(Boolean));
+function uniqueCampCode(base, kind, used = usedCampNames()){
+  if (!used.has(`${base}_${kind}`)) return `${base}_${kind}`;
+  let i = 2; while (used.has(`${base}_${kind}${i}`)) i++;
+  return `${base}_${kind}${i}`;
 }
 function uniqueCampName(base){
-  const used = new Set([...(state.drafts || []).filter(d => d.id !== compose.draftId).map(d => d.name), ...(state.planned || []).map(p => p.name), ...(state.sent || []).map(x => x.sessionName)].filter(Boolean));
+  const used = usedCampNames();
   if (!used.has(base)) return base;
   let i = 2; while (used.has(`${base} (${i})`)) i++;
   return `${base} (${i})`;
 }
 // kamēr lietotājs nosaukumu nav mainījis – tas atjaunojas līdzi veidam, apsekojumam un periodam (bez apsekojuma – iekšēji "Kampaņa Nr. N")
+// pēc nodošanas saskaņošanai vai nosūtīšanas nosaukums vairs automātiski nemainās
 function syncAutoName(){
-  if (compose.nameAuto){ const a = autoCampName(); compose.autoEmpty = !a; compose.name = a || defaultSessionName(); }
+  if (compose.nameAuto && !(compose.apv && ['pending', 'approved'].includes(compose.apv.status))){ const a = autoCampName(); compose.autoEmpty = !a; compose.name = a || defaultSessionName(); }
   const inp = $('#c-name'); if (!inp) return;
   if (document.activeElement !== inp) inp.value = compose.nameAuto && compose.autoEmpty ? '' : compose.name;
   const rs = $('#c-name-reset'); if (rs) rs.hidden = compose.nameAuto || !autoCampName();
@@ -9149,6 +9174,7 @@ async function finalSubmit(){
   if (!(await confirmDialog({title:'Nodot saskaņošanai?', okLabel:'Nodot saskaņošanai',
     message:`Kampaņa <b>${esc(compose.name)}</b> (${esc(SESS_LABELS[sessKindKey()])}, ${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}) tiks nodota ${who}.
       <br>Pēc saskaņojuma: ${isPlanned() ? `ieplānošana (${esc(whenLabel())})` : 'nosūtīšana'}.${a0.due ? `<br>Saskaņot līdz: ${esc(fmtDate(a0.due))}.` : ''}${compose.apv.comment ? `<br>Komentārs: “${esc(compose.apv.comment)}”` : ''}`}))) return;
+  compose.nameAuto = false;
   const now = new Date().toISOString(), name = compose.name;
   compose.apv = {...compose.apv, steps, approver:one ? one.id : compose.apv.approver, status:'pending', at:now, by:CURRENT_USER, returnComment:'', prog:steps.map(() => ({appr:[]})), history:[...(compose.apv.history || []), {act:'submit', at:now, by:CURRENT_USER, comment:compose.apv.comment || ''}]};
   alAddC('apvSub', one ? `Saskaņotājs: ${one.name}` : `${route ? `Maršruts “${route.name}”${a0.custom ? ' (pielāgots)' : ''}: ` : ''}${stepsText(steps)}`, compose.apv.comment ? {cmt:compose.apv.comment} : {});
@@ -9418,6 +9444,7 @@ async function send({skipConfirm = false, approved = false} = {}){
       message:`Kampaņa <b>${esc(compose.name)}</b> (${esc(SESS_LABELS[sessKindKey()])}) tiks izpildīta <b>${esc(whenLabel())}</b>.
         ${isReminder() ? `<br>Izpildes brīdī atlase tiks pārrēķināta pēc aktuālajiem iesniegšanas statusiem: atgādinājumu saņems tie, kuri līdz tam nebūs iesnieguši ${compose.remind === 'before' ? `pārskatus ar termiņu <b>${esc(fmtDate(remindTarget()))}</b>` : 'nokavētos pārskatus'} (pēc pašreizējiem statusiem – ${n} ${plural(n, 'adresāts', 'adresāti')}).` : `<br>Pēc pašreizējās atlases – ${n} ${plural(n, 'adresāts', 'adresāti')}.`}`});
     if (!ok) return;
+    compose.nameAuto = false;
     state.planned = state.planned || [];
     state.planned.unshift({id:'pl' + uid(), name:compose.name, kindKey:sessKindKey(), sendDate:compose.sel.sendDate, sendTime:compose.sendTime, target:remindTarget(),
       contentName:contentName(t), contentLabel:contentLabel(), prio:compose.prio.filter(Boolean), count:n, createdAt:compose.createdAt || new Date().toISOString(), createdBy:CURRENT_USER, snap:sessionSnapshot(), reps:campRepPairs()});
@@ -9435,6 +9462,7 @@ async function send({skipConfirm = false, approved = false} = {}){
       <br>Dokumenta Nr.: <b>${esc(compose.f.docNr)}</b>
       <br><br><span class="muted">Šī ir simulācija – vēstules reāli netiek sūtītas.</span>`});
   if (!ok) return;
+  compose.nameAuto = false;
   const name = compose.name, res = doSend();
   if (res){ const k = 'sent:' + res.batch; alMove(alKeyC(), k);
     alAdd(k, alE('send', approved ? AL_SYS : CURRENT_USER, `${alCnt(res.n, 'vēstule', 'vēstules')}${approved ? ' · automātiski pēc saskaņojuma' : ''}`)); }
@@ -9530,20 +9558,26 @@ const SEED_HIST = [
     force:{epasts:[], eadrese:['d-ok', 'd-ok', 'd-rejdiv', 'd-ok', 'd-transit']}},
 ];
 const OLD_SEED_NAMES = ['Darbaspēka apsekojums – uzaicinājums', 'Nokavētie pārskati – atgādinājums'];
+// arhīva kampaņas nosaukums – kods pēc apsekojuma un iepriekšējā perioda (ceturksnis vai mēnesis pirms 2 mēnešiem); unikāls (AT2 …)
+const archCode = (idx, per, kind) => at => {
+  const d = per === 'cet' ? new Date(at.getFullYear(), at.getMonth() - 3, 1) : new Date(at.getFullYear(), at.getMonth() - 2, 1);
+  const pc = per === 'cet' ? `C${Math.floor(d.getMonth() / 3) + 1}` : `M${pad(d.getMonth() + 1)}`;
+  return uniqueCampCode(`${idx}_${d.getFullYear()}_${pc}`, kind, new Set((state.sent || []).map(x => x.sessionName)));
+};
 // Testa arhīvs: kampaņas par pēdējiem 12 mēnešiem un dažas, kas vecākas par 2 gadiem (vēstules bez satura – tikai piegādes dati)
 function seedArchive(){
   const jur = state.respondents.filter(r => respType(r) === 'jur'), fiz = state.respondents.filter(r => respType(r) === 'fiz');
   const tplOf = id => state.templates.find(t => t.id === id);
   const plan = [];
   [31, 28, 25].forEach((m, i) => plan.push({m, day:[12, 9, 16][i], name:['Gada pārskati – atgādinājums', 'Darbaspēka apsekojums – uzaicinājums', 'Mēneša pārskati – atgādinājums'][i],
-    kind:['atg-pec', 'uzaicinajums', 'atg-pirms'][i], tpl:['t9', 't2', 't9'][i], list:[jur, fiz, jur][i], share:55, prio:DEFAULT_PRIO}));
+    kind:['atg-pec', 'uzaicinajums', 'atg-pirms'][i], tpl:['t9', 't2', 't9'][i], list:[jur, fiz, jur][i], share:55, prio:DEFAULT_PRIO, code:i === 1 ? archCode('1-DSA', 'cet', 'UZ') : null}));
   for (let m = 23; m >= 3; m--){
     // pēdējos mēnešos biežāk izmanto e-pastu (lai redzētu tendences)
     const emailFirst = m <= 6 ? ['email1', 'email2', 'eadrese'] : DEFAULT_PRIO;
     plan.push({m, day:10, name:'Mēneša pārskati – pirmstermiņa atgādinājums', kind:'atg-pirms', tpl:'t9', list:jur, share:60 + (m % 4) * 8, prio:DEFAULT_PRIO});
     plan.push({m, day:20, name:'Nokavētie pārskati – atgādinājums', kind:'atg-pec', tpl:'t9', list:jur, share:30 + (m % 3) * 10, prio:emailFirst});
-    if (m % 3 === 0) plan.push({m, day:4, name:'Darbaspēka apsekojums – uzaicinājums', kind:'uzaicinajums', tpl:'t2', list:fiz, share:85, prio:DEFAULT_PRIO});
-    if (m % 3 === 1) plan.push({m, day:14, name:'Ceļotāju apsekojums – atgādinājums', kind:'atg-pec', tpl:'t3', list:fiz, share:55, prio:emailFirst});
+    if (m % 3 === 0) plan.push({m, day:4, name:'Darbaspēka apsekojums – uzaicinājums', kind:'uzaicinajums', tpl:'t2', list:fiz, share:85, prio:DEFAULT_PRIO, code:archCode('1-DSA', 'cet', 'UZ')});
+    if (m % 3 === 1) plan.push({m, day:14, name:'Ceļotāju apsekojums – atgādinājums', kind:'atg-pec', tpl:'t3', list:fiz, share:55, prio:emailFirst, code:archCode('1-C', 'men2', 'AT')});
     if (m % 4 === 2) plan.push({m, day:25, name:'Rezultātu publicēšana', kind:'info', tpl:m % 8 === 2 ? 't10' : 't5', list:m % 8 === 2 ? jur : fiz, share:90, prio:['email1', 'email2', 'eadrese']});
     if (m % 12 === 9) plan.push({m, day:27, name:'Pateicība par datu iesniegšanu', kind:'cits', tpl:'t11', list:jur, share:70, prio:DEFAULT_PRIO});
   }
@@ -9553,11 +9587,13 @@ function seedArchive(){
       const t = tplOf(c.tpl);
       if (!t) return;
       state.seq = (state.seq || 0) + 1;
+      // apsekojuma kampaņām – kods ({indekss}_{gads}_{periods}_{veids}), pārējām – nosaukums ar mēnesi
+      const sname = c.code ? c.code(c.at) : `${c.name} (${MONTHS[c.at.getMonth()]})`;
       const batch = state.seq, sentAt = c.at.toISOString(), f = {...compose.f, date:isoDate(c.at), start:isoDate(addDaysTo(c.at, -10)), deadline:isoDate(addDaysTo(c.at, c.kind === 'atg-pec' ? -5 : 10))};
       c.list.filter(r => hashRoll(`${batch}|${c.name}|${r.id}`) < c.share && addrPlan(r, c.prio, false).length).forEach(r => {
         const attempts = deliveryAttempts(r, c.prio, `arch|${batch}|${r.id}`, undefined, false), fin = finalAttempt(attempts);
         stampAttempts(attempts, sentAt);
-        const rec = {id:'s' + uid(), batch, seed:true, archived:true, sessionName:`${c.name} (${MONTHS[c.at.getMonth()]})`, sessionKind:c.kind, plannedFor:'', contentSource:'tpl', sentAt,
+        const rec = {id:'s' + uid(), batch, seed:true, archived:true, sessionName:sname, sessionKind:c.kind, plannedFor:'', contentSource:'tpl', sentAt,
           templateId:t.id, templateName:t.name, kind:t.kind, respondentId:r.id, recipient:r.name, address:fin.address, addrType:fin.type, channel:ADDR_TYPES[fin.type].ch,
           prio:c.prio.filter(Boolean), attempts, docNr:`${state.layout.docPrefix}${c.at.getFullYear()}/${batch}`, subject:fillText(t.subject, ctxFor(r, f)), bodyHtml:'', bodyText:'', footer:'',
           lang:'lv', wantLang:'lv', fallback:false, org:state.layout.org, attachments:[], main:null, files:[], status:'rinda', note:'', manual:[]};
@@ -9573,13 +9609,14 @@ function seedHistory(){
   try { seedHistoryAll(); } finally { state.respondents = allR; }
 }
 function seedHistoryAll(){
-  state.histSeeded = true; state.histVer = 7;
+  state.histSeeded = true; state.histVer = 8;
   if (state.sent.length) return;
   seedArchive();
   const keep = sessionSnapshot(), keepId = compose.draftId, wasDefault = compose.nameAuto;
   SEED_HIST.forEach(x => {
     if (!state.templates.some(t => t.id === x.snap.content.templateId)) return;
     applySnapshot({...x.snap, f:{...keep.f, date:isoDate(addDays(x.days || 0)), dateManual:true}});
+    { const b = campCodeBase(); if (b) compose.name = uniqueCampCode(b.base, b.kind); }
     compose.f.docNr = nextDocNr();
     const at = x.minsAgo ? new Date(Date.now() - x.minsAgo * 60e3) : addDays(x.days);
     if (!x.minsAgo) at.setHours(x.h, 5, 0, 0);
@@ -9593,7 +9630,7 @@ function seedHistoryAll(){
   ui.newIds = new Set();
 }
 // Agrāk izveidotā testa vēsture tiek aizstāta ar jauno (ja tajā ir tikai testa ieraksti)
-if (state.histSeeded && state.histVer !== 7 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
+if (state.histSeeded && state.histVer !== 8 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
   state.sent = []; state.seq = 0; state.histSeeded = false; state.tasks = [];
   state.respondents.forEach(r => { delete r.invalidAddr; });
 }
