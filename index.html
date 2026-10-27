@@ -3216,7 +3216,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 121</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 122</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -8527,7 +8527,7 @@ function renderAcBar(){
   rs.forEach(r => cnt[acState(r)]++);
   const nNo = rs.filter(noSend).length, sm = sharedMap(), bads = acBadAddrs(), regPend = bads.filter(c => !(compose.regSent || {})[regKey(c)]);
   // pēdējās manuālās pārbaudes laiks (šai kampaņai) un pārbaudes norise
-  const busy = ui.acBusy === compose.draftId, acAt = ui.acAt && ui.acAt.id === compose.draftId ? new Date(ui.acAt.t).toLocaleTimeString('lv-LV', {hour:'2-digit', minute:'2-digit'}) : '';
+  const busy = ui.acBusy === compose.draftId;
   // filtrs, kuram vairs nav respondentu, tiek noņemts
   if (compose.acF && !rs.some(r => acMatch(r, compose.acF, sm))){ compose.acF = ''; setTimeout(() => renderComposeList(), 0); }
   // automātiski konstatētais
@@ -8540,7 +8540,7 @@ function renderAcBar(){
     <ul class="q-list q-list-ns" role="group" aria-label="Netiks nosūtīti (filtrē tabulu)"><li><button type="button" class="q-item q-nosend" data-acf="nosend" aria-pressed="${compose.acF === 'nosend'}" ${nNo ? '' : 'disabled'} title="Respondenti bez nevienas derīgas adreses – vēstule netiks nosūtīta: ${nNo}${nNo ? ' – filtrēt tabulu' : ''}"><span class="q-l">Netiks nosūtīti:</span><b>${nNo}</b></button></li></ul>
     ${cnt.bad ? '<p class="q-skip">Nederīgās adreses tiks izlaistas – vēstule tiks sūtīta uz nākamo derīgo adresi.</p>' : ''}
     <div class="q-auto" role="group" aria-label="Automātiski konstatētais (filtrē tabulu)">${sub('shared', nShared, 'Koplietojamas', `Viena e-pasta adrese vairākiem respondentiem${nPend ? ` – neizvērtētas: ${nPend}` : ''}`)}<span class="q-sep" aria-hidden="true">·</span>${sub('dup', nDup, 'Dublikāti', 'Vienam respondentam vienāda adrese vairākos e-pasta laukos – dublikāts noņemts')}<span class="q-sep" aria-hidden="true">·</span>${sub('mi', nMi, 'MI ieteikumi', 'MI ieteikumi pārrakstīšanās kļūdām')}</div>
-    <div class="q-acts"><button type="button" class="btn btn-sm ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button>${acAt ? `<span class="ac-checked">Pārbaudīts ${acAt}</span>` : ''}${regPend.length ? `<button type="button" class="link-btn ac-reg" data-ac-reg title="Izveidot uzdevumu kontaktu aktualizēšanai Respondentu pārvaldībā. Kampaņā adreses netiek dzēstas.">Nodot nederīgās adreses pārbaudei reģistrā (${regPend.length})</button>` : bads.length ? `<span class="ac-checked">Nodots pārbaudei reģistrā: ${bads.length}</span>` : ''}${nNo ? `<button type="button" class="btn btn-secondary btn-sm ac-excl-btn" data-ac-excl>Izņemt bez derīgas adreses (${nNo})</button>` : ''}<button type="button" class="btn btn-secondary btn-sm" data-ci-export>${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Eksportēt kontaktus</button></div>`;
+    <div class="q-acts"><button type="button" class="btn btn-sm ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button>${regPend.length ? `<button type="button" class="link-btn ac-reg" data-ac-reg title="Izveidot uzdevumu kontaktu aktualizēšanai Respondentu pārvaldībā. Kampaņā adreses netiek dzēstas.">Nodot nederīgās adreses pārbaudei reģistrā (${regPend.length})</button>` : bads.length ? `<span class="ac-checked">Nodots pārbaudei reģistrā: ${bads.length}</span>` : ''}${nNo ? `<button type="button" class="btn btn-secondary btn-sm ac-excl-btn" data-ac-excl>Izņemt bez derīgas adreses (${nNo})</button>` : ''}<button type="button" class="btn btn-secondary btn-sm" data-ci-export>${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Eksportēt kontaktus</button></div>`;
 }
 // rindas problēmas (respondenta vārda padomā): nederīgās adreses netiks izmantotas; bez derīgas adreses – netiks nosūtīts
 function respProblems(r){
@@ -11725,17 +11725,15 @@ $('#c-ac').addEventListener('click', e => {
   const f = e.target.closest('[data-acf]');
   if (f){ compose.acF = compose.acF === f.dataset.acf ? '' : f.dataset.acf; renderComposeList(); const b = $(`#c-ac [data-acf="${f.dataset.acf}"]`); if (b) b.focus(); return; }
   if (e.target.closest('[data-ac-recheck]')){
-    // ~1 s "Pārbauda…", pēc tam atjauno birkas un tabulu un parāda pārbaudes laiku
+    // ~1 s "Pārbauda…", pēc tam atjauno skaitītājus un tabulu un īsi paziņo (pārbaudes laiks netiek rādīts)
     if (ui.acBusy) return;
     const id = ui.acBusy = compose.draftId; renderAcBar();
     setTimeout(() => {
       ui.acBusy = '';
       if (compose.draftId !== id) return;
-      ui.acAt = {id, t:Date.now()};
       renderComposeList();
       const b = $('#c-ac [data-ac-recheck]'); if (b) b.focus();
-      const rs = acActive(), c = {ok:0, pot:0, bad:0, none:0}; rs.forEach(r => c[acState(r)]++);
-      toast(`Pārbaude atkārtota: derīgas ${c.ok}, potenciāli kļūdainas ${c.pot}, nederīgas ${c.bad}, bez adreses ${c.none}.`);
+      toast('Adreses pārbaudītas');
     }, 1000);
     return;
   }
