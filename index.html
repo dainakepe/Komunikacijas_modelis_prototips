@@ -1673,7 +1673,7 @@ dialog.drawer.al-drawer{width:min(420px,100vw)}
 .ns-table td label{font-weight:400;cursor:pointer}
 .ns-table .ns-c{text-align:center;width:80px}
 .ns-table input{width:18px;height:18px;accent-color:var(--primary)}
-.switch{display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-md);cursor:pointer;user-select:none}
+.switch{position:relative;display:inline-flex;align-items:center;gap:8px;font-size:var(--fs-md);cursor:pointer;user-select:none}
 .switch input{position:absolute;opacity:0;width:1px;height:1px}
 .switch .sw{position:relative;width:34px;height:20px;border-radius:var(--radius-pill);background:#C9D3D6;transition:background .15s;flex:none}
 .switch .sw::after{content:'';position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
@@ -2497,6 +2497,13 @@ dialog.modal.full{width:calc(100vw - 24px);max-width:none;height:calc(100vh - 24
 dialog.modal.editor{width:min(calc(100vw - 24px), clamp(900px, 50vw, 1100px));max-width:none;max-height:90vh}
 dialog.modal.editor .modal-wrap{max-height:90vh}
 dialog.modal.editor .modal-body{flex:1;min-height:0;overflow:auto;padding:14px 20px}
+/* Lielie logi ar redaktoru / priekšskatījumu: fiksēts izmērs (~90vh), galvene un apakšējā josla – fiksētas, ritināšana tikai iekšā; logs pats neritinās */
+dialog.modal.editor{height:90vh;overflow:hidden}
+dialog.modal.editor .modal-wrap{height:100%;max-height:none}
+dialog.modal.editor .modal-head,dialog.modal.editor .modal-foot{flex:none}
+#te-form,.tsp-left{position:relative}
+/* kamēr atvērts modālais logs, lapa aiz tā neritinās */
+html:has(dialog.modal[open]){overflow:hidden}
 .modal.editor .editor-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px}
 .modal.editor .editor-preview{position:sticky;top:0;max-height:calc(90vh - 170px);overflow:auto}
 .modal.editor #te-form .field{margin-bottom:10px;gap:4px}
@@ -2509,8 +2516,8 @@ dialog.modal.editor.te-big{width:min(90vw,1400px);height:90vh}
 dialog.modal.editor.te-big .modal-wrap{height:100%}
 dialog.modal.editor.te-big .modal-body{display:flex;flex-direction:column;padding:0;overflow:hidden}
 dialog.modal.te-big .editor-grid{grid-template-columns:minmax(0,45fr) minmax(0,55fr);grid-template-rows:minmax(0,1fr);gap:0;flex:1;min-height:0}
-dialog.modal.te-big #te-form{overflow:auto;min-height:0;padding:14px 20px}
-dialog.modal.te-big .editor-preview{position:static;max-height:none;align-self:stretch;min-height:0;overflow:auto;border-radius:0;border-left:1px solid var(--border);padding:0 16px 16px}
+dialog.modal.te-big #te-form{overflow-y:auto;overflow-x:hidden;min-height:0;height:100%;padding:14px 20px}
+dialog.modal.te-big .editor-preview{position:relative;max-height:none;align-self:stretch;min-height:0;height:100%;overflow:auto;border-radius:0;border-left:1px solid var(--border);padding:0 16px 16px}
 dialog.modal.te-big .editor-preview .pv-head{position:sticky;top:0;z-index:3;background:var(--bg);padding:12px 0 8px;margin:0}
 dialog.modal.te-big .pv-head .preview-opts{margin-left:auto}
 /* Saistītais apsekojums */
@@ -3422,7 +3429,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 132</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 133</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7204,7 +7211,7 @@ function openTemplateEditor(id, preset = {}){
   });
 
   // veidnes logs – ~90 % ekrāna, forma un priekšskatījums ritinās neatkarīgi
-  if (!sess) modal.classList.add('te-big');
+  modal.classList.add('te-big');
   // saistītais apsekojums (meklējama izvēlne)
   if (!sess) svc = surveyCombo($('#te-sv-host'), t.survey || '', () => { syncSv(); update(); });
   $('#te-hl').addEventListener('change', e => $('#te-preview').classList.toggle('hl', e.target.checked));
@@ -7414,7 +7421,7 @@ function openTemplateEditor(id, preset = {}){
     t.files.push({name:a.fileName, size:a.size, lib:a.id});
     extraOpen = true; syncExtra(); renderFiles(); update();
   }
-  $('#te-extra-toggle').addEventListener('click', () => { extraOpen = !extraOpen; syncExtra(); });
+  $('#te-extra-toggle').addEventListener('click', () => { extraOpen = !extraOpen; keepScroll(syncExtra); });
   $('#te-file-add').addEventListener('click', () => {
     const choose = () => openSourceChoice({title:'Pievienot pielikumu', opts:[
         {key:'lib', icon:ICON.doc, label:'No sagatavēm', desc:'Pielikumu sagataves un iepriekš pievienotie faili'},
@@ -7474,7 +7481,22 @@ function openTemplateEditor(id, preset = {}){
     const w = ready() && (epVer(cur) || eaVer(cur)) ? verWarn(cur) : '';
     $('#te-ch-warn').hidden = !w; $('#te-ch-warn').innerHTML = w ? `${ICON.warn}<span>${esc(w)}</span>` : '';
   }
-  function update(){
+  // pārzīmē tikai priekšskatījumu; abu kolonnu ritināšanas pozīcija saglabājas (bez lēcieniem)
+  function update(){ keepScroll(updateNow); }
+  // ja saturs kolonnas apakšā saraujas (paslēpts lauks, sakļauta sadaļa), pozīciju notur ar papildu atstarpi apakšā
+  function keepScroll(fn){
+    const keep = [$('#te-form'), $('.editor-preview', modal)].filter(Boolean).map(el => [el, el.scrollTop]);
+    try { fn(); } finally {
+      keep.forEach(([el, t]) => {
+        if (el.scrollTop === t) return;
+        if (el.dataset.pb0 == null) el.dataset.pb0 = parseFloat(getComputedStyle(el).paddingBottom) || 0;
+        const need = t + el.clientHeight - el.scrollHeight;
+        if (need > 0) el.style.paddingBottom = `${(parseFloat(el.style.paddingBottom) || +el.dataset.pb0) + need}px`;
+        el.scrollTop = t;
+      });
+    }
+  }
+  function updateNow(){
     if (!bodyEd || !docEd) return;
     syncFldSrc();
     syncVis();
@@ -7649,8 +7671,8 @@ function openTemplateEditor(id, preset = {}){
   ['te-doc-banner', 'te-doc-conf', 'te-doc-info'].forEach(fid => $('#' + fid).addEventListener('change', update));
   $('#te-doc-banner').addEventListener('change', syncVis);
   // Vizuālie elementi: jebkura izmaiņa – uzreiz priekšskatījumā
-  $('#te-vis-toggle').addEventListener('click', () => { visOpen = !visOpen; syncVis(); });
-  $$('#te-vis-body input[type="radio"], #te-vis-logo, #te-btn-on', modal).forEach(i => i.addEventListener('change', () => { if (i.id === 'te-btn-on' && i.checked) setTimeout(() => $('#te-btn-text').focus()); update(); }));
+  $('#te-vis-toggle').addEventListener('click', () => { visOpen = !visOpen; keepScroll(syncVis); });
+  $$('#te-vis-body input[type="radio"], #te-vis-logo, #te-btn-on', modal).forEach(i => i.addEventListener('change', () => { if (i.id === 'te-btn-on' && i.checked) setTimeout(() => $('#te-btn-text').focus({preventScroll:true})); update(); }));
   $('#te-btn-text').addEventListener('input', () => { $('#te-btn-text-err').hidden = true; update(); });
   // saites pārbaude: izejot no lauka un saglabājot; ja kļūda jau redzama – atjaunojas rakstot
   $('#te-btn-url').addEventListener('input', () => { const e = $('#te-btn-url-err'); if (!e.hidden){ const m = btnErrs().url; e.hidden = !m; e.textContent = m; } update(); });
