@@ -2634,20 +2634,24 @@ h1 .tip,h2 .tip,h3 .tip,h4 .tip{vertical-align:middle;margin-left:6px}
 .step-title .tip{margin-left:2px}
 /* Vēstules veids: kompaktas pogas, apakšizvēlne zem izvēlētās */
 .kind-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
-/* Vēstules saturs: divas rindas – galvenā izvēle (200 px) un tās darbības vienā rindā (bez pārnešanas) */
-.kind-rows{display:flex;flex-direction:column;gap:8px}
-.kind-row{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;min-width:0}
-.kind-row > .kind-opt{flex:none;width:172px}
-.kind-row > .kind-opt > span{white-space:nowrap}
-.kact{display:flex;gap:6px;flex-wrap:nowrap;white-space:nowrap;min-width:0;transition:opacity .12s}
-.kact-btn{appearance:none;flex:none;height:30px;padding:0 8px;font:inherit;font-size:12px;font-weight:500;line-height:1;background:#fff;border:1px solid #D0D0D0;border-radius:var(--radius-sm);color:#444;cursor:pointer;white-space:nowrap}
+/* Vēstules saturs: divi bloki – informatīvs virsraksts un zem tā darbību pogas vienā rindā (bez pārnešanas) */
+.kind-blocks{display:flex;flex-direction:column;gap:16px;margin-top:2px}
+.kind-block{display:flex;flex-direction:column;gap:7px;min-width:0;transition:opacity .12s}
+.kind-head{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:700;color:#1F5E69;cursor:default;user-select:none}
+.kind-head .icon{width:18px;height:18px;flex:none}
+.kind-block .kact{padding-left:25px}
+.kind-block.is-off{opacity:.6}
+.kind-block.is-off:hover,.kind-block.is-off:focus-within{opacity:.85}
+.kact{display:flex;gap:6px;flex-wrap:nowrap;white-space:nowrap;min-width:0}
+.kact-btn{appearance:none;flex:none;display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 10px;font:inherit;font-size:12.5px;font-weight:500;line-height:1;background:#fff;border:1px solid #D0D0D0;border-radius:var(--radius-sm);color:#444;cursor:pointer;white-space:nowrap}
+.kact-btn .icon{width:13px;height:13px;flex:none}
 .kact-btn:hover{background:#F2F3F3}
-.kact-btn[aria-pressed="true"]{color:var(--primary-darker);border-color:var(--primary);box-shadow:inset 0 0 0 1px var(--primary)}
+.kact-btn[aria-pressed="true"]{color:var(--primary-darker);border-color:var(--primary);background:var(--primary-50);box-shadow:inset 0 0 0 1px var(--primary)}
 .kact-btn:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
-.kind-row:not(.is-on) .kact{opacity:.6}
-.kind-row:not(.is-on) .kact:hover,.kind-row:not(.is-on) .kact:focus-within{opacity:.85}
-/* tikai telefonā (ļoti šaurs ekrāns) darbības var pāriet zem galvenās izvēles */
-@media (max-width:560px){ .kind-row{flex-wrap:wrap} .kind-row > .kind-opt{width:100%} }
+.kind-note{margin:0;padding-left:25px;font-size:var(--fs-xs);color:var(--text-muted)}
+.kind-note[hidden]{display:none}
+.kind-note .link-btn{font-size:var(--fs-xs);padding:0}
+@media (max-width:560px){ .kact{flex-wrap:wrap} }
 .kind-col{display:flex;flex-direction:column;gap:6px}
 .kind-opt{position:relative;display:block;cursor:pointer}
 .kind-opt input{position:absolute;opacity:0}
@@ -3443,7 +3447,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 134</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 135</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7048,7 +7052,7 @@ function openTemplateEditor(id, preset = {}){
   let started = base ? true : presetSample ? 'sample' : false;
   // šablons, no kura veidne izveidota (sagatavju izmantošanas informācijai)
   let fromSample = presetSample ? presetSample.id : (base && base.fromSample) || '';
-  let startNote = presetSample ? `Sagatave: ${presetSample.name}` : '';
+  let startNote = presetSample ? `Ielādēts: ${presetSample.name} (sagatave)` : '';
   // galvenā vēstule: null – nav izvēlēta; 'gen' – ģenerēts dokuments ar laukiem; {lib, name, size} – fails no bibliotēkas
   let main = t.kind === 'pielikums' ? (t.main && t.main.lib ? {...t.main} : 'gen') : null;
   // galvenās vēstules avots: 'lib' – no sagatavēm, 'gen' – redaktorā ar laukiem, 'upload' – augšupielādēts fails
@@ -7072,26 +7076,27 @@ function openTemplateEditor(id, preset = {}){
         <div class="field te-sv-field"${sess ? ' hidden' : ''}><span class="label"><label for="te-survey">Saistītais apsekojums</label> <span class="muted">(neobligāts)</span> ${tip('Ja norādīts, apsekojuma lauku ({apsekojums}, {e-anketa}, {apsekojuma_epasts}, {apsekojuma_vietne}) vērtības priekšskatījumā tiek ņemtas no šī apsekojuma. Kampaņā vērtības vienmēr ņem no kampaņas apsekojuma.')}</span>
           <div id="te-sv-host"></div><span class="te-sv-src" id="te-sv-src" hidden></span></div>
         <div class="field"><span class="label">Vēstules saturs <span class="req">*</span></span>
-          <!-- divas rindas: galvenā izvēle pa kreisi, tās darbības (neitrālas pogas) tajā pašā rindā -->
-          <div class="kind-rows" role="radiogroup" aria-label="Vēstules saturs">
-            <div class="kind-row" data-krow="epasts">
-              <label class="kind-opt"><input type="radio" name="te-kind" value="epasts" ${t.kind === 'epasts' ? 'checked' : ''}><span>${ICON.mail}E-pasta saturs</span></label>
+          <!-- divi bloki: informatīvs virsraksts (nav klikšķināms) un zem tā darbību pogas; poga izvēlas gan satura veidu, gan sākuma veidu -->
+          <div class="kind-blocks" role="group" aria-label="Vēstules saturs">
+            <div class="kind-block" data-krow="epasts">
+              <div class="kind-head"><input type="radio" name="te-kind" value="epasts" ${t.kind === 'epasts' ? 'checked' : ''} hidden>${ICON.mail}<span>E-pasta saturs</span></div>
               <div class="kact" id="te-start" role="group" aria-label="E-pasta saturs – kā sākt">
                 <button type="button" class="kact-btn" data-start="sample" title="Tipveida sagataves vai organizācijas veidnes">No sagataves</button>
-                <button type="button" class="kact-btn" data-start="blank" title="Tukšs redaktors ar uzrunu un noslēgumu">Veidot jaunu</button>
+                <button type="button" class="kact-btn" data-start="blank" title="Tukšs redaktors ar uzrunu un noslēgumu">${ICON.plus}Veidot jaunu</button>
               </div>
+              <p class="kind-note" id="te-start-note" hidden></p><span class="err" id="te-start-err" hidden></span>
             </div>
-            <div class="kind-row" data-krow="pielikums">
-              <label class="kind-opt"><input type="radio" name="te-kind" value="pielikums" ${t.kind === 'pielikums' ? 'checked' : ''}><span>${ICON.doc}Vēstule pielikumā</span></label>
+            <div class="kind-block" data-krow="pielikums">
+              <div class="kind-head"><input type="radio" name="te-kind" value="pielikums" ${t.kind === 'pielikums' ? 'checked' : ''} hidden>${ICON.doc}<span>Vēstule pielikumā</span></div>
               <div class="kact" id="te-main-opts" role="group" aria-label="Vēstule pielikumā – galvenā vēstule">
                 <button type="button" class="kact-btn" data-mact="lib" title="Dokuments no pielikumu sagatavēm">No sagataves</button>
-                <button type="button" class="kact-btn" data-mact="gen" title="Personalizēts PDF ar laukiem katram adresātam">Veidot redaktorā</button>
-                <button type="button" class="kact-btn" data-mact="upload" title="Augšupielādēt gatavu PDF failu (vienāds visiem adresātiem)">Augšupielādēt</button>
+                <button type="button" class="kact-btn" data-mact="gen" title="Personalizēts PDF ar laukiem katram adresātam">${ICON.plus}Veidot redaktorā</button>
+                <button type="button" class="kact-btn" data-mact="upload" title="Gatavs PDF fails, vienāds visiem adresātiem">${ICON.upload}Augšupielādēt</button>
               </div>
+              <p class="kind-note" id="te-main-note" hidden></p>
             </div>
           </div>
           <span class="err" id="te-kind-err" hidden></span>
-          <span class="hint" id="te-start-note" hidden></span><span class="err" id="te-start-err" hidden></span>
           <div id="te-main" hidden><div id="te-main-body"></div></div><span class="err" id="te-main-err" hidden></span></div>
         <div class="ch-tabs" role="tablist" aria-label="Saturs pa kanāliem">
           <button type="button" role="tab" class="ch-tab" id="te-tab-ep" data-chtab="epasts" aria-selected="true" aria-controls="te-pane-ep">${ICON.mail}E-pasts <span class="ch-st" id="te-st-ep"></span></button>
@@ -7240,7 +7245,7 @@ function openTemplateEditor(id, preset = {}){
   // Satura pārbaude (vēstules veids, sākums, galvenā vēstule, temats un teksts)
   function validContent(){
     const cur = current();
-    if (!cur.kind){ showErr('te-kind-err', 'Izvēlieties vēstules saturu.'); $('input[name="te-kind"]', modal).focus(); return false; }
+    if (!cur.kind){ showErr('te-kind-err', 'Izvēlieties vēstules saturu.'); $('.kact-btn', modal).focus(); return false; }
     if (cur.kind === 'epasts' && !started){ showErr('te-start-err', 'Izvēlieties, kā sākt: no sagataves vai tukšu.'); $('[data-start]', modal).focus(); return false; }
     if (cur.kind === 'pielikums' && !main){ showErr('te-main-err', 'Izvēlieties dokumentu no sagatavēm vai augšupielādējiet savu failu.'); $('#te-main-opts button').focus(); return false; }
     // jābūt aizpildītai vismaz vienai versijai (e-pasts vai eAdrese); daļēji aizpildīta versija – kļūda
@@ -7455,11 +7460,16 @@ function openTemplateEditor(id, preset = {}){
   });
   function syncKind(){
     const k = kind(), isDoc = k === 'pielikums', gen = isDoc && main === 'gen';
-    // abas rindas redzamas; neizvēlētās rindas darbības – pelēcīgākas; izceltā darbība – kā sākts / galvenās vēstules avots
-    $$('.kind-row', modal).forEach(r => r.classList.toggle('is-on', r.dataset.krow === k));
+    // abi bloki redzami; izvēlētais – tumšs, otrs (virsraksts un pogas) – pelēcīgāks, bet klikšķināms; izceltā poga – kā sākts / galvenās vēstules avots
+    $$('.kind-block', modal).forEach(r => { r.classList.toggle('is-on', r.dataset.krow === k); r.classList.toggle('is-off', !!k && r.dataset.krow !== k); });
     $$('[data-start]', modal).forEach(b => b.setAttribute('aria-pressed', k === 'epasts' && b.dataset.start === started));
     $$('#te-main-opts [data-mact]', modal).forEach(b => b.setAttribute('aria-pressed', isDoc && !!main && b.dataset.mact === mainSrc));
-    $('#te-start-note').hidden = !startNote || k !== 'epasts'; $('#te-start-note').textContent = startNote;
+    // piezīme zem izvēlētā bloka pogām: "Ielādēts: … · Mainīt"
+    const note = (el, txt, act) => { el.hidden = !txt; el.innerHTML = txt ? `<span>${esc(txt)}</span> · <button type="button" class="link-btn" ${act}>Mainīt</button>` : ''; };
+    note($('#te-start-note'), k === 'epasts' && started !== true ? startNote : '', 'data-knote="ep"');
+    const ma = isDoc && main && main !== 'gen' ? attById(main.lib) : null;
+    note($('#te-main-note'), !isDoc || !main ? '' : main === 'gen' ? 'Izveidots redaktorā: dokuments ar laukiem (ģenerēts PDF)'
+      : mainSrc === 'upload' ? `Augšupielādēts: ${ma ? ma.fileName : main.name}` : `Ielādēts: ${ma ? ma.name : main.name} (no sagatavēm)`, 'data-mact="change"');
     // apakšizvēlne – tikai zem izvēlētās pogas; kad dokuments izvēlēts, rāda tā kartīti
     $('#te-main').hidden = !isDoc || !main;
     if (isDoc) renderMain();
@@ -7574,6 +7584,7 @@ function openTemplateEditor(id, preset = {}){
     return true;
   }
   $$('input[name="te-kind"]', modal).forEach(i => i.addEventListener('change', () => chooseKind(kind())));
+  $('#te-start-note').addEventListener('click', e => { if (e.target.closest('[data-knote]')) $('[data-start="sample"]', modal).click(); });
   // E-pasta saturs: sākt no sagataves vai tukšu
   $$('[data-start]', modal).forEach(b => b.addEventListener('click', async () => {
     // 1. rindas darbība – automātiski izvēlas arī "E-pasta saturs"
@@ -7582,10 +7593,10 @@ function openTemplateEditor(id, preset = {}){
       !(await subConfirm({title:'Aizstāt saturu?', message:'Redaktorā esošais teksts tiks aizstāts. Turpināt?', okLabel:'Aizstāt'}))) return;
     $('#te-start-err').hidden = true;
     if (b.dataset.start === 'blank'){
-      started = 'blank'; startNote = '';
+      started = 'blank'; startNote = 'Izveidots: jauns saturs (uzruna un noslēgums)';
       setBody(blankBody(aud())); syncKind(); bodyEd.area.focus();
     } else openTplSources(aud(), x => x.typ ? loadTypical(x.typ) : x.tpl ? loadCopy(x.tpl) : openMailSamples(aud(), s => {
-      started = 'sample'; fromSample = s.id; startNote = `Sagatave: ${s.name}`;
+      started = 'sample'; fromSample = s.id; startNote = `Ielādēts: ${s.name} (sagatave)`;
       setBody(s.body);
       // sagatavei nav temata – temats jānorāda veidnē / kampaņā; eAdreses versija (teksts) tiek pārņemta
       if (s.ea && s.ea.body){ $('#te-ea-body').value = s.ea.body; update(); }
@@ -7595,7 +7606,7 @@ function openTemplateEditor(id, preset = {}){
   // tipveida sagatave: temats, e-pasta un eAdreses teksts (uzruna – pēc adresāta), kategorija
   function loadTypical(x){
     const tt = typTpl(x, aud());
-    started = 'sample'; fromSample = ''; startNote = `Tipveida sagatave: ${x.name}`;
+    started = 'sample'; fromSample = ''; startNote = `Ielādēts: ${x.name} (tipveida)`;
     setBody(tt.body);
     subj.value = tt.subject; $('#te-subject-err').hidden = true;
     $('#te-ea-subject').value = tt.ea.subject; $('#te-ea-body').value = tt.ea.body;
@@ -7622,7 +7633,7 @@ function openTemplateEditor(id, preset = {}){
       if (CAT_BY_KEY[src.cat]) $('#te-cat').value = src.cat;
       if (svc) svc.set(src.survey || '');
     }
-    fromSample = ''; startNote = `Kopija no veidnes: ${src.name} (autors: ${src.author || CURRENT_USER}) – oriģināls netiek mainīts`;
+    fromSample = ''; startNote = `Ielādēts: kopija no veidnes “${src.name}” (autors: ${src.author || CURRENT_USER}) – oriģināls netiek mainīts`;
     renderFiles(); if (t.files.length){ extraOpen = true; syncExtra(); }
     loadLang(); syncAud(); syncSv(); syncKind();
     toast(`Izveidota kopija no veidnes “${src.name}” – pielāgojiet to un saglabājiet.`);
