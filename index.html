@@ -1274,6 +1274,8 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 /* līdzšinējais nosaukums – apraksts zem jaunā nosaukuma (sarakstā) un aiz tā (galvenē) */
 .camp-desc{display:block;font-size:12px;color:var(--text-muted);font-weight:400;line-height:1.3;max-width:min(330px,26vw);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #camp-scroll .camp-desc{max-width:min(276px,21vw)}
+/* kampaņu saraksts: vienas rindas rindas (apraksts – tikai padomā uz nosaukuma) */
+#camp-scroll .camp-table td{height:36px}
 #c-title .c-desc{font-size:var(--fs-md);font-weight:400;color:var(--text-muted)}
 .hf-desc{display:block;font-size:11px;color:var(--text-muted);font-weight:400}
 .camp-name:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:var(--radius-xs)}
@@ -1781,7 +1783,7 @@ dialog.drawer.al-drawer{width:min(420px,100vw)}
 .kv-pop{max-width:300px;padding:10px 12px}
 .name-reset{align-self:flex-start;margin-top:4px;padding:0 2px;font-size:var(--fs-xs);font-weight:600}
 .name-reset[hidden]{display:none}
-/* "Mērķa grupa" (2. solis) – vienkāršota: tikai Joma, Apsekojumi, Periodi, Respondenti (un Ieraksti → Vēstules); 13 px */
+/* "Mērķa grupa" (2. solis) – vienkāršota: tikai Joma, Apsekojumi, Periodi, Respondenti; 13 px */
 .r-target .kv{font-size:13px;line-height:18px}
 .r-target .kv .link-btn{font-size:13px}
 .r-count .link-btn{padding:0 2px;font-size:inherit;font-weight:600}
@@ -2016,7 +2018,7 @@ button.ac-tag.t-risk:hover,button.ac-tag.t-risk[aria-expanded="true"]{border-col
 #c-list .sel-table > thead > tr > th,#c-list .sel-table > tbody > tr:not(.sel-duties) > td{padding:6px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;max-width:none}
 #c-list .sel-table > tbody > tr:not(.sel-duties) > td{height:32px;box-sizing:border-box}
 #c-list .sel-table .c-chk{width:36px}
-#c-list .sel-table th.c-name{width:16%}
+#c-list .sel-table th.c-name{width:25%}
 /* iedzīvotāju statistikas eAdreses kolonna: "Sūtīšanas brīdī · atkarīgs no e-adreses" vienā rindā */
 #c-list .sel-table th.c-ea-col{width:224px}
 #c-list .sel-table .c-other{width:92px}
@@ -3420,7 +3422,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 130</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 131</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -9321,8 +9323,6 @@ function renderScopeCtx(){
     rows.push(kvRow('Periodi', kvList('pers', pers.map(periodCode), pers.map(k => `${periodCode(k)} – ${periodLabel(k)}`))));
   }
   rows.push(kvRow('Respondenti', String(rs.length), 'kv-strong'));
-  // apvienojot pēc NMK: apsekojumu respondenti (ieraksti) → vēstules
-  if (selOpt('mergeNmk')) rows.push(kvRow('Ieraksti → Vēstules', `<span title="Apvienots pēc NMK">${scopeResult().n} → ${rs.length}</span>`));
   $('#c-ctx-kv').innerHTML = rows.join('');
 }
 // apsekojuma filtrs tabulā: tvērumā esošie apsekojumi ar respondentu skaitu
@@ -9430,7 +9430,7 @@ function renderComposeList(){
     const sa = c.usable || c.status === 'pot' ? (c.value || '').toLowerCase() : '';
     if (!full){
       if (c.status === 'empty') return `<td class="c-addr c-addr-st" title="${esc(st.tip)}"><div class="cell1"><span class="muted">—</span></div></td>`;
-      const notes = [c.status === 'error' && 'netiks izmantota', (c.shout || (sa && sm.has(sa))) && 'koplietojama', c.status === 'pot' && c.mi && 'MI ieteikums', (c.dupKept || (show && c.status === 'dup')) && 'dublikāts'].filter(Boolean);
+      const notes = [(c.shout || (sa && sm.has(sa))) && 'koplietojama', c.status === 'pot' && c.mi && 'MI ieteikums', (c.dupKept || (show && c.status === 'dup')) && 'dublikāts'].filter(Boolean);
       return `<td class="c-addr${show ? '' : ' c-addr-st'}" title="${esc(tip)}${notes.length ? ` (${esc(notes.join(', '))})` : ''} – darbības: atverot rindu ›"><div class="cell1"><span class="ac-val ac-st q-${st.cls} ${cls}">${inner}</span>${notes.map(n => `<small class="ac-nt">· ${esc(n)}</small>`).join('')}</div></td>`;
     }
     const rk = c.status === 'pot' && c.risk;
@@ -9451,7 +9451,7 @@ function renderComposeList(){
     if (c.dupKept) acts.push(link('data-ac-dupredo', 'Noņemt', `Dublikāts (= ${c.dupKept}) – noņemt`));
     if (sa && sm.has(sa)){ const d = sharedDec(sa, r.id), n = sm.get(sa).length;
       acts.push(`<button type="button" class="ac-tag t-shared${d ? ' is-dec' : ''}" data-shared="${esc(sa)}" aria-haspopup="dialog" title="Koplietojama adrese – izmanto ${n} respondenti${SHARED_TAG[d] ? ` · ${esc(SHARED_TAG[d])}` : ''} – izvērtēt" aria-label="${esc(nm)}: koplietojama adrese (${n}) – izvērtēt">${ICON.users}${n}</button>`); }
-    const why = c.status === 'pot' && c.mi ? `MI ieteikums: ${c.mi}` : c.status === 'error' ? `${stTip} · netiks izmantota` : c.value ? stTip : '';
+    const why = c.status === 'pot' && c.mi ? `MI ieteikums: ${c.mi}` : c.value ? stTip : '';
     return `<td class="c-addr" title="${esc(tip)}"><div class="cell1">${main}${why ? `<small class="ac-why q-${st.cls}">${esc(why)}</small>` : ''}${acts.join('')}</div></td>`;
   };
   // eAdreses kolonna – uzņēmumu statistikai (un jomai "Visi", kur ir arī uzņēmumi)
@@ -9469,7 +9469,7 @@ function renderComposeList(){
         <td class="c-chk"><input type="checkbox" data-rid="${r.id}" ${out ? '' : 'checked'} ${exc ? 'disabled title="Izņēmums – atjaunot var logā “Izņēmumi”"' : ''} aria-label="Iekļaut: ${esc(r.name)}"></td>
         ${(() => { const g = nmkGroup(r), pk = first && first.type, mtxt = g.length > 1 ? `Apvienota vēstule: ${g.length} vienības (NMK ${r.nmk}) – ${g.slice(1).map(x => x.name).join(', ')}` : '', ptxt = pk && !cols.includes(pk) ? `Primārā adrese – ${addrShort(pk)}: ${first.address}` : '';
           const tip = [r.name, exc ? `Izņēmums: ${exc}` : '', probs.join('; '), compose.custom[r.id] ? 'Pielāgota vēstule' : '', mtxt, ptxt].filter(Boolean).join('\n');
-          return `<td class="c-name" title="${esc(tip)}"><div class="cell1">${exc ? `<span class="exc-tag">Izņēmums</span>` : ''}${respLink(r.id, r.name)}${compose.custom[r.id] ? '<span class="pill pill-custom">Pielāgota vēstule</span>' : ''}${mtxt ? `<span class="r-mini merge-note" title="${esc(mtxt)}">Apvienota (${g.length})</span>` : ''}${ptxt ? `<span class="r-mini prim-note" title="${esc(ptxt)} (pirmā pieejamā pēc adrešu prioritātes)">Prim.: ${esc(addrShort(pk))}</span>` : ''}</div></td>`; })()}
+          return `<td class="c-name" title="${esc(tip)}"><div class="cell1">${exc ? `<span class="exc-tag">Izņēmums</span>` : ''}${respLink(r.id, r.name)}${compose.custom[r.id] ? '<span class="pill pill-custom">Pielāgota vēstule</span>' : ''}${ptxt ? `<span class="r-mini prim-note" title="${esc(ptxt)} (pirmā pieejamā pēc adrešu prioritātes)">Prim.: ${esc(addrShort(pk))}</span>` : ''}</div></td>`; })()}
         ${cols.map(k => addrCell(r, k)).join('')}${showO ? otherCell(r) : ''}
         <td class="c-tg"><button type="button" class="icon-btn row-tg" data-action="c-row-toggle" data-id="${r.id}" aria-expanded="${op}" aria-label="Pilna informācija: ${esc(r.name)}">${ICON.chev}</button></td></tr>
         ${op ? `<tr class="sel-duties"><td colspan="${ncol}">${respDetails(r, addrCell)}<table><thead><tr><th>Apsekojums</th><th>Periods</th><th>Termiņš</th><th>Statuss</th></tr></thead><tbody>${ds.map(d => {
@@ -10734,7 +10734,7 @@ function renderCampaigns(){
     (!c.creator || x.creator === c.creator) && (!c.from || campCreated(x) >= c.from) && (!c.to || campCreated(x) <= c.to)));
   renderCampSort();
   const row = x => `<tr class="camp-row" data-action="camp-row" data-id="${esc(x.key)}">
-      <td><button type="button" class="camp-name" data-action="camp-row" data-id="${esc(x.key)}" data-ctip="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + x.meta)}" aria-description="${esc((x.desc ? x.desc + ' · ' : '') + x.meta)}">${esc(x.name)}</button>${x.desc ? `<small class="camp-desc" aria-hidden="true">${esc(x.desc)}</small>` : ''}</td>
+      <td><button type="button" class="camp-name" data-action="camp-row" data-id="${esc(x.key)}" data-ctip="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + x.meta)}" aria-description="${esc((x.desc ? x.desc + ' · ' : '') + x.meta)}">${esc(x.name)}</button></td>
       <td>${campKindCell(x.kind)}</td>
       <td class="num">${x.n}</td>
       <td>${esc(x.when)}</td>
