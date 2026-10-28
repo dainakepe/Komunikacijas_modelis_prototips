@@ -1215,17 +1215,24 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 /* Žurnāls: 1. līmenis (kampaņu saraksts, respondentu meklēšana) un 2. līmeņa galvene */
 .jrn-filters{margin-bottom:12px}
 #jrn-l1 .flt-search{max-width:420px}
-#jrn-per{width:230px}
 .jrn-sec{margin-bottom:16px}
 .jrn-h{font-size:var(--fs-lg);margin:4px 0 8px;color:var(--primary-darker)}
 .jrn-n{color:var(--text-muted);font-weight:500}
 .jrn-table td{height:36px}
 .jrn-table .hist-camp{display:block;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.jrn-ctable th:nth-child(2){width:190px} .jrn-ctable th:nth-child(3){width:190px} .jrn-ctable th:nth-child(4){width:150px} .jrn-ctable th:nth-child(5){width:110px}
-.jrn-ctable .camp-name{max-width:min(520px,40vw)}
+/* 1. līmenis: Kampaņa | Adresāti | Statuss | Rezultāts | Nosūtīts | Nosūtītājs (nosaukums – atlikušais platums, vienā rindā ar "…") */
+.jrn-ctable{table-layout:fixed;width:100%}
+.jrn-ctable th:nth-child(2){width:100px} .jrn-ctable th:nth-child(3){width:165px} .jrn-ctable th:nth-child(4){width:185px} .jrn-ctable th:nth-child(5){width:115px} .jrn-ctable th:nth-child(6){width:170px}
+.jrn-ctable th:nth-child(2),.jrn-ctable td:nth-child(2){text-align:right;padding-right:24px}
+.jrn-ctable td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jrn-ctable .camp-name{display:block;max-width:100%;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jrn-res{white-space:nowrap}
+.jrn-by{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jrn-ctx{margin:-4px 0 12px}
-.jrn-ctx .back-link{margin-bottom:4px}
 .jrn-ctx-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* 2. līmenī lapas virsraksts "Žurnāls · kampaņas nosaukums" */
+#jrn-title{overflow-wrap:anywhere}
+.jrn-sep{color:var(--text-muted);font-weight:400;margin:0 2px}
 .jrn-ctx-t{display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-width:0}
 .jrn-ctx-t h2{margin:0;font-size:var(--fs-xl);color:var(--primary-darker);overflow-wrap:anywhere}
 .jrn-ctx-m{display:inline-flex;align-items:center;gap:14px;color:var(--text-secondary);font-size:var(--fs-sm)}
@@ -3241,16 +3248,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <input type="search" id="camp-search" placeholder="Meklēt pēc nosaukuma…">
         </label>
         <label class="cf-f cf-kind"><span class="sr-only">Kampaņas veids</span><select id="camp-kind"></select></label>
-        <div class="cf-f cf-date flt-period" role="group" aria-labelledby="cf-date-l"><span class="cf-l" id="cf-date-l">Izveidota</span>
-          <select id="cf-quick" aria-label="Izveidota – ātrā izvēle"></select>
-          <div class="dt-field"><input type="text" id="cf-from" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-label="Izveidota no (DD.MM.GGGG)" aria-describedby="cf-err">
-            <button type="button" class="dt-btn" data-ccal="from" aria-label="Izveidota no – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
-            <input type="date" id="cf-from-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div>
-          <span class="hf-dash" aria-hidden="true">–</span>
-          <div class="dt-field"><input type="text" id="cf-to" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-label="Izveidota līdz (DD.MM.GGGG)" aria-describedby="cf-err">
-            <button type="button" class="dt-btn" data-ccal="to" aria-label="Izveidota līdz – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
-            <input type="date" id="cf-to-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div>
-        </div>
+        <div data-per="cf"></div>
         <button type="button" class="flt-adv-btn" id="cf-adv-btn" aria-expanded="false" aria-controls="cf-adv"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Papildu filtri<span class="flt-n" id="cf-adv-n"></span><span class="flt-caret" aria-hidden="true">▾</span></button>
       </div>
       <div class="flt-adv" id="cf-adv" hidden>
@@ -3258,7 +3256,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <div class="dd-list cf-dd"><input type="search" id="cf-creator-q" placeholder="Meklēt veidotāju…" aria-label="Meklēt veidotāju"><div id="cf-creator-list" role="listbox" aria-label="Veidotājs"></div></div></details></div>
       </div>
     </div>
-    <span class="err cf-err" id="cf-err" hidden></span>
     <div class="flt-chips" id="cf-chips" hidden><span class="flt-chip-list" id="cf-chip-list" aria-label="Aktīvie filtri"></span><button type="button" class="link-btn flt-clear" id="cf-clear">Notīrīt visus</button></div>
     <div class="card table-card tc-fit" id="camp-card">
       <div class="table-wrap camp-scroll tc-area" id="camp-scroll"><table class="camp-table">
@@ -3523,7 +3520,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   <section id="tab-vesture" class="tab-panel" hidden>
     <div class="page-head">
       <div>
-        <h1>Žurnāls <span class="tip" tabindex="0" role="note" aria-label="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts." data-tip="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts.">i</span></h1>
+        <h1 id="jrn-title"><span id="jrn-title-t">Žurnāls</span> <span class="tip" id="jrn-title-tip" tabindex="0" role="note" aria-label="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts." data-tip="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts.">i</span></h1>
       </div>
       <div class="toolbar"><button type="button" class="btn btn-secondary" data-action="rules-open" title="NDR (e-pasts) un DIV (e-adrese) statusu klasifikācija: iemesls → tips → automātiskā rīcība"><svg class="icon" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h10"/></svg>Piegādes statusi un kļūdas</button></div>
     </div>
@@ -3534,8 +3531,9 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input type="search" id="jrn-q" placeholder="Meklēt kampaņu vai respondentu…" title="Meklē pēc kampaņas nosaukuma, respondenta nosaukuma, NMK vai adreses"></label>
         <label class="cf-f cf-kind"><span class="sr-only">Veids</span><select id="jrn-kind" aria-label="Veids"></select></label>
-        <label class="cf-f cf-kind"><span class="sr-only">Periods</span><select id="jrn-per" aria-label="Periods"></select></label>
+        <div data-per="jrn"></div>
       </div></div>
+      <div class="flt-chips" id="jrn-chipbar" hidden><span class="flt-chip-list" id="jrn-chips" aria-label="Aktīvie filtri"></span><button type="button" class="link-btn flt-clear" id="jrn-clear">Notīrīt visus</button></div>
       <div id="jrn-resp"></div>
       <div id="jrn-camps"></div>
     </div>
@@ -3557,19 +3555,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <div class="dd-list cf-dd hf-list"><input type="search" id="hist-camp-q" placeholder="Meklēt kampaņu…" aria-label="Meklēt kampaņu"><div id="hist-camp-list" role="listbox" aria-label="Kampaņa"></div></div></details>
         <details class="dd hf-dd hf-rep" id="hist-rep-dd"><summary id="hist-rep-sum" aria-label="Apsekojums">Visi apsekojumi</summary>
           <div class="dd-list cf-dd hf-list"><input type="search" id="hist-rep-q" placeholder="Meklēt apsekojumu…" aria-label="Meklēt apsekojumu"><div id="hist-rep-list" role="listbox" aria-label="Apsekojums"></div></div></details>
-        <div class="hf-per"><span class="hf-per-l" id="hist-per-l">Periods:</span>
-          <details class="dd hf-dd" id="hist-per-dd"><summary id="hist-per-sum" aria-labelledby="hist-per-l hist-per-sum">Jebkurā laikā</summary>
-            <div class="dd-list cf-dd hf-list hf-per-list"><div id="hist-per-list" role="listbox" aria-label="Periods"></div>
-              <div class="hf-cust" id="hist-cust" role="group" aria-label="Cits periods" hidden>
-                <div class="hf-cust-f"><label for="hist-from">No</label><div class="dt-field"><input type="text" id="hist-from" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-describedby="hist-per-err">
-                  <button type="button" class="dt-btn" data-hcal="from" aria-label="Periods no – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
-                  <input type="date" id="hist-from-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div></div>
-                <div class="hf-cust-f"><label for="hist-to">Līdz</label><div class="dt-field"><input type="text" id="hist-to" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-describedby="hist-per-err">
-                  <button type="button" class="dt-btn" data-hcal="to" aria-label="Periods līdz – izvēlēties datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
-                  <input type="date" id="hist-to-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div></div>
-                <span class="err" id="hist-per-err" hidden></span>
-                <div class="hf-cust-act"><button type="button" class="btn btn-ghost btn-sm" id="hist-cust-cancel">Atcelt</button><button type="button" class="btn btn-primary btn-sm" id="hist-cust-apply">Lietot</button></div>
-              </div></div></details></div>
+        <div data-per="hist"></div>
         <div class="hf-more"><button type="button" class="flt-adv-btn hf-btn" id="hist-more-f" aria-expanded="false" aria-controls="hist-fpanel" aria-haspopup="dialog"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtri<span class="hf-badge" id="hist-more-n" hidden></span></button>
           <div class="hf-panel" id="hist-fpanel" role="dialog" aria-label="Filtri" hidden>
             <div class="hf-pgrid">
@@ -3639,7 +3625,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 151</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 152</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5499,7 +5485,7 @@ function newSession(full){
   clearTimeout(draftTimer); state.activeDraft = compose.draftId;
   alBaseline();
 }
-const ui = {campView:'list', camp:{q:'', kind:'', status:'', creator:'', quick:'', from:'', to:''}, campRaw:{}, hist:{q:'', kind:'', sts:[], camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histLimit:50, cardId:'',
+const ui = {campView:'list', camp:{q:'', kind:'', status:'', creator:'', quick:'', from:'', to:''}, hist:{q:'', kind:'', sts:[], camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histLimit:50, cardId:'',
   rep:{from:'', to:'', camp:'', kind:'', ch:'', aud:'', rep:'', sort:{key:'date', dir:'desc'}},
   tplView:'veidnes', sagGroup:'mail', sag:{q:'', aud:'', cat:'', lang:''}, newIds:new Set(), tplAud:'', tplSearch:'', tplCat:'', tplKind:'', tplSts:['aktiva', 'melnraksts'], tplRt:'', tplSv:'', tplSort:{k:'', dir:0}, tplLimit:20, sagSort:{k:'', dir:0}, sagLimit:20, attSearch:'', attAud:'', attCat:'', attLang:''};
 // Sakļautie kategoriju bloki (tikai šajā kampaņā – pēc noklusējuma visi izvērsti)
@@ -10972,19 +10958,19 @@ function withSnap(snap, fn){
 }
 const kindOpts = cur => optList(Object.entries(SESS_KINDS).map(([k, v]) => [k, v.label]), cur, 'Visi veidi');
 const baseKind = k => k && k.startsWith('atg') ? 'atgadinajums' : k;
-const CAMP_QUICK = [['', 'Jebkurā laikā'], ['today', 'Šodien'], ['7d', 'Pēdējās 7 dienas'], ['month', 'Šis mēnesis'], ['year', 'Šis gads']];
 const campFiltOn = () => !!(ui.camp.q.trim() || ui.camp.kind || ui.camp.creator || ui.camp.from || ui.camp.to);
 const campFiltCount = () => [ui.camp.q.trim(), ui.camp.kind, ui.camp.creator, ui.camp.from || ui.camp.to].filter(Boolean).length;
 function campChips(){
   const c = ui.camp, out = [];
   if (c.q.trim()) out.push(['q', `Meklēt: ${c.q.trim()}`]);
   if (c.kind) out.push(['kind', `Veids: ${SESS_KINDS[c.kind] ? SESS_KINDS[c.kind].label : c.kind}`]);
-  if (c.from || c.to) out.push(['period', `Izveidota: ${c.quick && c.quick !== 'custom' ? CAMP_QUICK.find(([k]) => k === c.quick)[1] + ' · ' : ''}${c.from ? dmy(c.from) : '…'} – ${c.to ? dmy(c.to) : '…'}`]);
+  out.push(...perChip(c));
   if (c.creator) out.push(['creator', `Veidotājs: ${c.creator}`]);
   return out;
 }
-const campCreated = x => x.created ? isoDate(new Date(x.created)) : '';
-// filtru joslas vērtības (meklēšana, veids, veidotājs, izveides periods)
+// perioda filtrs kampaņās: nosūtītām – nosūtīšanas datums, ieplānotām – plānotais nosūtīšanas datums, melnrakstiem – izveides datums
+const campPerDate = x => x.type === 'sent' ? x.ts : x.type === 'planned' ? (x.pl.sendDate ? x.pl.sendDate + 'T12:00:00' : x.created) : x.created;
+// filtru joslas vērtības (meklēšana, veids, veidotājs, periods)
 function renderCampFilters(rows){
   const c = ui.camp;
   if (c.kind && !SESS_KINDS[c.kind]) c.kind = '';
@@ -10996,10 +10982,7 @@ function renderCampFilters(rows){
   const qq = norm($('#cf-creator-q').value);
   const opts = [['', 'Visi veidotāji'], ...creators.map(n => [n, n])].filter(([k, l]) => !qq || !k || norm(l).includes(qq));
   $('#cf-creator-list').innerHTML = opts.map(([k, l]) => `<button type="button" role="option" data-cf-creator="${esc(k)}" aria-selected="${c.creator === k}">${esc(l)}</button>`).join('') + (opts.length <= 1 && qq ? '<div class="cf-none">Nav atrasts</div>' : '');
-  $('#cf-quick').innerHTML = CAMP_QUICK.map(([k, l]) => `<option value="${k}" ${c.quick === k ? 'selected' : ''}>${esc(l)}</option>`).join('') + (c.quick === 'custom' ? '<option value="custom" selected>Norādīts periods</option>' : '');
-  ['from', 'to'].forEach(k => { const el = $('#cf-' + k); if (document.activeElement !== el) el.value = ui.campRaw[k] ?? dmy(c[k]); el.setAttribute('aria-invalid', String(ui.campRaw[k] != null)); });
-  const bad = ui.campRaw.from != null || ui.campRaw.to != null ? 'Ievadiet datumu formātā DD.MM.GGGG.' : c.from && c.to && c.from > c.to ? 'Perioda sākums nevar būt vēlāks par beigām.' : '';
-  $('#cf-err').hidden = !bad; $('#cf-err').textContent = bad;
+  perRender('cf');
   // aktīvo filtru birkas (no abām rindām) un skaits pogā "Papildu filtri"
   const chips = campChips();
   $('#cf-chips').hidden = !chips.length;
@@ -11142,7 +11125,7 @@ function renderCampaigns(){
   hideCTip();
   const c = ui.camp;
   const list = campSorted(rows.filter(x => (ui.campSub === 'all' || CAMP_ST[x.st].sub === ui.campSub) && (!c.kind || baseKind(x.kind) === c.kind) && (!q || norm(`${x.name} ${x.desc || ''}`).includes(q)) &&
-    (!c.creator || x.creator === c.creator) && (!c.from || campCreated(x) >= c.from) && (!c.to || campCreated(x) <= c.to)));
+    (!c.creator || x.creator === c.creator) && perMatch(c, campPerDate(x))));
   renderCampSort();
   const row = x => `<tr class="camp-row" data-action="camp-row" data-id="${esc(x.key)}">
       <td><button type="button" class="camp-name" data-action="camp-row" data-id="${esc(x.key)}" data-ctip="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + x.meta)}" aria-description="${esc((x.desc ? x.desc + ' · ' : '') + x.meta)}">${esc(x.name)}</button></td>
@@ -11296,27 +11279,41 @@ function showHistoryOf(batch){
   showTab('vesture');
 }
 /* ---------- Žurnāls: 1. līmenis – kampaņu saraksts; meklējot – arī respondenti visās kampaņās ---------- */
-ui.jrn = {camp:null, q:'', kind:'', per:'', sort:{k:'', dir:0}, rLimit:20, cLimit:50};
-const JRN_COLS = [['name', 'Kampaņa'], ['kind', 'Veids'], ['st', 'Statuss'], ['ts', 'Nosūtīta'], ['n', 'Vēstules']];
+// periods (ui.hist.quick/from/to) ir kopīgs abiem līmeņiem: atverot kampaņu, tas pāriet uz 2. līmeni, atgriežoties – saglabājas
+ui.jrn = {camp:null, q:'', kind:'', sort:{k:'', dir:0}, rLimit:20, cLimit:50};
+const JRN_COLS = [['name', 'Kampaņa'], ['n', 'Adresāti'], ['st', 'Statuss'], ['res', 'Rezultāts'], ['ts', 'Nosūtīts'], ['by', 'Nosūtītājs']];
+// kampaņas statuss Žurnālā: izpildē – "Procesā"
+const jrnSt = x => x.st === 'active' ? {...CAMP_ST.active, label:'Procesā'} : CAMP_ST[x.st];
+// rezultāts: piegādāti / procesā / jārisina (tās pašas grupas kā 2. līmeņa statusu pogas)
+function jrnRes(x){
+  if (!x.res){ const ok = x.xs.filter(y => histFinal(y) === 'ok').length, todo = x.xs.filter(isTodo).length;
+    x.res = {ok, todo, proc:x.xs.length - ok - todo, pc:x.xs.length ? Math.round(ok / x.xs.length * 100) : 0}; }
+  return x.res;
+}
+const jrnAdr = x => new Set(x.xs.map(y => y.respondentId)).size;
+const jrnBy = x => x.xs[0].sentBy || x.creator || '—';
 function jrnSortVal(x, k){
   if (k === 'name') return x.name || '';
-  if (k === 'kind') return campKindLabel(x.kind) || null;
-  if (k === 'st') return CAMP_ST[x.st].label;
+  if (k === 'n') return jrnAdr(x);
+  if (k === 'st') return jrnSt(x).label;
+  if (k === 'res') return jrnRes(x).pc;
   if (k === 'ts') return x.ts || null;
-  if (k === 'n') return x.n;
+  if (k === 'by') return jrnBy(x);
   return null;
 }
 const respNmkRaw = id => (state.respondents.find(y => y.id === id) || {}).nmk || '';
 function renderJrnL1(){
-  const j = ui.jrn, q = norm(j.q.trim()), rg = histRange(j.per);
-  const kSel = $('#jrn-kind'), pSel = $('#jrn-per');
-  kSel.innerHTML = `<option value="">Visi veidi</option>` + Object.entries(SESS_KINDS).map(([k, v]) => `<option value="${k}" ${k === j.kind ? 'selected' : ''}>${esc(v.label)}</option>`).join('');
-  pSel.innerHTML = HIST_QUICK.map(([k, l]) => `<option value="${k}" ${k === j.per ? 'selected' : ''}>${k ? esc(l) : 'Periods: jebkurā laikā'}</option>`).join('');
+  const j = ui.jrn, q = norm(j.q.trim()), per = ui.hist;
+  $('#jrn-kind').innerHTML = `<option value="">Visi veidi</option>` + Object.entries(SESS_KINDS).map(([k, v]) => `<option value="${k}" ${k === j.kind ? 'selected' : ''}>${esc(v.label)}</option>`).join('');
+  perRender('jrn');
   if (document.activeElement !== $('#jrn-q')) $('#jrn-q').value = j.q;
-  const inPer = x => { const d = isoDate(new Date(x.sentAt)); return (!rg.from || d >= rg.from) && (!rg.to || d <= rg.to); };
+  const chips = [...(j.kind ? [['kind', `Veids: ${SESS_KINDS[j.kind] ? SESS_KINDS[j.kind].label : j.kind}`]] : []), ...perChip(per)];
+  $('#jrn-chipbar').hidden = !chips.length;
+  $('#jrn-chips').innerHTML = chips.map(([k, l]) => `<span class="ms-tag"><span>${esc(l)}</span><button type="button" data-jchip="${k}" aria-label="Noņemt filtru: ${esc(l)}">×</button></span>`).join('');
+  const inPer = x => perMatch(per, x.sentAt);
   const kindOk = k => !j.kind || baseKind(k) === j.kind;
-  // tikai kampaņas ar vismaz vienu nosūtītu vēstuli (arī izpildē); melnraksti un ieplānotās – nē
-  const camps = campRows().filter(x => x.type === 'sent' && kindOk(x.kind) && x.xs.some(inPer));
+  // tikai kampaņas ar vismaz vienu nosūtītu vēstuli (arī izpildē); melnraksti un ieplānotās – nē; periods – pēc kampaņas nosūtīšanas datuma
+  const camps = campRows().filter(x => x.type === 'sent' && kindOk(x.kind) && perMatch(per, x.ts));
   const resp = q ? state.sent.filter(x => kindOk(x.sessionKind) && inPer(x) && norm([x.recipient, x.address, respNmkRaw(x.respondentId)].join(' ')).includes(q)).sort((a, b) => String(b.sentAt).localeCompare(String(a.sentAt))) : [];
   const rb = new Set(resp.map(x => String(x.batch)));
   const cl = sortList(camps.filter(x => !q || norm(`${x.name} ${x.desc || ''}`).includes(q) || rb.has(String(x.id))), j.sort, jrnSortVal);
@@ -11334,21 +11331,29 @@ function renderJrnL1(){
   const empty = !cl.length ? tcEmptyBox(camps.length || q ? 'Nav kampaņu, kas atbilst meklēšanai vai filtriem' : 'Vēl nav nosūtītu kampaņu') : '';
   $('#jrn-camps').innerHTML = `<section class="jrn-sec" aria-label="Kampaņas">${q ? `<h2 class="jrn-h">Kampaņas <span class="jrn-n">(${cl.length})</span></h2>` : ''}
     <div class="card table-card jrn-card"><div class="table-wrap camp-scroll"><table class="camp-table jrn-table jrn-ctable"><thead><tr id="jrn-head">${sortHead(JRN_COLS, j.sort, 'jsort').replace(/<th class="actions">[\s\S]*$/, '')}</tr></thead>
-    <tbody>${cPage.map(x => `<tr class="camp-row" data-action="jrn-open" data-id="${esc(x.id)}"><td><button type="button" class="camp-name" data-action="jrn-open" data-id="${esc(x.id)}" title="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + x.meta)}">${esc(x.name)}</button></td>
-      <td>${campKindCell(x.kind)}</td><td><span class="cst ${CAMP_ST[x.st].cls}"><i aria-hidden="true"></i>${CAMP_ST[x.st].label}</span></td>
-      <td title="${esc(fmtDateTime(x.ts))}">${esc(hxDate(x.ts))}</td><td class="num">${x.n}</td></tr>`).join('')}</tbody></table>
+    <tbody>${cPage.map(x => { const r = jrnRes(x), st = jrnSt(x), rt = `Piegādāti ${fmtCount(r.ok)} · Procesā ${fmtCount(r.proc)} · Jārisina ${fmtCount(r.todo)}`;
+      return `<tr class="camp-row" data-action="jrn-open" data-id="${esc(x.id)}"><td><button type="button" class="camp-name" data-action="jrn-open" data-id="${esc(x.id)}" title="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + campKindLabel(x.kind))}">${esc(x.name)}</button></td>
+      <td class="num">${esc(fmtCount(jrnAdr(x)))}</td><td><span class="cst ${st.cls}"><i aria-hidden="true"></i>${st.label}</span></td>
+      <td><span class="jrn-res" title="${esc(rt)}" aria-label="${esc(`Piegādāti ${r.ok} (${r.pc}%) – ${rt}`)}">Piegādāti ${esc(fmtCount(r.ok))} <span class="muted">(${r.pc}%)</span></span></td>
+      <td title="${esc(fmtDateTime(x.ts))}">${esc(dmy(isoDate(new Date(x.ts))))}</td><td><span class="jrn-by" title="${esc(jrnBy(x))}">${esc(jrnBy(x))}</span></td></tr>`; }).join('')}</tbody></table>
     <div class="tc-empty"${empty ? '' : ' hidden'}>${empty}</div></div>
     ${cl.length ? `<div class="table-foot camp-foot"><span>Rādītas <b>${cPage.length}</b> no <b>${cl.length}</b></span>${cPage.length < cl.length ? '<button type="button" class="btn btn-secondary btn-sm" data-action="jrn-cmore">Rādīt vairāk</button>' : ''}</div>` : ''}</div></section>`;
 }
-// 2. līmeņa galvene: "← Visas kampaņas", kampaņas nosaukums ar veidu un statusu, "Darbību vēsture"
+// lapas virsraksts: 1. līmenī "Žurnāls" ar (i); 2. līmenī "Žurnāls · kampaņas nosaukums" (bez (i) un statusa)
+function renderJrnTitle(name){
+  $('#jrn-title-t').innerHTML = name ? `Žurnāls <span class="jrn-sep" aria-hidden="true">·</span> <span class="jrn-tn">${esc(name)}</span>` : 'Žurnāls';
+  $('#jrn-title-tip').hidden = !!name;
+}
+// 2. līmeņa galvene: "← Visas kampaņas" un "Darbību vēsture" (nosaukums – lapas virsrakstā)
 function renderJrnCtx(){
   const c = ui.jrn.camp, x = c !== 'all' ? campRows().find(y => y.type === 'sent' && String(y.id) === String(c)) : null;
-  $('#jrn-ctx').innerHTML = `<button type="button" class="btn btn-ghost btn-sm back-link" data-action="jrn-back">← Visas kampaņas</button>
-    <div class="jrn-ctx-row"><div class="jrn-ctx-t"><h2>${esc(x ? x.name : 'Visu kampaņu vēstules')}</h2>${x ? `<span class="jrn-ctx-m">${campKindCell(x.kind)}<span class="cst ${CAMP_ST[x.st].cls}"><i aria-hidden="true"></i>${CAMP_ST[x.st].label}</span></span>` : ''}</div>
+  renderJrnTitle(x ? x.name : 'Visu kampaņu vēstules');
+  $('#jrn-ctx').innerHTML = `<div class="jrn-ctx-row"><button type="button" class="btn btn-ghost btn-sm back-link" data-action="jrn-back">← Visas kampaņas</button>
     ${x ? `<button type="button" class="al-link" data-action="audit-open" data-id="sent:${esc(x.id)}">${ICON.clock}Darbību vēsture</button>` : ''}</div>`;
 }
 function openJrnCamp(batch, extra = {}){
-  Object.assign(ui.hist, histDefaults(), {camp:String(batch), sts:[]}, extra);
+  const per = {quick:ui.hist.quick, from:ui.hist.from, to:ui.hist.to};
+  Object.assign(ui.hist, histDefaults(), per, {camp:String(batch), sts:[]}, extra);
   ui.jrn.camp = String(batch); ui.histLimit = 50;
   $('#hist-search').value = ui.hist.q || ''; $('#hist-ch').value = '';
   renderSent(); window.scrollTo({top:0});
@@ -11357,9 +11362,68 @@ function openJrnCamp(batch, extra = {}){
 const histDefaults = () => ({q:'', camp:'', rep:'', quick:'', from:'', to:'', ch:'', kind:'', mr:'', fa:'', aud:'', rule:''});
 // perioda izvēle (Žurnālā)
 const HF_QUICK = [['', 'Jebkurā laikā'], ['today', 'Šodien'], ['7d', 'Pēdējās 7 dienas'], ['30d', 'Pēdējās 30 dienas'], ['year', 'Šis gads'], ['custom', 'Cits periods…']];
+// ===== Perioda filtrs – viena kopīga komponente (Kampaņas, Žurnāla 1. un 2. līmenis): tas pats HTML, CSS un loģika =====
+// "Periods:" + izkrītošā izvēlne (Jebkurā laikā · Šodien · Pēdējās 7 dienas · Pēdējās 30 dienas · Šis gads · Cits periods…);
+// "Cits periods…" – mazs logs ar datumiem no–līdz un "Lietot". Stāvoklis – {quick, from, to}; katrs skats nosaka, kuru datumu filtrē.
+const CAL_IC = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
+function perHtml(p){
+  const f = (k, l) => `<div class="hf-cust-f"><label for="${p}-${k}">${l}</label><div class="dt-field"><input type="text" id="${p}-${k}" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-describedby="${p}-per-err">
+      <button type="button" class="dt-btn" data-per-cal="${k}" aria-label="Periods ${l.toLowerCase()} – izvēlēties datumu kalendārā" title="Kalendārs">${CAL_IC}</button>
+      <input type="date" id="${p}-${k}-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div></div>`;
+  return `<div class="hf-per" id="${p}-per"><span class="hf-per-l" id="${p}-per-l">Periods:</span>
+    <details class="dd hf-dd" id="${p}-per-dd"><summary id="${p}-per-sum" aria-labelledby="${p}-per-l ${p}-per-sum">Jebkurā laikā</summary>
+      <div class="dd-list cf-dd hf-list hf-per-list"><div id="${p}-per-list" role="listbox" aria-label="Periods"></div>
+        <div class="hf-cust" id="${p}-cust" role="group" aria-label="Cits periods" hidden>${f('from', 'No')}${f('to', 'Līdz')}
+          <span class="err" id="${p}-per-err" hidden></span>
+          <div class="hf-cust-act"><button type="button" class="btn btn-ghost btn-sm" id="${p}-cust-cancel">Atcelt</button><button type="button" class="btn btn-primary btn-sm" id="${p}-cust-apply">Lietot</button></div>
+        </div></div></details></div>`;
+}
+$$('[data-per]').forEach(el => { el.outerHTML = perHtml(el.dataset.per); });
+const PERIODS = {};
+const perOn = s => !!(s.quick || s.from || s.to);
+// aktīvā perioda birka (zem filtru rindas) – vienāda visos skatos
+const perChip = s => perOn(s) ? [['period', `Periods: ${hfPerLabel(s)}`]] : [];
+const perMatch = (s, iso) => { const d = iso ? isoDate(new Date(iso)) : ''; return (!s.from || (d && d >= s.from)) && (!s.to || (d && d <= s.to)); };
+function perRender(p){
+  const s = PERIODS[p].get(), sum = $(`#${p}-per-sum`), l = hfPerLabel(s);
+  sum.textContent = l; sum.title = l; sum.classList.toggle('is-on', perOn(s));
+  $(`#${p}-per-list`).innerHTML = HF_QUICK.map(([k, t]) => hfOpt(k, (s.quick || '') === k, `<span class="hf-o">${esc(t)}</span>${k === 'custom' && s.quick === 'custom' ? `<small>${esc(l)}</small>` : ''}`)).join('');
+}
+function perInit(p, get, set){
+  PERIODS[p] = {get, set};
+  const dd = $(`#${p}-per-dd`), sum = $(`#${p}-per-sum`), list = $(`#${p}-per-list`), cust = $(`#${p}-cust`), err = $(`#${p}-per-err`), fi = $(`#${p}-from`), ti = $(`#${p}-to`);
+  const done = v => { dd.open = false; set(v); sum.focus(); };
+  dd.addEventListener('toggle', () => {
+    if (!dd.open) return;
+    $$('.hf-dd[open]').forEach(o => { if (o !== dd) o.open = false; });
+    cust.hidden = true; list.hidden = false; perRender(p);
+    setTimeout(() => { const o = $('[role="option"][aria-selected="true"]', list) || $('[role="option"]', list); if (o) o.focus(); }, 0);
+  });
+  list.addEventListener('keydown', e => { const os = $$('[role="option"]', list), i = os.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); const o = os[i + (e.key === 'ArrowDown' ? 1 : -1)]; if (o) o.focus(); }
+    if (e.key === 'Escape'){ e.preventDefault(); dd.open = false; sum.focus(); } });
+  list.addEventListener('click', e => { const o = e.target.closest('[role="option"]'); if (!o) return;
+    if (o.dataset.v === 'custom'){ const v = get(); list.hidden = true; cust.hidden = false; err.hidden = true; fi.value = dmy(v.from); ti.value = dmy(v.to); [fi, ti].forEach(i => i.removeAttribute('aria-invalid')); fi.focus(); return; }
+    done({quick:o.dataset.v, ...histRange(o.dataset.v)}); });
+  const apply = () => {
+    const f = fi.value.trim(), t = ti.value.trim(), a = f ? parseDmy(f) : '', b = t ? parseDmy(t) : '';
+    const bf = (f && !a) || (!f && !t) || (!!a && !!b && a > b), bt = !!(t && !b);
+    const msg = (f && !a) || bt ? 'Nederīgs datums – ievadiet DD.MM.GGGG.' : !f && !t ? 'Norādiet vismaz vienu datumu.' : a && b && a > b ? 'Datums “no” ir vēlāks par “līdz”.' : '';
+    err.hidden = !msg; err.textContent = msg; fi.setAttribute('aria-invalid', String(!!msg && bf)); ti.setAttribute('aria-invalid', String(!!msg && bt));
+    if (msg){ (bf ? fi : ti).focus(); return; }
+    done({quick:'custom', from:a, to:b});
+  };
+  $(`#${p}-cust-apply`).addEventListener('click', apply);
+  $(`#${p}-cust-cancel`).addEventListener('click', () => { cust.hidden = true; list.hidden = false; const o = $('[aria-selected="true"]', list) || $('[role="option"]', list); if (o) o.focus(); });
+  [['from', fi], ['to', ti]].forEach(([k, inp]) => {
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); apply(); } if (e.key === 'Escape'){ e.preventDefault(); dd.open = false; sum.focus(); } });
+    $(`#${p}-${k}-pick`).addEventListener('change', e => { if (e.target.value){ inp.value = dmy(e.target.value); inp.focus(); } });
+  });
+  cust.addEventListener('click', e => { const c = e.target.closest('[data-per-cal]'); if (!c) return; const k = c.dataset.perCal, n = $(`#${p}-${k}-pick`);
+    n.value = parseDmy((k === 'from' ? fi : ti).value) || get()[k] || ''; try { n.showPicker(); } catch (er) { (k === 'from' ? fi : ti).focus(); } });
+}
 const HF_MR = {open:'Atvērts', none:'Nav konstatēta', na:'Nav attiecināms', nodata:'Nav datu'};
 const HF_FA = {ies:'Iesniegta', st:'Statuss mainīts', none:'Izmaiņu nav', nodata:'Nav datu'};
-const HIST_QUICK = [['', 'Jebkurā laikā'], ['today', 'Šodien'], ['7d', 'Pēdējās 7 dienas'], ['month', 'Šis mēnesis'], ['prev', 'Iepriekšējais mēnesis'], ['year', 'Šis gads']];
 function histRange(q){
   const t = new Date(), y = t.getFullYear(), m = t.getMonth(), today = isoDate(t);
   if (q === 'today') return {from:today, to:today};
@@ -11396,7 +11460,7 @@ const hfPerLabel = h => h.quick && h.quick !== 'custom' ? (HF_QUICK.find(([k]) =
 // aktīvo filtru birkas (zem filtru rindas): papildu filtri un periods
 function histChips(h){
   const out = [];
-  if (h.quick || h.from || h.to) out.push(['period', `Periods: ${hfPerLabel(h)}`]);
+  out.push(...perChip(h));
   if (h.ch) out.push(['ch', `Kanāls: ${CHANNELS[h.ch] || h.ch}`]);
   if (h.kind) out.push(['kind', `Kampaņas veids: ${SESS_LABELS[h.kind] || h.kind}`]);
   if (h.mr) out.push(['mr', `E-pasta reakcija: ${HF_MR[h.mr]}`]);
@@ -11421,12 +11485,11 @@ function renderHistFilters(h, all){
   const sum = (id, txt, on, title) => { const el = $(id); el.textContent = txt; el.classList.toggle('is-on', on); el.title = title || txt; };
   sum('#hist-camp-sum', cur ? cur.name : 'Visas kampaņas', !!h.camp);
   sum('#hist-rep-sum', rp ? rp.code : 'Visi apsekojumi', !!h.rep, rp ? `${rp.code} ${rp.name}` : '');
-  sum('#hist-per-sum', hfPerLabel(h), !!(h.quick || h.from || h.to));
+  perRender('hist');
   const cq = norm($('#hist-camp-q').value), cl = camps.filter(c => !cq || norm(`${c.name} ${c.desc || ''} ${c.b}`).includes(cq));
   $('#hist-camp-list').innerHTML = (cq ? '' : hfOpt('', !h.camp, '<span class="hf-o">Visas kampaņas</span>')) + cl.map(c => hfOpt(c.b, String(c.b) === String(h.camp), `<span class="hf-o">${esc(c.name)}${c.desc ? `<span class="hf-desc">${esc(c.desc)}</span>` : ''}</span><small>${esc(fmtDate(isoDate(new Date(c.at))))}</small>`, c.name + (c.desc ? `\n${c.desc}` : ''))).join('') + (!cl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   const rq = norm($('#hist-rep-q').value), rl = reps.filter(r => !rq || norm(`${r.code} ${r.name}`).includes(rq));
   $('#hist-rep-list').innerHTML = (rq ? '' : hfOpt('', !h.rep, '<span class="hf-o">Visi apsekojumi</span>')) + rl.map(r => hfOpt(r.id, r.id === h.rep, `<b>${esc(r.code)}</b> <small>${esc(r.name)}</small>`, `${r.code} – ${r.name}`)).join('') + (!rl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
-  $('#hist-per-list').innerHTML = HF_QUICK.map(([k, l]) => hfOpt(k, (h.quick || '') === k, `<span class="hf-o">${esc(l)}</span>${k === 'custom' && h.quick === 'custom' ? `<small>${esc(hfPerLabel(h))}</small>` : ''}`)).join('');
   const n = [h.ch, h.kind, h.mr, h.fa].filter(Boolean).length, b = $('#hist-more-n');
   b.hidden = !n; b.textContent = n || ''; $('#hist-more-f').setAttribute('aria-label', n ? `Filtri – aktīvi ${n}` : 'Filtri');
 }
@@ -11787,7 +11850,7 @@ function renderSent(){
   // 1. līmenis – kampaņu saraksts; 2. līmenis – izvēlētās kampaņas (vai no atskaitēm – visu kampaņu) vēstules
   const l2 = ui.jrn.camp != null;
   $('#jrn-l1').hidden = l2; $('#hist-l2').hidden = !l2;
-  if (!l2){ renderJrnL1(); return; }
+  if (!l2){ renderJrnTitle(''); renderJrnL1(); return; }
   if (ui.jrn.camp !== 'all') ui.hist.camp = ui.jrn.camp;
   $('#hist-camp-dd').hidden = ui.jrn.camp !== 'all';
   renderJrnCtx();
@@ -13066,30 +13129,14 @@ $('#cf-creator-list').addEventListener('keydown', e => { const os = $$('#cf-crea
   if (e.key === 'Escape'){ $('#cf-creator').open = false; $('#cf-creator-sum').focus(); } });
 $('#cf-creator-list').addEventListener('click', e => { const o = e.target.closest('[data-cf-creator]'); if (!o) return; ui.camp.creator = o.dataset.cfCreator; ui.campLimit = CAMP_PAGE; $('#cf-creator').open = false; renderCampaigns(); $('#cf-creator-sum').focus(); });
 document.addEventListener('click', e => { const d = $('#cf-creator'); if (d && d.open && !d.contains(e.target)) d.open = false; });
-// Izveidota: ātrā izvēle un datumu diapazons (DD.MM.GGGG)
-$('#cf-quick').addEventListener('change', e => { const q = e.target.value; if (q === 'custom') return; Object.assign(ui.camp, {quick:q}, histRange(q)); ui.campRaw = {}; ui.campLimit = CAMP_PAGE; renderCampaigns(); });
-function campDateSet(k, v){
-  v = String(v || '').trim();
-  const iso = v ? parseDmy(v) : '';
-  if (v && !iso){ ui.campRaw[k] = v; renderCampaigns(); return; }
-  delete ui.campRaw[k]; ui.camp[k] = iso;
-  ui.camp.quick = ui.camp.from || ui.camp.to ? 'custom' : '';
-  ui.campLimit = CAMP_PAGE; renderCampaigns();
-}
-['from', 'to'].forEach(k => {
-  $(`#cf-${k}`).addEventListener('change', e => campDateSet(k, e.target.value));
-  $(`#cf-${k}`).addEventListener('keydown', e => { if (e.key === 'Enter') campDateSet(k, e.target.value); });
-  $(`#cf-${k}-pick`).addEventListener('change', e => { if (e.target.value){ campDateSet(k, e.target.value); $(`#cf-${k}`).focus(); } });
-});
-$('#camp-filters').addEventListener('click', e => { const cal = e.target.closest('[data-ccal]'); if (!cal) return; const k = cal.dataset.ccal, n = $(`#cf-${k}-pick`); n.value = ui.camp[k] || ''; try { n.showPicker(); } catch (err) { $(`#cf-${k}`).focus(); } });
-const clearCampFilters = () => { Object.assign(ui.camp, {q:'', kind:'', creator:'', quick:'', from:'', to:''}); ui.campRaw = {}; ui.campLimit = CAMP_PAGE; renderCampaigns(); $('#camp-search').focus(); };
+const clearCampFilters = () => { Object.assign(ui.camp, {q:'', kind:'', creator:'', quick:'', from:'', to:''}); ui.campLimit = CAMP_PAGE; renderCampaigns(); $('#camp-search').focus(); };
 $('#cf-clear').addEventListener('click', clearCampFilters);
 // "Papildu filtri" un aktīvo filtru birku noņemšana
 $('#cf-adv-btn').addEventListener('click', () => { const row = $('#cf-adv'), b = $('#cf-adv-btn'); row.hidden = !row.hidden; b.setAttribute('aria-expanded', String(!row.hidden)); });
 $('#cf-chips').addEventListener('click', e => {
   const chip = e.target.closest('[data-cchip]'); if (!chip) return;
   const k = chip.dataset.cchip;
-  if (k === 'period'){ Object.assign(ui.camp, {quick:'', from:'', to:''}); ui.campRaw = {}; } else ui.camp[k] = '';
+  if (k === 'period') Object.assign(ui.camp, {quick:'', from:'', to:''}); else ui.camp[k] = '';
   ui.campLimit = CAMP_PAGE; renderCampaigns();
   const nxt = $('#cf-chips [data-cchip]') || $('#camp-search'); nxt.focus();
 });
@@ -13150,7 +13197,6 @@ function hfDd(key, pick){
     if (!dd.open) return;
     $$('.hf-dd[open]').forEach(o => { if (o !== dd) o.open = false; }); hfPanel(false);
     if (q) q.value = '';
-    if (key === 'per'){ $('#hist-cust').hidden = true; list.hidden = false; }
     hfRender();
     setTimeout(() => { const f = q || $('[role="option"][aria-selected="true"]', list) || $('[role="option"]', list); if (f) f.focus(); }, 0);
   });
@@ -13164,32 +13210,19 @@ function hfDd(key, pick){
 // Žurnāls – 1. līmeņa meklēšana, filtri un kārtošana (saglabājas, atgriežoties ar "← Visas kampaņas")
 $('#jrn-q').addEventListener('input', e => { ui.jrn.q = e.target.value; ui.jrn.rLimit = 20; ui.jrn.cLimit = 50; renderJrnL1(); });
 $('#jrn-kind').addEventListener('change', e => { ui.jrn.kind = e.target.value; ui.jrn.rLimit = 20; renderJrnL1(); });
-$('#jrn-per').addEventListener('change', e => { ui.jrn.per = e.target.value; ui.jrn.rLimit = 20; renderJrnL1(); });
+$('#jrn-chipbar').addEventListener('click', e => {
+  const c = e.target.closest('[data-jchip]');
+  if (c){ if (c.dataset.jchip === 'period') Object.assign(ui.hist, {quick:'', from:'', to:''}); else ui.jrn[c.dataset.jchip] = ''; }
+  else if (e.target.closest('#jrn-clear')){ Object.assign(ui.hist, {quick:'', from:'', to:''}); Object.assign(ui.jrn, {q:'', kind:''}); }
+  else return;
+  ui.jrn.rLimit = 20; ui.jrn.cLimit = 50; renderJrnL1(); const n = $('#jrn-chips [data-jchip]') || $('#jrn-q'); n.focus();
+});
 $('#jrn-camps').addEventListener('click', e => { const b = e.target.closest('[data-jsort]'); if (!b) return; const k = b.dataset.jsort; ui.jrn.sort = nextSort(ui.jrn.sort, k); renderJrnL1(); const nb = $(`#jrn-head [data-jsort="${k}"]`); if (nb) nb.focus(); });
 hfDd('camp', (v, dd, sum) => { ui.hist.camp = v; ui.histLimit = 50; dd.open = false; renderSent(); sum.focus(); });
 hfDd('rep', (v, dd, sum) => { ui.hist.rep = v; ui.histLimit = 50; dd.open = false; renderSent(); sum.focus(); });
-hfDd('per', (v, dd, sum) => {
-  if (v === 'custom'){ // "Cits periods…" – mazs logs ar datumiem no–līdz un "Lietot"
-    $('#hist-per-list').hidden = true; $('#hist-cust').hidden = false; $('#hist-per-err').hidden = true;
-    $('#hist-from').value = dmy(ui.hist.from); $('#hist-to').value = dmy(ui.hist.to); ['#hist-from', '#hist-to'].forEach(s => $(s).removeAttribute('aria-invalid'));
-    $('#hist-from').focus(); return; }
-  Object.assign(ui.hist, {quick:v}, histRange(v)); ui.histLimit = 50; dd.open = false; renderSent(); sum.focus();
-});
-function hfCustApply(){
-  const f = $('#hist-from').value.trim(), t = $('#hist-to').value.trim(), fi = f ? parseDmy(f) : '', ti = t ? parseDmy(t) : '';
-  const err = (f && !fi) || (t && !ti) ? 'Nederīgs datums – ievadiet DD.MM.GGGG.' : !f && !t ? 'Norādiet vismaz vienu datumu.' : fi && ti && fi > ti ? 'Datums “no” ir vēlāks par “līdz”.' : '';
-  $('#hist-per-err').hidden = !err; $('#hist-per-err').textContent = err;
-  $('#hist-from').setAttribute('aria-invalid', String(!!err && (!!(f && !fi) || (!f && !t) || (!!fi && !!ti && fi > ti))));
-  $('#hist-to').setAttribute('aria-invalid', String(!!err && !!(t && !ti)));
-  if (err){ ($('#hist-from').getAttribute('aria-invalid') === 'true' ? $('#hist-from') : $('#hist-to')).focus(); return; }
-  Object.assign(ui.hist, {quick:'custom', from:fi, to:ti}); ui.histLimit = 50; $('#hist-per-dd').open = false; renderSent(); $('#hist-per-sum').focus();
-}
-$('#hist-cust-apply').addEventListener('click', hfCustApply);
-$('#hist-cust-cancel').addEventListener('click', () => { $('#hist-cust').hidden = true; $('#hist-per-list').hidden = false; const o = $('#hist-per-list [aria-selected="true"]') || $('#hist-per-list [role="option"]'); if (o) o.focus(); });
-['from', 'to'].forEach(k => {
-  $(`#hist-${k}`).addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); hfCustApply(); } if (e.key === 'Escape'){ e.preventDefault(); $('#hist-per-dd').open = false; $('#hist-per-sum').focus(); } });
-  $(`#hist-${k}-pick`).addEventListener('change', e => { if (e.target.value){ $(`#hist-${k}`).value = dmy(e.target.value); $(`#hist-${k}`).focus(); } });
-});
+perInit('hist', () => ui.hist, v => { Object.assign(ui.hist, v); ui.histLimit = 50; renderSent(); });
+perInit('jrn', () => ui.hist, v => { Object.assign(ui.hist, v); ui.jrn.rLimit = 20; ui.jrn.cLimit = 50; renderJrnL1(); });
+perInit('cf', () => ui.camp, v => { Object.assign(ui.camp, v); ui.campLimit = CAMP_PAGE; renderCampaigns(); });
 // "Filtri" panelis: Kanāls · Kampaņas veids · E-pasta reakcija · Anketas aktivitāte; "Notīrīt" un "Lietot"
 const HF_PANEL = [['#hist-ch', 'ch'], ['#hist-kind', 'kind'], ['#hist-mr', 'mr'], ['#hist-fa', 'fa']];
 function hfPanel(open, focusBtn){
@@ -13225,8 +13258,6 @@ function histExport(){
 }
 $('#hist-export').addEventListener('click', histExport);
 $('#tab-vesture').addEventListener('click', e => {
-  const cal = e.target.closest('[data-hcal]');
-  if (cal){ const k = cal.dataset.hcal, n = $(`#hist-${k}-pick`); n.value = parseDmy($(`#hist-${k}`).value) || ui.hist[k] || ''; try { n.showPicker(); } catch (err) { $(`#hist-${k}`).focus(); } return; }
   const chip = e.target.closest('[data-hchip]');
   if (chip){ const k = chip.dataset.hchip;
     if (k === 'period') Object.assign(ui.hist, {quick:'', from:'', to:''}); else ui.hist[k] = '';
