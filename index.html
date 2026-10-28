@@ -2520,7 +2520,7 @@ html:has(dialog.modal[open]){overflow:hidden}
 dialog.modal.editor.te-big{width:min(90vw,1400px);height:90vh}
 dialog.modal.editor.te-big .modal-wrap{height:100%}
 dialog.modal.editor.te-big .modal-body{display:flex;flex-direction:column;padding:0;overflow:hidden}
-dialog.modal.te-big .editor-grid{grid-template-columns:minmax(0,47fr) minmax(0,53fr);grid-template-rows:minmax(0,1fr);gap:0;flex:1;min-height:0}
+dialog.modal.te-big .editor-grid{grid-template-columns:minmax(0,52fr) minmax(0,48fr);grid-template-rows:minmax(0,1fr);gap:0;flex:1;min-height:0}
 dialog.modal.te-big #te-form{overflow-y:auto;overflow-x:hidden;min-height:0;height:100%;padding:14px 18px}
 dialog.modal.te-big .editor-preview{position:relative;max-height:none;align-self:stretch;min-height:0;height:100%;overflow:auto;border-radius:0;border-left:1px solid var(--border);padding:0 16px 16px}
 dialog.modal.te-big .editor-preview .pv-head{position:sticky;top:0;z-index:3;background:var(--bg);padding:12px 0 8px;margin:0}
@@ -2640,23 +2640,28 @@ h1 .tip,h2 .tip,h3 .tip,h4 .tip{vertical-align:middle;margin-left:6px}
 /* Vēstules veids: kompaktas pogas, apakšizvēlne zem izvēlētās */
 .kind-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
 /* Vēstules saturs: divi bloki – informatīvs virsraksts un zem tā darbību pogas vienā rindā (bez pārnešanas) */
-.kind-blocks{display:flex;flex-direction:column;gap:16px;margin-top:2px}
-.kind-block{display:flex;flex-direction:column;gap:7px;min-width:0;transition:opacity .12s}
-.kind-head{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:700;color:#1F5E69;cursor:default;user-select:none}
-.kind-head .icon{width:18px;height:18px;flex:none}
-.kind-block .kact{padding-left:25px}
+/* Vēstules saturs: divas kartes blakus (platums – pēc satura); virsraksts nav klikšķināms; pogas kartē – vienā rindā */
+.kind-blocks{display:flex;gap:12px;align-items:stretch;flex-wrap:nowrap;margin-top:2px}
+.kind-block{flex:none;display:flex;flex-direction:column;gap:8px;min-width:0;background:#fff;border:1px solid #D6DDE0;border-radius:10px;padding:10px 12px;transition:opacity .12s,background .12s,box-shadow .12s}
+.kind-block.is-on{border-color:#297785;box-shadow:0 0 0 1px #297785;background:#EEF5F6}
 .kind-block.is-off{opacity:.6}
 .kind-block.is-off:hover,.kind-block.is-off:focus-within{opacity:.85}
+.kind-head{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:700;color:#1F5E69;cursor:default;user-select:none;white-space:nowrap}
+.kind-head .icon{width:17px;height:17px;flex:none}
 .kact{display:flex;gap:6px;flex-wrap:nowrap;white-space:nowrap;min-width:0}
-.kact-btn{appearance:none;flex:none;display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 10px;font:inherit;font-size:12.5px;font-weight:500;line-height:1;background:#fff;border:1px solid #D0D0D0;border-radius:var(--radius-sm);color:#444;cursor:pointer;white-space:nowrap}
-.kact-btn .icon{width:13px;height:13px;flex:none}
+.kact-btn{appearance:none;flex:none;display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 9px;font:inherit;font-size:12px;font-weight:500;line-height:1;background:#fff;border:1px solid #D0D0D0;border-radius:var(--radius-sm);color:#444;cursor:pointer;white-space:nowrap}
+.kact-btn .icon{width:12px;height:12px;flex:none}
 .kact-btn:hover{background:#F2F3F3}
-.kact-btn[aria-pressed="true"]{color:var(--primary-darker);border-color:var(--primary);background:var(--primary-50);box-shadow:inset 0 0 0 1px var(--primary)}
+.kact-btn[aria-pressed="true"]{color:var(--primary-darker);border-color:var(--primary);background:#fff;box-shadow:inset 0 0 0 1px var(--primary)}
 .kact-btn:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
-.kind-note{margin:0;padding-left:25px;font-size:var(--fs-xs);color:var(--text-muted)}
+/* piezīme kartes apakšā – nepaplašina karti (pārnesas kartes platumā) */
+.kind-note{margin:auto 0 0;width:0;min-width:100%;font-size:var(--fs-xs);color:var(--text-muted);line-height:1.35}
 .kind-note[hidden]{display:none}
 .kind-note .link-btn{font-size:var(--fs-xs);padding:0}
-@media (max-width:560px){ .kact{flex-wrap:wrap} }
+/* ja kartes neietilpst kolonnā (plats fonts / šaurs ekrāns) – mazākas atkāpes, vēl šaurāk – pogas bez ikonām (fitKinds) */
+.kind-blocks.is-tight{gap:10px} .kind-blocks.is-tight .kind-block{padding:9px 10px} .kind-blocks.is-tight .kact{gap:5px} .kind-blocks.is-tight .kact-btn{padding:0 7px}
+.kind-blocks.is-tighter .kact-btn .icon{display:none}
+@media (max-width:560px){ .kind-blocks{flex-wrap:wrap} .kact{flex-wrap:wrap} }
 .kind-col{display:flex;flex-direction:column;gap:6px}
 .kind-opt{position:relative;display:block;cursor:pointer}
 .kind-opt input{position:absolute;opacity:0}
@@ -3451,7 +3456,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 136</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 137</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7022,6 +7027,14 @@ function openTplSources(aud, onPick, survey = ''){
   renderLists(); renderPv();
 }
 
+// "Vēstules saturs" kartes vienā rindā: ja neietilpst kolonnā – sablīvē (atkāpes), tad bez pogu ikonām
+function fitKinds(root = modal){
+  const w = $('.kind-blocks', root); if (!w || !w.offsetParent) return;
+  w.classList.remove('is-tight', 'is-tighter');
+  if (w.scrollWidth > w.clientWidth + 1) w.classList.add('is-tight');
+  if (w.scrollWidth > w.clientWidth + 1) w.classList.add('is-tighter');
+}
+window.addEventListener('resize', () => { if (modal.open) fitKinds(); });
 function openTemplateEditor(id, preset = {}){
   // preset.session – kampaņas satura redaktors: {tpl – sākuma saturs (vai null), baseId – veidne, no kuras sākts, onDone(rec, savedId)}
   const sess = preset.session || null;
@@ -7080,7 +7093,7 @@ function openTemplateEditor(id, preset = {}){
         <div class="field te-sv-field"${sess ? ' hidden' : ''}><span class="label"><label for="te-survey">Saistītais apsekojums</label> <span class="muted">(neobligāts)</span> ${tip('Ja norādīts, apsekojuma lauku ({apsekojums}, {e-anketa}, {apsekojuma_epasts}, {apsekojuma_vietne}) vērtības priekšskatījumā tiek ņemtas no šī apsekojuma. Kampaņā vērtības vienmēr ņem no kampaņas apsekojuma.')}</span>
           <div id="te-sv-host"></div><span class="te-sv-src" id="te-sv-src" hidden></span></div>
         <div class="field"><span class="label">Vēstules saturs <span class="req">*</span></span>
-          <!-- divi bloki: informatīvs virsraksts (nav klikšķināms) un zem tā darbību pogas; poga izvēlas gan satura veidu, gan sākuma veidu -->
+          <!-- divas kartes blakus: informatīvs virsraksts (nav klikšķināms) un zem tā darbību pogas; poga izvēlas gan satura veidu, gan sākuma veidu -->
           <div class="kind-blocks" role="group" aria-label="Vēstules saturs">
             <div class="kind-block" data-krow="epasts">
               <div class="kind-head"><input type="radio" name="te-kind" value="epasts" ${t.kind === 'epasts' ? 'checked' : ''} hidden>${ICON.mail}<span>E-pasta saturs</span></div>
@@ -7726,6 +7739,7 @@ function openTemplateEditor(id, preset = {}){
   loadLang();
   syncSv();
   syncKind();
+  fitKinds();
 }
 
 /* =====================================================================
