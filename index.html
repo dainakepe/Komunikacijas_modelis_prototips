@@ -2405,8 +2405,13 @@ mark.v-miss,mark.v-unk{background:var(--danger-bg);color:var(--danger);border-ra
 .channel-opt input:checked + span{border-color:var(--primary);background:var(--primary-50);box-shadow:inset 0 0 0 1px var(--primary)}
 .channel-opt input:checked + span b{color:var(--primary-darker)}
 .channel-opt input:focus-visible + span{outline:3px solid var(--focus-ring);outline-offset:2px}
-.r-tools{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
-.r-tools .search{flex:1 1 180px}
+.r-tools{display:flex;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:nowrap}
+.r-tools .search{flex:1 1 auto;min-width:180px;max-width:320px}
+/* Respondentu rīkjosla vienā rindā: meklēšana · Apsekojums (~170 px, garš teksts ar "…") · Rādīt adreses */
+.r-tools .rep-filter{flex:none}
+.r-tools .rep-filter select{flex:none;width:170px;max-width:170px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#c-chk-all{vertical-align:middle;margin:0;cursor:pointer}
+@media (max-width:640px){ .r-tools{flex-wrap:wrap} }
 .r-list{max-height:360px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius-sm)}
 /* Soļi "Respondenti" un "Pārbaude": abas kolonnas vienāda augstuma */
 .r-layout{align-items:stretch}
@@ -3221,7 +3226,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                 </label>
                 <label class="rep-filter"><span>Apsekojums</span><select id="c-rep-filter"></select></label>
                 <label class="switch addr-toggle"><input type="checkbox" role="switch" id="c-show-addr"><span class="sw" aria-hidden="true"></span><span>Rādīt adreses</span></label>
-                <span class="r-links"><button type="button" class="link-btn" data-action="c-all">Iekļaut visus</button><button type="button" class="link-btn" data-action="c-none">Izņemt visus</button></span>
               </div>
               <div class="flt-chips r-acf" id="c-acf-chip" hidden></div>
               <div class="r-list" id="c-list"></div>
@@ -3447,7 +3451,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 135</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 136</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -9529,7 +9533,7 @@ function renderComposeList(){
   const ncol = 3 + cols.length + (showO ? 1 : 0);
   const otherCell = r => !showAddr() ? `<td class="c-other" title="${esc(others.filter(k => othVal(r, k)).map(k => `${addrShort(k)} – ir adrese (nav adrešu prioritātē)`).join('\n'))}">${others.filter(k => othVal(r, k)).map(k => `<small class="ac-oth"><span class="q-dot" aria-hidden="true"></span>${esc(addrShort(k))}</small>`).join(' ') || '<span class="muted">—</span>'}</td>`
     : `<td class="c-other" title="${esc(others.filter(k => othVal(r, k)).map(k => `${addrShort(k)}: ${othVal(r, k)}`).join('\n'))}">${others.filter(k => othVal(r, k)).map(k => `<small class="ac-oth" title="${esc(addrShort(k))}: ${esc(othVal(r, k))} – nav adrešu prioritātē">${esc(addrShort(k))}: ${esc(othVal(r, k))}</small>`).join('') || '<span class="muted">—</span>'}</td>`;
-  $('#c-list').innerHTML = list.length ? `<table class="sel-table"><thead><tr><th class="c-chk"><span class="sr-only">Iekļaut</span></th><th class="c-name">Respondents</th>${cols.map((k, i) => `<th${k === 'eadrese' && eaLater() ? ' class="c-ea-col"' : ''}>${esc(addrShort(k))} <span class="col-n" title="${i + 1}. prioritāte">${i + 1}</span></th>`).join('')}${showO ? '<th class="c-other">Citas adreses</th>' : ''}<th class="c-tg"><span class="sr-only">Izvērst</span></th></tr></thead><tbody>
+  $('#c-list').innerHTML = list.length ? `<table class="sel-table"><thead><tr><th class="c-chk"><input type="checkbox" id="c-chk-all" title="Iekļaut / izņemt visus" aria-label="Iekļaut / izņemt visus"></th><th class="c-name">Respondents</th>${cols.map((k, i) => `<th${k === 'eadrese' && eaLater() ? ' class="c-ea-col"' : ''}>${esc(addrShort(k))} <span class="col-n" title="${i + 1}. prioritāte">${i + 1}</span></th>`).join('')}${showO ? '<th class="c-other">Citas adreses</th>' : ''}<th class="c-tg"><span class="sr-only">Izvērst</span></th></tr></thead><tbody>
     ${list.map(r => {
       const first = addrPlan(r)[0], addr = first && first.address, ds = selDutiesOf(r), exc = (compose.exc || {})[r.id], out = isOut(r), op = compose.open.has(r.id);
       const probs = respProblems(r);
@@ -9547,6 +9551,7 @@ function renderComposeList(){
     }).join('')}</tbody></table>`
     : `<div class="tc-empty" style="--tc-head:0px"><div class="empty"><p class="tc-empty-t">${!state.respondents.length ? 'Respondentu saraksts ir tukšs.' : compose.search || compose.repF || compose.acF ? 'Neviens respondents neatbilst meklēšanai vai filtram.'
       : isReminder() && compose.remind === 'before' ? 'Nav neiesniegtu pienākumu ar aprēķināto termiņu.' : 'Atlasei neatbilst neviens respondents.'}</p></div></div>`;
+  syncChkAll();
   $('#c-list').classList.toggle('is-empty', !list.length);
   renderComposeCount();
 }
@@ -13420,12 +13425,21 @@ $('#c-pvch').addEventListener('click', e => {
 $('#c-days').addEventListener('input', e => { compose.sel.days = e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value, 10) || 0); selChanged(); });
 $('#c-late').addEventListener('input', e => { compose.sel.lateDays = e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value, 10) || 0); selChanged(); });
 $('#c-list').addEventListener('change', e => {
+  // galvenes rūtiņa – iekļaut / izņemt visus redzamos (agrāk saites "Iekļaut visus" / "Izņemt visus")
+  if (e.target.id === 'c-chk-all'){ actions[e.target.checked ? 'c-all' : 'c-none'](); return; }
   const id = e.target.dataset.rid;
   if (!id) return;
   e.target.checked ? compose.excluded.delete(id) : compose.excluded.add(id);
   e.target.closest('tr').classList.toggle('is-out', !e.target.checked);
+  syncChkAll();
   renderScopeCtx(); renderAcBar(); renderComposeCount(); renderComposePreview();
 });
+// galvenes rūtiņas stāvoklis: visi redzamie iekļauti – atzīmēta, daļa – starpstāvoklis (–), neviens – tukša (izņēmumi netiek skaitīti)
+function syncChkAll(){
+  const cb = $('#c-chk-all'); if (!cb) return;
+  const xs = visibleResp().filter(r => !(compose.exc || {})[r.id]), n = xs.filter(r => !compose.excluded.has(r.id)).length;
+  cb.checked = !!xs.length && n === xs.length; cb.indeterminate = n > 0 && n < xs.length; cb.disabled = !xs.length;
+}
 $('#c-hl').addEventListener('change', e => $('#c-preview').classList.toggle('hl', e.target.checked));
 // pārbaudes (⚠): priekšskatījumā tikai problemātiskās vēstules; atkārtots klikšķis / "Rādīt visas vēstules" – filtrs noņemts
 document.addEventListener('click', e => {
