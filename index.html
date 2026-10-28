@@ -2551,10 +2551,6 @@ dialog.modal.te-big .pv-head .preview-opts{margin-left:auto}
 .sv-combo .ms-list{max-height:280px}
 .sv-grp{padding:6px 10px 2px;font-size:var(--fs-2xs);font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.03em;background:var(--surface-subtle)}
 .sv-none{padding:8px 10px;color:var(--text-muted);font-size:var(--fs-sm)}
-.te-sv-src{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;font-size:var(--fs-xs);color:var(--text-muted)}
-.te-sv-src[hidden]{display:none}
-.te-sv-flds{display:inline-flex;flex-wrap:wrap;gap:4px}
-.te-sv-av{color:var(--primary-ink);font-weight:600}
 .tpl-sv{color:var(--text-muted);font-weight:400;font-size:var(--fs-sm);white-space:nowrap}
 .sv-camp-note{display:flex;gap:6px;align-items:flex-start;margin:6px 0 8px;font-size:var(--fs-xs);color:var(--text-muted)}
 .sv-camp-note .icon{width:14px;height:14px;flex:none;margin-top:1px;color:var(--info)}
@@ -3512,7 +3508,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 143</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 144</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7195,8 +7191,8 @@ function openTemplateEditor(id, preset = {}){
           <div class="field"${sess ? ' hidden' : ''}><label for="te-cat">Kategorija</label>
             <select id="te-cat">${CATS.map(c => `<option value="${c.key}" ${t.cat === c.key ? 'selected' : ''}>${esc(c.one)}</option>`).join('')}</select></div>
         </div>
-        <div class="field te-sv-field"${sess ? ' hidden' : ''}><span class="label"><label for="te-survey">Saistītais apsekojums</label> <span class="muted">(neobligāts)</span> ${tip('Ja norādīts, apsekojuma lauku ({apsekojums}, {e-anketa}, {apsekojuma_epasts}, {apsekojuma_vietne}) vērtības priekšskatījumā tiek ņemtas no šī apsekojuma. Kampaņā vērtības vienmēr ņem no kampaņas apsekojuma.')}</span>
-          <div id="te-sv-host"></div><span class="te-sv-src" id="te-sv-src" hidden></span></div>
+        <div class="field te-sv-field"${sess ? ' hidden' : ''}><span class="label"><label for="te-survey">Saistītais apsekojums</label> <span class="muted">(neobligāts)</span> ${tip('Lauki {apsekojums}, {e-anketa}, {apsekojuma_epasts}, {apsekojuma_vietne} tiks aizpildīti ar izvēlētā apsekojuma datiem. Kampaņā vērtības vienmēr ņem no kampaņas apsekojuma.')}</span>
+          <div id="te-sv-host"></div></div>
         <!-- Divas cilnes: "E-pasta saturs" (obligāts – temats, teksts, eAdreses teksts, baneris) un "Pielikums" (neobligāts – personalizētā vēstule, sagataves, faili) -->
         <div class="ch-tabs te-mtabs" role="tablist" aria-label="Vēstules saturs">
           <button type="button" role="tab" class="ch-tab" id="te-mtab-ep" data-mtab="ep" aria-selected="true" aria-controls="te-mpane-ep">${ICON.mail}E-pasta saturs <span class="req">*</span><span class="ch-st" id="te-mst-ep" hidden></span></button>
@@ -7570,13 +7566,11 @@ function openTemplateEditor(id, preset = {}){
     $('#te-preview').innerHTML = html;
     if (!sess) markSurveySrc($('#te-preview'), tplSurvey(cur));
   }
-  // saistītais apsekojums: avots pie apsekojuma laukiem (lauku izvēlnēs, redaktorā un zem izvēles)
+  // saistītais apsekojums: avots pie apsekojuma laukiem (lauku izvēlnēs un redaktorā; skaidrojums – lauka "i" padomā)
   function syncSv(){
     if (sess) return;
     const p = repById(svc ? svc.get() : '');
     $$('option', modal).forEach(o => { if (!SURVEY_FIELDS.includes(o.value)) return; const fd = FIELDS.find(x => x.key === o.value); o.textContent = `{${fd.key}} – ${fd.label}${p ? ` · ${svSrc(p)}` : ''}`; });
-    const src = $('#te-sv-src'); src.hidden = !p;
-    src.innerHTML = p ? `<span class="te-sv-flds">${SURVEY_FIELDS.map(k => `<span class="fld">{${esc(k)}}</span>`).join(' ')}</span><span class="te-sv-av">${esc(svSrc(p))}</span>` : '';
     $('#te-pv-sv').textContent = p ? repTitle(p) : compose.f.survey;
     syncFldSrc();
   }
