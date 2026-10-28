@@ -1933,7 +1933,6 @@ button.ac-tag.t-risk:hover,button.ac-tag.t-risk[aria-expanded="true"]{border-col
 .q-nosend .q-l{flex:1}
 .q-nosend b{color:var(--danger)}
 .q-nosend:disabled b{color:inherit}
-.q-skip{margin:4px 8px 2px;font-size:12px;line-height:1.35;color:var(--text-muted)}
 .c-table.sel-result{margin-top:10px;border-top:0;padding-top:0}
 @media (max-width:700px){ .c-strip{flex-wrap:wrap;padding:6px 10px} .cs-scope{white-space:normal;flex-basis:100%} .cs-sep{display:none} .ac-acts{margin-left:0} }
 .ac-lab{appearance:none;font:inherit;font-size:var(--fs-2xs);font-weight:600;padding:0 8px;border-radius:var(--radius-xl);border:1px solid var(--primary-200);background:var(--primary-50);color:var(--primary-dark);cursor:pointer;margin-top:3px;display:inline-flex;align-items:center;gap:3px}
@@ -2428,10 +2427,14 @@ mark.v-miss,mark.v-unk{background:var(--danger-bg);color:var(--danger);border-ra
 .channel-opt input:checked + span b{color:var(--primary-darker)}
 .channel-opt input:focus-visible + span{outline:3px solid var(--focus-ring);outline-offset:2px}
 .r-tools{display:flex;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:nowrap}
-.r-tools .search{flex:1 1 auto;min-width:180px;max-width:320px}
-/* Respondentu rīkjosla vienā rindā: meklēšana · Apsekojums (~170 px, garš teksts ar "…") · Rādīt adreses */
+.r-tools .search{flex:1 1 auto;min-width:160px;max-width:280px}
+/* Respondentu rīkjosla vienā rindā: meklēšana · Apsekojums (~160 px, garš teksts ar "…") · Rādīt adreses · pa labi "Iekļaut visus" · "Izņemt visus" */
 .r-tools .rep-filter{flex:none}
-.r-tools .rep-filter select{flex:none;width:170px;max-width:170px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.r-tools .rep-filter select{flex:none;width:160px;max-width:160px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.r-tools .addr-toggle{flex:none;white-space:nowrap}
+.r-bulk{margin-left:auto;flex:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:12.5px}
+.r-bulk .link-btn{font-size:12.5px;padding:2px 0;white-space:nowrap}
+.r-bulk-sep{color:var(--text-muted)}
 #c-chk-all{vertical-align:middle;margin:0;cursor:pointer}
 @media (max-width:640px){ .r-tools{flex-wrap:wrap} }
 .r-list{max-height:360px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius-sm)}
@@ -3283,6 +3286,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                 </label>
                 <label class="rep-filter"><span>Apsekojums</span><select id="c-rep-filter"></select></label>
                 <label class="switch addr-toggle"><input type="checkbox" role="switch" id="c-show-addr"><span class="sw" aria-hidden="true"></span><span>Rādīt adreses</span></label>
+                <span class="r-bulk" role="group" aria-label="Visi tabulā redzamie respondenti"><button type="button" class="link-btn" data-action="c-all" title="Iekļaut kampaņā visus tabulā redzamos respondentus">Iekļaut visus</button><span class="r-bulk-sep" aria-hidden="true">·</span><button type="button" class="link-btn" data-action="c-none" title="Izņemt no kampaņas visus tabulā redzamos respondentus">Izņemt visus</button></span>
               </div>
               <div class="flt-chips r-acf" id="c-acf-chip" hidden></div>
               <div class="r-list" id="c-list"></div>
@@ -3508,7 +3512,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 144</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 145</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -9502,10 +9506,9 @@ function renderAcBar(){
   const nShared = [...sm].filter(([, ids]) => ids.some(id => rs.some(r => r.id === id))).length, nPend = sharedPending(sm).length;
   const nMi = rs.reduce((a, r) => a + ks.filter(k => { const c = addrCheck(r, k); return c.status === 'pot' && c.mi; }).length, 0);
   const sub = (k, n, txt, title) => `<button type="button" class="q-sub${k === 'shared' && nPend ? ' has-pend' : ''}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${n ? '' : 'disabled'} title="${esc(title)}${n ? ' – filtrēt tabulu' : ''}">${txt} <b>${n}</b></button>`;
-  $('#c-ac').innerHTML = `<h4 id="c-q-h"><span class="scope-ic" aria-hidden="true">${ICON.shieldOk}</span>Kontaktu kvalitāte</h4>
+  $('#c-ac').innerHTML = `<h4 id="c-q-h"><span class="scope-ic" aria-hidden="true">${ICON.shieldOk}</span>Kontaktu kvalitāte${tip('Nederīgās adreses tiks izlaistas – vēstule tiks sūtīta uz nākamo derīgo adresi. “Netiks nosūtīti” – respondenti bez nevienas derīgas adreses.')}</h4>
     ${eaLater() ? `<p class="q-ea" title="${esc(EA_LATER_TIP)}"><b>eAdrese:</b> tiks noteikta sūtīšanas brīdī</p>` : ''}<ul class="q-list" role="group" aria-label="Adrešu kvalitāte (filtrē tabulu)">${AC_STATES.map(([k, l]) => `<li><button type="button" class="q-item q-${k}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${cnt[k] ? '' : 'disabled'} title="${esc(l)}: ${cnt[k]}${cnt[k] ? ' – filtrēt tabulu' : ''}"><span class="q-dot" aria-hidden="true"></span><span class="q-l">${esc(l)}</span><b>${cnt[k]}</b></button></li>`).join('')}</ul>
     <ul class="q-list q-list-ns" role="group" aria-label="Netiks nosūtīti (filtrē tabulu)"><li><button type="button" class="q-item q-nosend" data-acf="nosend" aria-pressed="${compose.acF === 'nosend'}" ${nNo ? '' : 'disabled'} title="Respondenti bez nevienas derīgas adreses – vēstule netiks nosūtīta: ${nNo}${nNo ? ' – filtrēt tabulu' : ''}"><span class="q-l">Netiks nosūtīti:</span><b>${nNo}</b></button></li></ul>
-    ${cnt.bad ? '<p class="q-skip">Nederīgās adreses tiks izlaistas – vēstule tiks sūtīta uz nākamo derīgo adresi.</p>' : ''}
     <div class="q-auto" role="group" aria-label="Automātiski konstatētais (filtrē tabulu)">${sub('shared', nShared, 'Koplietojamas', `Viena e-pasta adrese vairākiem respondentiem${nPend ? ` – neizvērtētas: ${nPend}` : ''}`)}<span class="q-sep" aria-hidden="true">·</span>${sub('dup', nDup, 'Dublikāti', 'Vienam respondentam vienāda adrese vairākos e-pasta laukos – dublikāts noņemts')}<span class="q-sep" aria-hidden="true">·</span>${sub('mi', nMi, 'MI<span class="q-long"> ieteikumi</span>', 'MI ieteikumi pārrakstīšanās kļūdām')}</div>
     <div class="q-acts"><button type="button" class="btn btn-secondary btn-sm ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button>${
       // nederīgās adreses – Respondentu pārvaldībai labošanai (kampaņā tās netiek izmantotas); pēc nodošanas – neaktīva, līdz parādās jaunas
