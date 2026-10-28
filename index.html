@@ -425,11 +425,14 @@ td.contacts{display:table-cell}
 .duty-table th,.duty-table td{padding:7px 10px;border-bottom:1px solid var(--border-light);text-align:left}
 .duty-table .late,.rtab-out .late{color:var(--danger);font-weight:600}
 /* ===== Respondentu reakcija un veidlapu iesniegšana (3.4) – jaunas klases ===== */
-/* Žurnāls: fiksēti kolonnu platumi (Adresāts 20% | Kampaņa 12% | Statuss 11% | Kanāls 7% | Nosūtīts 10% | Atvērts 11% | Iesniegšana 24% | ••• 5%);
-   viss vienā rindā, garš teksts – ar "…" (pilns – padomā) */
+/* Žurnāls: fiksēti kolonnu platumi (Adresāts 26% | Statuss 12% | Kanāls 9% | Nosūtīts 11% | E-pasta reakcija 16% | Anketas aktivitāte 26%);
+   viss vienā rindā, garš teksts – ar "…" (pilns – padomā); klikšķis jebkurā rindas vietā atver vēstules detaļu logu */
 .hist-table{table-layout:fixed;width:100%}
 .hist-table > thead > tr > th{width:auto}
-.hist-table > thead > tr > th:first-child{width:18%}
+.hist-table > thead > tr > th:first-child{width:26%}
+.hist-table tr.hist-row:focus-visible{outline:3px solid var(--focus-ring);outline-offset:-3px}
+.hist-table .hist-st{cursor:inherit}
+.hist-table .hist-st:hover{background:none}
 .hist-table > thead > tr > th,.hist-table > tbody > tr.hist-row > td{padding-left:8px;padding-right:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hist-table .th-sort{max-width:100%}
 .hist-table .hist-name,.hist-table .hist-camp{max-width:100%}
@@ -2579,6 +2582,50 @@ img.doc-crest{background:none}
 .empty .btn{margin-top:14px}
 
 /* ===== Dialogs ===== */
+/* Žurnāls: vēstules detaļu logs (~80% platuma, ~85% augstuma); galvene, cilnes un apakšējā josla – fiksētas, ritina tikai saturs */
+dialog.modal.lm{width:min(calc(100vw - 32px),max(80vw,720px));max-width:none;height:85vh;max-height:calc(100vh - 32px);overflow:hidden}
+dialog.modal.lm .modal-wrap{height:100%;max-height:none}
+.lm-head{align-items:flex-start;padding:16px 20px 8px;border-bottom:0;flex:none}
+.lm-ttl{min-width:0}
+.lm-ttl h2{margin:0;font-size:var(--fs-xl);font-weight:700;overflow-wrap:anywhere}
+.lm-sub{margin-top:2px;color:var(--text-muted);font-size:var(--fs-sm)}
+.lm-hr{display:flex;align-items:center;gap:12px;flex:none}
+.lm-nav{display:inline-flex;align-items:center;gap:2px}
+.lm-nav .icon-btn{font-size:22px;line-height:1;font-weight:600}
+.lm-nav .icon-btn:disabled{opacity:.35;cursor:default}
+.lm-pos{min-width:56px;text-align:center;font-size:var(--fs-sm);color:var(--text-muted);font-variant-numeric:tabular-nums}
+.lm-tabs{margin:0;padding:0 20px;flex:none}
+.lm-body{flex:1;min-height:0;overflow:auto;padding:16px 20px 20px}
+.lm-foot{justify-content:space-between;flex:none}
+.lm-acts{display:flex;flex-wrap:wrap;gap:8px}
+.lm-sec + .lm-sec{margin-top:20px}
+.lm-sec > h3{margin:0 0 8px;font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.03em;color:var(--text-muted)}
+.lm-meta{margin:0}
+.lm-letter{display:grid;grid-template-columns:minmax(240px,320px) minmax(0,1fr);gap:24px;align-items:start}
+.lm-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:900px){.lm-letter,.lm-grid{grid-template-columns:minmax(0,1fr)}}
+.lm-mail .ch-tabs-sub{margin-top:0}
+.lm-sent{font-weight:500;color:var(--text-muted)}
+.lm-alt{margin:0 0 10px}
+.lm-atts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.lm-atts li{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--border-light);border-radius:var(--radius-sm);background:var(--surface)}
+.lm-ext{flex:none;font-size:var(--fs-xs);font-weight:700;padding:3px 6px;border-radius:4px;background:var(--bg);color:var(--text-muted)}
+.lm-ext.gen{background:var(--primary-50);color:var(--primary-dark)}
+.lm-att-t{flex:1;min-width:0}
+.lm-att-t b,.lm-att-t small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lm-att-t small{color:var(--text-muted)}
+.lm-duty tr.is-in > td{background:var(--primary-50)}
+.lm-camps{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.lm-camp{appearance:none;font:inherit;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:8px 10px;border:1px solid var(--border-light);border-radius:var(--radius-sm);background:var(--surface);color:inherit;cursor:pointer}
+.lm-camp:hover{background:var(--row-hover)}
+.lm-camp:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px}
+.lm-camp-n{min-width:0}
+.lm-camp-n b,.lm-camp-n small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lm-camp-n small{color:var(--text-muted)}
+.lm-camp .cst{flex:none}
+.lm-path{max-width:920px}
+.lm-todo{margin:0 0 14px}
+.timeline li.ev-rx::before{border-color:var(--info);background:var(--info-bg)}
 dialog.modal{border:0;padding:0;border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);width:min(560px,calc(100vw - 32px));max-height:calc(100vh - 32px);color:var(--text)}
 dialog.modal.wide{width:min(1180px,calc(100vw - 32px))}
 dialog.modal.mid{width:min(900px,calc(100vw - 32px))}
@@ -3592,7 +3639,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 150</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 151</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -3601,6 +3648,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 <dialog class="drawer al-drawer" id="al-drawer" aria-labelledby="al-title"></dialog>
 <dialog class="modal" id="modal"></dialog>
 <dialog class="modal" id="submodal"></dialog>
+<dialog class="modal lm" id="lm" aria-labelledby="lm-title"></dialog>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <div class="viz-tip" id="viz-tip" role="tooltip" hidden></div>
 <noscript><p style="padding:20px">Prototipam nepieciešams JavaScript.</p></noscript>
@@ -5451,7 +5499,7 @@ function newSession(full){
   clearTimeout(draftTimer); state.activeDraft = compose.draftId;
   alBaseline();
 }
-const ui = {campView:'list', camp:{q:'', kind:'', status:'', creator:'', quick:'', from:'', to:''}, campRaw:{}, hist:{q:'', kind:'', sts:[], camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histRow:new Set(), histLimit:50, cardId:'',
+const ui = {campView:'list', camp:{q:'', kind:'', status:'', creator:'', quick:'', from:'', to:''}, campRaw:{}, hist:{q:'', kind:'', sts:[], camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histLimit:50, cardId:'',
   rep:{from:'', to:'', camp:'', kind:'', ch:'', aud:'', rep:'', sort:{key:'date', dir:'desc'}},
   tplView:'veidnes', sagGroup:'mail', sag:{q:'', aud:'', cat:'', lang:''}, newIds:new Set(), tplAud:'', tplSearch:'', tplCat:'', tplKind:'', tplSts:['aktiva', 'melnraksts'], tplRt:'', tplSv:'', tplSort:{k:'', dir:0}, tplLimit:20, sagSort:{k:'', dir:0}, sagLimit:20, attSearch:'', attAud:'', attCat:'', attLang:''};
 // Sakļautie kategoriju bloki (tikai šajā kampaņā – pēc noklusējuma visi izvērsti)
@@ -6766,6 +6814,7 @@ function showHome(){
 function route(){
   const h = location.hash.slice(1);
   if (drawer.open) drawer.close();
+  if (lmDlg.open) lmDlg.close();
   if (!h || h === 'sakums') showHome();
   // agrākā cilne "Pielikumi" -> Veidnes › Sagataves › Pielikumu sagataves
   else if (h === 'pielikumi' || h === 'sagataves'){ ui.tplView = 'sagataves'; if (h === 'pielikumi') ui.sagGroup = 'att'; ui.tab = ''; showTab('veidnes'); }
@@ -8745,8 +8794,11 @@ function addrPanel(r){
       <span class="hint">${r.email3At ? `Ievadīja: ${esc(r.email3By || '—')}, ${fmtDateTime(r.email3At)}` : 'Nav ievadīts'}</span></div>
   </div>`;
 }
-// Respondenta kartīte – sānu panelis (atveras, uzklikšķinot uz respondenta nosaukuma kampaņā vai vēsturē)
+// Respondenta kartīte – sānu panelis (atveras, uzklikšķinot uz respondenta nosaukuma kampaņā; Žurnālā – vēstules detaļu logs)
 const drawer = $('#drawer');
+// Žurnāla vēstules detaļu logs (sk. openLetterModal)
+const lmDlg = $('#lm');
+ui.lm = null;
 function openRespCard(id){
   ui.cardId = id;
   renderRespCard();
@@ -8793,7 +8845,7 @@ function drawerCampaignNote(r){
 drawer.addEventListener('click', e => { if (e.target === drawer) drawer.close(); });
 drawer.addEventListener('close', () => { ui.cardId = ''; });
 // Pēc izmaiņām (adreses, statusi) – pārzīmē kartīti, ja tā ir atvērta
-const refreshCard = () => { if (drawer.open) renderRespCard(); };
+const refreshCard = () => { if (drawer.open) renderRespCard(); lmRefresh(true); };
 const respLink = (id, name) => `<button type="button" class="link-btn resp-link" data-action="resp-card" data-id="${esc(id)}">${esc(name)}</button>`;
 
 /* =====================================================================
@@ -11124,14 +11176,6 @@ $('#camp-scroll .camp-table thead').addEventListener('click', e => {
   ui.campSort = cur.k !== k ? {k, dir:1} : cur.dir === 1 ? {k, dir:-1} : {k:'', dir:0};
   renderCampaigns(); const nb = $(`.camp-table [data-csort="${k}"]`); if (nb) nb.focus();
 });
-// Žurnāla rindas izvēlne "⋯": statusu ceļš, nosūtītā vēstule, dzēšana (tikai ierakstiem, kas vecāki par 2 gadiem)
-function histMenuItems(x){
-  const it = (action, icon, label, cls = '') => `<button type="button" role="menuitem" tabindex="-1" class="${cls}" data-action="${action}" data-id="${esc(x.id)}">${ICON[icon]}${esc(label)}</button>`;
-  return [it('hist-row', 'chev', ui.histRow.has(x.id) ? 'Sakļaut statusu ceļu' : 'Statusu ceļš un mēģinājumi'),
-    x.archived ? '' : it('sent-view', 'eye', `Skatīt vēstuli (${sentVerLabel(x)})`), '<hr>',
-    canDeleteRec(x) ? it('sent-del', 'trash', 'Dzēst ierakstu', 'danger')
-      : `<button type="button" role="menuitem" tabindex="-1" class="is-dis" aria-disabled="true" title="${DEL_TIP}">${ICON.trash}Dzēst ierakstu<small>${DEL_TIP}</small></button>`].join('');
-}
 // Rindas izvēlne "⋯": Atvērt, Kopēt kā jaunu kampaņu, Dzēst (tikai melnrakstiem)
 function campMenuItems(x){
   const it = (action, id, icon, label, cls = '') => `<button type="button" role="menuitem" tabindex="-1" class="${cls}" data-action="${action}" data-id="${esc(id)}">${ICON[icon]}${esc(label)}</button>`;
@@ -11155,7 +11199,6 @@ function closeCampMenu(focus){
   campMenuBtn = null;
 }
 const MENU_SRC = {
-  'hist-menu':{find:id => state.sent.find(y => y.id === id), items:x => histMenuItems(x), name:x => x.recipient},
   'camp-menu':{find:id => campByKey(id), items:x => campMenuItems(x), name:x => x.name},
   'tpl-menu':{find:id => state.templates.find(y => y.id === id), items:x => tplMenuItems(x), name:x => x.name},
   'tpl-st-menu':{find:id => state.templates.find(y => y.id === id), items:x => tplStMenuItems(x), name:x => `Statuss un vērtējums: ${x.name}`},
@@ -11448,41 +11491,6 @@ const evHtml = e => `<li class="${e.cls}"><div class="tl-head"><b>${esc(e.t)}</b
   <small>${esc(fmtT(e.at)) || 'tagad'}${e.type ? ` · ${esc(CHANNELS[e.ch])} · ${esc(addrShort(e.type))}: <span class="mono">${esc(e.address)}</span>` : ''}${e.d ? ` · ${esc(e.d)}` : ''}</small>
   ${e.ndr ? `<div class="tl-ndr">${rulePills(e.ndr)}</div><code class="tl-code">${e.ndrAt ? `${esc(fmtT(e.ndrAt))} · ` : ''}${esc(e.ndr.text)}</code>` : ''}
   ${e.action ? `<div class="tl-act"><span class="muted">Automātiskā rīcība:</span> ${esc(e.action)}${e.route ? ` <span class="muted">· novirzīts: ${esc(NDR_ROUTES[e.route])}</span>` : ''}</div>` : ''}</li>`;
-function histDetail(x){
-  const r = state.respondents.find(y => y.id === x.respondentId) || {};
-  const tasks = (state.tasks || []).filter(t => t.recId === x.id);
-  const manual = x.status === 'kluda' || x.status === 'manuali';
-  const nd = ndrsOf(x).filter(n => n.rule !== 'e-away'), codes = sentCodes([x]);
-  const row = (l, v) => v ? `<dt>${esc(l)}</dt><dd>${v}</dd>` : '';
-  const meta = `<dl class="hd-meta">${row('Adrese', `<span class="mono">${esc(x.address || '—')}</span> <span class="muted">(${esc(addrShort(x.addrType || ''))})</span>`)}
-    ${row('Kanāls', `<span class="pill pill-ch">${esc(CHANNELS[x.channel] || '')}</span>${x.archived ? '' : ` <button type="button" class="link-btn hd-ver" data-action="sent-view" data-id="${x.id}" title="Atvērt nosūtīto versiju">${esc(sentVerLabel(x))}</button>`}`)}
-    ${row('Statuss', `${stPill(x.status)}${STATUSES[x.status] && STATUSES[x.status].next ? ` <span class="muted">→ ${esc(STATUSES[x.status].next)}${x.reviewed ? ` · ${esc((x.reviewed.how || 'izskatīta').toLowerCase())}` : ''}${x.adminResolved ? ' · atrisināta' : ''}</span>` : ''}${x.awayUntil ? ` <span class="pill pill-away">Prombūtne līdz ${esc(dmShort(x.awayUntil))}</span>` : ''}${isRetried(x) ? ' <span class="muted">· atkārtoti nosūtīta</span>' : ''}`)}
-    ${row(nd.some(n => !n.ai) ? 'NDR/DIV iemesls' : 'NDR iemesls', nd.length ? nd.map(n => `<div class="hd-ndr">${esc(ruleOf(n.rule).reason)} ${rulePills(n)}</div>`).join('') : '')}
-    ${row('Kampaņa', `${esc(x.sessionName || `Kampaņa Nr. ${x.batch}`)} <span class="muted">· ${esc(SESS_LABELS[x.sessionKind] || '')} · Nr. ${x.batch}${codes ? ` · ${esc(codes)}` : ''}</span>`)}
-    ${row('Temats', `${esc(sentVer(x).subject)}${x.customized ? ' <span class="pill pill-custom">Pielāgota</span>' : ''}`)}
-    ${row('NMK', esc(r.nmk || ''))}
-    ${row('Nosūtīts', esc(fmtDateTime(x.sentAt)))}
-    ${row('Pielikumi', [...(x.attachments || []).filter(a => a.html).map(a => mainAttCard({gen:true, name:a.name, doc:a, tag:`Adresāts: ${x.recipient}`}, 'sm')), ...(x.main ? [mainAttCard(x.main, 'sm')] : []), ...((x.files || []).length ? [`<div class="att-list">${x.files.map(fileChip).join('')}</div>`] : [])].join(''))}</dl>`;
-  return `<div class="hd-grid">
-    <div>${meta}<h4>Statusu ceļš un mēģinājumi</h4><ol class="timeline">${letterTimeline(x).map(evHtml).join('')}</ol></div>
-    <div>
-      ${manual ? `<div class="manual-box"><h4>${x.status === 'kluda' ? 'Manuāla pārbaude' : 'Manuāla izskatīšana'}${tip(x.status === 'kluda' ? 'Visas pieejamās adreses ir izsmeltas.' : 'Atbildes teksts nav atpazīts (piem., “adrese mainīta”).')}</h4>
-        ${x.reviewed ? `<p class="hint">${esc(x.reviewed.how || 'Izskatīta')}: ${esc(x.reviewed.by)}, ${esc(fmtDateTime(x.reviewed.at))}.</p>` : ''}
-        <label for="mr-${x.id}"><b>Ievadīt jaunu adresi un sūtīt</b></label>
-        <div class="addr-e3"><input type="email" id="mr-${x.id}" value="${esc(r.email3 || '')}" placeholder="jauns.epasts@uznemums.example" aria-describedby="mr-err-${x.id}">
-          <button type="button" class="btn btn-primary btn-sm" data-action="hist-resend" data-id="${x.id}">Sūtīt</button></div>
-        <span class="err" id="mr-err-${x.id}" hidden></span>
-        <p class="hint" style="margin:2px 0 0">Adrese tiks saglabāta kā respondenta E-pasts 3.</p>
-        ${x.reviewed ? '' : `<div class="mb-actions"><button type="button" class="btn btn-secondary btn-sm" data-action="hist-reviewed" data-id="${x.id}">Atzīmēt kā izskatītu</button>
-          <button type="button" class="btn btn-secondary btn-sm" data-action="hist-handover" data-id="${x.id}">Nodot kontaktu aktualizēšanai</button>
-          <button type="button" class="btn btn-secondary btn-sm" data-action="hist-notfound" data-id="${x.id}">Kontakts nav atrodams</button></div>`}</div>` : ''}
-      ${x.status === 'admin' ? `<div class="admin-box"><h4>Paziņojums administratoram${tip('Sūtītāja puses kļūda (bloķēšana, noraidījums): adrese netiek mainīta, vēstule netiek sūtīta atkārtoti.')}</h4>
-        ${x.adminResolved ? `<p class="hint">Atrisināta: ${esc(x.adminResolved.by)}, ${esc(fmtDateTime(x.adminResolved.at))}.</p>`
-          : `<p class="hint">${esc((ndrsOf(x).filter(n => ruleOf(n.rule).type === 'sender').pop() || {}).text || '')}</p><button type="button" class="btn btn-secondary btn-sm" data-action="hist-resolve" data-id="${x.id}">Atzīmēt kā atrisinātu</button>`}</div>` : ''}
-      ${tasks.length ? `<div class="hd-tasks"><b>Uzdevumi</b>${tasks.map(t => `<div>${esc(t.title)} – ${esc(addrShort(t.type))}: <span class="mono">${esc(t.address)}</span> <span class="muted">(${esc(t.by)}, ${esc(fmtDate(isoDate(new Date(t.at))))})</span></div>`).join('')}</div>` : ''}
-      ${x.archived ? '' : `<button type="button" class="btn btn-ghost btn-sm" data-action="sent-view" data-id="${x.id}">${ICON.eye}Skatīt vēstuli (${esc(sentVerLabel(x))})</button>`}
-    </div></div>`;
-}
 // "Piegādes statusi un kļūdas" (agrāk – "Klasifikācijas noteikumi"; tikai lasīšanai): abas specifikācijas tabulas
 function openRulesModal(){
   // normālā plūsma (starpstatuss un gala statuss – nav kļūdu tipi): tips "—", tabulas augšā; kļūdu rindas zemāk
@@ -11576,22 +11584,6 @@ function reactView(x, now = Date.now()){
   return {open, forms, res:forms.filter(f => !f.pre)};
 }
 const rxT = iso => new Date(iso).getFullYear() === new Date().getFullYear() ? fmtShortIso(iso) : fmtDateTime(iso);
-// rindas detaļās: veidlapu tabula; uzklikšķinot uz veidlapas – laika līnija
-ui.histForm = new Set();
-function reactFormsHtml(x){
-  const v = reactView(x); if (!v.forms.length) return '';
-  const stCell = f => `<span class="rx-st rx-${f.st}"><i class="rx-d rx-${f.st}" aria-hidden="true">${FORM_ST[f.st].ic}</i>${esc(FORM_ST[f.st].label)}</span>${f.late ? ' <span class="rx-tag is-late">pēc termiņa</span>' : ''}${f.pre ? ' <span class="rx-tag">iesniegta pirms vēstules</span>' : ''}`;
-  const evLabel = e => e.st === 'kl' ? `${FORM_ST.kl.label} (${FORM_ST.kl.d})` : FORM_ST[e.st].label;
-  const tl = f => { const evs = [...(v.open ? [{at:v.open.at, t:`Vēstule atvērta${v.open.approx ? ' (aptuveni)' : ''}`}] : []), ...(f.pre ? [{at:x.sentAt, t:'Vēstule nosūtīta'}] : []),
-      ...f.hist.map(e => ({at:e.at, t:evLabel(e) + (e.st === 'ies' && f.late && e === f.hist[f.hist.length - 1] ? ' (pēc termiņa)' : ''), st:e.st}))].sort((a, b) => a.at.localeCompare(b.at));
-    return evs.length ? evs.map((e, i) => `${i ? '<span class="rx-sep" aria-hidden="true">·</span>' : ''}<span class="rx-ev${e.st === 'kl' ? ' rx-kl' : ''}"><b>${esc(rxT(e.at))}</b> ${esc(e.t)}</span>`).join('') : '<span class="muted">Statusa izmaiņu vēl nav.</span>'; };
-  return `<div class="hd-forms"><h4>Veidlapas${tip('Vēstulē iekļautās veidlapas (apsekojums un periods) un to statuss. Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena.')}</h4>
-    <table class="duty-table rx-table"><thead><tr><th>Apsekojums</th><th>Periods</th><th>Termiņš</th><th>Statuss</th><th>Statusa laiks</th></tr></thead><tbody>${v.forms.map(f => {
-      const k = `${x.id}|${f.i}`, op = ui.histForm.has(k);
-      return `<tr class="rx-row${op ? ' is-open' : ''}" data-action="hist-form" data-id="${esc(k)}" tabindex="0" aria-expanded="${op}"><td><span class="rx-tg" aria-hidden="true">${ICON.chev}</span>${esc(f.d && repById(f.d.reportId) ? repTitle(repById(f.d.reportId)) : '—')}</td>
-        <td>${esc(periodLabel(f.d.period))}</td><td>${esc(fmtDate(f.d.deadline))}</td><td>${stCell(f)}</td><td>${f.at ? esc(rxT(f.at)) : '<span class="muted">—</span>'}</td></tr>
-        ${op ? `<tr class="rx-tl"><td colspan="5"><div class="rx-evs">${tl(f)}</div></td></tr>` : ''}`; }).join('')}</tbody></table></div>`;
-}
 // nosūtītas kampaņas skats: "Reakcija un iesniegšana"
 function reactGroups(xs){
   const g = {nav:new Set(), sak:new Set(), kl:new Set()}, reps = {nav:new Set(), sak:new Set(), kl:new Set()};
@@ -11762,12 +11754,11 @@ const sentCodes = (xs, dm = dutyRepMap()) => [...new Set(xs.flatMap(x => (x.duti
 const isManualQ = x => (x.status === 'kluda' || x.status === 'manuali') && !x.reviewed, isAdminQ = x => x.status === 'admin' && !x.adminResolved;
 // gala statuss tabulā (detaļās – visi starpstatusi)
 // kolonnas un kārtošana (kā kampaņu sarakstā): 1. klikšķis – augoši, 2. – dilstoši, 3. – noklusējums (jaunākās augšā)
-const HIST_COLS = [['name', 'Adresāts'], ['camp', 'Kampaņa'], ['st', 'Statuss'], ['ch', 'Kanāls'], ['at', 'Nosūtīts'], ['open', 'E-pasta reakcija'], ['sub', 'Anketas aktivitāte']];
-const HIST_W = [18, 11, 10, 7, 9, 14, 26, 5];
+const HIST_COLS = [['name', 'Adresāts'], ['st', 'Statuss'], ['ch', 'Kanāls'], ['at', 'Nosūtīts'], ['open', 'E-pasta reakcija'], ['sub', 'Anketas aktivitāte']];
+const HIST_W = [26, 12, 9, 11, 16, 26];
 ui.histSort = {k:'', dir:0};
 function histSortVal(x, k){
   if (k === 'name') return x.recipient || '';
-  if (k === 'camp') return x.sessionName || `Kampaņa Nr. ${x.batch}`;
   if (k === 'st') return histShort(histFinal(x));
   if (k === 'ch') return x.channel === 'eadrese' ? 'eAdrese' : CHANNELS[x.channel] || '';
   if (k === 'at') return x.sentAt || null;
@@ -11825,26 +11816,19 @@ function renderSent(){
   const hEmpty = !all.length ? tcEmptyBox('Vēl nav nosūtītu vēstuļu', `<button class="btn btn-primary btn-sm" data-action="camp-new">${ICON.plus}Jauna kampaņa</button>`)
     : !list.length ? tcEmptyBox(sel.length && !active && !h.q && !h.camp && !h.rep ? `Nav vēstuļu ar statusu “${sel.length === histGroupOf(sel[0]).sts.length ? histGroupOf(sel[0]).label : sel.map(k => HIST_FINAL[k].label).join(', ')}”` : 'Nav ierakstu, kas atbilst filtriem') : '';
   $('#hist-body').innerHTML = `<div class="card table-card tc-fit" id="hist-card"><div class="table-wrap camp-scroll hist-scroll tc-area" id="hist-scroll"><table class="camp-table hist-table"><colgroup>${HIST_W.map(w => `<col style="width:${w}%">`).join('')}</colgroup>
-      <thead><tr>${HIST_COLS.map(([k, l]) => `<th aria-sort="none"><button type="button" class="th-sort" data-hsort="${k}">${l}<span class="sort-ic" aria-hidden="true">↕</span></button></th>`).join('')}<th class="actions"><span class="sr-only">Darbības</span></th></tr></thead>
-      <tbody>${sorted.slice(0, ui.histLimit).map(x => { const op = ui.histRow.has(x.id), f = HIST_FINAL[histFinal(x)];
-        return `<tr class="hist-row ${op ? 'is-open' : ''} ${ui.newIds.has(x.id) ? 'is-new' : ''}" data-hrow="${x.id}">
-          <td><span class="hist-name" title="${esc(x.recipient)}">${respLink(x.respondentId, x.recipient)}</span></td>
-          <td><span class="hist-camp" title="${esc((x.sessionName || `Kampaņa Nr. ${x.batch}`) + (x.sessionDesc ? `\n${x.sessionDesc}` : ''))}">${esc(x.sessionName || `Kampaņa Nr. ${x.batch}`)}</span></td>
-          <td><button type="button" class="cst hist-st ${f.cls}" data-action="hist-row" data-id="${x.id}" aria-expanded="${op}" title="${esc(f.label)}\n${esc(histStTip(x))}\nKlikšķis – detaļas: adrese, mēģinājumi, starpstatusi, NDR/DIV" aria-label="${esc(f.label)}">${'<i aria-hidden="true"></i>'}${esc(histShort(histFinal(x)))}</button></td>
+      <thead><tr>${HIST_COLS.map(([k, l]) => `<th aria-sort="none"><button type="button" class="th-sort" data-hsort="${k}">${l}<span class="sort-ic" aria-hidden="true">↕</span></button></th>`).join('')}</tr></thead>
+      <tbody>${sorted.slice(0, ui.histLimit).map(x => { const k = histFinal(x), f = HIST_FINAL[k];
+        return `<tr class="hist-row${ui.newIds.has(x.id) ? ' is-new' : ''}" data-hrow="${x.id}" tabindex="0" aria-haspopup="dialog">
+          <td><span class="hist-name" title="${esc(x.recipient)}">${esc(x.recipient)}</span></td>
+          <td><span class="cst hist-st ${f.cls}" title="${esc(f.label)}\n${esc(histStTip(x))}"><i aria-hidden="true"></i>${esc(histShort(k))}</span></td>
           <td>${esc(x.channel === 'eadrese' ? 'eAdrese' : CHANNELS[x.channel] || '')}</td>
           <td title="${esc(fmtDateTime(x.sentAt))}">${esc(hxDate(x.sentAt))}</td>
           ${reactCellHtml(mailReact(x))}
-          ${reactCellHtml(formAct(x))}
-          <td class="actions"><button type="button" class="icon-btn camp-more" data-action="hist-menu" data-id="${x.id}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.recipient)}" title="Darbības">${ICON.dots}</button></td></tr>
-          ${op ? `<tr class="hist-detail"><td colspan="8">${histDetail(x)}${reactFormsHtml(x)}</td></tr>` : ''}`; }).join('')}</tbody></table><div class="tc-empty" id="hist-empty"${hEmpty ? '' : ' hidden'}>${hEmpty}</div></div>
+          ${reactCellHtml(formAct(x))}</tr>`; }).join('')}</tbody></table><div class="tc-empty" id="hist-empty"${hEmpty ? '' : ' hidden'}>${hEmpty}</div></div>
       ${hEmpty ? '' : `<div class="table-foot camp-foot hist-foot2"><span>Rādītas <b>${Math.min(ui.histLimit, sorted.length)}</b> no <b>${sorted.length}</b>${sorted.length !== all.length ? ` <span class="muted">(kopā ${all.length})</span>` : ''}</span>${sorted.length > ui.histLimit ? `<button type="button" class="btn btn-secondary btn-sm" data-action="hist-more">Rādīt vairāk</button>` : ''}</div>`}</div>`;
   if (hEmpty) $('#hist-scroll').classList.add('is-empty');
   fitTables();
   renderHistSort();
-  if (campMenuBtn && campMenuBtn.dataset.action === 'hist-menu' && !campMenuBtn.isConnected){
-    const nb = $(`#hist-body [data-action="hist-menu"][data-id="${campMenuBtn.dataset.id}"]`), rec = nb && state.sent.find(y => y.id === nb.dataset.id);
-    if (nb && rec){ campMenuBtn = nb; nb.setAttribute('aria-expanded', 'true'); $('#cm-menu').innerHTML = histMenuItems(rec); } else closeCampMenu();
-  }
   // admin sarakstam – skaits zem tabulas (galvenajai tabulai skaits un "Rādīt vairāk" ir tabulas apakšā)
   $('#hist-foot').textContent = '';
 }
@@ -11855,15 +11839,11 @@ const DEL_TIP = 'Ierakstus var dzēst tikai pēc 2 gadiem';
 function deleteRecords(ids){
   const set = new Set(ids);
   state.sent = state.sent.filter(x => !set.has(x.id));
-  ids.forEach(id => ui.histRow.delete(id));
   save(); renderSent(); renderCounts(); refreshCard();
 }
 // Manuāla atkārtota nosūtīšana uz jaunu e-pastu (F10)
 // Nepiegādes apstrāde: atvērta "Jārisina" vēstule – laika uzskaites mērķis; atrisināšana – ieraksts apstrādē un Darbību vēsturē
-function ndrTrack(id){
-  const x = state.sent.find(y => y.id === id);
-  if (ui.histRow.has(id) && x && isTodo(x)) ui.ndrCur = id; else if (ui.ndrCur === id && !ui.histRow.has(id)) ui.ndrCur = '';
-}
+function ndrTrack(){ const x = lmCur(); ui.ndrCur = x && isTodo(x) ? x.id : ''; }
 function ndrResolve(x, how){
   const w = (state.ndrWork = state.ndrWork || {})[x.id] || (state.ndrWork[x.id] = {active:0, sessions:0, startedAt:new Date().toISOString()});
   if (w.resolvedAt) { w.how = how; return; }
@@ -11872,9 +11852,9 @@ function ndrResolve(x, how){
 }
 function resendLetter(id){
   const x = state.sent.find(y => y.id === id), inp = $('#mr-' + id), e = $('#mr-err-' + id);
-  if (!x || !inp) return;
+  if (!x || !inp) return false;
   const val = inp.value.trim(), err = !val ? 'Ievadiet e-pasta adresi.' : !EMAIL_RE.test(val) ? 'Nederīga e-pasta adrese.' : '';
-  if (err){ e.hidden = false; e.textContent = err; inp.setAttribute('aria-invalid', 'true'); inp.focus(); return; }
+  if (err){ e.hidden = false; e.textContent = err; inp.setAttribute('aria-invalid', 'true'); inp.focus(); return false; }
   saveEmail3(x.respondentId, val);
   const now = Date.now(), steps = tryAddress('email3', val, `${id}|manual|${(x.manual || []).length}`);
   x.attempts = x.attempts || [];
@@ -11890,7 +11870,200 @@ function resendLetter(id){
   finalizeStatus(x);
   save(); renderSent(); refreshCard();
   toast(ok ? `Vēstule nosūtīta uz ${val}.` : `${ruleOf(added[0].rule).reason}: ${added[0].note}.`, !ok && attKind(added[0]) !== 'temp');
+  return true;
 }
+// ===== Žurnāls: vēstules detaļu logs – visa informācija par vienu vēstuli vienuviet (cilnes Vēstule · Respondents · Statusu ceļš) =====
+// Atveras, uzklikšķinot jebkurā tabulas rindas vietā; ‹ › – iepriekšējā / nākamā rinda (pēc filtriem un kārtošanas); × / Esc – aizvērt
+const LM_TABS = [['letter', 'Vēstule'], ['resp', 'Respondents'], ['path', 'Statusu ceļš']];
+// noklusētā cilne: "Jārisina" vēstulei – Statusu ceļš, citādi – Vēstule
+const lmDefTab = x => isTodo(x) ? 'path' : 'letter';
+const lmCur = () => ui.lm && state.sent.find(y => y.id === ui.lm.id);
+const letterLink = x => `<button type="button" class="link-btn resp-link" data-action="jrn-letter" data-id="${esc(x.id)}" title="Atvērt vēstuli Žurnālā">${esc(x.recipient)}</button>`;
+function openLetterModal(id, tab){
+  const x = state.sent.find(y => y.id === id); if (!x) return;
+  ui.lm = {id, tab:tab || lmDefTab(x), ver:''};
+  ndrTrack();
+  renderLetterModal();
+  if (!lmDlg.open) lmDlg.showModal();
+  const t = $('.lm-tab[aria-selected="true"]', lmDlg); if (t) t.focus();
+}
+// no respondentu meklēšanas / Atskaitēm: kampaņas žurnāls ar šo respondentu un vēstules logs
+function openLetterIn(id){
+  const x = state.sent.find(y => y.id === id); if (!x) return;
+  openJrnCamp(x.batch, {q:x.recipient});
+  if (ui.tab !== 'vesture') showTab('vesture');
+  openLetterModal(x.id);
+}
+function lmNav(d){
+  const L = ui.histList || [], i = L.findIndex(y => y.id === ui.lm.id), n = i < 0 ? null : L[i + d];
+  if (!n) return;
+  ui.lm = {...ui.lm, id:n.id, ver:''}; ndrTrack(); renderLetterModal();
+  const b = $(`[data-lm-nav="${d}"]`, lmDlg); (b && !b.disabled ? b : $(`[data-lm-nav="${-d}"]`, lmDlg)).focus();
+}
+// pārzīmē atvērto logu (pēc darbībām, statusu izmaiņām); soft – neaiztiek, kamēr lietotājs raksta laukā
+function lmRefresh(soft){
+  if (!lmDlg.open) return;
+  const a = document.activeElement;
+  if (soft && a && lmDlg.contains(a) && a.matches('input, textarea, select')) return;
+  renderLetterModal();
+}
+function renderLetterModal(){
+  const x = lmCur();
+  if (!x){ if (lmDlg.open) lmDlg.close(); return; }
+  const a = document.activeElement, keep = a && lmDlg.contains(a) ? lmFocusSel(a) : null;
+  const sc = $('.lm-body', lmDlg), top = sc && ui.lm.shown === `${x.id}|${ui.lm.tab}` ? sc.scrollTop : 0;
+  const L = ui.histList || [], i = L.findIndex(y => y.id === x.id), t = ui.lm.tab, acts = lmActions(x);
+  const nmk = respNmkRaw(x.respondentId), cn = x.sessionName || `Kampaņa Nr. ${x.batch}`;
+  lmDlg.innerHTML = `<div class="modal-wrap">
+    <div class="modal-head lm-head">
+      <div class="lm-ttl"><h2 id="lm-title">${esc(x.recipient)}</h2><div class="lm-sub">${esc(nmk || 'NMK nav norādīts')} · ${esc(cn)}</div></div>
+      <div class="lm-hr"><span class="lm-st" title="${esc(histStTip(x))}">${msgBadge(histFinal(x))}</span>
+        <span class="lm-nav" role="group" aria-label="Pārvietoties pa tabulas rindām">
+          <button type="button" class="icon-btn" data-lm-nav="-1" aria-label="Iepriekšējā rinda" title="Iepriekšējā rinda"${i > 0 ? '' : ' disabled'}>‹</button>
+          ${i >= 0 ? `<span class="lm-pos">${i + 1} / ${L.length}</span>` : ''}
+          <button type="button" class="icon-btn" data-lm-nav="1" aria-label="Nākamā rinda" title="Nākamā rinda"${i >= 0 && i < L.length - 1 ? '' : ' disabled'}>›</button></span>
+        <button type="button" class="icon-btn" data-lm-close aria-label="Aizvērt">${ICON.x}</button></div></div>
+    <div class="ch-tabs lm-tabs" role="tablist" aria-label="Vēstules informācija">${LM_TABS.map(([k, l]) => `<button type="button" role="tab" class="ch-tab lm-tab" id="lm-tab-${k}" data-lm-tab="${k}" aria-selected="${k === t}" aria-controls="lm-pane"${k === t ? '' : ' tabindex="-1"'}>${l}</button>`).join('')}</div>
+    <div class="modal-body lm-body" id="lm-pane" role="tabpanel" aria-labelledby="lm-tab-${t}">${t === 'resp' ? lmRespHtml(x) : t === 'path' ? lmPathHtml(x) : lmLetterHtml(x)}</div>
+    ${acts ? `<div class="modal-foot lm-foot"><div class="lm-acts" role="group" aria-label="Darbības ar vēstuli">${acts}</div><button type="button" class="btn btn-primary" data-lm-close>Aizvērt</button></div>` : ''}</div>`;
+  ui.lm.shown = `${x.id}|${t}`;
+  $('.lm-body', lmDlg).scrollTop = top;
+  if (keep){ const f = keep && $(keep, lmDlg); (f && !f.disabled ? f : $('.lm-tab[aria-selected="true"]', lmDlg)).focus({preventScroll:true}); }
+}
+const lmFocusSel = a => { const d = a.dataset || {};
+  return a.id ? '#' + CSS.escape(a.id) : d.lmTab ? `[data-lm-tab="${d.lmTab}"]` : d.lmNav ? `[data-lm-nav="${d.lmNav}"]` : d.lmVer ? `[data-lm-ver="${d.lmVer}"]`
+    : d.action ? `[data-action="${d.action}"][data-id="${CSS.escape(d.id || '')}"]` : '.lm-tab[aria-selected="true"]'; };
+const lmRow = (l, v) => v ? `<dt>${esc(l)}</dt><dd>${v}</dd>` : '';
+// 1) Vēstule: kampaņa, nosūtītais saturs (e-pasta / eAdreses versija) un pielikumi
+function lmLetterHtml(x){
+  const codes = sentCodes([x]), row = lmRow;
+  const info = `<dl class="hd-meta lm-meta">${row('Nosaukums', `<b>${esc(x.sessionName || `Kampaņa Nr. ${x.batch}`)}</b>`)}${row('Veids', esc(SESS_LABELS[x.sessionKind] || ''))}
+    ${row('Nr.', esc(String(x.batch)) + (codes ? ` <span class="muted">· ${esc(codes)}</span>` : ''))}${row('Nosūtīts', esc(fmtDateTime(x.sentAt)))}
+    ${row('Kanāls', `<span class="pill pill-ch">${esc(CHANNELS[x.channel] || '')}</span>`)}
+    ${row('Izmantotā adrese', `<span class="mono">${esc(x.address || '—')}</span>${x.addrType ? ` <span class="muted">(${esc(addrShort(x.addrType))})</span>` : ''}`)}
+    ${row(x.contentSource && x.contentSource !== 'tpl' ? 'Saturs' : 'Veidne', x.templateName ? esc(x.templateName) + (x.customized ? ' <span class="pill pill-custom">Pielāgota vēstule</span>' : '') : '')}
+    ${row('Dok. Nr.', x.docNr ? esc(x.docNr) : '')}</dl>`;
+  const atts = lmAttItems(x);
+  const attHtml = atts.length ? `<ul class="lm-atts">${atts.map(a => `<li><span class="lm-ext${a.gen ? ' gen' : ''}">${esc(a.ext)}</span><span class="lm-att-t"><b>${esc(a.name)}</b><small>${esc(a.sub)}</small></span>
+      ${a.v ? `<button type="button" class="btn btn-secondary btn-sm" data-attv="${attViewReg(a.v)}" title="${a.gen ? 'Atvērt A4 skatā' : 'Skatīt pielikumu'}">${ICON.eye}Skatīt</button>` : '<span class="muted">Nav pieejams</span>'}</li>`).join('')}</ul>`
+    : '<p class="hint">Vēstulei nav pielikumu.</p>';
+  return `<div class="lm-letter"><div class="lm-side"><section class="lm-sec"><h3>Kampaņa</h3>${info}</section><section class="lm-sec"><h3>Pielikumi (${atts.length})</h3>${attHtml}</section></div>
+    <section class="lm-sec lm-mail"><h3>Nosūtītais saturs</h3>${lmMailHtml(x)}</section></div>`;
+}
+function lmMailHtml(x){
+  if (x.archived) return '<p class="hint">Vēstules saturs testa datu arhīvā nav saglabāts.</p>';
+  // versijas: nosūtītā (pēc kanāla) un – ja kampaņā bija abas – otra, tikai apskatei
+  const sv = sentVer(x), vers = sv.fb ? [] : [...(x.hasEp !== false && x.bodyHtml ? ['epasts'] : []), ...(x.eaText != null ? ['eadrese'] : [])];
+  const ver = vers.length > 1 && vers.includes(ui.lm.ver) ? ui.lm.ver : sv.ver, own = ver === sv.ver, ch = own ? x.channel : ver;
+  const text = own ? sv.text : ver === 'eadrese' ? x.eaText : null;
+  const tg = vers.length > 1 ? `<div class="ch-tabs ch-tabs-sub lm-ver" role="tablist" aria-label="Vēstules versija">${vers.map(k => `<button type="button" role="tab" class="ch-tab" data-lm-ver="${k}" aria-selected="${k === ver}"${k === ver ? '' : ' tabindex="-1"'}>${ICON[k === 'epasts' ? 'mail' : 'building']}${k === 'epasts' ? 'E-pasts' : 'eAdrese'}${k === sv.ver ? ' <small class="lm-sent">nosūtīta</small>' : ''}</button>`).join('')}</div>` : '';
+  return tg + (own ? '' : `<div class="alert alert-info lm-alt">${ICON.info}<span>Šī versija adresātam netika nosūtīta (nosūtīta ${sv.ver === 'epasts' ? 'e-pasta' : 'eAdreses'} versija) – tikai apskatei.</span></div>`) + mailView({
+    toName:x.recipient, toAddr:own ? x.address : '', channel:ch, visNote:ch === 'eadrese' ? visNoteOf(x.visEls) : '',
+    subjectHtml:esc(own ? sv.subject : ver === 'eadrese' ? x.eaSubject : x.subject),
+    bodyHtml:text != null ? `<div class="mail-plain">${esc(text)}</div>` : resolveImages(x.bodyHtml),
+    bodyTextHtml:esc(text != null ? text : x.bodyText), footerHtml:esc(x.footer || ''), variant:x.variant || '',
+    org:x.org || state.layout.org, lang:x.lang || '', wantLang:x.wantLang || '', fallback:!!x.fallback});
+}
+const lmExt = n => (String(n).split('.').pop() || '').toUpperCase().slice(0, 4);
+function lmAttItems(x){
+  const tag = `Adresāts: ${x.recipient}`;
+  const out = (x.attachments || []).filter(a => a.html).map(a => ({gen:true, ext:'PDF', name:a.name, sub:'Personalizēta vēstule · A4', v:{kind:'gen', name:a.name, html:a.html, print:a.print, tag}}));
+  const m = x.main;
+  if (m){ const a = !m.gen && m.lib && attById(m.lib), name = m.gen ? m.name : a ? a.fileName : m.name;
+    out.push({gen:!!m.gen, ext:m.gen ? 'PDF' : lmExt(name), name, sub:m.gen ? 'Personalizēta vēstule · A4' : `Vēstule pielikumā${a ? ` · ${fmtSize(a.size)}` : ''}`,
+      v:m.gen ? (m.doc && m.doc.html ? {kind:'gen', name, html:m.doc.html, print:m.doc.print, tag} : null) : attViewOf(a)}); }
+  (x.files || []).forEach(f => out.push({ext:lmExt(f.name), name:f.name, sub:fmtSize(f.size), v:attViewOf(f.lib && attById(f.lib))}));
+  return out;
+}
+// 2) Respondents: pamatdati, adreses ar statusiem, saistītie apsekojumi, citas kampaņas
+function lmRespHtml(x){
+  const r = state.respondents.find(y => y.id === x.respondentId);
+  if (!r) return '<p class="hint">Respondenta dati nav atrasti.</p>';
+  const jur = respType(r) === 'jur', row = lmRow, none = t => `<span class="muted">${t}</span>`;
+  const base = `<dl class="hd-meta lm-meta">${row('Nosaukums', `<b>${esc(r.name)}</b>`)}${row('NMK', r.nmk ? `<span class="mono">${esc(r.nmk)}</span>` : none('nav norādīts'))}
+    ${row('Tips', jur ? 'Juridiska persona (uzņēmums)' : 'Fiziska persona (mājsaimniecība)')}${jur ? row('Reģ. Nr.', r.regNr ? esc(r.regNr) : none('nav norādīts')) : ''}
+    ${row('Kontaktpersona', r.contact ? esc(r.contact) : none('nav norādīta'))}${row('Pazīmes', attrPills(r))}</dl>`;
+  // apsekojumi: vēstulē iekļautās anketas (statuss pēc vēstules reakcijas datiem) un respondenta citi apsekojumi – katram jaunākais sākušais periods
+  const inL = new Map(reactView(x).forms.map(f => [f.d.id, f])), now = Date.now(), seen = new Set();
+  const ds = dutiesOf(r.id).slice().sort((a, b) => (inL.has(b.id) - inL.has(a.id)) || periodStart(b.period) - periodStart(a.period))
+    .filter(d => { if (inL.has(d.id)){ seen.add(d.reportId); return true; } if (seen.has(d.reportId) || periodStart(d.period) > now) return false; seen.add(d.reportId); return true; });
+  const stCell = d => { const f = inL.get(d.id);
+    return f ? `<span class="rx-st rx-${f.st}"><i class="rx-d rx-${f.st}" aria-hidden="true">${FORM_ST[f.st].ic}</i>${esc(FORM_ST[f.st].label)}</span>${f.at ? ` <small class="muted">${esc(rxT(f.at))}</small>` : ''}` : dutyPill(d); };
+  const duty = ds.length ? `<div class="table-card tc-modal"><div class="table-wrap tc-area"><table class="duty-table lm-duty"><thead><tr><th>Apsekojums</th><th>Periods</th><th>Anketas statuss</th></tr></thead><tbody>${ds.map(d => { const p = repById(d.reportId);
+      return `<tr${inL.has(d.id) ? ' class="is-in"' : ''}><td>${esc(p ? repTitle(p) : '—')}${inL.has(d.id) ? ' <span class="rx-tag">šajā vēstulē</span>' : ''}</td><td>${esc(periodLabel(d.period))}</td><td>${stCell(d)}</td></tr>`; }).join('')}</tbody></table></div></div>`
+    : '<p class="hint">Respondentam nav reģistrētu apsekojumu.</p>';
+  const others = state.sent.filter(y => y.respondentId === r.id && String(y.batch) !== String(x.batch)).sort((a, b) => String(b.sentAt).localeCompare(String(a.sentAt)));
+  const camps = others.length ? `<ul class="lm-camps">${others.map(y => `<li><button type="button" class="lm-camp" data-lm-camp="${esc(y.id)}" title="Atvērt kampaņas žurnālu"><span class="lm-camp-n"><b>${esc(y.sessionName || `Kampaņa Nr. ${y.batch}`)}</b><small>${esc(SESS_LABELS[y.sessionKind] || 'Kampaņa')} · ${esc(fmtDateTime(y.sentAt))}</small></span>${msgBadge(histFinal(y))}</button></li>`).join('')}</ul>`
+    : '<p class="hint">Respondents nav bijis citās kampaņās.</p>';
+  return `<div class="lm-grid"><div><section class="lm-sec"><h3>Respondents</h3>${base}</section><section class="lm-sec"><h3>Adreses</h3>${addrPanel(r)}</section></div>
+    <div><section class="lm-sec"><h3>Saistītie apsekojumi</h3>${duty}</section><section class="lm-sec"><h3>Citas kampaņas šim respondentam (${others.length})</h3>${camps}</section></div></div>`;
+}
+// 3) Statusu ceļš: sūtīšanas mēģinājumi, NDR/DIV ar klasifikāciju un automātisko rīcību, pāreja uz nākamo adresi, atvēršana, anketu statusu izmaiņas
+function lmPathHtml(x){
+  const v = reactView(x), sentMs = Date.parse(x.sentAt);
+  const rx = [...(v.open ? [{at:v.open.at, cls:'ev-rx', t:x.channel === 'eadrese' ? 'Vēstule atvērta' : 'E-pasts atvērts (aptuveni)', d:v.open.approx ? 'izsekošanas attēls – atvēršana ir aptuvena' : ''}] : []),
+    ...v.forms.flatMap(f => f.hist.map(e => ({at:e.at, cls:e.st === 'kl' ? 'ev-temp' : e.st === 'ies' ? 'ev-ok' : 'ev-rx',
+      t:`Anketa ${formName(f)}: ${FORM_ST[e.st].label}${e.st === 'kl' ? ` (${FORM_ST.kl.d})` : ''}`, d:Date.parse(e.at) < sentMs ? 'pirms vēstules nosūtīšanas' : ''})))];
+  const ev = [...letterTimeline(x), ...rx].sort((p, q) => !p.at ? 1 : !q.at ? -1 : p.at.localeCompare(q.at));
+  const by = o => `${o.by}, ${fmtDateTime(o.at)}`, manual = x.status === 'kluda' || x.status === 'manuali';
+  const box = x.status === 'admin' ? {h:'Paziņojums administratoram', p:x.adminResolved ? `Atrisināta: ${by(x.adminResolved)}.` : 'Sūtītāja puses kļūda (bloķēšana, noraidījums): adrese netiek mainīta, vēstule netiek sūtīta atkārtoti.', done:!!x.adminResolved}
+    : manual ? {h:x.status === 'kluda' ? 'Manuāla pārbaude' : 'Manuāla izskatīšana', p:(x.status === 'kluda' ? 'Visas pieejamās adreses ir izsmeltas.' : 'Atbildes teksts nav atpazīts (piem., “adrese mainīta”).') + (x.reviewed ? ` ${x.reviewed.how || 'Izskatīta'}: ${by(x.reviewed)}.` : ''), done:!!x.reviewed} : null;
+  const tasks = (state.tasks || []).filter(t => t.recId === x.id);
+  return `<div class="lm-path">${box ? `<div class="alert ${box.done ? 'alert-info' : 'alert-warn'} lm-todo">${ICON.info}<span><b>${esc(box.h)}.</b> ${esc(box.p)}${lmActions(x) && !box.done ? ' Darbības – loga apakšā.' : ''}</span></div>` : ''}
+    <ol class="timeline">${ev.map(evHtml).join('')}</ol>
+    ${tasks.length ? `<div class="hd-tasks"><b>Uzdevumi</b>${tasks.map(t => `<div>${esc(t.title)} – ${esc(addrShort(t.type))}: <span class="mono">${esc(t.address)}</span> <span class="muted">(${esc(t.by)}, ${esc(fmtDate(isoDate(new Date(t.at))))})</span></div>`).join('')}</div>` : ''}
+    <p class="rx-note">E-pasta atvēršana ir aptuvena. Anketu statusi – vēstulē iekļautās veidlapas (apsekojums un periods).</p></div>`;
+}
+// apakšējā josla: darbības, kas pieejamas šai vēstulei (agrāk – rindas izvēlnē un izvēršanā)
+function lmActions(x){
+  const b = (action, label, cls = 'btn-secondary', title = '') => `<button type="button" class="btn ${cls}" data-action="${action}" data-id="${esc(x.id)}"${title ? ` title="${esc(title)}"` : ''}>${label}</button>`;
+  const out = [];
+  if (x.status === 'kluda' || x.status === 'manuali'){
+    out.push(b('lm-resend', `${ICON.send}Sūtīt atkārtoti`, 'btn-secondary', 'Ievadīt vai labot e-pasta adresi un nosūtīt vēstuli atkārtoti'));
+    if (!x.reviewed) out.push(b('hist-handover', 'Nodot kontaktu aktualizēšanai'), b('hist-reviewed', 'Atzīmēt kā izskatītu'), b('hist-notfound', 'Kontakts nav atrodams'));
+  }
+  if (x.status === 'admin' && !x.adminResolved) out.push(b('hist-resolve', 'Atzīmēt kā atrisinātu'));
+  if (canDeleteRec(x)) out.push(b('sent-del', `${ICON.trash}Dzēst ierakstu`, 'btn-danger-ghost', 'Ierakstus var dzēst pēc 2 gadiem no nosūtīšanas'));
+  return out.join('');
+}
+// "Sūtīt atkārtoti": e-pasta adrese (var labot) → nosūtīšana; adrese tiek saglabāta kā respondenta E-pasts 3
+function lmResend(id){
+  const x = state.sent.find(y => y.id === id), r = x && state.respondents.find(y => y.id === x.respondentId); if (!x) return;
+  const val = (r && r.email3) || (x.channel === 'epasts' ? x.address : '');
+  const {el} = openSubModal({title:'Sūtīt atkārtoti', content:`<p class="hint" style="margin-top:0">${esc(x.recipient)} · ${esc(x.sessionName || `Kampaņa Nr. ${x.batch}`)}</p>
+    <div class="field"><label for="mr-${x.id}">E-pasta adrese</label><input type="email" id="mr-${x.id}" value="${esc(val)}" placeholder="jauns.epasts@uznemums.example" aria-describedby="mr-err-${x.id} mr-hint-${x.id}">
+      <span class="err" id="mr-err-${x.id}" hidden></span><span class="hint" id="mr-hint-${x.id}">Adresi var labot. Tā tiks saglabāta kā respondenta E-pasts 3.</span></div>`,
+    actions:[{label:'Atcelt'}, {label:`${ICON.send}Sūtīt`, cls:'btn-primary', onClick:c => { if (resendLetter(x.id)) c(); }}]});
+  const inp = $('input', el); inp.focus(); inp.select();
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('[data-act="1"]', el).click(); } });
+}
+lmDlg.addEventListener('click', e => {
+  if (e.target === lmDlg || e.target.closest('[data-lm-close]')){ lmDlg.close(); return; }
+  const n = e.target.closest('[data-lm-nav]'); if (n){ lmNav(+n.dataset.lmNav); return; }
+  const t = e.target.closest('[data-lm-tab]');
+  if (t){ ui.lm.tab = t.dataset.lmTab; renderLetterModal(); $(`[data-lm-tab="${ui.lm.tab}"]`, lmDlg).focus(); return; }
+  const v = e.target.closest('[data-lm-ver]');
+  if (v){ ui.lm.ver = v.dataset.lmVer; renderLetterModal(); $(`[data-lm-ver="${ui.lm.ver}"]`, lmDlg).focus(); return; }
+  // citas kampaņas: atver tās kampaņas žurnālu (fokuss – šī respondenta rindā)
+  const c = e.target.closest('[data-lm-camp]'), y = c && state.sent.find(z => z.id === c.dataset.lmCamp);
+  if (y){ ui.lm.id = y.id; lmDlg.close(); openJrnCamp(y.batch); if (ui.tab !== 'vesture') showTab('vesture'); }
+});
+// cilnes: bultiņas pa kreisi / pa labi, Home, End
+lmDlg.addEventListener('keydown', e => {
+  const t = e.target.closest('.lm-tab'); if (!t || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+  e.preventDefault();
+  const ks = LM_TABS.map(z => z[0]), i = ks.indexOf(t.dataset.lmTab);
+  ui.lm.tab = ks[e.key === 'Home' ? 0 : e.key === 'End' ? ks.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : ks.length - 1)) % ks.length];
+  renderLetterModal(); $(`[data-lm-tab="${ui.lm.tab}"]`, lmDlg).focus();
+});
+// aizverot – fokuss atpakaļ uz pēdējās skatītās vēstules rindu (ja tā aiz "Rādīt vairāk" – tabula tiek paplašināta)
+lmDlg.addEventListener('close', () => {
+  const id = ui.lm && ui.lm.id; ui.lm = null; ui.ndrCur = ''; lmDlg.innerHTML = '';
+  if (!id || ui.tab !== 'vesture' || ui.jrn.camp == null) return;
+  const i = (ui.histList || []).findIndex(y => y.id === id);
+  if (i >= ui.histLimit){ ui.histLimit = Math.ceil((i + 1) / 50) * 50; renderSent(); }
+  const tr = $(`#hist-body tr[data-hrow="${id}"]`); if (tr) tr.focus();
+});
 
 // ===== Atskaites (F18) =====
 // 4 apakšcilnes: Pārskats · Piegāde (piegādes rezultāti, neveiksmīgās ziņas, atkārtotā nosūtīšana) · Reakcija un iesniegšana · Patērētais laiks (KPI)
@@ -12223,7 +12396,7 @@ function deliveryView(xs){
   const nHead = ['Laiks', 'Respondents', 'Kampaņa', 'Kanāls un adrese', 'Iemesls', 'Tips', 'Klasifikācija', 'Automātiskā rīcība', 'Vēstules statuss'];
   const stTxt = x => STATUSES[x.status].label + (STATUSES[x.status].next ? ` → ${STATUSES[x.status].next}` : '') + (x.reviewed ? ' · izskatīta' : '') + (x.adminResolved ? ' · atrisināta' : '');
   const nRows = nd.sort((a, b) => String(b.at).localeCompare(String(a.at))).map(n => { const r = ruleOf(n.rule), t = NDR_TYPES[r.type];
-    return [fmtT(n.at), {html:respLink(n.x.respondentId, n.x.recipient), text:n.x.recipient}, n.x.sessionName || '', `${CHANNELS[r.ch]} · ${addrShort(n.type)}: ${n.address}`,
+    return [fmtT(n.at), {html:letterLink(n.x), text:n.x.recipient}, n.x.sessionName || '', `${CHANNELS[r.ch]} · ${addrShort(n.type)}: ${n.address}`,
       r.reason, {html:`<span class="pill ${t.cls}">${esc(t.label)}</span>`, text:t.label},
       {html: n.ai ? `<span class="pill pill-ai">MI klasificēts · ${Math.round(n.conf * 100)}%</span>` : '<span class="pill pill-div">DIV statuss</span>', text: n.ai ? `MI klasificēts ${Math.round(n.conf * 100)}%` : 'DIV statuss'},
       r.action, {html:`${stPill(n.x.status)}${n.x.reviewed ? ' <span class="muted">izskatīta</span>' : ''}${n.x.adminResolved ? ' <span class="muted">atrisināta</span>' : ''}`, text:stTxt(n.x)}]; });
@@ -12244,7 +12417,7 @@ function deliveryView(xs){
     if ((x.manual || []).some(m => m.action === 'resend')) r.push('Manuāla atkārtota nosūtīšana');
     return r.join('; '); };
   const aHead = ['Respondents', 'Kampaņa', 'Mēģinājumi', 'Iemesls', 'Pēdējā adrese', 'Gala rezultāts'];
-  const aRows = rs.map(x => [{html:respLink(x.respondentId, x.recipient), text:x.recipient}, x.sessionName || '', (x.attempts || []).filter(a => attKind(a) !== 'skip').length, why(x), `${addrShort(x.addrType || '')}: ${x.address}`, STATUSES[x.status].label]);
+  const aRows = rs.map(x => [{html:letterLink(x), text:x.recipient}, x.sessionName || '', (x.attempts || []).filter(a => attKind(a) !== 'skip').length, why(x), `${addrShort(x.addrType || '')}: ${x.address}`, STATUSES[x.status].label]);
   const okAfter = rs.filter(x => ['piegadats', 'nosutits', 'div_pienemts', 'piegade'].includes(x.status)).length;
   const s3 = `<div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
       <div class="card kpi"><div class="n">${rs.length}</div><div class="l">Atkārtoti nosūtītas</div><div class="sub">${pct(rs.length, xs.length)}% no visām vēstulēm</div></div>
@@ -12721,8 +12894,7 @@ const actions = {
     showTab('kampanas'); toast('Melnraksts dzēsts.');
   },
   'fixed-info': () => openFixedInfo(),
-  'resp-card': (id, el) => { const tr = el && el.closest && el.closest('tr'), hid = tr && (tr.dataset.hrow || (tr.classList.contains('hist-detail') && tr.previousElementSibling ? tr.previousElementSibling.dataset.hrow : ''));
-    if (ui.tab === 'vesture' && hid){ const x = state.sent.find(y => y.id === hid); if (x && isTodo(x)) ui.ndrCur = hid; } openRespCard(id); },
+  'resp-card': id => openRespCard(id),
   'camp-new': () => { if (ui.campView === 'edit') flushDraft(); newSession(true); openEditor(); },
   'camp-open': id => openEditor(id),
   'camp-back': () => showTab('kampanas'),
@@ -12732,8 +12904,9 @@ const actions = {
   // Žurnāls
   'jrn-open': id => openJrnCamp(id),
   'jrn-back': () => { ui.jrn.camp = null; renderSent(); window.scrollTo({top:0}); const q = $('#jrn-q'); if (q) q.focus({preventScroll:true}); },
-  'jrn-resp': id => { const x = state.sent.find(y => y.id === id); if (!x) return; ui.histRow.add(x.id);
-    openJrnCamp(x.batch, {q:x.recipient}); setTimeout(() => { const rw = $(`#hist-body tr[data-hrow="${x.id}"]`); if (rw) rw.scrollIntoView({block:'center'}); }, 50); },
+  // respondentu meklēšana (1. līmenis) un Atskaišu tabulas: kampaņas žurnāls ar šo respondentu + vēstules detaļu logs
+  'jrn-resp': id => openLetterIn(id),
+  'jrn-letter': id => openLetterIn(id),
   'jrn-rmore': () => { ui.jrn.rLimit += 20; renderJrnL1(); },
   'jrn-cmore': () => { ui.jrn.cLimit += 50; renderJrnL1(); },
   'camp-row': id => openCampRow(id),
@@ -12746,8 +12919,6 @@ const actions = {
   'camp-menu': (id, el) => openCampMenu(el),
   'react-menu': (id, el) => openCampMenu(el),
   'react-remind': id => { const [b, g] = String(id).split('|'); reactReminder(b, g); },
-  'hist-form': id => { ui.histForm.has(id) ? ui.histForm.delete(id) : ui.histForm.add(id); renderSent(); const b = $(`.hist-table [data-action="hist-form"][data-id="${id}"]`); if (b) b.focus(); },
-  'hist-menu': (id, el) => openCampMenu(el),
   'camp-copy': id => copyCampaign(id),
   'camp-delete': async id => {
     const d = state.drafts.find(x => x.id === id);
@@ -12756,18 +12927,17 @@ const actions = {
     if (compose.draftId === id) newSession(true);
     save(); renderCampaigns(); renderCounts(); toast('Melnraksts dzēsts.');
   },
-  'hist-row': id => { ui.histRow.has(id) ? ui.histRow.delete(id) : ui.histRow.add(id); ndrTrack(id); renderSent(); const b = $(`.hist-table .hist-st[data-id="${id}"]`) || $(`.hl-table [data-action="hist-row"][data-id="${id}"]`); if (b) b.focus(); },
-  'hist-resend': id => resendLetter(id),
+  'lm-resend': id => lmResend(id),
   'hist-reviewed': id => { const x = state.sent.find(y => y.id === id); if (!x) return; const at = new Date().toISOString();
-    x.reviewed = {by:CURRENT_USER, at}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'reviewed'}); ndrResolve(x, 'Atzīmēta kā izskatīta'); save(); renderSent(); toast('Vēstule atzīmēta kā izskatīta.'); },
+    x.reviewed = {by:CURRENT_USER, at}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'reviewed'}); ndrResolve(x, 'Atzīmēta kā izskatīta'); save(); renderSent(); refreshCard(); toast('Vēstule atzīmēta kā izskatīta.'); },
   'hist-notfound': id => { const x = state.sent.find(y => y.id === id); if (!x) return; const at = new Date().toISOString();
-    x.reviewed = {by:CURRENT_USER, at, how:'Kontakts nav atrodams'}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'notfound'}); ndrResolve(x, 'Kontakts nav atrodams'); save(); renderSent(); toast('Atzīmēts: kontakts nav atrodams.'); },
+    x.reviewed = {by:CURRENT_USER, at, how:'Kontakts nav atrodams'}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'notfound'}); ndrResolve(x, 'Kontakts nav atrodams'); save(); renderSent(); refreshCard(); toast('Atzīmēts: kontakts nav atrodams.'); },
   'hist-handover': id => { const x = state.sent.find(y => y.id === id), r = x && state.respondents.find(y => y.id === x.respondentId); if (!x || !r) return; const at = new Date().toISOString();
     addContactTask(r, x.addrType, x.address, `Manuāla pārbaude: ${STATUSES[x.status].label.toLowerCase()} vēstule`, CURRENT_USER, x.id, at);
     x.reviewed = {by:CURRENT_USER, at, how:'Nodota kontaktu aktualizēšanai'}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'handover'});
     ndrResolve(x, 'Nodots kontaktu pārbaudei'); save(); renderSent(); refreshCard(); toast('Izveidots uzdevums “Kontaktu aktualizēšana”.'); },
   'hist-resolve': id => { const x = state.sent.find(y => y.id === id); if (!x) return; const at = new Date().toISOString();
-    x.adminResolved = {by:CURRENT_USER, at}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'resolved'}); ndrResolve(x, 'Sūtītāja puses kļūda atrisināta'); save(); renderSent(); toast('Sūtītāja puses kļūda atzīmēta kā atrisināta.'); },
+    x.adminResolved = {by:CURRENT_USER, at}; (x.manual = x.manual || []).push({at, by:CURRENT_USER, action:'resolved'}); ndrResolve(x, 'Sūtītāja puses kļūda atrisināta'); save(); renderSent(); refreshCard(); toast('Sūtītāja puses kļūda atzīmēta kā atrisināta.'); },
   'rules-open': () => openRulesModal(),
   'rep-csv': () => exportCsv(),
   'rep-sort': key => { const so = ui.rep.sort; ui.rep.sort = {key, dir: so.key === key && so.dir === 'desc' ? 'asc' : so.key === key ? 'desc' : (['name', 'kind'].includes(key) ? 'asc' : 'desc')}; renderReports();
@@ -12858,7 +13028,7 @@ const actions = {
     if (!ok) return;
     state = seedData(); state.drafts = []; state.planned = [];
     newSession(true); seedHistory(); assignCreators(); seedApvDrafts(); save();
-    ui.histRow = new Set(); ui.campView = 'list';
+    ui.campView = 'list';
     renderAll(); showTab(ui.tab === 'veidnes' ? 'veidnes' : ui.tab === 'vesture' ? 'vesture' : 'kampanas'); toast('Testa dati atjaunoti.');
   },
 };
@@ -13158,13 +13328,12 @@ $('#hist-body').addEventListener('click', e => {
   ui.histSort = cur.k !== k ? {k, dir:1} : cur.dir === 1 ? {k, dir:-1} : {k:'', dir:0};
   renderSent(); const nb = $(`.hist-table [data-hsort="${k}"]`); if (nb) nb.focus();
 });
-// veidlapas rinda (detaļās) – Enter / atstarpe izvērš laika līniju
-$('#hist-body').addEventListener('keydown', e => { const tr = e.target.closest('tr.rx-row'); if (tr && e.target === tr && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); actions['hist-form'](tr.dataset.id); } });
-// vēstules rinda – izvērš statusu ceļu (izņemot saites un pogas)
+// vēstules rinda – klikšķis jebkurā rindas vietā (vai Enter / atstarpe) atver vēstules detaļu logu
+$('#hist-body').addEventListener('keydown', e => { const tr = e.target.closest('tr.hist-row'); if (tr && e.target === tr && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); openLetterModal(tr.dataset.hrow); } });
 $('#hist-body').addEventListener('click', e => {
-  if (e.target.closest('button, a, input, .hist-detail')) return;
+  if (e.target.closest('button, a, input')) return;
   const tr = e.target.closest('tr.hist-row');
-  if (tr) actions['hist-row'](tr.dataset.hrow);
+  if (tr) openLetterModal(tr.dataset.hrow);
 });
 $('#tpl-search').addEventListener('input', e => { ui.tplSearch = e.target.value; ui.tplLimit = TPL_PAGE; renderTemplates(); });
 $('#tpl-cat').addEventListener('change', e => { ui.tplCat = e.target.value; ui.tplLimit = TPL_PAGE; renderTemplates(); });
@@ -13892,8 +14061,8 @@ let wlLastAct = Date.now(), wlCtxKey = '', wlLastAcc = 0, wlPrevTick = Date.now(
 // kur šobrīd tiek strādāts: veidnes redaktors (ne kampaņas satura logs) vai kampaņas izveides / rediģēšanas skats
 function wlTarget(){
   if (ui.tplWl && modal.open) return {key:ui.tplWl.key, wl:ui.tplWl.wl, step:0};
-  // nepiegādātas vēstules apstrāde Žurnālā (atvērtas detaļas vai respondenta kartīte) – lietotājam netiek rādīts
-  if (ui.tab === 'vesture' && ui.ndrCur && (ui.histRow.has(ui.ndrCur) || drawer.open)){
+  // nepiegādātas vēstules apstrāde Žurnālā (atvērts vēstules detaļu logs) – lietotājam netiek rādīts
+  if (ui.ndrCur && lmDlg.open){
     const w = (state.ndrWork = state.ndrWork || {})[ui.ndrCur] || (state.ndrWork[ui.ndrCur] = {active:0, sessions:0, startedAt:new Date().toISOString()});
     return {key:'ndr:' + ui.ndrCur, wl:w, step:0, ndr:true};
   }
