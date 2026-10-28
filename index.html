@@ -2319,12 +2319,13 @@ mark.v-miss,mark.v-unk{background:var(--danger-bg);color:var(--danger);border-ra
 /* ===== Vēstule – PDF pielikums (A4) ===== */
 .doc{position:relative;background:#fff;width:100%;max-width:794px;aspect-ratio:210/297;margin:0 auto;padding:40px 56px 64px;box-shadow:0 1px 3px rgba(0,0,0,.14),0 6px 24px rgba(0,40,40,.08);font-family:"Segoe UI",Arial,sans-serif;font-size:12.5px;line-height:1.55;color:var(--doc-ink)}
 .doc-head{text-align:center}
-/* veidlapas galva: CSP logo (tas pats, kas e-pasta galvenē) centrā virs iestādes nosaukuma – vienmēr, bez iestatījumiem;
-   arī agrāk nosūtītajās vēstulēs (vēsturē saglabātā tukšā logo vieta tiek aizpildīta ar CSS; agrākā tukšā apļa vieta paslēpta) */
-.doc-logo{width:44px;height:44px;border-radius:5px;background:var(--primary);color:#fff;display:grid;place-items:center;font:800 14px/1 "Segoe UI",Arial,sans-serif;letter-spacing:.3px;margin:0 auto 8px}
-.doc-logo:empty::before{content:"CSP"}
-.doc-crest{display:none}
-.doc-org{font-size:11.5px;font-weight:600}
+/* Veidlapas galva – kā pielikumu sagatavēs: krāsaina josla lapas augšmalā, valsts ģerbonis centrā (atteli/gerbonis.png – no sagataves),
+   iestādes nosaukums, līnija, rekvizīti, pilsēta; vienmēr, bez iestatījumiem. Tās pašas klases arī vēsturē saglabātajām vēstulēm
+   (tur .doc-crest ir tukšs div – ģerbonis ar fona attēlu; Versijas 146 "CSP" teksts joslā paslēpts) */
+.doc-logo{position:absolute;top:0;left:50%;transform:translateX(-50%);width:62px;height:31px;margin:0;background:#008DA1;font-size:0;color:transparent;overflow:hidden}
+.doc-crest{display:block;width:64px;height:64px;margin:6px auto 10px;object-fit:contain;background:url("atteli/gerbonis.png") center/contain no-repeat}
+img.doc-crest{background:none}
+.doc-org{font-size:12px;font-weight:400;letter-spacing:.1px}
 .doc-addr{display:inline-block;border-top:1px solid var(--doc-ink);margin-top:8px;padding:3px 24px 0;font-size:10px}
 .doc-city{font-size:10px;margin-top:2px}
 .doc-meta{font-size:10.5px;margin:22px 0 16px}
@@ -3514,7 +3515,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 146</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 147</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -6047,13 +6048,17 @@ function templateText(t, channel){
 // vēstule – tikai latviešu valodā (valodu versiju nav)
 function versionOf(t){ return {lang:'lv', fallback:false, t}; }
 // PDF pielikuma dokuments (A4)
+// Veidlapas galva – viena kopīga komponente visām ģenerētajām PDF vēstulēm (personalizētā vēstule visos skatos un drukā):
+// josla, valsts ģerbonis (tas pats attēls kā pielikumu sagatavēs), iestāde, līnija, rekvizīti un pilsēta – no "Pastāvīgās daļas" (state.layout)
+const FORM_CREST = 'atteli/gerbonis.png';
+const formHeadHtml = (L = state.layout) => `<div class="doc-head"><div class="doc-logo" aria-hidden="true"></div><img class="doc-crest" src="${FORM_CREST}" alt="Latvijas Republikas valsts ģerbonis">
+      <div class="doc-org">${esc(L.org)}</div>
+      <div class="doc-addr">${esc(L.address)}</div><div class="doc-city">${esc(L.city)}</div></div>`;
 function docHtml(t, ctx, mark, attrs, f = compose.f, L = state.layout){
   const d = t.doc;
   const R = h => fillRich(h, ctx, mark);
   return `<div class="doc">
-    <div class="doc-head"><div class="doc-logo" role="img" aria-label="CSP logo">CSP</div>
-      <div class="doc-org">${esc(L.org)}</div>
-      <div class="doc-addr">${esc(L.address)}</div><div class="doc-city">${esc(L.city)}</div></div>
+    ${formHeadHtml(L)}
     <div class="doc-meta">${R('{datums} Nr. {dok_nr}')}</div>
     <div class="doc-to">${R('{adresāts}')}${ctx && ctx['vārds'] && ctx['vārds'] !== ctx['adresāts'] ? `<br><span>${R('{vārds}')}</span>` : ''}</div>
     ${d.banner ? `<div class="doc-banner"${(b => b ? ` style="background:${b.img ? `${UBN_C1} url('${b.img}') center/cover no-repeat` : b.c1}"` : '')(bannerById(visOf(t).banner))}><b>${R('{apsekojums}')}</b>${d.tags ? `<small>${esc(d.tags)}</small>` : ''}</div>${d.slogan && (L.lang || 'lv') === 'lv' ? `<div class="doc-slogan">${esc(d.slogan)}</div>` : ''}` : ''}
