@@ -1243,6 +1243,17 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .flt-clear{font-size:var(--fs-sm);padding:2px 4px}
 .cf-f{flex:0 0 auto;min-width:0}
 .cf-kind select{width:160px}
+.tpl-st-dd{flex:0 0 auto;width:250px}
+/* Sagataves: "Veidlapas / Apsekojumi" (pielikumu cilnē) un saite uz NAMEJS kolonnā "Fails" */
+.sag-sv{width:280px}
+.sag-sv .ms-input input{width:100%}
+.namejs-link{display:inline-flex;align-items:center;gap:5px;color:var(--primary-dark);font-weight:600;text-decoration:none;white-space:nowrap}
+.namejs-link .icon{width:14px;height:14px}
+.namejs-link:hover{text-decoration:underline}
+.tpl-st-dd > summary{padding-top:8px;padding-bottom:8px;font-size:var(--fs-sm)}
+.tpl-st-dd .dd-list{right:auto;min-width:100%}
+.dd-list .dd-all{border-bottom:1px solid var(--border-light);font-weight:600}
+.tpl-st-dd .dd-list label .muted{margin-left:auto;font-size:var(--fs-xs)}
 .cf-creator .dd{width:175px}
 .cf-creator .dd > summary{padding-top:8px;padding-bottom:8px}
 .cf-dd{min-width:220px;padding:6px}
@@ -2341,6 +2352,20 @@ img.doc-crest{background:none}
 .doc .rich h2{color:var(--primary);font-size:15px}
 .doc .rich h3{color:var(--primary);font-size:13.5px}
 .doc .rich p{margin-bottom:.6em}
+/* "Nemainīgā informācija" (tikai lasāma): katra daļa ar virsrakstu un priekšskatījumu */
+.fi-note{margin:0 0 14px;color:var(--text-muted);font-size:var(--fs-sm)}
+.fi-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+.fi-sec{min-width:0;border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;background:var(--surface)}
+.fi-h{margin:0 0 2px;font-size:var(--fs-md);color:var(--primary-darker)}
+.fi-hint{margin:0 0 8px;font-size:var(--fs-xs);color:var(--text-muted)}
+.fi-pv{background:var(--bg);border-radius:var(--radius-sm);padding:10px}
+.doc.fi-doc{aspect-ratio:auto;max-width:none;padding:40px 22px 14px;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.doc.fi-doc-close,.doc.fi-doc-text{padding:12px 18px}
+.fi-doc-close .doc-close{margin-top:0}
+.fi-dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 12px;margin:0;font-size:var(--fs-sm)}
+.fi-dl dt{color:var(--text-muted)} .fi-dl dd{margin:0}
+.fi-foot{background:#fff;border-radius:var(--radius-xs)}
+@media (max-width:900px){ .fi-grid{grid-template-columns:1fr} }
 .doc-close{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-top:26px}
 .doc-bar{position:absolute;left:0;right:0;bottom:0;height:16px;background:repeating-linear-gradient(90deg,var(--doc-bar-1) 0 4%,var(--doc-bar-2) 4% 8%,var(--doc-bar-3) 8% 12%,var(--doc-bar-4) 12% 16%)}
 .doc-stage{background:#E9EEEF;border-radius:8px;padding:20px}
@@ -3056,7 +3081,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         <h1>Vēstuļu veidnes</h1>
       </div>
       <div class="toolbar">
-        <button class="btn btn-plain" data-action="layout-edit"><svg class="icon" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 17h8"/></svg>Pastāvīgās daļas</button>
+        <button class="btn btn-secondary" data-action="fixed-info" title="Informācija, ko vēstulēm pievieno automātiski (tikai apskatei)"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg>Nemainīgā informācija</button>
         <button class="btn btn-soft" data-action="sag-open"><svg class="icon" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Sagataves</button>
         <button class="btn btn-primary" data-action="tpl-new"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Jauna veidne</button>
       </div>
@@ -3069,12 +3094,12 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <input type="search" id="tpl-search" placeholder="Meklēt pēc nosaukuma vai temata…">
         </label>
         <label class="cf-f cf-kind"><span class="sr-only">Kategorija</span><select id="tpl-cat"></select></label>
-        <label class="flt-chk tpl-arch-chk"><input type="checkbox" id="tpl-arch"> Rādīt arhivētās<span class="muted" id="tpl-arch-n"></span></label>
+        <details class="dd tpl-st-dd" id="tpl-st-dd"><summary id="tpl-st-sum" aria-label="Statuss"></summary>
+          <div class="dd-list" id="tpl-st-list" role="group" aria-label="Statuss"></div></details>
         <button type="button" class="flt-adv-btn" id="tpl-adv-btn" aria-expanded="false" aria-controls="tpl-adv"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Papildu filtri<span class="flt-n" id="tpl-adv-n"></span><span class="flt-caret" aria-hidden="true">▾</span></button>
       </div>
       <div class="flt-adv" id="tpl-adv" hidden>
         <label class="flt-f"><span class="sr-only">Vēstules saturs</span><select id="tpl-kind"></select></label>
-        <label class="flt-f"><span class="sr-only">Statuss</span><select id="tpl-st"></select></label>
         <label class="flt-f"><span class="sr-only">Vērtējums</span><select id="tpl-rt"></select></label>
         <label class="flt-f"><span class="sr-only">Saistītais apsekojums</span><select id="tpl-sv"></select></label>
       </div>
@@ -3090,9 +3115,9 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       <div class="page-head">
         <div>
           <button type="button" class="btn btn-ghost btn-sm back-link" data-action="sag-back">← Atpakaļ uz veidnēm</button>
-          <h1>Sagataves <span class="tip" tabindex="0" role="note" aria-label="Atkārtoti izmantojami materiāli, no kuriem veido vai papildina veidnes: e-pasta satura šabloni un pielikumu sagataves." data-tip="Atkārtoti izmantojami materiāli, no kuriem veido vai papildina veidnes: e-pasta satura šabloni un pielikumu sagataves.">i</span></h1>
+          <h1>Sagataves <span class="tip" tabindex="0" role="note" aria-label="Atkārtoti izmantojami materiāli, no kuriem veido vai papildina veidnes: e-pasta satura sagataves un pielikumu sagataves." data-tip="Atkārtoti izmantojami materiāli, no kuriem veido vai papildina veidnes: e-pasta satura sagataves un pielikumu sagataves.">i</span></h1>
         </div>
-        <div class="toolbar"><button type="button" class="btn btn-primary" id="sag-add"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Pievienot sagatavi</button></div>
+        <div class="toolbar"><button type="button" class="btn btn-primary" id="sag-add"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span id="sag-add-l">Izveidot sagatavi</span></button></div>
       </div>
       <div class="sag-tabs" id="sag-group" role="tablist" aria-label="Sagatavju grupa"></div>
       <div class="flt sag-toolbar" id="sag-filters" role="search" aria-label="Sagatavju filtri">
@@ -3103,7 +3128,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           </label>
           <label class="cf-f cf-kind"><span class="sr-only">Adresāts</span><select id="sag-aud" aria-label="Adresāts"></select></label>
           <label class="cf-f cf-kind"><span class="sr-only">Kategorija</span><select id="sag-cat" aria-label="Kategorija"></select></label>
-          <label class="cf-f cf-kind"><span class="sr-only">Sagataves veids</span><select id="sag-kind" aria-label="Sagataves veids"></select></label>
+          <div class="cf-f sag-sv" id="sag-sv-f"><span class="sr-only" id="sag-sv-l">Veidlapas / Apsekojumi</span><div id="sag-sv-host"></div></div>
         </div>
       </div>
       <div class="card table-card tc-fit" id="sag-card">
@@ -3515,7 +3540,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 147</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 148</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -3803,22 +3828,22 @@ const ATT_KINDS = {variants:'Vēstules variants', instrukcija:'Instrukcija', inf
 const attKindOf = a => ATT_KINDS[a.kind] ? a.kind : a.lib ? 'variants' : 'pielikums';
 const ATT_DIR = 'pielikumi/';
 const ATT_LIB = [
-  {id:'lib-dsa-intervija', file:'uzaicinajums_darbaspeka_apsekojums_intervija_lv.pdf', pages:2, size:751636,
+  {id:'lib-dsa-intervija', sv:'a-dsa', namejs:'https://namejs.example/doc/2026-0412', file:'uzaicinajums_darbaspeka_apsekojums_intervija_lv.pdf', pages:2, size:751636,
    name:'Uzaicinājums – Darbaspēka apsekojums (telefona vai klātienes intervija)', cat:'uzaicinajums', aud:'fiz', lang:'lv', survey:'Darbaspēka apsekojums',
    desc:'Garā uzaicinājuma vēstule mājsaimniecībām ar baneri: kāpēc dalība ir svarīga, kā notiek intervija pa telefonu vai klātienē, datu konfidencialitāte un plašāka informācija. Beigās – teikumi tiem, kas piedalījās iepriekš, un tiem, kas nepiedalījās.'},
-  {id:'lib-celotaju-isa-e-anketa', file:'isa_vestule_celotaju_apsekojums_e-anketa_lv.pdf', pages:1, size:436433,
+  {id:'lib-celotaju-isa-e-anketa', sv:'a-cel', namejs:'https://namejs.example/doc/2026-0388', file:'isa_vestule_celotaju_apsekojums_e-anketa_lv.pdf', pages:1, size:436433,
    name:'Īsā vēstule – Ceļotāju apsekojums (e-anketa vai telefonintervija)', cat:'uzaicinajums', aud:'fiz', lang:'lv', survey:'Ceļotāju apsekojums',
    desc:'Vienas lapas uzaicinājums piedalīties aptaujā par atpūtas un darījumu braucieniem. E-anketa ar kvadrātkodu; ja tā netiek aizpildīta – telefonintervija.'},
-  {id:'lib-celotaju-isa-telefons', file:'isa_vestule_celotaju_apsekojums_telefonaptauja_lv.pdf', pages:1, size:393469,
+  {id:'lib-celotaju-isa-telefons', sv:'a-cel', namejs:'https://namejs.example/doc/2026-0389', file:'isa_vestule_celotaju_apsekojums_telefonaptauja_lv.pdf', pages:1, size:393469,
    name:'Īsā vēstule – Ceļotāju apsekojums (telefonaptauja)', cat:'uzaicinajums', aud:'fiz', lang:'lv', survey:'Ceļotāju apsekojums',
    desc:'Vienas lapas uzaicinājums uz telefonaptauju par atpūtas un darījumu braucieniem. Kvadrātkods ved uz aptaujas informāciju.'},
-  {id:'lib-ikt-poga', file:'uzaicinajums_ikt_2026_ar_pogu_lv.pdf', pages:2, size:455390,
+  {id:'lib-ikt-poga', namejs:'https://namejs.example/doc/2026-0451', file:'uzaicinajums_ikt_2026_ar_pogu_lv.pdf', pages:2, size:455390,
    name:'Uzaicinājums – IKT lietošana 2026 (ar pogu “Dodies uz anketu”)', cat:'uzaicinajums', aud:'fiz', lang:'lv', survey:'Informācijas un komunikāciju tehnoloģiju lietošana 2026. gadā',
    desc:'Saīsināts uzaicinājums ar izceltu pogu uz e-anketu un pamācību, kā to aizpildīt. Otrajā lapā – plašāka informācija un noslēgums.'},
-  {id:'lib-celotaju-e-anketa', file:'uzaicinajums_celotaju_apsekojums_e-anketa_lv.pdf', pages:2, size:780428,
+  {id:'lib-celotaju-e-anketa', sv:'a-cel', namejs:'https://namejs.example/doc/2026-0390', file:'uzaicinajums_celotaju_apsekojums_e-anketa_lv.pdf', pages:2, size:780428,
    name:'Uzaicinājums – Ceļotāju apsekojums (e-anketa)', cat:'uzaicinajums', aud:'fiz', lang:'lv', survey:'Ceļotāju apsekojums',
    desc:'Garā uzaicinājuma vēstule ar baneri un statistiku par ceļošanu: kāpēc dalība ir svarīga, e-anketas pamācība ar kvadrātkodu un telefonintervijas iespēja.'},
-  {id:'lib-ikt-e-anketa', file:'uzaicinajums_ikt_2026_e-anketa_lv.pdf', pages:2, size:822830,
+  {id:'lib-ikt-e-anketa', namejs:'https://namejs.example/doc/2026-0452', file:'uzaicinajums_ikt_2026_e-anketa_lv.pdf', pages:2, size:822830,
    name:'Uzaicinājums – IKT lietošana 2026 (e-anketa)', cat:'uzaicinajums', aud:'fiz', lang:'lv', survey:'Informācijas un komunikāciju tehnoloģiju lietošana 2026. gadā',
    desc:'Garā uzaicinājuma vēstule par interneta lietošanas aptauju ar baneri, konkrētiem e-anketas un telefonintervijas datumiem un kvadrātkodu.'},
 ].map(a => ({...a, lib:true, fileName:a.file, thumb:'sikbildes/' + a.file.replace(/\.pdf$/, '.jpg')}));
@@ -3838,13 +3863,13 @@ function miniPdf(title, lines){
 }
 // Testa materiāli dažādiem sagatavju veidiem (izdomāti)
 const SEED_MATERIALS = [
-  {id:'att-seed-instr', kind:'instrukcija', fileName:'instrukcija_e-anketas_aizpildisana.pdf', name:'Instrukcija – e-anketas aizpildīšana', cat:'uzaicinajums', aud:'visi', lang:'lv',
+  {id:'att-seed-instr', namejs:'https://namejs.example/doc/2026-0120', kind:'instrukcija', fileName:'instrukcija_e-anketas_aizpildisana.pdf', name:'Instrukcija – e-anketas aizpildīšana', cat:'uzaicinajums', aud:'visi', lang:'lv',
    desc:'Soli pa solim: kā pieslēgties e-anketai, saglabāt atbildes un iesniegt anketu. Pievienojama uzaicinājumiem.',
    lines:['1. Atveriet vestule noradito saiti vai noskenejiet kvadratkodu.', '2. Ievadiet lietotaja kodu un paroli no vestules.', '3. Aizpildiet anketu; atbildes tiek saglabatas automatiski.', '4. Nospiediet "Iesniegt". Apstiprinajumu sanemsiet e-pasta.', 'Jautajumu gadijuma: 60000000 (testa numurs).']},
-  {id:'att-seed-info', kind:'info', fileName:'informativais_materials_datu_konfidencialitate.pdf', name:'Informatīvais materiāls – datu konfidencialitāte', cat:'info', aud:'visi', lang:'lv',
+  {id:'att-seed-info', namejs:'https://namejs.example/doc/2026-0121', kind:'info', fileName:'informativais_materials_datu_konfidencialitate.pdf', name:'Informatīvais materiāls – datu konfidencialitāte', cat:'info', aud:'visi', lang:'lv',
    desc:'Īss skaidrojums respondentiem par to, kā tiek aizsargāti un izmantoti viņu sniegtie dati.',
    lines:['Sniegtie dati tiek izmantoti tikai statistikas vajadzibam.', 'Dati netiek nodoti tresajam personam identificejama veida.', 'Rezultati tiek publiceti tikai apkopota veida.', '(Izdomats testa materials.)']},
-  {id:'att-seed-piel', kind:'pielikums', fileName:'pielikums_iesniegsanas_termini_2026.pdf', name:'Pielikums – pārskatu iesniegšanas termiņi 2026', cat:'atgadinajums', aud:'jur', lang:'lv',
+  {id:'att-seed-piel', namejs:'https://namejs.example/doc/2026-0207', kind:'pielikums', fileName:'pielikums_iesniegsanas_termini_2026.pdf', name:'Pielikums – pārskatu iesniegšanas termiņi 2026', cat:'atgadinajums', aud:'jur', lang:'lv',
    desc:'Tabula ar mēneša, ceturkšņa un gada pārskatu iesniegšanas termiņiem. Pievienojama atgādinājumiem uzņēmumiem.',
    lines:['Menesa parskati - lidz nakama menesa 10. datumam.', 'Ceturksna parskati - lidz nakama menesa 20. datumam.', 'Gada parskati - lidz 1. aprilim.', '(Izdomats testa materials.)']},
 ];
@@ -4339,7 +4364,7 @@ function flattenConds(html, veids){
   });
   return t.innerHTML;
 }
-// visiem saglabātajiem tekstiem (veidnes, sagataves, melnraksti, ieplānotās kampaņas, pastāvīgās daļas)
+// visiem saglabātajiem tekstiem (veidnes, sagataves, melnraksti, ieplānotās kampaņas, nemainīgā informācija)
 function flattenCondsDeep(o, veids){
   if (!o || typeof o !== 'object') return;
   Object.keys(o).forEach(k => { if (typeof o[k] === 'string') o[k] = flattenConds(o[k], veids); else flattenCondsDeep(o[k], veids); });
@@ -5068,6 +5093,8 @@ function loadState(){
       if (!s.eaSeeded){ s.templates.forEach(t => { if (/^t\d+$/.test(t.id) && !t.ea && +t.id.slice(1) <= 14) t.ea = seedEa(t); }); s.eaSeeded = true; }
       // pielikumu kategorijas – tās pašas, kas veidnēm
       s.attachments.forEach(a => { a.cat = {vestule:'uzaicinajums', instrukcija:'info'}[a.cat] || (CAT_BY_KEY[a.cat] ? a.cat : 'cits'); });
+      // testa pielikumu sagatavēm – fiktīva saite uz DVS NAMEJS (vienreiz)
+      (s.attachments || []).forEach(a => { const m = SEED_MATERIALS.find(x => x.id === a.id); if (m && a.namejs === undefined) a.namejs = m.namejs || ''; });
       if (!(s.schema >= SCHEMA)){ s.templates.forEach(migrateTemplate); s.schema = SCHEMA; }
       s.templates.forEach(t => { if (!AUDS[t.aud]) t.aud = 'fiz'; if (!CAT_BY_KEY[t.cat]) t.cat = 'cits'; });
       // kampaņas statistikas joma "Visi" vairs nav – šādas kampaņas pārceltas uz uzņēmumu statistiku
@@ -5365,7 +5392,7 @@ function newSession(full){
 }
 const ui = {campView:'list', camp:{q:'', kind:'', status:'', creator:'', quick:'', from:'', to:''}, campRaw:{}, hist:{q:'', kind:'', sts:[], camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histRow:new Set(), histLimit:50, cardId:'',
   rep:{from:'', to:'', camp:'', kind:'', ch:'', aud:'', rep:'', sort:{key:'date', dir:'desc'}},
-  tplView:'veidnes', sagGroup:'mail', sag:{q:'', aud:'', cat:'', lang:''}, newIds:new Set(), tplAud:'', tplSearch:'', tplCat:'', tplKind:'', tplSt:'', tplRt:'', tplSv:'', tplArch:false, tplSort:{k:'', dir:0}, tplLimit:20, sagSort:{k:'', dir:0}, sagLimit:20, attSearch:'', attAud:'', attCat:'', attLang:''};
+  tplView:'veidnes', sagGroup:'mail', sag:{q:'', aud:'', cat:'', lang:''}, newIds:new Set(), tplAud:'', tplSearch:'', tplCat:'', tplKind:'', tplSts:['aktiva', 'melnraksts'], tplRt:'', tplSv:'', tplSort:{k:'', dir:0}, tplLimit:20, sagSort:{k:'', dir:0}, sagLimit:20, attSearch:'', attAud:'', attCat:'', attLang:''};
 // Sakļautie kategoriju bloki (tikai šajā kampaņā – pēc noklusējuma visi izvērsti)
 // Izvērstie kategoriju bloki (pēc noklusējuma visi sakļauti)
 // mainīgo vērtības: rediģējamā vērtība un izvērstie apsekojumu bloki
@@ -6049,7 +6076,7 @@ function templateText(t, channel){
 function versionOf(t){ return {lang:'lv', fallback:false, t}; }
 // PDF pielikuma dokuments (A4)
 // Veidlapas galva – viena kopīga komponente visām ģenerētajām PDF vēstulēm (personalizētā vēstule visos skatos un drukā):
-// josla, valsts ģerbonis (tas pats attēls kā pielikumu sagatavēs), iestāde, līnija, rekvizīti un pilsēta – no "Pastāvīgās daļas" (state.layout)
+// josla, valsts ģerbonis (tas pats attēls kā pielikumu sagatavēs), iestāde, līnija, rekvizīti un pilsēta – no "Nemainīgā informācija" (state.layout)
 const FORM_CREST = 'atteli/gerbonis.png';
 const formHeadHtml = (L = state.layout) => `<div class="doc-head"><div class="doc-logo" aria-hidden="true"></div><img class="doc-crest" src="${FORM_CREST}" alt="Latvijas Republikas valsts ģerbonis">
       <div class="doc-org">${esc(L.org)}</div>
@@ -6800,7 +6827,7 @@ function tplStMenuItems(t){
 function setTplStatus(id, v){
   const t = state.templates.find(x => x.id === id); if (!t || !TPL_ST[v] || tplSt(t) === v) return;
   t.status = v; save(); renderTemplates();
-  toast(`Veidnes “${t.name}” statuss: ${TPL_ST[v].label}.${v === 'arhiveta' ? ` Arhivētā veidne netiek piedāvāta kampaņām${ui.tplArch ? '' : ' un sarakstā ir paslēpta (filtrs “Rādīt arhivētās”)'}.` : v === 'melnraksts' ? ' Melnrakstu kampaņā izmantot nevar.' : ''}`);
+  toast(`Veidnes “${t.name}” statuss: ${TPL_ST[v].label}.${v === 'arhiveta' ? ` Arhivētā veidne netiek piedāvāta kampaņām${ui.tplSts.includes('arhiveta') ? '' : ' un sarakstā ir paslēpta (filtrs “Statuss”)'}.` : v === 'melnraksts' ? ' Melnrakstu kampaņā izmantot nevar.' : ''}`);
 }
 function setTplRating(id, v){
   const t = state.templates.find(x => x.id === id); if (!t) return;
@@ -6812,12 +6839,13 @@ function setTplRating(id, v){
 const tplUsable = t => tplSt(t) === 'aktiva';
 const tplNotUsableMsg = t => tplSt(t) === 'arhiveta' ? `Veidne “${t.name}” ir arhivēta – kampaņā to izmantot nevar.` : `Veidne “${t.name}” ir melnraksts – kampaņā to izmantot nevar. Vispirms mainiet statusu uz “Aktīva”.`;
 // Apsekojuma izvēle ar meklēšanu (indekss + nosaukums; viena vērtība vai "Nav")
-function surveyCombo(host, val, onChange){
+// Apsekojuma izvēle ar meklēšanu (veidnes "Saistītais apsekojums"; sagatavju filtrs "Veidlapas / Apsekojumi")
+function surveyCombo(host, val, onChange, {id = 'te-survey', none = 'Nav (vispārīga veidne)', ph = 'Nav – meklēt pēc indeksa vai nosaukuma…', aria = ''} = {}){
   host.innerHTML = `<div class="ms sv-combo"><div class="ms-input">
       <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      <input type="search" id="te-survey" role="combobox" aria-expanded="false" aria-controls="te-survey-list" aria-autocomplete="list" autocomplete="off" placeholder="Nav – meklēt pēc indeksa vai nosaukuma…">
-      <div class="ms-list" id="te-survey-list" role="listbox" aria-label="Apsekojumi" hidden></div></div></div>`;
-  const inp = $('#te-survey', host), box = $('#te-survey-list', host);
+      <input type="search" id="${id}" role="combobox" aria-expanded="false" aria-controls="${id}-list" aria-autocomplete="list" autocomplete="off" placeholder="${esc(ph)}"${aria ? ` aria-label="${esc(aria)}" title="${esc(aria)}"` : ''}>
+      <div class="ms-list" id="${id}-list" role="listbox" aria-label="Apsekojumi" hidden></div></div></div>`;
+  const inp = $('#' + id, host), box = $(`#${id}-list`, host);
   let cur = val && repById(val) ? val : '', act = -1;
   const label = id => id ? repTitle(repById(id)) : '';
   const opts = () => { const q = norm(inp.value.trim()), same = q === norm(label(cur));
@@ -6825,8 +6853,8 @@ function surveyCombo(host, val, onChange){
   function render(){
     const xs = opts(), grp = a => xs.filter(p => p.aud === a);
     let i = 0;
-    const o = p => `<div class="ms-opt" role="option" id="te-sv-${i++}" data-sv="${esc(p.id)}" aria-selected="${p.id === cur}"><span class="ms-txt"><b>${esc(p.code)}</b> ${esc(p.name)}</span></div>`;
-    box.innerHTML = `<div class="ms-opt" role="option" id="te-sv-n" data-sv="" aria-selected="${!cur}"><span class="ms-txt muted">Nav (vispārīga veidne)</span></div>`
+    const o = p => `<div class="ms-opt" role="option" id="${id}-o${i++}" data-sv="${esc(p.id)}" aria-selected="${p.id === cur}"><span class="ms-txt"><b>${esc(p.code)}</b> ${esc(p.name)}</span></div>`;
+    box.innerHTML = `<div class="ms-opt" role="option" id="${id}-on" data-sv="" aria-selected="${!cur}"><span class="ms-txt muted">${esc(none)}</span></div>`
       + [['fiz', 'Iedzīvotāju statistika'], ['jur', 'Uzņēmumu statistika']].map(([a, l]) => grp(a).length ? `<div class="sv-grp" role="presentation">${l}</div>${grp(a).map(o).join('')}` : '').join('')
       + (xs.length ? '' : '<div class="sv-none">Nav atbilstošu apsekojumu</div>');
     act = -1; inp.removeAttribute('aria-activedescendant');
@@ -6899,12 +6927,18 @@ function tplSortVal(t, k){
   if (k === 'use') return tplUses(t);
   return null;
 }
-const tplFiltOn = () => !!(ui.tplSearch.trim() || ui.tplCat || ui.tplKind || ui.tplSt || ui.tplRt || ui.tplSv);
-// papildu filtri: vēstules veids, statuss, vērtējums, saistītais apsekojums; arhivētās – tikai ar "Rādīt arhivētās" (vai statusa filtru "Arhivēta")
-const tplAdvN = () => [ui.tplKind, ui.tplSt, ui.tplRt, ui.tplSv].filter(Boolean).length;
+// Statuss (1. filtru rindā, vairākizvēle): pēc noklusējuma visi, izņemot arhivētās
+const TPL_STS_DEF = ['aktiva', 'melnraksts'];
+const tplStsDef = () => ui.tplSts.length === TPL_STS_DEF.length && TPL_STS_DEF.every(k => ui.tplSts.includes(k));
+function tplStsLabel(){
+  const n = ui.tplSts.length, all = Object.keys(TPL_ST).length;
+  return n === all ? 'Statuss: visi' : tplStsDef() ? 'Statuss: visi, izņemot arhivētās' : n === 1 ? TPL_ST[ui.tplSts[0]].label : n ? `Statuss: ${n} izvēlēti` : 'Statuss: nav izvēlēts';
+}
+const tplFiltOn = () => !!(ui.tplSearch.trim() || ui.tplCat || ui.tplKind || !tplStsDef() || ui.tplRt || ui.tplSv);
+// papildu filtri: vēstules saturs, vērtējums, saistītais apsekojums
+const tplAdvN = () => [ui.tplKind, ui.tplRt, ui.tplSv].filter(Boolean).length;
 function tplFilterOk(t, top){
-  if (!ui.tplArch && ui.tplSt !== 'arhiveta' && tplSt(t) === 'arhiveta') return false;
-  if (ui.tplSt && tplSt(t) !== ui.tplSt) return false;
+  if (!ui.tplSts.includes(tplSt(t))) return false;
   if (ui.tplRt === 'top' ? !top.has(t.id) : ui.tplRt === 'none' ? !!(t.rating && TPL_RT[t.rating.v]) : ui.tplRt && (!t.rating || t.rating.v !== ui.tplRt)) return false;
   if (ui.tplSv === '-' ? !!tplSurvey(t) : ui.tplSv && t.survey !== ui.tplSv) return false;
   return true;
@@ -6920,16 +6954,17 @@ function renderTemplates(){
   $('#tpl-cat').innerHTML = optList(CATS.map(c => [c.key, c.label]), ui.tplCat, 'Visas kategorijas');
   $('#tpl-kind').innerHTML = optList(Object.entries(CONTENT_F), ui.tplKind, 'Jebkurš vēstules saturs');
   if (document.activeElement !== $('#tpl-search')) $('#tpl-search').value = ui.tplSearch;
-  $('#tpl-st').innerHTML = optList(Object.entries(TPL_ST).map(([k, x]) => [k, x.label]), ui.tplSt, 'Visi statusi');
+  { const all = ui.tplSts.length === Object.keys(TPL_ST).length;
+    $('#tpl-st-sum').textContent = tplStsLabel(); $('#tpl-st-sum').setAttribute('aria-label', tplStsLabel());
+    $('#tpl-st-list').innerHTML = `<label class="dd-all"><input type="checkbox" data-tst="all" ${all ? 'checked' : ''}>Atlasīt visus</label>`
+      + Object.entries(TPL_ST).map(([k, x]) => `<label><input type="checkbox" data-tst="${k}" ${ui.tplSts.includes(k) ? 'checked' : ''}><span class="tst ${x.cls}">${esc(x.label)}</span><span class="muted">${state.templates.filter(t => tplSt(t) === k).length}</span></label>`).join('');
+    const ab = $('#tpl-st-list [data-tst="all"]'); ab.indeterminate = !all && ui.tplSts.length > 0; }
   $('#tpl-rt').innerHTML = optList([['ok', 'Veiksmīga'], ['bad', 'Neveiksmīga'], ['none', 'Bez vērtējuma'], ['top', '★ Biežāk izmantota']], ui.tplRt, 'Jebkurš vērtējums');
   { const used = [...new Set(state.templates.map(t => t.survey).filter(id => id && repById(id)))].map(repById).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
     if (ui.tplSv && ui.tplSv !== '-' && !used.some(p => p.id === ui.tplSv)) ui.tplSv = '';
     $('#tpl-sv').innerHTML = optList([['-', 'Bez apsekojuma'], ...used.map(p => [p.id, repTitle(p)])], ui.tplSv, 'Jebkurš apsekojums'); }
-  $('#tpl-arch').checked = !!ui.tplArch;
   $('#tpl-adv-n').textContent = tplAdvN() ? ` (${tplAdvN()})` : '';
   const q = ui.tplSearch.trim(), top = tplTopIds();
-  const nArch = state.templates.filter(t => tplSt(t) === 'arhiveta').length;
-  $('#tpl-arch-n').textContent = nArch ? ` (${nArch})` : '';
   const list = sortList(defOrder(state.templates.filter(t => (!ui.tplAud || t.aud === ui.tplAud) && (!ui.tplCat || t.cat === ui.tplCat) && contentOk(t, ui.tplKind) && tplFilterOk(t, top) && tplMatches(t, q))), ui.tplSort, tplSortVal);
   $('#tpl-head').innerHTML = sortHead(TPL_COLS, ui.tplSort, 'tsort');
   const row = t => { const v = tplVers(t), a = AUDS[t.aud] || AUDS.fiz;
@@ -7018,7 +7053,7 @@ function pickFile(onFile, host = modal, accept = ATT_ACCEPT){
 function openMailSamples(aud, onPick){
   const list = mailSamples(aud);
   let pick = '';
-  openSubModal({title:'No sagataves', size:'editor', info:`E-pasta satura šabloni no sadaļas “Veidnes › Sagataves” (adresāts: ${attAudLabel(aud)}). Izvēlētās sagataves teksts un formatējums tiks ielādēts redaktorā, un to varēsiet brīvi labot.`, content:`
+  openSubModal({title:'No sagataves', size:'editor', info:`E-pasta satura sagataves no sadaļas “Veidnes › Sagataves” (adresāts: ${attAudLabel(aud)}). Izvēlētās sagataves teksts un formatējums tiks ielādēts redaktorā, un to varēsiet brīvi labot.`, content:`
     ${CATS.map(c => {
       const items = list.filter(s => s.cat === c.key);
       return `<section class="ms-group"><h3>${esc(c.label)} <span class="pill pill-cat">${items.length}</span></h3>
@@ -7067,7 +7102,7 @@ function openTplSources(aud, onPick, survey = ''){
         <section class="tsp-sec" aria-labelledby="tsp-h1"><h3 class="tsp-h" id="tsp-h1">Tipveida sagataves</h3><div id="tsp-typ"></div></section>
         <hr class="tsp-hr">
         <section class="tsp-sec" aria-labelledby="tsp-h2"><h3 class="tsp-h" id="tsp-h2">Organizācijas veidnes <span class="tsp-n" id="tsp-n"></span></h3><div class="tsp-list" id="tsp-list" role="listbox" aria-labelledby="tsp-h2"></div></section>
-        <button type="button" class="link-btn tsp-ms" id="tsp-ms">E-pasta satura šabloni (Veidnes › Sagataves)</button>
+        <button type="button" class="link-btn tsp-ms" id="tsp-ms">E-pasta satura sagataves (Veidnes › Sagataves)</button>
       </div>
       <div class="tsp-pv editor-preview">
         <div class="pv-head"><h3>Priekšskatījums</h3>
@@ -7268,7 +7303,7 @@ function openTemplateEditor(id, preset = {}){
             <legend>Personalizēta vēstule – dokuments ar laukiem (ģenerēts PDF)</legend>
             <div class="field te-lf"><label for="te-doc-file">Faila nosaukums ${tip('Var lietot laukus, piem., {dok_nr}. Dokumenta virsrakstu rakstiet tekstā ar stilu “Virsraksts 1”.')}</label><input type="text" id="te-doc-file"></div>
             <div class="field te-lf"><span class="label">Mainīgā daļa (vēstules teksts)</span><div id="te-doc-body"></div></div>
-            <div class="field"><span class="label">Pastāvīgās daļas ${tip('Veidlapas galva, datums un numurs, noslēguma frāze un kājene tiek pievienoti vienmēr. To saturu rediģē sadaļā “Pastāvīgās daļas”.')}</span>
+            <div class="field"><span class="label">Nemainīgā informācija ${tip('Veidlapas galva, datums un numurs, noslēguma frāze un kājene tiek pievienoti vienmēr. To saturu var apskatīt veidņu sadaļā “Nemainīgā informācija”.')}</span>
               <div class="checks">
                 <label><input type="checkbox" id="te-doc-banner" ${t.doc.banner ? 'checked' : ''}> Apsekojuma baneris</label>
                 <label><input type="checkbox" id="te-doc-conf" ${t.doc.conf ? 'checked' : ''}> Konfidencialitāte</label>
@@ -8001,7 +8036,7 @@ function fileChip(f){
 }
 function attMatches(a){
   const f = ui.sag;
-  if (f.kind && attKindOf(a) !== f.kind) return false;
+  if (f.sv && attSv(a) !== f.sv) return false;
   if (f.aud && a.aud !== f.aud) return false;
   if (f.cat && a.cat !== f.cat) return false;
   if (f.lang && (a.lang || '') !== (f.lang === '-' ? '' : f.lang)) return false;
@@ -8013,15 +8048,26 @@ function msMatches(x){
   if (f.cat && x.cat !== f.cat) return false;
   return !f.q || norm([x.name, htmlToText(x.body), (x.ea || {}).body || ''].join(' ')).includes(norm(f.q));
 }
+let sagSvc = null;
+// pielikuma sagataves apsekojums (veidlapa): sv – apsekojuma id
+const attSv = a => a.sv && repById(a.sv) ? a.sv : '';
+// saite uz saskaņoto dokumentu DVS NAMEJS (kolonna "Fails"; atveras jaunā cilnē)
+const NAMEJS_TIP = 'Saite uz saskaņoto dokumentu DVS NAMEJS.';
+const namejsCell = a => a.namejs
+  ? `<a class="namejs-link" href="${esc(a.namejs)}" target="_blank" rel="noopener" title="${esc(a.namejs)}"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg><span>Atvērt NAMEJS</span></a>`
+  : '<span class="muted" title="Saite uz NAMEJS nav norādīta">—</span>';
 function renderAttFilters(){
   const f = ui.sag, sel = (id, all, entries, cur) => { $(id).innerHTML = `<option value="">${all}</option>` + entries.map(([k, v]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${esc(v)}</option>`).join(''); };
   sel('#sag-aud', 'Visi adresāti', Object.keys(AUDS).map(k => [k, attAudLabel(k)]), f.aud);
   sel('#sag-cat', 'Visas kategorijas', CATS.map(c => [c.key, c.label]), f.cat);
-  sel('#sag-kind', 'Visi veidi', Object.entries(ATT_KINDS), f.kind || '');
-  $('#sag-kind').hidden = ui.sagGroup !== 'att';
+  // pielikumu cilnē – "Veidlapas / Apsekojumi" (meklējama izvēle: indekss + nosaukums; "Visi")
+  $('#sag-sv-f').hidden = ui.sagGroup !== 'att';
+  if (!sagSvc) sagSvc = surveyCombo($('#sag-sv-host'), f.sv || '', v => { ui.sag.sv = v; ui.sagLimit = TPL_PAGE; renderSagataves(); },
+    {id:'sag-sv', none:'Visi', ph:'Veidlapas / Apsekojumi: visi', aria:'Veidlapas / Apsekojumi'});
+  $('#sag-add-l').textContent = ui.sagGroup === 'att' ? 'Pievienot sagatavi' : 'Izveidot sagatavi';
   $('#sag-search').placeholder = ui.sagGroup === 'att' ? 'Meklēt pēc nosaukuma, apraksta vai faila…' : 'Meklēt pēc nosaukuma vai teksta…';
   const nM = (state.mailSamples || []).length, nA = allAtts().length;
-  $('#sag-group').innerHTML = [['mail', 'E-pasta satura šabloni', nM, 'mail'], ['att', 'Pielikumu sagataves', nA, 'doc']].map(([k, l, n, ic]) =>
+  $('#sag-group').innerHTML = [['mail', 'E-pasta satura sagataves', nM, 'mail'], ['att', 'Pielikumu sagataves', nA, 'doc']].map(([k, l, n, ic]) =>
     `<button type="button" class="tab" role="tab" data-sgroup="${k}" aria-selected="${ui.sagGroup === k}" ${ui.sagGroup === k ? 'aria-current="page"' : 'tabindex="-1"'} aria-controls="sag-scroll">${ICON[ic]}${l}<span class="tab-n" aria-label="${n} ${plural(n, 'sagatave', 'sagataves')}">${n}</span></button>`).join('');
 }
 // E-pasta satura šablona kartīte
@@ -8043,7 +8089,7 @@ function msCard(x){
     <div class="tpl-actions">
       <button class="btn btn-ghost btn-sm" data-action="ms-edit" data-id="${esc(x.id)}">${ICON.edit}Rediģēt</button>
       <button class="btn btn-danger-ghost btn-sm" data-action="ms-delete" data-id="${esc(x.id)}">${ICON.trash}Dzēst</button>
-      <button class="btn btn-secondary btn-sm" data-action="ms-use" data-id="${esc(x.id)}">${ICON.plus}Jauna veidne</button>
+      <button class="btn btn-secondary btn-sm" data-action="ms-use" data-id="${esc(x.id)}">${ICON.plus}Izmantot savai veidnei</button>
     </div>
   </article>`;
 }
@@ -8076,11 +8122,15 @@ function attCard(a){
 }
 // Sadaļa "Sagataves": tāds pats izkārtojums kā veidnēm – grupas pogas, meklēšana un filtri, tabula ar kārtošanu
 // adresāts – grupas virsrakstā (kolonnas "Adresāts" nav)
-const SAG_COLS = {mail:[['name', 'Sagatave'], ['cat', 'Kategorija'], ['ver', 'Versijas'], ['used', 'Veidnēs'], ['upd', 'Pēdējās izmaiņas']],
-  att:[['name', 'Sagatave'], ['kind', 'Veids'], ['cat', 'Kategorija'], ['file', 'Fails'], ['used', 'Veidnēs']]};
-// grupas pēc adresāta: Fiziskās personas, Juridiskās personas, Visi adresāti (apakšā); sakļaušana – katrai apakšcilnei atsevišķi, saglabājas
+const SAG_COLS = {mail:[['name', 'Sagatave'], ['cat', 'Kategorija'], ['ver', 'Versijas'], ['upd', 'Pēdējās izmaiņas']],
+  att:[['name', 'Sagatave'], ['kind', 'Veids'], ['cat', 'Kategorija'], ['file', 'Fails']]};
+// grupas pēc adresāta: Fiziskās personas, Juridiskās personas, Visi adresāti (apakšā); pēc noklusējuma SAKĻAUTAS (redzami virsraksti ar skaitu),
+// lietotājs atver vajadzīgās (katrai apakšcilnei atsevišķi); meklējot / filtrējot grupas ar rezultātiem izvēršas automātiski
 const SAG_GRPS = [['fiz', 'Fiziskās personas', 'user'], ['jur', 'Juridiskās personas', 'building'], ['visi', 'Visi adresāti', 'users']];
-ui.sagColl = {mail:new Set(), att:new Set()};
+ui.sagOpen = {mail:new Set(), att:new Set()};
+ui.sagCollF = new Set(); ui.sagFSig = '';
+const sagFiltOn = () => { const f = ui.sag; return !!((f.q || '').trim() || f.aud || f.cat || (ui.sagGroup === 'att' && f.sv)); };
+const sagGrpOpen = k => sagFiltOn() ? !ui.sagCollF.has(k) : ui.sagOpen[ui.sagGroup].has(k);
 function sagSortVal(x, k){
   const att = ui.sagGroup === 'att';
   if (k === 'name') return x.name || '';
@@ -8089,13 +8139,13 @@ function sagSortVal(x, k){
   if (k === 'kind') return ATT_KINDS[attKindOf(x)] || '';
   if (k === 'ver') { const v = msVerOnly(x); return !v ? 0 : v === 'Tikai e-pasts' ? 1 : 2; }
   if (k === 'used') return (att ? tplsUsing(x.id) : tplsFromSample(x.id)).length;
-  if (k === 'file') return x.fileName || '';
+  if (k === 'file') return x.namejs || '';
   if (k === 'upd') return x.updated || null;
   return null;
 }
 function msMenuItems(x){
   const it = (action, icon, label, cls = '') => `<button type="button" role="menuitem" tabindex="-1" class="${cls}" data-action="${action}" data-id="${esc(x.id)}">${ICON[icon]}${esc(label)}</button>`;
-  return [it('ms-edit', 'edit', 'Rediģēt'), it('ms-use', 'plus', 'Jauna veidne'), '<hr>', it('ms-delete', 'trash', 'Dzēst', 'danger')].join('');
+  return [it('ms-edit', 'edit', 'Rediģēt'), it('ms-use', 'plus', 'Izmantot savai veidnei'), '<hr>', it('ms-delete', 'trash', 'Dzēst', 'danger')].join('');
 }
 function attMenuItems(a){
   const it = (action, icon, label, cls = '') => `<button type="button" role="menuitem" tabindex="-1" class="${cls}" data-action="${action}" data-id="${esc(a.id)}">${ICON[icon]}${esc(label)}</button>`;
@@ -8108,25 +8158,24 @@ function renderSagataves(){
   const att = ui.sagGroup === 'att', all = att ? allAtts() : (state.mailSamples || []);
   const list = sortList(defOrder(all.filter(att ? attMatches : msMatches)), ui.sagSort, sagSortVal), page = list.slice(0, ui.sagLimit);
   $('#sag-head').innerHTML = sortHead(SAG_COLS[ui.sagGroup], ui.sagSort, 'ssort');
-  const usedCell = xs => xs.length ? `<span title="${esc((att ? 'Pievienots veidnēm:\n' : 'Izmantots veidnēs:\n') + xs.map(t => t.name).join('\n'))}">${xs.length}</span>` : '<span class="muted">—</span>';
+  // filtru maiņa – meklēšanas laikā sakļautās grupas atkal izvērstas
+  { const sig = JSON.stringify([ui.sagGroup, ui.sag.q, ui.sag.aud, ui.sag.cat, ui.sag.sv]); if (sig !== ui.sagFSig){ ui.sagFSig = sig; ui.sagCollF.clear(); } }
   const nameCell = (x, action) => `<td class="sag-name"><button type="button" class="camp-name" data-action="${action}" data-id="${esc(x.id)}" title="${esc(x.name + (x.desc ? '\n' + x.desc : ''))}">${esc(x.name)}</button></td>`;
   const mailRow = x => { const v = msVerOnly(x);
     return `<tr class="camp-row sag-row" data-action="ms-edit" data-id="${esc(x.id)}">
       ${nameCell(x, 'ms-edit')}
       <td>${esc((CAT_BY_KEY[x.cat] || {}).one || x.cat)}</td>
       <td>${verCell({ep:v !== 'Tikai eAdrese', ea:v !== 'Tikai e-pasts'}, !v ? 'Ir e-pasta un eAdreses versija' : v === 'Tikai e-pasts' ? 'Nav eAdreses versijas' : 'Nav e-pasta versijas')}</td>
-      <td>${usedCell(tplsFromSample(x.id))}</td>
       <td title="${esc(x.updated ? fmtDateTime(x.updated) : '')}">${esc(x.updated ? fmtShortIso(x.updated) : '—')}</td>
       <td class="actions"><button type="button" class="icon-btn camp-more" data-action="ms-menu" data-id="${esc(x.id)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.name)}" title="Darbības">${ICON.dots}</button></td></tr>`; };
   const attRow = a => `<tr class="camp-row sag-row" data-action="att-open" data-id="${esc(a.id)}">
       ${nameCell(a, 'att-open')}
       <td>${esc(ATT_KINDS[attKindOf(a)] || '')}</td><td>${esc(ATT_CATS[a.cat] || ATT_CATS.cits)}</td>
-      <td><span class="sag-file mono" title="${esc(a.fileName)}">${esc(a.fileName)}</span> <span class="muted">${fmtSize(a.size)}</span></td>
-      <td>${usedCell(tplsUsing(a.id))}</td>
+      <td>${namejsCell(a)}</td>
       <td class="actions"><button type="button" class="icon-btn camp-more" data-action="att-menu" data-id="${esc(a.id)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(a.name)}" title="Darbības">${ICON.dots}</button></td></tr>`;
-  const ncol = SAG_COLS[ui.sagGroup].length + 1, coll = ui.sagColl[ui.sagGroup], shown = new Set(page);
+  const ncol = SAG_COLS[ui.sagGroup].length + 1, shown = new Set(page);
   const grpKey = x => AUDS[x.aud] && x.aud !== 'visi' ? x.aud : 'visi';
-  const body = SAG_GRPS.map(([k, l, ic]) => { const g = list.filter(x => grpKey(x) === k); if (!g.length) return ''; const op = !coll.has(k);
+  const body = SAG_GRPS.map(([k, l, ic]) => { const g = list.filter(x => grpKey(x) === k); if (!g.length) return ''; const op = sagGrpOpen(k);
     return `<tr class="sag-grp" data-sgrp="${k}"><td colspan="${ncol}"><button type="button" class="sag-grp-btn" data-sgrp-tg="${k}" aria-expanded="${op}"><span class="chev${op ? ' is-open' : ''}" aria-hidden="true">${ICON.chev}</span>${ICON[ic] || ''}<b>${esc(l)}</b><span class="n">(${g.length})</span></button></td></tr>`
       + (op ? g.filter(x => shown.has(x)).map(att ? attRow : mailRow).join('') : ''); }).join('');
   $('#sag-body').innerHTML = list.length ? body : '';
@@ -8143,7 +8192,7 @@ function openMailSampleForm(id){
   const ea0 = x.ea || {body:''};
   const opts = (entries, cur) => entries.map(([k, v]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${esc(v)}</option>`).join('');
   let ed, tab = 'epasts', pv = 'epasts';
-  openModal({title: ex ? 'Rediģēt e-pasta satura šablonu' : 'Jauns e-pasta satura šablons', editor:true, content:`<div class="editor-grid">
+  openModal({title: ex ? 'Rediģēt e-pasta satura sagatavi' : 'Jauna e-pasta satura sagatave', editor:true, content:`<div class="editor-grid">
     <div id="ms-form"><div class="form-grid">
       <div class="field full"><label for="ms-name">Nosaukums <span class="req">*</span></label><input type="text" id="ms-name" value="${esc(x.name)}" maxlength="120"><span class="err" id="ms-name-err" hidden></span></div>
       <div class="field"><label for="ms-aud">Adresāts</label><select id="ms-aud">${opts(Object.keys(AUDS).map(k => [k, attAudLabel(k)]), x.aud)}</select></div>
@@ -8162,7 +8211,7 @@ function openMailSampleForm(id){
           <textarea id="ms-ea-body" class="ea-text" rows="12">${esc(ea0.body || '')}</textarea><span class="err" id="ms-ea-body-err" hidden></span></div></div>
       ${ex && (ex.versions || []).length ? `<div class="field"><span class="label">Iepriekšējās versijas</span><ul class="ver-list">${ex.versions.map((v, i) =>
         `<li>Versija ${ex.versions.length - i} · aizstāta ${esc(fmtDateTime(v.replaced))}${v.by ? `, ${esc(v.by)}` : ''} <button type="button" class="link-btn" data-msver="${i}">Ielādēt redaktorā</button></li>`).join('')}</ul></div>` : ''}
-      ${ex ? `<div class="field"><span class="hint">${tplsFromSample(ex.id).length ? `Izmantots veidnēs: ${tplsFromSample(ex.id).map(t => esc(t.name)).join(', ')}${tip('Šablona labojumi esošās veidnes nemaina.')}` : 'Vēl nav izmantots nevienā veidnē'}</span></div>` : ''}
+      ${ex ? `<div class="field"><span class="hint">${tplsFromSample(ex.id).length ? `Izmantots veidnēs: ${tplsFromSample(ex.id).map(t => esc(t.name)).join(', ')}${tip('Sagataves labojumi esošās veidnes nemaina.')}` : 'Vēl nav izmantots nevienā veidnē'}</span></div>` : ''}
     </div>
     <div class="editor-preview">
       <div class="pv-head"><h3>Priekšskatījums</h3>
@@ -8249,7 +8298,7 @@ async function deleteMailSample(id){
   const x = (state.mailSamples || []).find(m => m.id === id);
   if (!x) return;
   const ok = await confirmDialog({title:'Dzēst sagatavi?', okLabel:'Dzēst', danger:true,
-    message:`E-pasta satura šablons <b>${esc(x.name)}</b> tiks dzēsts. Veidnes, kas no tā izveidotas, netiek mainītas.`});
+    message:`E-pasta satura sagatave <b>${esc(x.name)}</b> tiks dzēsta. Veidnes, kas no tās izveidotas, netiek mainītas.`});
   if (!ok) return;
   state.mailSamples = state.mailSamples.filter(m => m.id !== id);
   save(); renderSagataves(); toast('Sagatave dzēsta.');
@@ -8277,6 +8326,9 @@ function openAttForm(id){
       <div class="field"><label for="af-kind">Sagataves veids</label><select id="af-kind">${opts(Object.entries(ATT_KINDS), attKindOf(a))}</select></div>
       <div class="field"><label for="af-cat">Kategorija</label><select id="af-cat">${opts(Object.entries(ATT_CATS), a.cat)}</select></div>
       <div class="field"><label for="af-aud">Adresāti</label><select id="af-aud">${opts(Object.keys(AUDS).map(k => [k, attAudLabel(k)]), a.aud)}</select></div>
+      <div class="field full"><label for="af-namejs">Adrese (saite uz NAMEJS)${tip(NAMEJS_TIP)}</label>
+        <input type="url" id="af-namejs" value="${esc(a.namejs || '')}" placeholder="https://namejs.example/doc/…" inputmode="url" autocomplete="off">
+        <span class="err" id="af-namejs-err" hidden></span></div>
     </div>`,
     actions:[
       {label:'Atcelt', cls:'btn-secondary'},
@@ -8284,10 +8336,12 @@ function openAttForm(id){
         const err = (k, msg) => { const e = $(`#af-${k}-err`); e.hidden = !msg; e.textContent = msg || ''; $('#af-' + k).setAttribute('aria-invalid', msg ? 'true' : 'false'); };
         const name = $('#af-name').value.trim();
         const fErr = !file && !existing ? 'Izvēlieties PDF vai DOCX failu.' : file ? attFileError(file) : '';
-        err('file', fErr); err('name', name ? '' : 'Norādiet nosaukumu.');
+        const nj = $('#af-namejs').value.trim(), njErr = nj && !/^https:\/\/[^\s/$.?#][^\s]*\.[^\s]+$/i.test(nj) ? 'Saitei jāsākas ar https:// (piem., https://namejs.example/doc/2026-0412).' : '';
+        err('file', fErr); err('name', name ? '' : 'Norādiet nosaukumu.'); err('namejs', njErr);
         if (fErr){ $('#af-file').focus(); return; }
         if (!name){ $('#af-name').focus(); return; }
-        const d = {name, desc:$('#af-desc').value.trim(), kind:$('#af-kind').value, cat:$('#af-cat').value, aud:$('#af-aud').value};
+        if (njErr){ $('#af-namejs').focus(); return; }
+        const d = {name, desc:$('#af-desc').value.trim(), kind:$('#af-kind').value, cat:$('#af-cat').value, aud:$('#af-aud').value, namejs:nj};
         if (file) Object.assign(d, await readAttFile(file));
         if (existing){
           // aizstājot failu, iepriekšējo saglabā kā versiju (pēdējās 3)
@@ -8365,67 +8419,23 @@ async function deleteTemplate(id){
   toast('Veidne dzēsta.');
 }
 
-/* ----- Pastāvīgās daļas ----- */
-function openLayoutEditor(){
-  const work = clone(state.layout);
-  work.tr = work.tr || {};
-  let lang = 'lv', confEd, infoEd;
-  const LV_KEYS = ['org', 'address', 'city', 'docPrefix', 'closing', 'phone', 'emailFooter', 'confTitle', 'infoTitle'];
-  const val = k => lang === 'lv' ? (work[k] || '') : ((work.tr[lang] || {})[k] || '');
-  const inp = (key, label, hint = '', full = false) => `<div class="field ${full ? 'full' : ''}"><label for="ly-${key}">${label}${hint ? tip(hint.replace(/<[^>]+>/g, '')) : ''}</label>
-    <input type="text" id="ly-${key}" value="${esc(val(key))}" placeholder="${lang === 'lv' ? '' : esc(work[key] || '')}"></div>`;
-  const form = () => lang === 'lv' ? `
-    <fieldset class="box"><legend>Veidlapas galva</legend><div class="form-grid">
-      ${inp('org', 'Iestādes nosaukums')}
-      ${inp('city', 'Vieta')}
-      ${inp('address', 'Iestādes rekvizīti', '', true)}
-      ${inp('docPrefix', 'Dokumenta numura prefikss', 'Nr. = prefikss + gads + kārtas Nr., piem., 0100-16/2026/1')}
-    </div></fieldset>
-    <fieldset class="box"><legend>Noslēgums un kontakti</legend><div class="form-grid">
-      ${inp('closing', 'Noslēguma frāze', 'Vēstules beigās pirms iestādes nosaukuma')}
-      ${inp('phone', 'Informatīvais tālrunis <span class="muted">{tālrunis}</span>')}
-      ${inp('emailFooter', 'E-pasta kājene', 'Redzama formatētā e-pasta apakšā. Var lietot laukus.', true)}
-    </div></fieldset>` : `
-    <fieldset class="box"><legend>Veidlapas galva un noslēgums</legend><div class="form-grid">
-      ${inp('org', 'Iestādes nosaukums')}
-      ${inp('city', 'Vieta')}
-      ${inp('closing', 'Noslēguma frāze')}
-      ${inp('emailFooter', 'E-pasta kājene', '', true)}
-    </div></fieldset>`;
-  openModal({title:'Pastāvīgās daļas', wide:true, info:'Šīs daļas parasti saglabājas visās vēstulēs. Izmaiņas attiecas uz visām veidnēm.', content:`
-    <div id="ly-form"></div>
-    <div class="form-grid">
-      <fieldset class="box"><legend>Sadaļa “Konfidencialitāte”</legend>
-        <div class="field"><label for="ly-confTitle">Virsraksts</label><input type="text" id="ly-confTitle"></div>
-        <div class="field"><span class="label">Teksts</span><div id="ly-conf"></div></div></fieldset>
-      <fieldset class="box"><legend>Sadaļa “Plašāka informācija”</legend>
-        <div class="field"><label for="ly-infoTitle">Virsraksts</label><input type="text" id="ly-infoTitle"></div>
-        <div class="field"><span class="label">Teksts</span><div id="ly-info"></div></div></fieldset>
+/* ----- Nemainīgā informācija (tikai lasāma; agrāk rediģējamā sadaļa "Pastāvīgās daļas") ----- */
+function openFixedInfo(){
+  const L = state.layout;
+  const chips = txt => esc(txt || '').replace(/\{([^}]+)\}/g, (m, k) => F(k));
+  const sec = (title, body, hint = '') => `<section class="fi-sec"><h3 class="fi-h">${esc(title)}</h3>${hint ? `<p class="fi-hint">${esc(hint)}</p>` : ''}<div class="fi-pv">${body}</div></section>`;
+  openModal({title:'Nemainīgā informācija', wide:true, content:`
+    <p class="fi-note">Šī informācija tiek pievienota vēstulēm automātiski un prototipā nav rediģējama.</p>
+    <div class="fi-grid">
+      ${sec('Veidlapas galva', `<div class="doc fi-doc">${formHeadHtml(L)}</div>`, 'Personalizētās vēstules (PDF) augšā: valsts ģerbonis, iestāde, rekvizīti un vieta.')}
+      ${sec('Rekvizīti', `<dl class="fi-dl"><dt>Iestāde</dt><dd>${esc(L.org)}</dd><dt>Rekvizīti</dt><dd>${esc(L.address)}</dd><dt>Vieta</dt><dd>${esc(L.city)}</dd>
+        <dt>Dokumenta Nr.</dt><dd>${esc(L.docPrefix)}gads/kārtas Nr. <span class="muted">(piem., ${esc(L.docPrefix)}2026/1)</span></dd><dt>Informatīvais tālrunis</dt><dd>${esc(L.phone)} <span class="muted">– lauks ${F('tālrunis')}</span></dd></dl>`)}
+      ${sec('Noslēguma frāze', `<div class="doc fi-doc fi-doc-close"><div class="doc-close"><div>${esc(L.closing)}<br>${esc(L.org)}</div></div></div>`, 'Personalizētās vēstules beigās.')}
+      ${sec('Kājene', `<div class="mail-foot fi-foot">${chips(L.emailFooter)}</div>`, 'Formatētā e-pasta apakšā.')}
+      ${sec('Konfidencialitāte', `<div class="doc fi-doc fi-doc-text"><div class="rich"><h3>${esc(L.confTitle)}</h3>${L.confHtml}</div></div>`, 'Personalizētajā vēstulē, ja atzīmēta rūtiņa “Konfidencialitāte”.')}
+      ${sec('Plašāka informācija', `<div class="doc fi-doc fi-doc-text"><div class="rich"><h3>${esc(L.infoTitle)}</h3>${L.infoHtml}</div></div>`, 'Personalizētajā vēstulē, ja atzīmēta rūtiņa “Plašāka informācija”.')}
     </div>`,
-    actions:[
-      {label:'Atjaunot noklusējumu', cls:'btn-ghost left', onClick: close => { state.layout = clone(DEFAULT_LAYOUT); save(); close(); toast('Pastāvīgās daļas atjaunotas.'); }},
-      {label:'Atcelt', cls:'btn-secondary'},
-      {label:'Saglabāt', cls:'btn-primary', onClick: close => {
-        collect();
-        state.layout = work;
-        compose.f.docNr = nextDocNr();
-        save(); close(); toast('Pastāvīgās daļas saglabātas.');
-      }},
-    ]});
-  function collect(){
-    const target = lang === 'lv' ? work : (work.tr[lang] = work.tr[lang] || {});
-    LV_KEYS.forEach(k => { const el = $('#ly-' + k); if (el) target[k] = el.value.trim(); });
-    const c = confEd.getHTML(), i = infoEd.getHTML();
-    target.confHtml = (lang !== 'lv' && !htmlToText(c)) ? '' : c;
-    target.infoHtml = (lang !== 'lv' && !htmlToText(i)) ? '' : i;
-  }
-  function render(){
-    $('#ly-form').innerHTML = form();
-    ['confTitle', 'infoTitle'].forEach(k => { const el = $('#ly-' + k); el.value = val(k); el.placeholder = lang === 'lv' ? '' : (work[k] || ''); });
-    confEd = createEditor($('#ly-conf'), val('confHtml') || '<p><br></p>', {compact:true, cta:false});
-    infoEd = createEditor($('#ly-info'), val('infoHtml') || '<p><br></p>', {compact:true, cta:false});
-  }
-  render();
+    actions:[{label:'Aizvērt', cls:'btn-primary'}]});
 }
 
 /* =====================================================================
@@ -11698,7 +11708,7 @@ const statusCounts = xs => Object.fromEntries(REP_SERIES.map(([k]) => [k, xs.fil
 // ===== Patērētais laiks (KPI): kampaņu un veidņu / sagatavju sagatavošanas laiks (kopsavilkums, bez atsevišķu darbinieku rezultātiem) =====
 // divas daļas (pārslēgs augšā): Kampaņas | Veidnes; daļā "Veidnes" – arī sagataves (e-pasta satura šabloni, pielikumu sagataves)
 ui.repTime = {part:'camp', obj:''};
-const TP_OBJ = {tpl:'Veidne', ms:'E-pasta satura šablons', att:'Pielikuma sagatave'};
+const TP_OBJ = {tpl:'Veidne', ms:'E-pasta satura sagatave', att:'Pielikuma sagatave'};
 const sagWl = id => (state.sagWl || {})[id];
 function timeData(){
   const f = ui.rep, inP = iso => { const d = iso ? isoDate(new Date(iso)) : ''; return (!f.from || d >= f.from) && (!f.to || d <= f.to); };
@@ -11788,7 +11798,7 @@ function tplTimeView(){
     <div class="viz-grid">
       ${card('Vidējais laiks pēc veida', byCat, 'Veids', 'Veidnes / sagataves kategorija (uzaicinājums, atgādinājums, informatīvais ziņojums, cits).')}
       ${card('Vidējais laiks pēc adresātiem', byAud, 'Adresāti')}
-      ${card('Vidējais laiks pēc objekta', byObj, 'Objekts', 'Veidne, e-pasta satura šablons vai pielikuma sagatave.')}
+      ${card('Vidējais laiks pēc objekta', byObj, 'Objekts', 'Veidne, e-pasta satura sagatave vai pielikuma sagatave.')}
     </div>
     <div class="card viz-card" id="tp-tpl-table"><h3>Pa veidnēm</h3>${tableHtml(['Veidne', 'Adresāts', 'Kategorija', 'Aktīvais laiks', 'Sesijas', 'Pēdējās izmaiņas'], tRows, undefined, 'Atlasītajā periodā nav veidņu')}</div>
     <p class="hint">Aktīvais laiks redaktorā, summēts pa sesijām; pēc 3 min bez aktivitātes laiks netiek skaitīts. Rādīts kopsavilkums, nevis atsevišķu darbinieku rezultāti.</p>`,
@@ -12393,7 +12403,7 @@ const actions = {
   'att-menu': (id, el) => openCampMenu(el),
   'tpl-more-rows': () => { ui.tplLimit += TPL_PAGE; renderTemplates(); },
   'sag-more-rows': () => { ui.sagLimit += TPL_PAGE; renderSagataves(); },
-  'tpl-filt-clear': () => { ui.tplSearch = ''; ui.tplCat = ''; ui.tplKind = ''; ui.tplSt = ''; ui.tplRt = ''; ui.tplSv = ''; ui.tplLimit = TPL_PAGE; renderTemplates(); $('#tpl-search').focus(); },
+  'tpl-filt-clear': () => { ui.tplSearch = ''; ui.tplCat = ''; ui.tplKind = ''; ui.tplSts = [...TPL_STS_DEF]; ui.tplRt = ''; ui.tplSv = ''; ui.tplLimit = TPL_PAGE; renderTemplates(); $('#tpl-search').focus(); },
   'tpl-edit': id => openTemplateEditor(id),
   'att-new': () => openAttForm(),
   'ms-edit': id => openMailSampleForm(id),
@@ -12443,7 +12453,7 @@ const actions = {
     removeDraft(compose.draftId); newSession(true); save(); renderCounts();
     showTab('kampanas'); toast('Melnraksts dzēsts.');
   },
-  'layout-edit': () => openLayoutEditor(),
+  'fixed-info': () => openFixedInfo(),
   'resp-card': (id, el) => { const tr = el && el.closest && el.closest('tr'), hid = tr && (tr.dataset.hrow || (tr.classList.contains('hist-detail') && tr.previousElementSibling ? tr.previousElementSibling.dataset.hrow : ''));
     if (ui.tab === 'vesture' && hid){ const x = state.sent.find(y => y.id === hid); if (x && isTodo(x)) ui.ndrCur = hid; } openRespCard(id); },
   'camp-new': () => { if (ui.campView === 'edit') flushDraft(); newSession(true); openEditor(); },
@@ -12570,7 +12580,7 @@ const actions = {
   'go': (id, el) => showTab(el.dataset.tab === 'sagatavot' ? 'kampanas' : el.dataset.tab === 'nosutitas' ? 'vesture' : el.dataset.tab),
   'reset': async () => {
     const ok = await confirmDialog({title:'Atjaunot testa datus?', okLabel:'Atjaunot', danger:true,
-      message:'Visas veidnes, pastāvīgās daļas, respondentu dati, kampaņas un komunikācijas vēsture tiks aizstāta ar sākotnējiem testa datiem.'});
+      message:'Visas veidnes, nemainīgā informācija, respondentu dati, kampaņas un komunikācijas vēsture tiks aizstāta ar sākotnējiem testa datiem.'});
     if (!ok) return;
     state = seedData(); state.drafts = []; state.planned = [];
     newSession(true); seedHistory(); assignCreators(); save();
@@ -12593,6 +12603,8 @@ document.addEventListener('click', e => {
   // galvenā navigācija (apakšcilnēm, piem., Sagatavēs, ir tā pati klase .tab, bet bez data-tab)
   const tab = e.target.closest('.tab[data-tab]');
   if (tab){ showTab(tab.dataset.tab); return; }
+  // ārēja saite rindā (piem., "Atvērt NAMEJS") – atveras jaunā cilnē, rindas darbība netiek izpildīta
+  if (e.target.closest('a.namejs-link')) return;
   // respondenta nosaukums atlases tabulā u.c. – atver kartīti (nevis atzīmē rindu)
   const b = e.target.closest('[data-action]');
   if (b && !b.disabled && actions[b.dataset.action]) actions[b.dataset.action](b.dataset.id, b, e);
@@ -12878,8 +12890,17 @@ $('#hist-body').addEventListener('click', e => {
 $('#tpl-search').addEventListener('input', e => { ui.tplSearch = e.target.value; ui.tplLimit = TPL_PAGE; renderTemplates(); });
 $('#tpl-cat').addEventListener('change', e => { ui.tplCat = e.target.value; ui.tplLimit = TPL_PAGE; renderTemplates(); });
 $('#tpl-kind').addEventListener('change', e => { ui.tplKind = e.target.value; ui.tplLimit = TPL_PAGE; renderTemplates(); });
-[['#tpl-st', 'tplSt'], ['#tpl-rt', 'tplRt'], ['#tpl-sv', 'tplSv']].forEach(([id, k]) => $(id).addEventListener('change', e => { ui[k] = e.target.value; ui.tplLimit = TPL_PAGE; renderTemplates(); }));
-$('#tpl-arch').addEventListener('change', e => { ui.tplArch = e.target.checked; ui.tplLimit = TPL_PAGE; renderTemplates(); });
+[['#tpl-rt', 'tplRt'], ['#tpl-sv', 'tplSv']].forEach(([id, k]) => $(id).addEventListener('change', e => { ui[k] = e.target.value; ui.tplLimit = TPL_PAGE; renderTemplates(); }));
+// Statusa vairākizvēle: "Atlasīt visus" atzīmē / noņem visus; izvēlne paliek atvērta
+$('#tpl-st-list').addEventListener('change', e => {
+  const k = e.target.dataset.tst; if (!k) return;
+  if (k === 'all') ui.tplSts = e.target.checked ? Object.keys(TPL_ST) : [];
+  else ui.tplSts = Object.keys(TPL_ST).filter(x => x === k ? e.target.checked : ui.tplSts.includes(x));
+  ui.tplLimit = TPL_PAGE; renderTemplates();
+  const el = $(`#tpl-st-list [data-tst="${k}"]`); if (el) el.focus();
+});
+$('#tpl-st-dd').addEventListener('keydown', e => { if (e.key === 'Escape' && $('#tpl-st-dd').open){ e.preventDefault(); $('#tpl-st-dd').open = false; $('#tpl-st-sum').focus(); } });
+document.addEventListener('click', e => { const d = $('#tpl-st-dd'); if (d && d.open && !d.contains(e.target)) d.open = false; });
 $('#tpl-sub').addEventListener('click', e => { const b = e.target.closest('[data-tsub]'); if (!b) return; ui.tplAud = b.dataset.tsub; ui.tplLimit = TPL_PAGE; renderTemplates(); $(`#tpl-sub [data-tsub="${ui.tplAud}"]`).focus(); });
 $('#tpl-adv-btn').addEventListener('click', () => { const row = $('#tpl-adv'), b = $('#tpl-adv-btn'); row.hidden = !row.hidden; b.setAttribute('aria-expanded', String(!row.hidden)); if (!row.hidden) $('#tpl-kind').focus(); });
 $('#tpl-head').addEventListener('click', e => { const b = e.target.closest('[data-tsort]'); if (!b) return; const k = b.dataset.tsort; ui.tplSort = nextSort(ui.tplSort, k); renderTemplates(); const nb = $(`#tpl-head [data-tsort="${k}"]`); if (nb) nb.focus(); });
@@ -13556,7 +13577,7 @@ const setTplView = v => { ui.tplView = v; v === 'veidnes' ? renderTemplates() : 
 $('#sag-body').addEventListener('click', e => {
   const b = e.target.closest('[data-sgrp-tg]'); if (!b) return;
   e.stopPropagation();
-  const k = b.dataset.sgrpTg, c = ui.sagColl[ui.sagGroup];
+  const k = b.dataset.sgrpTg, c = sagFiltOn() ? ui.sagCollF : ui.sagOpen[ui.sagGroup];
   if (c.has(k)) c.delete(k); else c.add(k);
   renderSagataves(); const nb = $(`#sag-body [data-sgrp-tg="${k}"]`); if (nb) nb.focus();
 });
@@ -13571,7 +13592,7 @@ $('#sag-group').addEventListener('click', e => {
   ui.sagGroup = b.dataset.sgroup; ui.sagSort = {k:'', dir:0}; ui.sagLimit = TPL_PAGE; renderSagataves();
 });
 $('#sag-search').addEventListener('input', e => { ui.sag.q = e.target.value; ui.sagLimit = TPL_PAGE; renderSagataves(); });
-[['#sag-aud', 'aud'], ['#sag-cat', 'cat'], ['#sag-kind', 'kind']].forEach(([sel, k]) =>
+[['#sag-aud', 'aud'], ['#sag-cat', 'cat']].forEach(([sel, k]) =>
   $(sel).addEventListener('change', e => { ui.sag[k] = e.target.value; renderSagataves(); }));
 $('#sag-add').addEventListener('click', () => ui.sagGroup === 'att' ? openAttForm() : openMailSampleForm());
 window.addEventListener('hashchange', route);
