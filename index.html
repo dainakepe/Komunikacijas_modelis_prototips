@@ -1320,6 +1320,8 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .camp-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .c-tipbox{position:fixed;z-index:80;max-width:320px;background:var(--text-strong);color:var(--on-primary);font-size:var(--fs-xs);line-height:1.45;padding:6px 9px;border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);pointer-events:none;white-space:pre-line}
 .c-tipbox[hidden]{display:none}
+.ac-tipbox{white-space:nowrap;max-width:min(460px,calc(100vw - 16px));overflow:hidden;text-overflow:ellipsis}
+#c-list .ac-val[data-actip]:focus-visible{outline:2px solid var(--focus-ring);outline-offset:1px;border-radius:3px}
 .camp-more{width:30px;height:30px}
 .camp-more[aria-expanded="true"]{background:var(--primary-50);color:var(--primary-dark)}
 .cm-menu{position:fixed;z-index:60;min-width:220px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 24px rgba(16,40,48,.16);padding:5px;display:flex;flex-direction:column}
@@ -1798,7 +1800,9 @@ dialog.drawer.al-drawer{width:min(420px,100vw)}
 .q-item .q-l{flex:1;min-width:0}
 .q-item b{font-variant-numeric:tabular-nums}
 .q-item:focus-visible,.q-sub:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px}
-.q-auto{display:flex;flex-wrap:wrap;align-items:center;gap:2px 4px;border-top:1px solid var(--border-light);padding-top:8px;margin-top:4px;font-size:var(--fs-xs)}
+.q-auto{display:flex;flex-wrap:nowrap;white-space:nowrap;align-items:center;gap:1px;border-top:1px solid var(--border-light);padding-top:8px;margin-top:4px;font-size:12px;overflow:hidden}
+.q-auto .q-sub{flex:none;padding:2px 4px;font-size:12px}
+.q-auto.is-short .q-long{display:none}
 .q-sub{appearance:none;font:inherit;font-size:var(--fs-xs);background:none;border:1px solid transparent;border-radius:var(--radius-sm);padding:2px 5px;color:#4F5A5F;cursor:pointer;display:inline-flex;align-items:center;gap:3px}
 .q-sub:hover:not(:disabled){background:var(--bg)}
 .q-sub:disabled{cursor:default;opacity:.55}
@@ -1906,8 +1910,7 @@ button.ac-tag.t-risk:hover,button.ac-tag.t-risk[aria-expanded="true"]{border-col
 .pre-list{margin:0 0 10px;padding-left:18px;line-height:1.6}
 .ac-pills .ac-pill.is-zero{color:var(--icon-muted);border-color:var(--border-light);background:#FAFBFB;cursor:default}
 .ac-acts{display:flex;align-items:center;gap:6px;margin-left:auto}
-.ac-recheck{height:34px;padding:0 14px;gap:6px;font-size:var(--fs-sm);background:var(--surface);border:1px solid var(--primary);color:var(--primary)}
-.ac-recheck:hover{background:var(--primary-50);border-color:var(--primary);color:var(--primary)}
+.ac-recheck{height:34px;padding:0 14px;gap:6px;font-size:var(--fs-sm)}
 .ac-recheck:disabled{opacity:1;cursor:progress}
 .ac-recheck .ac-spin{display:inline-block;font-size:var(--fs-base);line-height:1}
 .ac-recheck.is-busy .ac-spin{animation:ac-spin .9s linear infinite}
@@ -1921,7 +1924,7 @@ button.ac-tag.t-risk:hover,button.ac-tag.t-risk[aria-expanded="true"]{border-col
 #c-ac .ac-acts{flex:0 1 auto;flex-wrap:wrap;justify-content:flex-end;max-width:100%}
 #c-ac .ac-acts .btn{white-space:nowrap;height:34px;flex:none;text-align:center}
 .q-acts .btn.ac-excl-btn{height:30px;font-size:var(--fs-xs)}
-.q-acts .ac-reg{font-size:var(--fs-xs);text-align:center;align-self:center;padding:0}
+.q-acts .btn:disabled:not(.ac-recheck){opacity:.6;cursor:default}
 .q-list-ns{border-top:1px solid var(--border-light);padding-top:4px;margin-top:4px}
 .q-nosend .q-l{flex:1}
 .q-nosend b{color:var(--danger)}
@@ -3456,7 +3459,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 137</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 139</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4067,7 +4070,8 @@ function visOf(t){
   const v = (t && t.vis) || {}, d = (t && t.doc) || {}, b = {...BTN_DEF, ...(v.btn || {})};
   if (!BTN_SHAPES[b.shape]) b.shape = 'round';
   if (!BTN_COLORS.some(([c]) => c === b.color)) b.color = BTN_DEF.color;
-  return {logo:v.logo !== false, banner:BANNERS[v.banner] ? v.banner : '', tags:v.tags ?? d.tags ?? '', slogan:v.slogan ?? d.slogan ?? '', btn:b};
+  // logo – vienmēr (darba grupas lēmums); poga – e-pasta satura redaktorā (t.vis.btn vairs netiek izmantots)
+  return {logo:true, banner:BANNERS[v.banner] ? v.banner : '', tags:v.tags ?? d.tags ?? '', slogan:v.slogan ?? d.slogan ?? '', btn:{...b, on:false}};
 }
 // banera dekoratīvais fons (SVG): apļi labajā pusē un 4 krāsu josla apakšā
 function bannerSvg(b){
@@ -4104,7 +4108,7 @@ function eaWithBtn(text, vis){
   return ps.join('\n\n');
 }
 // elementi, ko eAdrese neatbalsta (piezīmei eAdreses priekšskatījumā)
-const visEls = vis => [vis.logo && 'logo', vis.banner && 'baneris', vis.btn.on && vis.btn.text && 'poga'].filter(Boolean);
+const visEls = vis => [vis.banner && 'baneris'].filter(Boolean);
 // esošā poga tekstā (atsevišķā rindkopā) -> pogas modelis (testa datiem un agrāk saglabātām veidnēm)
 function ctaToBtn(t){
   if (!t || !t.body || (t.vis && t.vis.btn && t.vis.btn.on)) return false;
@@ -4118,6 +4122,20 @@ function ctaToBtn(t){
 }
 // testa veidnēm: bibliotēkas baneri (tēmturi / sauklis saglabājas); t2 – iepriekšējais baneris attēlā tekstā -> bibliotēkas baneris
 const VIS_SEED = {t1:{banner:'bn-apt'}, t2:{banner:'bn-iedz', tags:'#aptauja', slogan:'Pastāsti par sevi!'}, t8:{banner:'bn-uzn'}};
+// pogas modelis (t.vis.btn) -> parasta poga e-pasta tekstā tajā pašā vietā (pirms noslēguma); logo vairs nav izslēdzams
+function btnToInline(t){
+  if (!t) return;
+  const v = t.vis || {}, b = v.btn;
+  if (b && b.on && b.text && t.body) t.body = withBtn(t.body, {btn:{...BTN_DEF, ...b, on:true}});
+  if (t.vis){ delete t.vis.btn; delete t.vis.logo; }
+}
+function applyBtnInline(s){
+  (s.templates || []).forEach(btnToInline);
+  const ct = c => { if (c && c.tpl) btnToInline(c.tpl); };
+  (s.drafts || []).forEach(d => ct(d.content)); if (s.draft) ct(s.draft.content);
+  (s.planned || []).forEach(pl => ct(pl.snap && pl.snap.content));
+  Object.values(s.campSnaps || {}).forEach(c => ct(c && c.content));
+}
 function applyVisSeed(s){
   (s.templates || []).forEach(t => {
     const m = VIS_SEED[t.id];
@@ -4213,7 +4231,7 @@ function sanitize(html){
         n.replaceWith(r); n = r;
       }
       if (!ALLOWED.includes(tag) || (tag === 'SPAN' && !n.classList.contains('fld'))){ n.replaceWith(...n.childNodes); return; }
-      const href = (n.getAttribute('href') || '').trim(), cta = n.classList.contains('cta'), bg = normHex(n.dataset.bg);
+      const href = (n.getAttribute('href') || '').trim(), cta = n.classList.contains('cta'), bg = normHex(n.dataset.bg), sh = ['rect', 'outline'].includes(n.dataset.shape) ? n.dataset.shape : '';
       // līdzināšana: klases al-c / al-r (arī no ielīmēta text-align)
       const ta = n.style.textAlign || n.getAttribute('align') || '';
       const al = n.classList.contains('al-c') || ta === 'center' ? 'al-c' : n.classList.contains('al-r') || ta === 'right' ? 'al-r' : '';
@@ -4222,7 +4240,7 @@ function sanitize(html){
       if (/^(P|H1|H2|H3|LI)$/.test(tag) && al) n.className = al;
       if (tag === 'A'){
         if (/^(https?:|mailto:|tel:|\{)/i.test(href)) n.setAttribute('href', href);
-        if (cta){ n.className = 'cta'; if (bg) n.dataset.bg = bg; }
+        if (cta){ n.className = 'cta'; if (bg) n.dataset.bg = bg; if (sh) n.dataset.shape = sh; }
       }
     });
   };
@@ -4408,7 +4426,7 @@ const TYPICAL_TPLS = [
 ];
 const typGreet = aud => aud === 'jur' ? '<p>Labdien!</p>' : `<p>Labdien, ${F(aud === 'visi' ? 'adresāts' : 'vārds')}!</p>`;
 // tipveida sagatave kā veidnes saturs izvēlētajam adresātam (e-pasts + eAdrese)
-const typTpl = (x, aud) => { const body = typGreet(aud) + x.text + TPL_SIGN, t = {aud, cat:x.cat, kind:'epasts', name:x.name, subject:x.subject, body, doc:null, main:null, files:[], tr:{}, ea:{subject:x.subject, body:emailToPlain(body)}}; ctaToBtn(t); return t; };
+const typTpl = (x, aud) => { const body = typGreet(aud) + x.text + TPL_SIGN, t = {aud, cat:x.cat, kind:'epasts', name:x.name, subject:x.subject, body, doc:null, main:null, files:[], tr:{}, ea:{subject:x.subject, body:emailToPlain(body)}}; return t; };
 // Izdomāts testa baneris (PNG), ko uzzīmē pārlūkā
 function seedBanner(){
   try {
@@ -4549,6 +4567,7 @@ function seedData(){
   data.mailSamples = defaultMailSamples(data.templates);
   applyTplMeta(data);
   applyVisSeed(data); data.visSeeded = 1;
+  applyBtnInline(data); data.btnInline = 1;
   data.schema = SCHEMA;
   return data;
 }
@@ -4986,6 +5005,8 @@ function loadState(){
       applyTplMeta(s);
       // vizuālie elementi: testa veidnēm – bibliotēkas baneri; pogas tekstā -> pogas modelis (vienreiz)
       if (!s.visSeeded){ applyVisSeed(s); s.visSeeded = 1; }
+      // logo – vienmēr; Vizuālo elementu poga -> poga e-pasta tekstā (vienreiz)
+      if (!s.btnInline){ applyBtnInline(s); s.btnInline = 1; }
       return s;
     }
   } catch (e) {}
@@ -5302,6 +5323,7 @@ const AL_T = {
  
   plan:{l:'Ieplānoja nosūtīšanu', c:'nos', i:'calendar'}, unplan:{l:'Atcēla ieplānošanu', c:'nos', i:'calX', k:'warn'}, send:{l:'Nosūtīja', c:'nos', i:'send', k:'pri'},
   remind:{l:'Izveidoja atgādinājumu no šīs kampaņas', c:'nos', i:'bell'},
+  fixHand:{l:'Nodeva labošanai', c:'atlase', i:'handoff'},
   pubWarn:{l:'Turpināja, neskatoties uz brīdinājumu', c:'nos', i:'bell', k:'warn'},
 };
 const AL_SYS = 'Sistēma';
@@ -7122,7 +7144,7 @@ function openTemplateEditor(id, preset = {}){
         <div class="alert alert-warn ch-warn" id="te-ch-warn" hidden></div>
         <div class="ch-pane" id="te-pane-ep" role="tabpanel" aria-labelledby="te-tab-ep">
         <div class="field te-lf"><div class="label-row"><label for="te-subject">E-pasta temats <span class="req">*</span></label>
-          <select class="mini" id="te-subj-field" aria-label="Ievietot lauku tematā"><option value="">+ lauks</option>${fieldOptions()}</select></div>
+          <select class="mini" id="te-subj-field" aria-label="Ievietot lauku e-pasta tematā (kursora vietā)"><option value="">+ lauks e-pasta tematā</option>${fieldOptions()}</select></div>
           <input type="text" id="te-subject" maxlength="200"><span class="err" id="te-subject-err" hidden></span></div>
         <div id="te-content" hidden>
           <div class="field te-lf"><span class="label"><span id="te-body-label"></span> ${tip('', 'te-body-hint')}</span>
@@ -7133,7 +7155,7 @@ function openTemplateEditor(id, preset = {}){
         </div>
         <div class="ch-pane" id="te-pane-ea" role="tabpanel" aria-labelledby="te-tab-ea" hidden>
           <div class="field"><div class="label-row"><label for="te-ea-subject">eAdreses ziņas temats <span class="req">*</span></label>
-            <select class="mini" id="te-ea-subj-field" aria-label="Ievietot lauku eAdreses tematā"><option value="">+ lauks</option>${fieldOptions()}</select></div>
+            <select class="mini" id="te-ea-subj-field" aria-label="Ievietot lauku eAdreses tematā (kursora vietā)"><option value="">+ lauks eAdreses tematā</option>${fieldOptions()}</select></div>
             <input type="text" id="te-ea-subject" maxlength="200" value="${esc((t.ea || {}).subject || '')}"><span class="err" id="te-ea-subject-err" hidden></span></div>
           <div class="field" id="te-ea-content" hidden><div class="label-row"><label for="te-ea-body" id="te-ea-label">eAdreses ziņas teksts</label>
             <select class="mini" id="te-ea-body-field" aria-label="Ievietot lauku eAdreses tekstā"><option value="">+ lauks</option>${fieldOptions()}</select></div>
@@ -7157,13 +7179,10 @@ function openTemplateEditor(id, preset = {}){
           </fieldset>
         </div>
         <section class="te-extra te-vis">
-          <div class="te-extra-row"><button type="button" class="te-extra-head" id="te-vis-toggle" aria-expanded="false" aria-controls="te-vis-body">${ICON.chev}<span>Vizuālie elementi</span><span class="te-vis-sum" id="te-vis-sum"></span></button>
-            ${tip('Logo, baneris un poga e-pastā. Kampaņa izmanto veidnes vizuālos elementus; vienai kampaņai tos var mainīt ar “Labot saturu”. eAdreses ziņā tie netiek attēloti (poga – kā teksts ar saiti).')}</div>
+          <div class="te-extra-row"><button type="button" class="te-extra-head" id="te-vis-toggle" aria-expanded="false" aria-controls="te-vis-body">${ICON.chev}<span>Baneris</span><span class="te-vis-sum" id="te-vis-sum"></span></button>
+            ${tip('Baneris e-pasta sākumā (no Komunikācijas daļas bibliotēkas). Kampaņa izmanto veidnes baneri; vienai kampaņai to var mainīt ar “Labot saturu”. eAdreses ziņā baneris netiek attēlots. CSP logo e-pasta galvenē ir vienmēr.')}</div>
           <div class="te-extra-body te-vis-body" id="te-vis-body" hidden>
-            <div class="vis-sub"><h4>Logo</h4>
-              <label class="switch"><input type="checkbox" role="switch" id="te-vis-logo" ${vis0.logo ? 'checked' : ''}><span class="sw" aria-hidden="true"></span>Rādīt logo</label>
-              <div class="vis-logo"><span class="mlogo" aria-hidden="true">CSP</span><span>Apstiprināts CSP logo. Atrašanās vieta un noformējums – pēc noformējuma sagataves (nav rediģējami).</span></div></div>
-            <div class="vis-sub"><h4 id="te-bn-h">Baneris</h4>
+            <div class="vis-sub"><span class="sr-only" id="te-bn-h">Baneris</span>
               <div class="bn-grid" role="radiogroup" aria-labelledby="te-bn-h">
                 <label class="bn-opt"><input type="radio" name="te-bn" value="" ${vis0.banner ? '' : 'checked'}><span class="bn-thumb bn-none">Bez banera</span><span class="bn-name">Bez banera</span></label>
                 ${Object.entries(BANNERS).map(([k, b]) => `<label class="bn-opt"><input type="radio" name="te-bn" value="${k}" ${vis0.banner === k ? 'checked' : ''}><span class="bn-thumb" style="${bannerStyle(b)}"><b>Apsekojums</b></span><span class="bn-name">${esc(b.name)}</span></label>`).join('')}
@@ -7173,20 +7192,6 @@ function openTemplateEditor(id, preset = {}){
                   <div class="field"><label for="te-doc-slogan">Sauklis zem banera</label><input type="text" id="te-doc-slogan" value="${esc(vis0.slogan)}" placeholder="piem., Pastāsti, kā Tu ceļo!"></div></div>
                 <p class="hint" id="te-design-note" hidden>Tēmturi un sauklis tiek rādīti arī PDF dokumenta apsekojuma banerī.</p></div>
               <p class="vis-muted">Banerus pārvalda Komunikācijas daļa.</p></div>
-            <div class="vis-sub"><h4>Poga</h4>
-              <label class="switch"><input type="checkbox" role="switch" id="te-btn-on" ${vis0.btn.on ? 'checked' : ''}><span class="sw" aria-hidden="true"></span>Pievienot pogu</label>
-              <div class="btn-box" id="te-btn-box" hidden>
-                <div class="field"><span class="label" id="te-btn-shape-l">Forma</span>
-                  <div class="btn-shapes" role="radiogroup" aria-labelledby="te-btn-shape-l">${Object.entries(BTN_SHAPES).map(([k, l]) => `<label class="bs-opt"><input type="radio" name="te-btn-shape" value="${k}" ${vis0.btn.shape === k ? 'checked' : ''}><span class="bs-sample bs-${k}">Poga</span><span>${esc(l)}</span></label>`).join('')}</div></div>
-                <div class="field"><span class="label" id="te-btn-color-l">Krāsa</span>
-                  <div class="btn-colors" role="radiogroup" aria-labelledby="te-btn-color-l">${BTN_COLORS.map(([c, l]) => `<label class="bc-opt" title="${esc(l)} ${c}"><input type="radio" name="te-btn-color" value="${c}" aria-label="${esc(l)}" ${vis0.btn.color === c ? 'checked' : ''}><span class="bc-dot" style="background:${c}"></span></label>`).join('')}<span class="hint" id="te-btn-color-n"></span></div></div>
-                <div class="field"><div class="label-row"><label for="te-btn-text">Teksts <span class="req">*</span></label><span class="hint" id="te-btn-n"></span></div>
-                  <input type="text" id="te-btn-text" maxlength="${BTN_TEXT_MAX}" value="${esc(vis0.btn.text)}" placeholder="piem., Aizpildīt e-anketu"><span class="err" id="te-btn-text-err" hidden></span></div>
-                <div class="field"><div class="label-row"><label for="te-btn-url">Saite (URL) <span class="req">*</span></label>
-                  <select class="mini" id="te-btn-field" aria-label="Ievietot lauku saitē"><option value="">+ lauks</option>${fieldOptions()}</select></div>
-                  <input type="text" id="te-btn-url" value="${esc(vis0.btn.url)}" placeholder="https://… vai {e-anketa}" spellcheck="false"><span class="err" id="te-btn-url-err" hidden></span></div>
-                <p class="hint">Novietojums: zem pamatteksta (pirms noslēguma, piem., “Ar cieņu”).</p>
-              </div></div>
           </div>
         </section>
         <section class="te-extra">
@@ -7276,14 +7281,6 @@ function openTemplateEditor(id, preset = {}){
     if (epS && !epB) return fail('epasts', 'te-body', 'Teksts nedrīkst būt tukšs.', bodyEd.area);
     if (eaS && !eaB) return fail('eadrese', 'te-ea-body', 'eAdreses teksts nedrīkst būt tukšs.', $('#te-ea-body'));
     if (eaB && !eaS) return fail('eadrese', 'te-ea-subject', 'Norādiet eAdreses ziņas tematu.', $('#te-ea-subject'));
-    const be = btnErrs();
-    if (be.text || be.url){
-      visOpen = true; syncVis();
-      if (be.text) showErr('te-btn-text-err', be.text);
-      if (be.url) showErr('te-btn-url-err', be.url);
-      (be.text ? $('#te-btn-text') : $('#te-btn-url')).focus();
-      return false;
-    }
     return true;
   }
   // brīdinājums, ja aizpildīta tikai viena versija
@@ -7310,10 +7307,9 @@ function openTemplateEditor(id, preset = {}){
   }
 
   function kind(){ const r = $('input[name="te-kind"]:checked', modal); return r ? r.value : ''; }
-  // Vizuālie elementi (logo, baneris, poga)
+  // Baneris (logo e-pastā – vienmēr; poga – e-pasta satura redaktorā)
   const radioVal = n => { const r = $(`input[name="${n}"]:checked`, modal); return r ? r.value : ''; };
-  const curVis = () => ({logo:$('#te-vis-logo').checked, banner:radioVal('te-bn'), tags:$('#te-doc-tags').value.trim(), slogan:$('#te-doc-slogan').value.trim(),
-    btn:{on:$('#te-btn-on').checked, shape:radioVal('te-btn-shape') || 'round', color:radioVal('te-btn-color') || BTN_DEF.color, text:$('#te-btn-text').value.trim(), url:$('#te-btn-url').value.trim()}});
+  const curVis = () => ({banner:radioVal('te-bn'), tags:$('#te-doc-tags').value.trim(), slogan:$('#te-doc-slogan').value.trim()});
   let visOpen = false;
   function syncVis(){
     const v = curVis(), gen = kind() === 'pielikums' && main === 'gen', docBn = gen && $('#te-doc-banner').checked;
@@ -7321,28 +7317,13 @@ function openTemplateEditor(id, preset = {}){
     $('#te-design').hidden = !v.banner && !docBn;
     $('#te-design-note').hidden = !docBn;
     $('#te-doc-bn-note').hidden = !docBn;
-    $('#te-btn-box').hidden = !v.btn.on;
-    $('#te-btn-n').textContent = `${$('#te-btn-text').value.length} / ${BTN_TEXT_MAX}`;
-    $('#te-btn-color-n').textContent = (BTN_COLORS.find(([c]) => c === v.btn.color) || [, ''])[1];
-    $('#te-vis-sum').innerHTML = [v.logo ? 'Logo' : 'Bez logo', v.banner ? `Baneris: ${BANNERS[v.banner].name}` : '', v.btn.on ? `Poga${v.btn.text ? `: ${v.btn.text}` : ''}` : '']
-      .filter(Boolean).map(x => `<span class="cnt">${esc(x)}</span>`).join('');
+    $('#te-vis-sum').innerHTML = `<span class="cnt">${esc(v.banner ? BANNERS[v.banner].name : 'Bez banera')}</span>`;
   }
   function setVisUI(v){
-    $('#te-vis-logo').checked = v.logo;
     $$('input[name="te-bn"]', modal).forEach(r => r.checked = r.value === v.banner);
     $('#te-doc-tags').value = v.tags || ''; $('#te-doc-slogan').value = v.slogan || '';
-    $('#te-btn-on').checked = v.btn.on;
-    $$('input[name="te-btn-shape"]', modal).forEach(r => r.checked = r.value === v.btn.shape);
-    $$('input[name="te-btn-color"]', modal).forEach(r => r.checked = r.value === v.btn.color);
-    $('#te-btn-text').value = v.btn.text || ''; $('#te-btn-url').value = v.btn.url || '';
-    ['te-btn-text-err', 'te-btn-url-err'].forEach(id => $('#' + id).hidden = true);
-    if (v.banner || v.btn.on) visOpen = true;
+    if (v.banner) visOpen = true;
     syncVis();
-  }
-  // pogas pārbaude: teksts obligāts (līdz 40 simboliem), saite – https:// vai lauks, piem., {e-anketa}
-  function btnErrs(v = curVis()){
-    if (!v.btn.on) return {};
-    return {text:!v.btn.text ? 'Norādiet pogas tekstu.' : '', url:ctaUrlError(v.btn.url)};
   }
   const ready = () => kind() === 'epasts' ? !!started : kind() === 'pielikums' ? !!main : false;
   // Ieraksta redaktora saturu
@@ -7627,7 +7608,6 @@ function openTemplateEditor(id, preset = {}){
     setBody(tt.body);
     subj.value = tt.subject; $('#te-subject-err').hidden = true;
     $('#te-ea-subject').value = tt.ea.subject; $('#te-ea-body').value = tt.ea.body;
-    { const v = curVis(); setVisUI({...v, btn:visOf(tt).btn}); }
     if (!sess && CAT_BY_KEY[x.cat]) $('#te-cat').value = x.cat;
     syncKind();
   }
@@ -7678,7 +7658,7 @@ function openTemplateEditor(id, preset = {}){
     const ta = $('#te-ea-body');
     if (ta.value.trim() && !(await subConfirm({title:'Pārrakstīt eAdreses tekstu?', message:'Esošais eAdreses teksts tiks aizstāts ar e-pasta tekstu bez noformējuma. Turpināt?', okLabel:'Pārrakstīt'}))) return;
     collect();
-    ta.value = emailToPlain(withBtn(versions.lv.body, curVis()));
+    ta.value = emailToPlain(versions.lv.body);
     if (!$('#te-ea-subject').value.trim()) $('#te-ea-subject').value = subj.value.trim();
     $('#te-ea-body-err').hidden = true;
     update(); ta.focus();
@@ -7725,17 +7705,12 @@ function openTemplateEditor(id, preset = {}){
   $('#te-doc-banner').addEventListener('change', syncVis);
   // Vizuālie elementi: jebkura izmaiņa – uzreiz priekšskatījumā
   $('#te-vis-toggle').addEventListener('click', () => { visOpen = !visOpen; keepScroll(syncVis); });
-  $$('#te-vis-body input[type="radio"], #te-vis-logo, #te-btn-on', modal).forEach(i => i.addEventListener('change', () => { if (i.id === 'te-btn-on' && i.checked) setTimeout(() => $('#te-btn-text').focus({preventScroll:true})); update(); }));
-  $('#te-btn-text').addEventListener('input', () => { $('#te-btn-text-err').hidden = true; update(); });
-  // saites pārbaude: izejot no lauka un saglabājot; ja kļūda jau redzama – atjaunojas rakstot
-  $('#te-btn-url').addEventListener('input', () => { const e = $('#te-btn-url-err'); if (!e.hidden){ const m = btnErrs().url; e.hidden = !m; e.textContent = m; } update(); });
-  $('#te-btn-url').addEventListener('blur', () => { const m = btnErrs().url, e = $('#te-btn-url-err'); if ($('#te-btn-on').checked && $('#te-btn-url').value.trim()){ e.hidden = !m; e.textContent = m; } });
-  insField('#te-btn-field', '#te-btn-url');
+  $$('#te-vis-body input[type="radio"]', modal).forEach(i => i.addEventListener('change', update));
   ['te-doc-tags', 'te-doc-slogan'].forEach(fid => $('#' + fid).addEventListener('input', update));
   $('#te-name').addEventListener('input', () => { $('#te-name-err').hidden = true; });
   renderFiles();
   syncExtra();
-  if (vis0.banner || vis0.btn.on) visOpen = true;
+  if (vis0.banner) visOpen = true;
   loadLang();
   syncSv();
   syncKind();
@@ -9450,13 +9425,18 @@ function renderAcBar(){
   const ks = acKeys(), nDup = rs.reduce((a, r) => a + ks.filter(k => addrCheck(r, k).status === 'dup').length, 0);
   const nShared = [...sm].filter(([, ids]) => ids.some(id => rs.some(r => r.id === id))).length, nPend = sharedPending(sm).length;
   const nMi = rs.reduce((a, r) => a + ks.filter(k => { const c = addrCheck(r, k); return c.status === 'pot' && c.mi; }).length, 0);
-  const sub = (k, n, txt, title) => `<button type="button" class="q-sub${k === 'shared' && nPend ? ' has-pend' : ''}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${n ? '' : 'disabled'} title="${esc(title)}${n ? ' – filtrēt tabulu' : ''}">${k === 'shared' && nPend ? `<span class="pend-ic" aria-hidden="true">${ICON.warn}</span>` : ''}${txt} <b>${n}</b></button>`;
+  const sub = (k, n, txt, title) => `<button type="button" class="q-sub${k === 'shared' && nPend ? ' has-pend' : ''}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${n ? '' : 'disabled'} title="${esc(title)}${n ? ' – filtrēt tabulu' : ''}">${txt} <b>${n}</b></button>`;
   $('#c-ac').innerHTML = `<h4 id="c-q-h"><span class="scope-ic" aria-hidden="true">${ICON.shieldOk}</span>Kontaktu kvalitāte</h4>
     ${eaLater() ? `<p class="q-ea" title="${esc(EA_LATER_TIP)}"><b>eAdrese:</b> tiks noteikta sūtīšanas brīdī</p>` : ''}<ul class="q-list" role="group" aria-label="Adrešu kvalitāte (filtrē tabulu)">${AC_STATES.map(([k, l]) => `<li><button type="button" class="q-item q-${k}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${cnt[k] ? '' : 'disabled'} title="${esc(l)}: ${cnt[k]}${cnt[k] ? ' – filtrēt tabulu' : ''}"><span class="q-dot" aria-hidden="true"></span><span class="q-l">${esc(l)}</span><b>${cnt[k]}</b></button></li>`).join('')}</ul>
     <ul class="q-list q-list-ns" role="group" aria-label="Netiks nosūtīti (filtrē tabulu)"><li><button type="button" class="q-item q-nosend" data-acf="nosend" aria-pressed="${compose.acF === 'nosend'}" ${nNo ? '' : 'disabled'} title="Respondenti bez nevienas derīgas adreses – vēstule netiks nosūtīta: ${nNo}${nNo ? ' – filtrēt tabulu' : ''}"><span class="q-l">Netiks nosūtīti:</span><b>${nNo}</b></button></li></ul>
     ${cnt.bad ? '<p class="q-skip">Nederīgās adreses tiks izlaistas – vēstule tiks sūtīta uz nākamo derīgo adresi.</p>' : ''}
-    <div class="q-auto" role="group" aria-label="Automātiski konstatētais (filtrē tabulu)">${sub('shared', nShared, 'Koplietojamas', `Viena e-pasta adrese vairākiem respondentiem${nPend ? ` – neizvērtētas: ${nPend}` : ''}`)}<span class="q-sep" aria-hidden="true">·</span>${sub('dup', nDup, 'Dublikāti', 'Vienam respondentam vienāda adrese vairākos e-pasta laukos – dublikāts noņemts')}<span class="q-sep" aria-hidden="true">·</span>${sub('mi', nMi, 'MI ieteikumi', 'MI ieteikumi pārrakstīšanās kļūdām')}</div>
-    <div class="q-acts"><button type="button" class="btn btn-sm ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button>${regPend.length ? `<button type="button" class="link-btn ac-reg" data-ac-reg title="Izveidot uzdevumu kontaktu aktualizēšanai Respondentu pārvaldībā. Kampaņā adreses netiek dzēstas.">Nodot nederīgās adreses pārbaudei reģistrā (${regPend.length})</button>` : bads.length ? `<span class="ac-checked">Nodots pārbaudei reģistrā: ${bads.length}</span>` : ''}${nNo ? `<button type="button" class="btn btn-secondary btn-sm ac-excl-btn" data-ac-excl>Izņemt bez derīgas adreses (${nNo})</button>` : ''}<button type="button" class="btn btn-secondary btn-sm" data-ci-export>${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Eksportēt kontaktus</button></div>`;
+    <div class="q-auto" role="group" aria-label="Automātiski konstatētais (filtrē tabulu)">${sub('shared', nShared, 'Koplietojamas', `Viena e-pasta adrese vairākiem respondentiem${nPend ? ` – neizvērtētas: ${nPend}` : ''}`)}<span class="q-sep" aria-hidden="true">·</span>${sub('dup', nDup, 'Dublikāti', 'Vienam respondentam vienāda adrese vairākos e-pasta laukos – dublikāts noņemts')}<span class="q-sep" aria-hidden="true">·</span>${sub('mi', nMi, 'MI<span class="q-long"> ieteikumi</span>', 'MI ieteikumi pārrakstīšanās kļūdām')}</div>
+    <div class="q-acts"><button type="button" class="btn btn-secondary btn-sm ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button>${
+      // nederīgās adreses – Respondentu pārvaldībai labošanai (kampaņā tās netiek izmantotas); pēc nodošanas – neaktīva, līdz parādās jaunas
+      regPend.length ? `<button type="button" class="btn btn-secondary btn-sm ac-reg" data-ac-reg title="Nederīgās adreses tiks nodotas Respondentu pārvaldībai labošanai. Kampaņā tās netiek izmantotas.">${ICON.edit}Nodot labošanai (${regPend.length})</button>`
+      : `<button type="button" class="btn btn-secondary btn-sm ac-reg" disabled title="${bads.length ? 'Visas nederīgās adreses jau nodotas Respondentu pārvaldībai labošanai.' : 'Nederīgu adrešu nav.'}">${bads.length ? `${ICON.check}Nodots labošanai` : `${ICON.edit}Nodot labošanai (0)`}</button>`}<button type="button" class="btn btn-secondary btn-sm" data-ci-export>${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Eksportēt kontaktus</button>${nNo ? `<button type="button" class="btn btn-secondary btn-sm ac-excl-btn" data-ac-excl>Izņemt bez derīgas adreses (${nNo})</button>` : ''}</div>`;
+  // "Koplietojamas · Dublikāti · MI ieteikumi" – vienā rindā; ja neietilpst – "MI" (pilnais nosaukums padomā)
+  { const q = $('#c-ac .q-auto'); if (q){ q.classList.remove('is-short'); if (q.scrollWidth > q.clientWidth + 1) q.classList.add('is-short'); } }
 }
 // rindas problēmas (respondenta vārda padomā): nederīgās adreses netiks izmantotas; bez derīgas adreses – netiks nosūtīts
 function respProblems(r){
@@ -9481,13 +9461,14 @@ function respDetails(r, addrCell){
 const showAddr = () => { if (ui.showAddr == null){ try { ui.showAddr = sessionStorage.getItem('csp-show-addr') === '1'; } catch (e) { ui.showAddr = false; } } return ui.showAddr; };
 function addrDotState(c, prim){
   if (c.status === 'empty') return {cls:'none', tip:'Nav adreses'};
-  if (c.status === 'error') return {cls:'bad', tip:`Nederīga: ${String(c.msg || '').replace(/^\w/, m => m.toLowerCase())}`};
+  if (c.status === 'error'){ const m = String(c.msg || '').trim(); return {cls:'bad', tip:/^nederīga/i.test(m) ? `Nederīga${m.slice(8)}` : `Nederīga: ${m.replace(/^\w/, x => x.toLowerCase())}`}; }
   if (c.status === 'dup') return {cls:'none', tip:'Dublikāts – noņemts'};
   if (c.status === 'skip') return {cls:'pot', tip:`Netiek izmantota: ${c.shout ? 'koplietojama adrese' : `riskanta adrese${c.risk ? ` (${c.risk})` : ''}`}`};
   if (c.status === 'pot') return {cls:'pot', tip:c.mi ? 'Jāpārskata: MI ieteikums' : c.risk ? `Riskanta adrese: ${c.risk}` : `Jāpārskata${c.msg ? `: ${c.msg}` : ''}`};
   return {cls:'ok', tip:`Derīga${c.status === 'fixed' ? ' (labota automātiski)' : c.status === 'edit' ? ' (labota)' : ''}${prim ? ' – primārā' : ''}`};
 }
 function renderComposeList(){
+  hideAcTip();
   { const sw = $('#c-show-addr'); if (sw) sw.checked = showAddr(); }
   renderScopeCtx(); renderRepFilter(); renderAcBar();
   // filtrs no kartes "Kontaktu kvalitāte" – noņemama birka virs tabulas
@@ -9517,7 +9498,9 @@ function renderComposeList(){
     if (!full){
       if (c.status === 'empty') return `<td class="c-addr c-addr-st" title="${esc(st.tip)}"><div class="cell1"><span class="muted">—</span></div></td>`;
       const notes = [(c.shout || (sa && sm.has(sa))) && 'koplietojama', c.status === 'pot' && c.mi && 'MI ieteikums', (c.dupKept || (show && c.status === 'dup')) && 'dublikāts'].filter(Boolean);
-      return `<td class="c-addr${show ? '' : ' c-addr-st'}" title="${esc(tip)}${notes.length ? ` (${esc(notes.join(', '))})` : ''} – darbības: atverot rindu ›"><div class="cell1"><span class="ac-val ac-st q-${st.cls} ${cls}">${inner}</span>${notes.map(n => `<small class="ac-nt">· ${esc(n)}</small>`).join('')}</div></td>`;
+      // padoms (pele un tastatūra): pati adrese un statuss, piem., "laura.kaleja@pasts.example – Derīga", "_DEFAULT@… (eAdrese) – Derīga", "… – Nederīga: nav domēna"
+      const atip = `${c.value ? `${c.value}${k === 'eadrese' ? ' (eAdrese)' : ''} – ` : ''}${stTip}${c.verified ? ' (pārbaudīta riskanta adrese)' : ''}${notes.length ? ` · ${notes.join(', ')}` : ''}`;
+      return `<td class="c-addr${show ? '' : ' c-addr-st'}"><div class="cell1"><span class="ac-val ac-st q-${st.cls} ${cls}" tabindex="0" data-actip="${esc(atip)}" aria-label="${esc(nm)}: ${esc(atip)}">${inner}</span>${notes.map(n => `<small class="ac-nt">· ${esc(n)}</small>`).join('')}</div></td>`;
     }
     const rk = c.status === 'pot' && c.risk;
     const main = ['dup', 'skip'].includes(c.status) ? `<span class="ac-val ac-st q-${st.cls} ${cls}" title="${esc(tip)}">${inner}</span>`
@@ -12288,7 +12271,7 @@ function viewSent(id){
   if (!x) return;
   const v = sentVer(x);
   openModal({title:'Nosūtītā vēstule', wide:true, content: mailView({
-    toName:x.recipient, toAddr:x.address, channel:x.channel, logo:x.logo !== false, visNote:x.channel === 'eadrese' ? visNoteOf(x.visEls) : '',
+    toName:x.recipient, toAddr:x.address, channel:x.channel, logo:true, visNote:x.channel === 'eadrese' ? visNoteOf(x.visEls) : '',
     subjectHtml:esc(v.subject), bodyHtml: x.archived ? '<p class="hint">Saturs arhīvā nav saglabāts.</p>' : v.text != null ? `<div class="mail-plain">${esc(v.text)}</div>` : resolveImages(x.bodyHtml),
     bodyTextHtml: x.archived ? 'Vēstules saturs testa datu arhīvā nav saglabāts.' : esc(v.text != null ? v.text : x.bodyText), footerHtml:esc(x.footer || ''),
     atts:(x.attachments || []).map(a => ({name:a.name, doc:a, tag:`Adresāts: ${x.recipient}`})), main:x.main || null, files:x.files || [], variant:x.variant || '',
@@ -12928,7 +12911,9 @@ $('#c-ac').addEventListener('click', e => {
     // simulācija: uzdevums kontaktu aktualizēšanai Respondentu pārvaldībā; kampaņā adreses netiek dzēstas
     const xs = acBadAddrs().filter(c => !(compose.regSent || {})[regKey(c)]); if (!xs.length) return;
     compose.regSent = compose.regSent || {}; const t = new Date().toISOString(); xs.forEach(c => { compose.regSent[regKey(c)] = t; });
-    saveDraft(); renderAcBar(); toast(`Nodots pārbaudei: ${xs.length} ${plural(xs.length, 'adrese', 'adreses')}`);
+    alAddC('fixHand', alCnt(xs.length, 'nederīga adrese', 'nederīgas adreses'));
+    saveDraft(); renderAcBar(); toast(`${xs.length} ${plural(xs.length, 'adrese nodota', 'adreses nodotas')} labošanai`);
+    const b = $('#c-ac [data-ac-reg]'); if (b) b.focus();
   }
   if (e.target.closest('[data-ci-export]')) exportContacts();
 });
@@ -13438,6 +13423,20 @@ $('#c-pvch').addEventListener('click', e => {
 });
 $('#c-days').addEventListener('input', e => { compose.sel.days = e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value, 10) || 0); selChanged(); });
 $('#c-late').addEventListener('input', e => { compose.sel.lateDays = e.target.value === '' ? '' : Math.max(0, parseInt(e.target.value, 10) || 0); selChanged(); });
+// adreses statusa padoms Respondentu tabulā: blakus statusam (pa labi; ja nav vietas – pa kreisi), vienā rindā – neaizsedz blakus rindu statusus
+function hideAcTip(){ const t = $('#ac-tipbox'); if (t) t.hidden = true; }
+function showAcTip(el){
+  let t = $('#ac-tipbox'); if (!t){ t = document.createElement('div'); t.id = 'ac-tipbox'; t.className = 'c-tipbox ac-tipbox'; t.setAttribute('role', 'tooltip'); document.body.appendChild(t); }
+  t.textContent = el.dataset.actip; t.hidden = false;
+  const r = el.getBoundingClientRect(), w = t.offsetWidth, h = t.offsetHeight;
+  t.style.left = (r.right + 8 + w <= innerWidth - 8 ? r.right + 8 : Math.max(8, r.left - w - 8)) + 'px';
+  t.style.top = Math.max(8, r.top + r.height / 2 - h / 2) + 'px';
+}
+$('#c-list').addEventListener('mouseover', e => { const el = e.target.closest('[data-actip]'); if (el) showAcTip(el); });
+$('#c-list').addEventListener('mouseout', e => { const el = e.target.closest('[data-actip]'); if (el && !el.contains(e.relatedTarget)) hideAcTip(); });
+$('#c-list').addEventListener('focusin', e => { const el = e.target.closest('[data-actip]'); if (el) showAcTip(el); else hideAcTip(); });
+$('#c-list').addEventListener('focusout', () => hideAcTip());
+$('#c-list').addEventListener('scroll', () => hideAcTip(), true);
 $('#c-list').addEventListener('change', e => {
   // galvenes rūtiņa – iekļaut / izņemt visus redzamos (agrāk saites "Iekļaut visus" / "Izņemt visus")
   if (e.target.id === 'c-chk-all'){ actions[e.target.checked ? 'c-all' : 'c-none'](); return; }
