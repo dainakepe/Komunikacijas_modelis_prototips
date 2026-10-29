@@ -1238,6 +1238,8 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .al-campf select{flex:1;min-width:0;font-size:var(--fs-sm);padding-top:5px;padding-bottom:5px}
 .al-camp{color:var(--primary-dark);font-weight:600}
 .jrn-views{margin:-6px 0 14px}
+/* 2. līmenī apakšciļņu nav – statusu rinda nedaudz zemāk zem virsraksta */
+#jrn-views[hidden] ~ #hist-l2 .hg-row{margin-top:8px}
 .hist-table.is-all > thead > tr > th:first-child{width:20%}
 .hist-table .hist-camp-l{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;font-size:var(--fs-sm);font-weight:500;padding:0}
 #jrn-l1 .flt-search{max-width:420px}
@@ -3557,7 +3559,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   <section id="tab-vesture" class="tab-panel" hidden>
     <div class="page-head">
       <div>
-        <button type="button" class="btn btn-ghost btn-sm back-link" id="jrn-back-top" data-action="jrn-back" hidden>← Visi sūtījumi</button>
+        <button type="button" class="btn btn-ghost btn-sm back-link" id="jrn-back-top" data-action="jrn-back" hidden>← Sūtījumi</button>
         <h1 id="jrn-title"><span id="jrn-title-t">Sūtījumi</span> <span class="tip" id="jrn-title-tip" tabindex="0" role="note" aria-label="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts." data-tip="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts.">i</span></h1>
       </div>
       <div class="toolbar jrn-tools"><button type="button" class="btn-mini" data-action="rules-open" title="NDR (e-pasts) un DIV (e-adrese) statusu klasifikācija: iemesls → tips → automātiskā rīcība"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Piegādes statusi un kļūdas</button>
@@ -3653,7 +3655,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 156</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 157</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11312,7 +11314,7 @@ function copyCampaign(key){
 }
 // Sūtījumi ar atlasītu kampaņu
 function showHistoryOf(batch){
-  jrnSetView('camp');
+  jrnSetView('camp'); ui.jrn.from = 'camp';
   Object.assign(ui.hist, histDefaults(), {camp:String(batch), sts:[]});
   ui.jrn.camp = String(batch); ui.histLimit = 50;
   $('#hist-search').value = ''; $('#hist-ch').value = '';
@@ -11388,7 +11390,7 @@ function renderJrnTitle(name){
   $('#jrn-title-t').innerHTML = name ? `Sūtījumi <span class="jrn-sep" aria-hidden="true">·</span> <span class="jrn-tn">${esc(name)}</span>` : 'Sūtījumi';
   $('#jrn-title-tip').hidden = !!name;
 }
-// 2. līmeņa galvene: virs virsraksta "← Visi sūtījumi" (atgriež uz skatu, no kura kampaņa atvērta); nosaukums – lapas virsrakstā
+// 2. līmeņa galvene: virs virsraksta "← Sūtījumi" (atgriež 1. līmenī tajā apakšcilnē, no kuras kampaņa atvērta – ar saglabātiem filtriem); nosaukums – lapas virsrakstā
 function renderJrnCtx(){
   const c = ui.jrn.camp, x = campRows().find(y => y.type === 'sent' && String(y.id) === String(c));
   renderJrnTitle(x ? x.name : `Kampaņa Nr. ${c}`);
@@ -11909,9 +11911,10 @@ function renderSent(){
   // 1. līmenis – kampaņu saraksts; 2. līmenis – izvēlētās kampaņas (vai no atskaitēm – visu kampaņu) vēstules
   // "Visi sūtījumi" – visu kampaņu vēstules (tā pati tabula, filtri un logs kā 2. līmenī, papildus kolonna un filtrs "Kampaņa")
   const va = jrnVA(), l2 = va || ui.jrn.camp != null;
-  renderJrnViews();
-  // galvene: 2. līmenī – "← Visi sūtījumi" virs virsraksta, bez "Darbību vēsture" un miskastes; augšējā līmenī – abi labajā pusē
+  // galvene: 2. līmenī – tikai "← Sūtījumi" virs virsraksta (bez apakšcilnēm, "Darbību vēsture" un miskastes); 1. līmenī – apakšcilnes un abi labajā pusē
   const camp2 = l2 && !va;
+  $('#jrn-views').hidden = camp2;
+  if (!camp2) renderJrnViews();
   $('#jrn-back-top').hidden = !camp2; $('#jrn-top').hidden = camp2;
   jrnPurgeBtn();
   $('#jrn-l1').hidden = l2; $('#hist-l2').hidden = !l2;
@@ -12014,8 +12017,9 @@ function openLetterModal(id, tab){
 // no respondentu meklēšanas / Atskaitēm: kampaņas sūtījumi ar šo respondentu un vēstules logs
 function openLetterIn(id){
   const x = state.sent.find(y => y.id === id); if (!x) return;
+  const away = ui.tab !== 'vesture';
   openJrnCamp(x.batch, {q:x.recipient});
-  if (ui.tab !== 'vesture') showTab('vesture');
+  if (away){ ui.jrn.from = 'camp'; showTab('vesture'); }
   openLetterModal(x.id);
 }
 // pārzīmē atvērto logu (pēc darbībām, statusu izmaiņām); soft – neaiztiek, kamēr lietotājs raksta laukā
@@ -12232,7 +12236,7 @@ function repDrill(o){
   // viena kampaņa – tās 2. līmenis ("Pa kampaņām"); citādi – "Visi sūtījumi" ar atskaites filtriem
   jrnSetView(h.camp ? 'camp' : 'all');
   Object.assign(ui.hist, h, {sts:g ? [...g.sts] : []}); ui.histLimit = 50;
-  if (h.camp) ui.jrn.camp = String(h.camp);
+  if (h.camp){ ui.jrn.camp = String(h.camp); ui.jrn.from = 'camp'; }
   $('#hist-search').value = h.q || '';
   showTab('vesture');
 }
@@ -13021,7 +13025,7 @@ const actions = {
   'camp-history': id => showHistoryOf(id),
   // Sūtījumi
   'jrn-open': id => openJrnCamp(id),
-  'jrn-back': () => { ui.jrn.camp = null; if (ui.jrn.from === 'all'){ ui.jrn.from = ''; jrnSetView('all'); } renderSent(); window.scrollTo({top:0}); const q = $('#jrn-q'); if (q) q.focus({preventScroll:true}); },
+  'jrn-back': () => { ui.jrn.camp = null; if (ui.jrn.from === 'all') jrnSetView('all'); ui.jrn.from = ''; renderSent(); window.scrollTo({top:0}); const q = $(jrnVA() ? '#hist-search' : '#jrn-q'); if (q) q.focus({preventScroll:true}); },
   // respondentu meklēšana (1. līmenis) un Atskaišu tabulas: kampaņas sūtījumi ar šo respondentu + vēstules detaļu logs
   'jrn-letter': id => openLetterIn(id),
   // "Visi sūtījumi": kampaņas nosaukums atver tās 2. līmeni cilnē "Pa kampaņām"
@@ -13164,7 +13168,7 @@ document.addEventListener('click', e => {
   }
   // galvenā navigācija (apakšcilnēm, piem., Sagatavēs, ir tā pati klase .tab, bet bez data-tab)
   const tab = e.target.closest('.tab[data-tab]');
-  if (tab){ if (tab.dataset.tab === 'vesture') ui.jrn.camp = null; showTab(tab.dataset.tab); return; }
+  if (tab){ if (tab.dataset.tab === 'vesture'){ ui.jrn.camp = null; if (ui.jrn.from === 'all') jrnSetView('all'); ui.jrn.from = ''; } showTab(tab.dataset.tab); return; }
   // ārēja saite rindā (piem., "Atvērt NAMEJS") – atveras jaunā cilnē, rindas darbība netiek izpildīta
   if (e.target.closest('a.namejs-link')) return;
   // respondenta nosaukums atlases tabulā u.c. – atver kartīti (nevis atzīmē rindu)
