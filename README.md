@@ -18,7 +18,7 @@ Prototips ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var a
   - **Tabulu kartes – vienots noteikums visām tabulām** (kopīga CSS klase `.table-card`): karte ir flex kolonna – augšā virsraksts / filtri (ja ir), vidū tabulas laukums `.tc-area` (`flex: 1`), apakšā kopsavilkuma vai lappušu rinda ("Rādītas N no M", "Rādīt vairāk"). Tukšā vieta ir tabulas laukuma iekšpusē zem pēdējās rindas (balts fons, bez rindu līnijām); horizontālā ritjosla – laukuma apakšā; ja rindu daudz – laukums ritinās vertikāli, galva sticky.
     - **Augstums (`.tc-fit`):** karte sniedzas līdz lapas satura apakšai – lapa ietilpst logā, zem kartes paliek tikai kājene (vai kampaņas soļos – navigācijas josla). Ar maz rindām karte nesaraujas; filtrējot vai pārslēdzot cilnes, kartes apakšējā mala un lapas augstums nemainās (lapa nelec; ja virs kartes parādās filtru birku rinda, karte kļūst par tik zemāka). Ja virs kartes ir daudz satura (piem., atskaitēs – rādītāji un grafiki) un līdz loga apakšai paliek < 300 px, kartei ir fiksēts augstums – 60 % no loga, ne vairāk par 560 px. Augstums tiek pārrēķināts, mainot loga izmēru un saturu virs kartes.
     - **Tukšs stāvoklis (0 rindu):** tabulas galva paliek, laukuma vidū pelēks teksts (piem., "Nav ierakstu, kas atbilst filtriem", "Nav kampaņu, kas atbilst filtriem" ar pogu "Notīrīt filtrus"), karte saglabā to pašu augstumu.
-    - **Attiecas uz:** Kampaņas (kampaņu saraksts), Veidnes, Sagataves (abas apakšcilnes), Sūtījumi, Atskaites (tabulas: "Kampaņas", "Piegādes rezultāti pa kampaņām", "NDR un DIV paziņojumi", "Atkārtotā nosūtīšana" – apakšcilnē "Piegāde"; "Pa kanāliem" – vienmēr divas rindas, dabiskā augstumā; grafiku datu tabulas "Rādīt datu tabulu" – tās pašas klases laukums), kampaņas soļi (Respondenti; Saturs – "Mainīgo vērtības"), modālie logi ar tabulām (Piegādes statusi un kļūdas, Izslēgt pēc neiesniegšanas koda, Koplietojama adrese, Izņēmumi, respondenta kartītes "Pārskati un periodi" – tur minimālais augstums ir loga saturs, laukums ritinās loga robežās). Neattiecas uz vēstules saturā ievietoto pārskatu tabulu (`{pārskatu_tabula}`) un rindas detaļās iekļauto pienākumu tabulu – tās ir vēstules / rindas saturs.
+    - **Attiecas uz:** Kampaņas (kampaņu saraksts), Veidnes, Sagataves (abas apakšcilnes), Sūtījumi, Atskaites (tabulas: "Kampaņas", "Piegādes rezultāti pa kampaņām", "NDR un DIV paziņojumi", "Atkārtotā nosūtīšana" – apakšcilnē "Piegāde"; "Pa kanāliem" – vienmēr trīs rindas (eAdrese, E-pasts, Pasts), dabiskā augstumā; grafiku datu tabulas "Rādīt datu tabulu" – tās pašas klases laukums), kampaņas soļi (Respondenti; Saturs – "Mainīgo vērtības"), modālie logi ar tabulām (Piegādes statusi un kļūdas, Izslēgt pēc neiesniegšanas koda, Koplietojama adrese, Izņēmumi, respondenta kartītes "Pārskati un periodi" – tur minimālais augstums ir loga saturs, laukums ritinās loga robežās). Neattiecas uz vēstules saturā ievietoto pārskatu tabulu (`{pārskatu_tabula}`) un rindas detaļās iekļauto pienākumu tabulu – tās ir vēstules / rindas saturs.
     - **Soļi "Respondenti" un "Pārbaude":** abas kolonnas vienāda augstuma (`align-items: stretch`). Solī "Respondenti" labās kartes apakšējā mala ir vienā līmenī ar kreisās kolonnas apakšu (zem pogas "Eksportēt kontaktus"); tabulas laukums aizpilda brīvo vietu (min. 260 px), "Iekļauti N no M" un "N gatavs · N jāpārskata" – kartes apakšā. Solī "Pārbaude" (tabulas nav – vēstuļu priekšskatījums) labā kolonna sniedzas vismaz līdz kreisās kolonnas apakšai.
   - **Filtru zona** (kampaņu saraksts – sūtījumos ir kompakta filtru rinda, sk. "Sūtījumi"; vienāds elements un stils): 1. rindā meklēšana un svarīgākie filtri, labajā pusē poga **"Papildu filtri ▾"** (pēc noklusējuma aizvērta; ja papildu blokā ir aktīvi filtri – skaits, piem., "Papildu filtri (2)"); izvēršamajā blokā – retāk lietotie filtri. Zem filtru zonas aktīvie filtri (no abām rindām) redzami kā nelielas birkas ar × (piem., "Veids: Atgādinājums ×") un saite **"Notīrīt visus"** (statusa poga paliek).
   - **Kartītes** ar plānu apmali un tikko jaušamu ēnu; bez dekoratīvām krāsainām malām (veidņu bloki, sagatavju kartītes, rādītāju kartītes, modālo logu galvenes) – krāsa paliek tikai statusiem un skaitļiem.
@@ -783,6 +783,49 @@ Papildinājums esošajai sūtījumiem un nosūtītas kampaņas skatam (esošās 
   - tabula pa apsekojumiem: Apsekojums | Veidlapas vēstulēs | Iesāktas | Kļūdainas | Iesniegtas | Iesniegšanas % (pašreizējie statusi);
   - sekundāra poga **"Veidot atgādinājumu"** virs piltuves (tā pati izvēle – arī kampaņu saraksta izvēlnē "⋯") ar izvēlni: "Neuzsākušajiem (N)", "Iesākušajiem, bet neiesniegušajiem (N)", "Ar kļūdainām veidlapām (N)" (N – unikāli respondenti; ar 0 – neaktīvs). Izvēle atver **jaunu kampaņu** (solis Pamatdati; esošā izveides plūsma) ar sākuma vērtībām: veids "Atgādinājums", tā pati statistikas joma un adrešu prioritāte, attiecīgie apsekojumi, respondentu saraksts ("Ielādēt sarakstu no faila" – NMK/UUK) un šodienas vēstules datums; saturs nav izvēlēts. Atgādinājuma nosacījums (esošais) – pēc vai pirms termiņa, atkarībā no tā, kurš aptver vairāk respondentu; atlase tiek veikta uzreiz;
   - mazs pelēks teksts: "Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena."
+
+### Drukāta vēstule (pasts) – trešais saziņas kanāls (Versija 158)
+
+Ja respondentu nevar sasniegt elektroniski, vēstuli izdrukā un nosūta pa pastu. Esošā funkcionalitāte nav mainīta – drukātā vēstule to tikai papildina. Testa dati ir izdomāti.
+- **Pasta adrese:** katram respondentam testa datos ir izdomāta pasta adrese (iela, māja, pilsēta, pasta indekss), piem., "Liepu iela 12, Rīga, LV-1010".
+- **Kampaņa – adrešu prioritāte (1. solis):**
+  - ķēdes beigās ir pēdējais, nepārvietojamais solis **"Drukāta vēstule"** (printera ikona);
+  - pārslēgs **"Ja elektroniski nesasniedz – sagatavot drukai"**, pēc noklusējuma ieslēgts;
+  - padoms: "Ja nav nevienas derīgas e-adreses vai e-pasta, vai piegāde neizdodas, vēstule tiek sagatavota drukāšanai un nosūtīta pa pastu uz respondenta pasta adresi.";
+  - iestatījums saglabājas kampaņā (melnrakstā, kopijā, ieplānotajā kampaņā).
+- **Respondentu solis** (ja drukāšana ieslēgta):
+  - kartē "Kontaktu kvalitāte" rindas "Netiks nosūtīti: N" vietā – **"Drukāt: N"** (filtrē tabulu);
+  - tabulā respondentiem bez derīgas elektroniskās adreses – pelēka piezīme **"· tiks drukāts"** (padomā – pasta adrese);
+  - poga "Izņemt bez derīgas adreses" netiek rādīta;
+  - ja drukāšana izslēgta – viss kā agrāk ("Netiks nosūtīti: N", poga redzama).
+- **Kopsavilkumi:**
+  - "Pārbaude" – rindā "Kanāli" papildus **"Drukāta vēstule: N"**; adrešu secībā – "… → Drukāta vēstule";
+  - "Nosūtīšana" – rindā "Kanāls" papildus **"Drukāta vēstule: N"**.
+- **Statusi** (vienoti visā prototipā):
+  - **"Jādrukā"** – grupā "Jārisina";
+  - **"Nosūtīts pa pastu"** – grupā "Piegādāts" (grupai "Piegādāts" tagad ir izvēlne ar diviem statusiem).
+  - Vēstule iegūst "Jādrukā", ja respondentam nav derīgas elektroniskās adreses vai visas elektroniskās adreses izmēģinātas neveiksmīgi, un kampaņā drukāšana ir ieslēgta. Ja drukāšana izslēgta – kā agrāk, "Nepiegādāts".
+  - Kanāla kolonnā – **"Pasts"**; filtros "Kanāls" (Sūtījumi, Atskaites) – "Pasts (drukāta vēstule)".
+  - Logā "Piegādes statusi un kļūdas" – sadaļa **"Drukāta vēstule (pasts)"** ar skaidrojumu.
+  - E-pasta atvēršana drukātai vēstulei netiek mērīta ("Nav attiecināms").
+- **Vēstules detaļu logs:**
+  - "Statusu ceļš": "Elektroniskās adreses izsmeltas → Jādrukā" (vai "Nav derīgas elektroniskās adreses → Jādrukā") → "Nosūtīts pa pastu (datums)";
+  - "Jādrukā" vēstulei apakšējā joslā – **"Atzīmēt kā nodotu pastā"**.
+- **Drukas rinda** (Sūtījumi, augšējais līmenis): virsraksta rindā poga **"Drukas rinda (N)"** (N – vēstules ar statusu "Jādrukā" visās kampaņās). Tā atver logu ar tabulu **Respondents | Pasta adrese | Kampaņa | Iemesls** ("Nav e-adreses / e-pasta" vai "Piegāde neizdevās") **| Kopš**. Rindas atlasa ar rūtiņām (arī "atlasīt visas"); darbības atlasītajām:
+  - **"Ģenerēt PDF drukai"** – viens PDF (pārlūka drukas logā "Saglabāt kā PDF"): katra vēstule jaunā A4 lapā ar veidlapas galvu, datumu un Nr., adresāta pasta adresi un vēstules tekstu;
+  - **"Adrešu uzlīmes"** – PDF ar adrešu uzlīmēm (A4, 3 × 7);
+  - **"Atzīmēt kā nodotu pastā"** – statuss → "Nosūtīts pa pastu" ar datumu un lietotāju; ieraksts kampaņas Darbību vēsturē ("Nodeva pastā drukātas vēstules").
+- **Atskaites:** grafiks **"Ziņas pa kanāliem"** – apļveida (donut) diagramma ar 3 daļām: eAdrese, E-pasts, Drukāta vēstule.
+  - Grafiks ir apakšcilnē "Pārskats" (aizstāj agrākos stabiņus) un "Piegāde" (blakus tabulai "Pa kanāliem", kurai pievienota rinda "Pasts").
+  - Pie daļām – procenti, leģendā – nosaukums, procenti un skaits iekavās, piem., "eAdrese 60% (402)"; tas pats teksts padomā uz daļas.
+  - Krāsas – no atskaišu paletes (zila, zaļa, oranža). Grafiks ņem vērā atskaišu filtrus.
+  - Klikšķis uz daļas (vai leģendas rindas) atver Sūtījumus ("Visi sūtījumi") ar attiecīgā kanāla filtru – skaits sakrīt.
+  - KPI "Jārisina" ietver arī "Jādrukā"; piegādātās ietver "Nosūtīts pa pastu".
+- **Testa dati:** ticams kanālu sadalījums – ~60 % eAdrese, ~35 % e-pasts, ~5 % drukāta vēstule.
+  - Arhīva vēstules, kurām visas elektroniskās adreses izsmeltas, ir drukātas un nodotas pastā.
+  - Respondentiem bez derīgas elektroniskās adreses daļā kampaņu ir vēstules pa pastu.
+  - Pēdējo 2 nedēļu kampaņās daļa vēl ir "Jādrukā" (drukas rindā).
+  - Esošiem pārlūka datiem tie tiek pievienoti vienreiz.
 
 ### Sūtīšanas statusi un kļūdu apstrāde
 
