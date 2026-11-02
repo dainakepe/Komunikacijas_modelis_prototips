@@ -1315,9 +1315,10 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .jrn-table .hist-camp{display:block;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* 1. līmenis: Kampaņa | Adresāti | Statuss | Rezultāts | Nosūtīts | Nosūtītājs (nosaukums – atlikušais platums, vienā rindā ar "…") */
 .jrn-ctable{table-layout:fixed;width:100%}
-.jrn-ctable th:nth-child(2){width:100px} .jrn-ctable th:nth-child(3){width:165px} .jrn-ctable th:nth-child(4){width:185px} .jrn-ctable th:nth-child(5){width:115px} .jrn-ctable th:nth-child(6){width:170px}
+.jrn-ctable th:nth-child(2){width:100px} .jrn-ctable th:nth-child(3){width:200px} .jrn-ctable th:nth-child(4){width:185px} .jrn-ctable th:nth-child(5){width:115px} .jrn-ctable th:nth-child(6){width:170px}
 .jrn-ctable th:nth-child(2),.jrn-ctable td:nth-child(2){text-align:right;padding-right:24px}
 .jrn-ctable td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cf-jst select{width:220px}
 .jrn-ctable .camp-name{display:block;max-width:100%;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jrn-res{white-space:nowrap}
 .jrn-by{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1496,9 +1497,10 @@ button.cst2:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px
 .cst2.cs-done{color:var(--success)}
 /* rindas signāls: rīcība vajadzīga – šaura oranža josla kreisajā malā */
 /* Versija 167: rinda, kurai vajag rīcību (Jālabo / neatrisinātas problēmas) – ļoti viegls oranžīgs fons + 3 px oranža līnija kreisajā malā */
-#camp-scroll tr.camp-row.needs-act > td{background:#FFF8EE}
-#camp-scroll tr.camp-row.needs-act > td:first-child{box-shadow:inset 3px 0 0 #E08A00}
-#camp-scroll tr.camp-row.needs-act:hover > td,#camp-scroll tr.camp-row.needs-act:focus-within > td,#camp-scroll tr.camp-row.needs-act.is-menu > td{background:#FCEBD3}
+#camp-scroll tr.camp-row.needs-act > td,.jrn-ctable tr.camp-row.needs-act > td{background:#FFF8EE}
+#camp-scroll tr.camp-row.needs-act > td:first-child,.jrn-ctable tr.camp-row.needs-act > td:first-child{box-shadow:inset 3px 0 0 #E08A00}
+#camp-scroll tr.camp-row.needs-act:hover > td,#camp-scroll tr.camp-row.needs-act:focus-within > td,#camp-scroll tr.camp-row.needs-act.is-menu > td,.jrn-ctable tr.camp-row.needs-act:hover > td,.jrn-ctable tr.camp-row.needs-act:focus-within > td{background:#FCEBD3}
+.jrn-ctable tr.camp-row.needs-act button.cst2:hover{background:#F8DDB8}
 #camp-scroll tr.camp-row:not(.needs-act):focus-within > td,#camp-scroll tr.camp-row.is-menu:not(.needs-act) > td{background:var(--row-hover)}
 #camp-scroll tr.camp-row.needs-act button.cst2:hover{background:#F8DDB8}
 /* ātrais filtrs "Jārīkojas (N)" statusu pogu rindā */
@@ -3777,6 +3779,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input type="search" id="jrn-q" placeholder="Meklēt kampaņu…"></label>
         <label class="cf-f cf-kind"><span class="sr-only">Veids</span><select id="jrn-kind" aria-label="Veids"></select></label>
+        <label class="cf-f cf-jst"><span class="sr-only">Sūtīšanas statuss</span><select id="jrn-st" aria-label="Sūtīšanas statuss"></select></label>
         <div data-per="jrn"></div>
         <button type="button" class="link-btn hf-exp" id="jrn-export"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>Eksportēt</button>
       </div></div>
@@ -3858,7 +3861,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 170</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 171</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -12092,7 +12095,7 @@ function showHistoryOf(batch){
 }
 /* ---------- Sūtījumi: apakšcilnes "Pa kampaņām" (1. līmenis – kampaņu saraksts, 2. – kampaņas vēstules) un "Visi sūtījumi" ---------- */
 // periods (ui.hist.quick/from/to) ir kopīgs abiem līmeņiem: atverot kampaņu, tas pāriet uz 2. līmeni, atgriežoties – saglabājas
-ui.jrn = {camp:null, view:'camp', q:'', kind:'', sort:{k:'', dir:0}, cLimit:50};
+ui.jrn = {camp:null, view:'camp', q:'', kind:'', st:'', sort:{k:'', dir:0}, cLimit:50};
 // katrai apakšcilnei savi filtri (ui.hist – aktīvās cilnes filtri); izvēlētā cilne saglabājas sesijas laikā
 ui.histC = ui.hist; ui.histA = {...ui.hist, sts:[]};
 try { if (sessionStorage.getItem('csp-jrn-view') === 'all'){ ui.jrn.view = 'all'; ui.hist = ui.histA; } } catch (e) {}
@@ -12108,9 +12111,10 @@ function jrnSetView(v){
 function renderJrnViews(){
   $('#jrn-views').innerHTML = JRN_VIEWS.map(([k, l]) => `<button type="button" class="tab" role="tab" data-jview="${k}" aria-selected="${ui.jrn.view === k}" ${ui.jrn.view === k ? 'aria-current="page"' : 'tabindex="-1"'} aria-controls="${k === 'all' ? 'hist-l2' : 'jrn-l1'}">${l}</button>`).join('');
 }
-const JRN_COLS = [['name', 'Kampaņa'], ['n', 'Adresāti'], ['st', 'Statuss'], ['res', 'Rezultāts'], ['ts', 'Nosūtīts'], ['by', 'Nosūtītājs']];
-// kampaņas statuss Sūtījumos: izpildē – "Procesā"
-const jrnSt = x => x.st === 'active' ? {...CAMP_ST.active, label:'Procesā'} : CAMP_ST[x.st];
+const JRN_COLS = [['name', 'Kampaņa'], ['n', 'Adresāti'], ['st', 'Sūtīšanas statuss'], ['res', 'Rezultāts'], ['ts', 'Nosūtīts'], ['by', 'Nosūtītājs']];
+// Versija 171: kampaņas sūtīšanas statuss Sūtījumos – tā pati funkcija kā Kampaņu sarakstā (campSend / SEND_ST / campStHtml)
+const jrnSt = x => SEND_ST[campSend(x).k];
+const jrnAct = x => { const d = campSend(x); return d.k === 'issues' && d.open > 0; };
 // rezultāts: piegādāti / procesā / jārisina (tās pašas grupas kā 2. līmeņa statusu pogas)
 function jrnRes(x){
   if (!x.res){ const ok = x.xs.filter(y => histFinal(y) === 'ok').length, todo = x.xs.filter(isTodo).length;
@@ -12122,7 +12126,7 @@ const jrnBy = x => x.xs[0].sentBy || x.creator || '—';
 function jrnSortVal(x, k){
   if (k === 'name') return x.name || '';
   if (k === 'n') return jrnAdr(x);
-  if (k === 'st') return jrnSt(x).label;
+  if (k === 'st') return Object.keys(SEND_ST).indexOf(campSend(x).k);
   if (k === 'res') return jrnRes(x).pc;
   if (k === 'ts') return x.ts || null;
   if (k === 'by') return jrnBy(x);
@@ -12132,14 +12136,16 @@ const respNmkRaw = id => (state.respondents.find(y => y.id === id) || {}).nmk ||
 function renderJrnL1(){
   const j = ui.jrn, q = norm(j.q.trim()), per = ui.hist;
   $('#jrn-kind').innerHTML = `<option value="">Visi veidi</option>` + Object.entries(SESS_KINDS).map(([k, v]) => `<option value="${k}" ${k === j.kind ? 'selected' : ''}>${esc(v.label)}</option>`).join('');
+  // sūtīšanas statusa filtrs – tās pašas vērtības kā Kampaņu sarakstā (1. līmenī – tikai nosūtītas kampaņas: Procesā / Pabeigta / Pabeigta ar problēmām)
+  $('#jrn-st').innerHTML = `<option value="">Sūtīšanas statuss: visi</option>` + ['proc', 'done', 'issues'].map(k => `<option value="${k}"${k === j.st ? ' selected' : ''}>${esc(SEND_ST[k].label)}</option>`).join('');
   perRender('jrn');
   if (document.activeElement !== $('#jrn-q')) $('#jrn-q').value = j.q;
-  const chips = [...(j.kind ? [['kind', `Veids: ${SESS_KINDS[j.kind] ? SESS_KINDS[j.kind].label : j.kind}`]] : []), ...perChip(per)];
+  const chips = [...(j.kind ? [['kind', `Veids: ${SESS_KINDS[j.kind] ? SESS_KINDS[j.kind].label : j.kind}`]] : []), ...(j.st && SEND_ST[j.st] ? [['st', `Sūtīšanas statuss: ${SEND_ST[j.st].label}`]] : []), ...perChip(per)];
   $('#jrn-chipbar').hidden = !chips.length;
   $('#jrn-chips').innerHTML = chips.map(([k, l]) => `<span class="ms-tag"><span>${esc(l)}</span><button type="button" data-jchip="${k}" aria-label="Noņemt filtru: ${esc(l)}">×</button></span>`).join('');
   const kindOk = k => !j.kind || baseKind(k) === j.kind;
   // tikai kampaņas ar vismaz vienu nosūtītu vēstuli (arī izpildē); melnraksti un ieplānotās – nē; periods – pēc kampaņas nosūtīšanas datuma
-  const camps = campRows().filter(x => x.type === 'sent' && kindOk(x.kind) && perMatch(per, x.ts));
+  const camps = campRows().filter(x => x.type === 'sent' && kindOk(x.kind) && (!j.st || campSend(x).k === j.st) && perMatch(per, x.ts));
   const cl = sortList(camps.filter(x => !q || norm(`${x.name} ${x.desc || ''}`).includes(q)), j.sort, jrnSortVal);
   ui.jrnList = cl;
   // kampaņas
@@ -12148,8 +12154,8 @@ function renderJrnL1(){
   $('#jrn-camps').innerHTML = `<section class="jrn-sec" aria-label="Kampaņas">
     <div class="card table-card jrn-card"><div class="table-wrap camp-scroll"><table class="camp-table jrn-table jrn-ctable"><thead><tr id="jrn-head">${sortHead(JRN_COLS, j.sort, 'jsort').replace(/<th class="actions">[\s\S]*$/, '')}</tr></thead>
     <tbody>${cPage.map(x => { const r = jrnRes(x), st = jrnSt(x), rt = `Piegādāti ${fmtCount(r.ok)} · Procesā ${fmtCount(r.proc)} · Jārisina ${fmtCount(r.todo)}`;
-      return `<tr class="camp-row" data-action="jrn-open" data-id="${esc(x.id)}"><td><button type="button" class="camp-name" data-action="jrn-open" data-id="${esc(x.id)}" title="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + campKindLabel(x.kind))}">${esc(x.name)}</button></td>
-      <td class="num">${esc(fmtCount(jrnAdr(x)))}</td><td><span class="cst ${st.cls}"><i aria-hidden="true"></i>${st.label}</span></td>
+      return `<tr class="camp-row${jrnAct(x) ? ' needs-act' : ''}" data-action="jrn-open" data-id="${esc(x.id)}"><td><button type="button" class="camp-name" data-action="jrn-open" data-id="${esc(x.id)}" title="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + campKindLabel(x.kind))}">${esc(x.name)}</button></td>
+      <td class="num">${esc(fmtCount(jrnAdr(x)))}</td><td class="c-st">${campStHtml('send', x)}</td>
       <td><span class="jrn-res" title="${esc(rt)}" aria-label="${esc(`Piegādāti ${r.ok} (${r.pc}%) – ${rt}`)}">Piegādāti ${esc(fmtCount(r.ok))} <span class="muted">(${r.pc}%)</span></span></td>
       <td title="${esc(fmtDateTime(x.ts))}">${esc(dmy(isoDate(new Date(x.ts))))}</td><td><span class="jrn-by" title="${esc(jrnBy(x))}">${esc(jrnBy(x))}</span></td></tr>`; }).join('')}</tbody></table>
     <div class="tc-empty"${empty ? '' : ' hidden'}>${empty}</div></div>
@@ -14229,12 +14235,17 @@ function hfDd(key, pick){
 // Sūtījumi – 1. līmeņa meklēšana, filtri un kārtošana (saglabājas, atgriežoties ar "← Visas kampaņas")
 $('#jrn-q').addEventListener('input', e => { ui.jrn.q = e.target.value; ui.jrn.cLimit = 50; renderJrnL1(); });
 $('#jrn-kind').addEventListener('change', e => { ui.jrn.kind = e.target.value; renderJrnL1(); });
+$('#jrn-st').addEventListener('change', e => { ui.jrn.st = e.target.value; ui.jrn.cLimit = 50; renderJrnL1(); $('#jrn-st').focus(); });
+// padomi (tāpat kā Kampaņu sarakstā)
+$('#jrn-camps').addEventListener('mouseover', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
+$('#jrn-camps').addEventListener('mouseout', e => { const el = e.target.closest('[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
+$('#jrn-camps').addEventListener('focusin', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
 $('#jrn-views').addEventListener('click', e => { const b = e.target.closest('[data-jview]'); if (!b) return; jrnSetView(b.dataset.jview); renderSent(); $(`#jrn-views [data-jview="${ui.jrn.view}"]`).focus(); });
 $('#jrn-views').addEventListener('keydown', e => { if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return; e.preventDefault(); jrnSetView(ui.jrn.view === 'all' ? 'camp' : 'all'); renderSent(); $(`#jrn-views [data-jview="${ui.jrn.view}"]`).focus(); });
 $('#jrn-chipbar').addEventListener('click', e => {
   const c = e.target.closest('[data-jchip]');
   if (c){ if (c.dataset.jchip === 'period') Object.assign(ui.hist, {quick:'', from:'', to:''}); else ui.jrn[c.dataset.jchip] = ''; }
-  else if (e.target.closest('#jrn-clear')){ Object.assign(ui.hist, {quick:'', from:'', to:''}); Object.assign(ui.jrn, {q:'', kind:''}); }
+  else if (e.target.closest('#jrn-clear')){ Object.assign(ui.hist, {quick:'', from:'', to:''}); Object.assign(ui.jrn, {q:'', kind:'', st:''}); }
   else return;
   ui.jrn.cLimit = 50; renderJrnL1(); const n = $('#jrn-chips [data-jchip]') || $('#jrn-q'); n.focus();
 });
@@ -14273,7 +14284,7 @@ const EXP_F = {
     ['open', 'E-pasta reakcija', x => expRx(mailReact(x))], ['sub', 'Anketas aktivitāte', x => expRx(formAct(x))],
     ['tries', 'Mēģinājumu skaits', x => (x.attempts || []).filter(a => attKind(a) !== 'skip' && a.at && Date.parse(a.at) <= Date.now()).length],
     ['err', 'Kļūdas iemesls', x => { const n = lastNdrOf(x); return n && histFinal(x) !== 'ok' ? ruleOf(n.rule).reason : ''; }]],
-  camps:[['name', 'Kampaņa', x => x.name], ['kind', 'Veids', x => campKindLabel(x.kind)], ['n', 'Adresāti', x => jrnAdr(x)], ['st', 'Statuss', x => jrnSt(x).label],
+  camps:[['name', 'Kampaņa', x => x.name], ['kind', 'Veids', x => campKindLabel(x.kind)], ['n', 'Adresāti', x => jrnAdr(x)], ['st', 'Sūtīšanas statuss', x => jrnSt(x).label],
     ['res', 'Rezultāts', x => `Piegādāti ${jrnRes(x).ok} (${jrnRes(x).pc}%)`], ['ok', 'Piegādāti', x => jrnRes(x).ok], ['proc', 'Procesā', x => jrnRes(x).proc], ['todo', 'Jārisina', x => jrnRes(x).todo],
     ['ts', 'Nosūtīts', x => dmy(isoDate(new Date(x.ts)))], ['by', 'Nosūtītājs', x => jrnBy(x)]],
 };
