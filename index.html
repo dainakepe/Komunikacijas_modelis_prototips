@@ -1484,7 +1484,12 @@ button.cst2:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px
 .cst2.cs-ret,.cst2.cs-part{color:var(--orange-ink)} .cst2.cs-ret .icon,.cst2.cs-part .icon{color:#E07B1F}
 .cst2.cs-done{color:var(--success)}
 /* rindas signāls: rīcība vajadzīga – šaura oranža josla kreisajā malā */
-#camp-scroll tr.camp-row.needs-act td:first-child{box-shadow:inset 3px 0 0 #E07B1F}
+/* Versija 167: rinda, kurai vajag rīcību (Jālabo / neatrisinātas problēmas) – ļoti viegls oranžīgs fons + 3 px oranža līnija kreisajā malā */
+#camp-scroll tr.camp-row.needs-act > td{background:#FFF8EE}
+#camp-scroll tr.camp-row.needs-act > td:first-child{box-shadow:inset 3px 0 0 #E08A00}
+#camp-scroll tr.camp-row.needs-act:hover > td,#camp-scroll tr.camp-row.needs-act:focus-within > td,#camp-scroll tr.camp-row.needs-act.is-menu > td{background:#FCEBD3}
+#camp-scroll tr.camp-row:not(.needs-act):focus-within > td,#camp-scroll tr.camp-row.is-menu:not(.needs-act) > td{background:var(--row-hover)}
+#camp-scroll tr.camp-row.needs-act button.cst2:hover{background:#F8DDB8}
 /* ātrais filtrs "Jārīkojas (N)" statusu pogu rindā */
 .camp-sub .sub-act{display:inline-flex;align-items:center;gap:6px;margin-left:10px;position:relative;border-color:#F0C9A0;color:var(--orange-ink);background:var(--surface)}
 .camp-sub .sub-act::before{content:"";position:absolute;left:-9px;top:5px;bottom:5px;width:1px;background:var(--border)}
@@ -3841,7 +3846,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 166</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 167</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11546,7 +11551,7 @@ function campPubTag(x, compact){
   if (x.type !== 'planned') return '';
   const xs = pubIssues((x.pl && x.pl.reps) || ((x.pl && x.pl.snap && x.pl.snap.sel && x.pl.snap.sel.reports) || []).map(id => `${id}|`)); if (!xs.length) return '';
   const tipT = 'Apsekojums nav publicēts:\n' + pubLines(xs).join('\n');
-  return `<span class="pub-tag${compact ? ' is-ic' : ''}" tabindex="0" title="${esc(tipT)}" aria-label="${esc(tipT)}">${ICON.warn}${compact ? '' : 'Apsekojums nav publicēts'}</span>`;
+  return `<span class="pub-tag${compact ? ' is-ic' : ''}" tabindex="0" title="${esc(tipT)}" aria-label="${esc(tipT)}">${compact ? ICON.info : ICON.warn}${compact ? '' : 'Apsekojums nav publicēts'}</span>`;
 }
 function renderCampaigns(){
   refreshStatuses();
@@ -11589,7 +11594,7 @@ function renderCampaigns(){
   // atvērtā izvēlne paliek atvērta arī pēc statusu atjaunošanas
   if (menuKey){
     const btn = $$('#camp-tbody [data-action="camp-menu"]').find(b => b.dataset.id === menuKey), x = btn && list.find(y => y.key === menuKey);
-    if (btn && x){ campMenuBtn = btn; btn.setAttribute('aria-expanded', 'true'); const m = $('#cm-menu'), f = document.activeElement && document.activeElement.closest('#cm-menu') ? document.activeElement.dataset.action : '';
+    if (btn && x){ campMenuBtn = btn; btn.setAttribute('aria-expanded', 'true'); btn.closest('tr').classList.add('is-menu'); const m = $('#cm-menu'), f = document.activeElement && document.activeElement.closest('#cm-menu') ? document.activeElement.dataset.action : '';
       m.innerHTML = campMenuItems(x); const it = f && $(`[data-action="${f}"]`, m); if (it) it.focus(); }
     else closeCampMenu();
   }
@@ -11803,6 +11808,7 @@ function campMenuItems(x){
 }
 let campMenuBtn = null;
 function closeCampMenu(focus){
+  $$('#camp-tbody tr.is-menu').forEach(r => r.classList.remove('is-menu'));
   const m = $('#cm-menu'); if (m) m.hidden = true;
   if (campMenuBtn){ campMenuBtn.setAttribute('aria-expanded', 'false'); if (focus && campMenuBtn.isConnected) campMenuBtn.focus(); }
   campMenuBtn = null;
@@ -11833,7 +11839,7 @@ function openCampMenu(btn){
   m.innerHTML = src.items(x);
   m.setAttribute('aria-label', `Darbības: ${src.name(x)}`);
   m.hidden = false;
-  campMenuBtn = btn; btn.setAttribute('aria-expanded', 'true');
+  campMenuBtn = btn; btn.setAttribute('aria-expanded', 'true'); { const tr = btn.closest('tr'); if (tr) tr.classList.add('is-menu'); }
   placeCampMenu();
   $('[role="menuitem"]', m).focus();
 }
@@ -11985,9 +11991,11 @@ function renderCampMs(){
 const campAct = x => campPrep(x).k === 'fix' || (campSend(x).k === 'issues' && campSend(x).open > 0);
 // statusu ikonas (tādā pašā līnijas stilā kā pārējās ikonas)
 const CST_IC = {
-  draft:ICON.edit, fix:ICON.warn, ret:'<svg class="icon" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>',
+  // Versija 167: bez izsaukuma zīmēm – "Jālabo" – uzgrieznis (atšķiras no "Melnraksts" zīmuļa); "Pabeigta ar problēmām" – aploksne ar krustiņu
+  draft:ICON.edit, fix:'<svg class="icon" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></svg>', ret:'<svg class="icon" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>',
   appr:'<svg class="icon" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12"/><path d="M7.5 3v2.5c0 2 1.8 3.6 4.5 6.5 2.7-2.9 4.5-4.5 4.5-6.5V3M7.5 21v-2.5c0-2 1.8-3.6 4.5-6.5 2.7 2.9 4.5 4.5 4.5 6.5V21"/></svg>',
-  ready:ICON.check, planned:ICON.clock, done:ICON.check, issues:ICON.warn,
+  ready:ICON.check, planned:ICON.clock, done:ICON.check,
+  issues:'<svg class="icon" viewBox="0 0 24 24"><rect x="2" y="4" width="15" height="11" rx="2"/><path d="m2 6 7.5 5L17 6"/><path d="m16.5 15.5 5 5M21.5 15.5l-5 5"/></svg>',
   none:'<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/></svg>',
   proc:'<svg class="icon" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg>',
 };
