@@ -688,6 +688,7 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .rv-ck.is-warn .ck-ic{background:var(--warning-bg);color:var(--warning)}
 .rv-ck.is-warn{color:var(--warning)}
 .rv-ck-t{flex:1;min-width:0}
+.kv-ct{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
 .rv-ck-t small{display:block;color:var(--text-muted);font-size:var(--fs-xs)}
 .rv-ck-t small.rv-ck-go{color:var(--primary-dark);font-weight:600}
 .rv-ck .rv-n{font-weight:700;min-width:18px;text-align:right}
@@ -3901,7 +3902,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 177</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 178</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5686,7 +5687,7 @@ function applySnapshot(d){
     kind: SESS_KINDS[d.kind] ? d.kind : 'uzaicinajums', remind: d.remind === 'after' ? 'after' : 'before',
     sel: migrateSel(d.sel), excluded: new Set(d.excluded || []), surveyIdx: d.surveyIdx || 0,
     f: {...compose.f, ...(d.f || {})}, prio: Array.isArray(d.prio) && d.prio[0] ? [...d.prio] : [...DEFAULT_PRIO],
-    filt: {...(d.filt || {})}, content: d.content ? clone(d.content) : null, index: 0,
+    filt: {...(d.filt || {})}, content: normContent(d.content), index: 0,
     // agrākiem melnrakstiem: sūtīšanas datums nākotnē = ieplānota
     when: d.when || (d.sel && d.sel.sendDate > todayIso() ? 'plan' : 'now'), sendTime: d.sendTime || '09:00',
     custom: clone(d.custom || {}), step: d.wiz === 3 ? d.step || 1 : d.wiz === 2 ? ({4:5, 5:4}[d.step] || d.step || 1) : ({5:1, 6:4}[d.step] || d.step || 1), prioManual: d.wiz >= 2 ? !!d.prioManual : true,
@@ -9151,12 +9152,22 @@ const respLink = (id, name) => `<button type="button" class="link-btn resp-link"
    3. KOMUNIKĀCIJAS SAGATAVOŠANA
    ===================================================================== */
 // Kampaņas vēstules saturs (veidne vai kampaņai pielāgots / individuāls saturs)
-function currentTemplate(){
-  const c = compose.content;
-  if (!c) return null;
-  if (c.source === 'tpl') return state.templates.find(t => t.id === c.templateId) || null;
-  return c.tpl ? {id:'', ...c.tpl} : null;
+// Versija 178: viena funkcija kampaņas satura nolasīšanai – Saturs, Pārbaude, Nosūtīšana, priekšskatījums, soļu indikatori, kopsavilkumi.
+// Saturs: {source:'tpl', templateId} – veidne; {source:'tplmod', templateId, tpl} – veidne, pielāgota kampaņai; {source:'custom', tpl} – individuāls saturs.
+// Agrākie dati bez "source" tiek nolasīti tāpat (ar templateId – veidne, ar tpl – individuāls saturs).
+function campContent(c = compose.content){
+  if (!c) return {c:null, t:null, base:null, source:'', label:'', kind:''};
+  const source = c.source || (c.tpl ? (c.templateId ? 'tplmod' : 'custom') : c.templateId ? 'tpl' : '');
+  const base = c.templateId ? state.templates.find(x => x.id === c.templateId) || null : null;
+  const t = source === 'tpl' ? base : c.tpl ? {id:'', ...c.tpl} : null;
+  const nf = t ? (t.files || []).length : 0;
+  const label = !t ? '' : source === 'tpl' ? `Veidne: ${t.name}` : source === 'tplmod' ? `Veidne, pielāgota kampaņai${base ? ` (${base.name})` : ''}` : 'Individuāls saturs';
+  const kind = !t ? '' : (t.kind === 'pielikums' ? (t.main ? 'E-pasts + vēstule pielikumā' : 'E-pasts + personalizēts PDF') : 'E-pasts') + (nf ? ` + ${nf} ${plural(nf, 'pielikums', 'pielikumi')}` : '');
+  return {c, t, base, source, label, kind};
 }
+function currentTemplate(){ return campContent().t; }
+// ielādējot melnrakstu / ieplānoto / nosūtīto kampaņu – satura avots vienmēr norādīts (agrākiem datiem – pēc templateId / tpl)
+function normContent(c){ if (!c) return null; const x = clone(c); if (!x.source) x.source = x.tpl ? (x.templateId ? 'tplmod' : 'custom') : x.templateId ? 'tpl' : ''; return x.source ? x : null; }
 const baseTemplate = () => compose.content && compose.content.templateId ? state.templates.find(t => t.id === compose.content.templateId) : null;
 const CONTENT_SRC = {tpl:'Veidne', tplmod:'Veidne, pielāgota kampaņai', custom:'Individuāls saturs'};
 function contentLabel(c = compose.content){
@@ -9966,7 +9977,9 @@ function renderFinalSummary(){
   const fzP = fizMode() ? repById(compose.sel.reports[0]) : null, fzPer = fizMode() ? compose.sel.fz.period : '';
   const repsRow = fizMode() ? kvRow('Apsekojums', fzP ? `<span class="nw" title="${esc(repTitle(fzP))}">${esc(fzP.code)}</span>${fzPer ? ` · <span class="nw" title="${esc(periodLabel(fzPer))}">${esc(periodCode(fzPer))}</span>` : compose.sel.fz.year ? ` · <span class="nw">${esc(compose.sel.fz.year)}, visi periodi</span>` : ''}` : '<span class="muted">—</span>')
     : kvRow('Apsekojumi', compose.sel.allReports && !campRepObjs().length ? 'Visi apsekojumi' : repSumHtml(campRepObjs()));
+  const cc = campContent();
   $('#c-final-sum').innerHTML = kvRow('Kampaņa', esc(compose.name), 'kv-strong') + kvRow('Veids', esc(SESS_LABELS[sessKindKey()])) + repsRow +
+    kvRow('Saturs', cc.t ? `<span class="kv-ct" title="${esc(`${cc.label}\n${cc.kind}\nTemats: ${cc.t.subject || '—'}`)}">${esc(cc.label)}</span>` : '<span class="muted">nav izvēlēts</span>') +
     kvRow('Nosūtīšana', isPlanned() ? esc(whenLabel()) : 'Nav ieplānota') +
     kvRow('Respondenti', `${kvNw(String(st.sel))} · ${kvNw(`${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}`)}`) +
     kvRow('Kanāli', kvChannels(ch) + (eaLater() ? ` · <span class="muted nw" title="${esc(EA_LATER_TIP)}">eAdrese – sūtīšanas brīdī</span>` : '')) +
@@ -10405,6 +10418,7 @@ const PV_CHECK_MAX = 60;
 function autoChecks(){
   const t = currentTemplate(), recs = recipients(), out = [];
   if (!t) return [{key:'content', label:'Saturs', ok:false, n:0, detail:'nav izvēlēts', step:3}];
+  { const cc = campContent(); out.push({key:'content', label:'Saturs', ok:true, n:1, detail:`${cc.label} · ${cc.kind}`, step:3}); }
   // personalizācijas lauki: vēstules ar neaizpildītiem laukiem (nezināmi lauki – visās vēstulēs)
   const vi = varIssues(t, recs), vBad = [...vi.missing, ...vi.unknown], keys = usedVars(templateText(t, 'epasts')).filter(k => FIELD_KEYS.has(k));
   const vIds = vi.unknown.length ? recs.map(r => r.id) : recs.filter(r => { const c = ctxFor(r); return keys.some(k => !c[k]); }).map(r => r.id);
@@ -10454,7 +10468,7 @@ function renderChecks(){
   // ⚠ – uzklikšķinot: priekšskatījuma filtrs uz problemātiskajām vēstulēm vai pāreja uz labošanu
   box.innerHTML = cks.map(c => {
     const filt = !c.ok && (c.ids || []).length > 0, go = !c.ok && !filt && !lk;
-    const inner = `<span class="ck-ic" aria-hidden="true">${c.ok ? '✓' : '⚠'}</span><span class="rv-ck-t">${esc(c.label)}<small>${esc(c.detail)}</small>${filt ? `<small class="rv-ck-go">${fk === c.key ? 'Rādīt visas vēstules' : 'Rādīt problemātiskās vēstules'}</small>` : go ? '<small class="rv-ck-go">Labot</small>' : ''}</span><b class="rv-n">${c.n}</b>`;
+    const inner = `<span class="ck-ic" aria-hidden="true">${c.ok ? '✓' : '⚠'}</span><span class="rv-ck-t">${esc(c.label)}<small>${esc(c.detail)}</small>${filt ? `<small class="rv-ck-go">${fk === c.key ? 'Rādīt visas vēstules' : 'Rādīt problemātiskās vēstules'}</small>` : go ? '<small class="rv-ck-go">Labot</small>' : ''}</span>${c.key === 'content' && c.ok ? '' : `<b class="rv-n">${c.n}</b>`}`;
     return `<li>${filt ? `<button type="button" class="rv-ck is-warn" data-pvf="${c.key}" aria-pressed="${fk === c.key}">${inner}</button>`
       : go ? `<button type="button" class="rv-ck is-warn" data-action="wiz-go" data-id="${c.step}">${inner}</button>` : `<div class="rv-ck ${c.ok ? 'is-ok' : 'is-warn'}">${inner}</div>`}</li>`;
   }).join('');
@@ -12156,7 +12170,8 @@ function copyCampaign(key){
   if (!sn) return;
   if (ui.campView === 'edit') flushDraft();
   const c = clone(sn);
-  if (c.content && c.content.templateId && !state.templates.some(t => t.id === c.content.templateId)) c.content = null;
+  // dzēsta veidne: atsauce uz veidni (source 'tpl') tiek noņemta; pielāgots / individuāls saturs (ar tpl) saglabājas
+  if (c.content && c.content.templateId && !state.templates.some(t => t.id === c.content.templateId)){ if (campContent(c.content).source === 'tpl') c.content = null; else { c.content = {...c.content, source:'custom'}; delete c.content.templateId; } }
   const today = todayIso();
   c.sel = c.sel || {};
   if (!c.sel.sendDate || c.sel.sendDate < today){ c.sel.sendDate = today; c.when = 'now'; }
