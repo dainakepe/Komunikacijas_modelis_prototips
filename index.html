@@ -1236,6 +1236,13 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 /* vadīklas 34 px; filtru zonas kopējais augstums kā citās cilnēs (55 px), lai tabulas galva visās cilnēs ir vienā līmenī */
 .hist-filters.hf{padding-top:9.5px;padding-bottom:9.5px}
 .hf-row{flex-wrap:nowrap;gap:8px}
+.rep-flt .sf .sf-btn{height:34px}
+.rep-flt .sf .sf-x{height:34px}
+/* Versija 170: Atskaišu filtru rinda ar "Mani filtri" ietilpst 1280 px platumā */
+.rep-flt .hf-camp,.rep-flt .hf-rep{width:150px}
+.rep-flt .hf-row .hf-sel{width:140px}
+.rep-flt .hf-row .hf-per .hf-dd{width:170px}
+.rep-flt .sf .sf-name{display:inline-block;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
 .hf-row .hf-q{flex:1 1 260px;min-width:260px}
 .hf-row .hf-q input,.hf-dd > summary,.hf-row .hf-btn{height:34px;box-sizing:border-box}
 .hf-row .hf-q input{padding-top:7px;padding-bottom:7px;line-height:18px;font-size:var(--fs-sm)}
@@ -3822,6 +3829,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     <div class="subnav camp-sub" id="rep-sub" role="group" aria-label="Atskaites"></div>
     <div class="flt rep-flt hf" role="search" aria-label="Atskaišu filtri">
       <div class="flt-row hf-row">
+        <div class="sf" id="sf-rep"></div>
         <details class="dd hf-dd hf-camp" id="rep-camp-dd"><summary id="rep-camp-sum" aria-label="Kampaņa">Visas kampaņas</summary>
           <div class="dd-list cf-dd hf-list"><input type="search" id="rep-camp-q" placeholder="Meklēt kampaņu…" aria-label="Meklēt kampaņu"><div id="rep-camp-list" role="listbox" aria-label="Kampaņa"></div></div></details>
         <details class="dd hf-dd hf-rep" id="rep-rep-dd"><summary id="rep-rep-sum" aria-label="Apsekojums">Visi apsekojumi</summary>
@@ -3850,7 +3858,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 169</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 170</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11625,7 +11633,7 @@ function sfRegister(view, cfg){ SF_CFG[view] = cfg; ui.sf[view] = ui.sf[view] ||
 // atverot skatu pirmo reizi (pēc lapas ielādes) – noklusējuma filtrs
 function sfBoot(view){
   const st = ui.sf[view]; if (!st || st.booted) return; st.booted = true;
-  const d = sfList(view).find(x => x.def); if (d){ if (!SF_CFG[view].overlay) SF_CFG[view].apply(clone(d.f)); else sfSort(view, d.f); st.active = d.id; }
+  const d = sfList(view).find(x => x.def); if (d){ if (!SF_CFG[view].overlay) SF_CFG[view].apply(clone(d.f)); else { sfSort(view, d.f); if (SF_CFG[view].onPick) SF_CFG[view].onPick(d); } st.active = d.id; }
 }
 // saglabātā filtra kārtošana (ja saglabāta) – arī "slāņa" režīmā
 function sfSort(view, f){ if (view === 'camp' && f && f.sort && f.sort.k){ ui.campSort = {k:f.sort.k, dir:f.sort.dir || 1}; } }
@@ -11634,7 +11642,7 @@ function sfUnsort(view, prev){ const s0 = prev && prev.f && prev.f.sort; if (vie
 function sfPick(view, id){
   const cfg = SF_CFG[view], prev = sfCur(view), x = id ? sfList(view).find(y => y.id === id) : null;
   ui.sf[view].active = x ? x.id : ''; ui.sf[view].open = false;
-  if (cfg.overlay){ sfUnsort(view, prev); if (x) sfSort(view, x.f); if (view === 'camp') ui.campLimit = CAMP_PAGE; cfg.render(); const b = $(`#sf-${view} .sf-btn`); if (b) b.focus(); return; }
+  if (cfg.overlay){ sfUnsort(view, prev); if (x) sfSort(view, x.f); if (x && cfg.onPick) cfg.onPick(x); if (view === 'camp') ui.campLimit = CAMP_PAGE; cfg.render(); const b = $(`#sf-${view} .sf-btn`); if (b) b.focus(); return; }
   cfg.apply(x ? clone(x.f) : cfg.empty()); cfg.render();
   const b = $(`#sf-${view} .sf-btn`); if (b) b.focus();
 }
@@ -11676,7 +11684,7 @@ function sfEditDlg(view, o = {}){
       if (msg){ err.hidden = false; err.textContent = msg; inp.setAttribute('aria-invalid', String(!nm || msg.startsWith('Filtrs') || msg.startsWith('Nosaukums'))); inp.focus(); return; }
       const def = $('#sf-def', el).checked, x = {id:ed ? ed.id : 'sf' + uid(), name:nm, def, f};
       sfSave(view, ed ? list.map(y => y.id === ed.id ? x : def ? {...y, def:false} : y) : [...list.map(y => def ? {...y, def:false} : y), x]);
-      ui.sf[view].active = x.id; ui.sf[view].open = false; c(); if (cfg.overlay) sfSort(view, f); else cfg.apply(clone(f)); cfg.render();
+      ui.sf[view].active = x.id; ui.sf[view].open = false; c(); if (cfg.overlay){ sfSort(view, f); if (cfg.onPick) cfg.onPick(x); } else cfg.apply(clone(f)); cfg.render();
       toast(`Filtrs “${nm}” ${ed ? 'saglabāts' : 'izveidots un piemērots'}${def ? ' (noklusējums)' : ''}.`);
     }}]});
   el.classList.add('sf-edm');
@@ -12167,7 +12175,7 @@ function openJrnCamp(batch, extra = {}){
   renderSent(); window.scrollTo({top:0});
 }
 // Sūtījumu filtri (bez statusa)
-const histDefaults = () => ({q:'', camp:'', rep:'', quick:'', from:'', to:'', ch:'', kind:'', mr:'', fa:'', aud:'', rule:''});
+const histDefaults = () => ({q:'', camp:'', rep:'', quick:'', from:'', to:'', ch:'', kind:'', mr:'', fa:'', aud:'', rule:'', sfx:null});
 // perioda izvēle (Sūtījumos)
 const HF_QUICK = [['', 'Jebkurā laikā'], ['today', 'Šodien'], ['7d', 'Pēdējās 7 dienas'], ['30d', 'Pēdējās 30 dienas'], ['year', 'Šis gads'], ['custom', 'Cits periods…']];
 // ===== Perioda filtrs – viena kopīga komponente (Kampaņas, Sūtījumu 1. un 2. līmenis): tas pats HTML, CSS un loģika =====
@@ -12263,7 +12271,7 @@ function histMatch(x, h){
   return (!h.camp || String(x.batch) === String(h.camp)) && (!h.rep || histReps(x).includes(h.rep)) && (!h.kind || baseKind(x.sessionKind) === h.kind) && (!h.ch || x.channel === h.ch) &&
     (!h.aud || letterAud(x) === h.aud) && (!h.rule || ndrsOf(x).some(n => n.rule === h.rule)) &&
     (!h.from || d >= h.from) && (!h.to || d <= h.to) && (!q || norm([x.recipient, x.address, respNmk(x.respondentId)].join(' ')).includes(q)) &&
-    (!h.mr || mailReact(x).k === h.mr) && (!h.fa || faKey(x) === h.fa);
+    (!h.mr || mailReact(x).k === h.mr) && (!h.fa || faKey(x) === h.fa) && (!h.sfx || repSfLetter(x, h.sfx));
 }
 // perioda teksts: ātrā izvēle vai "01.10.–14.10." (cits gads – ar gadu)
 const hfDay = iso => fmtShortDay(iso);
@@ -12280,6 +12288,7 @@ function histChips(h){
   // no atskaitēm (drill-down): statistikas joma un kļūdas iemesls
   if (h.aud) out.push(['aud', `Statistikas joma: ${REP_AUD_L[h.aud] || h.aud}`]);
   if (h.rule && RULES[h.rule]) out.push(['rule', `Kļūdas iemesls: ${CHANNELS[RULES[h.rule].ch]}: ${RULES[h.rule].reason}`]);
+  if (h.sfx) out.push(['sfx', `Atskaišu filtrs: ${h.sfx.name}`]);
   return out;
 }
 // kampaņas (jaunākās augšā) un apsekojumi (kuriem ir vēstules)
@@ -12995,23 +13004,42 @@ function quickRange(q){
   const from = q === 'month' ? new Date(y, m, 1) : q === '3m' ? new Date(y, m - 2, 1) : q === '6m' ? new Date(y, m - 5, 1) : q === 'year' ? new Date(y, 0, 1) : new Date(y, m - 11, 1);
   return {from:isoDate(from), to:isoDate(t)};
 }
+// ===== Atskaites: "Mani filtri" (Versija 170) – saglabātais filtrs kā atsevišķs slānis (filtru rindas lauki netiek aizpildīti) =====
+// kanoniskā forma: kampaņas, apsekojumi, veidi, kanāli (vairākizvēle), joma, periods (ātrā izvēle vai datumi), apakšcilne
+function repFCanon(f){
+  f = f || {}; const so = a => [...new Set((a || []).map(String))].sort(), q = f.quick || '';
+  return {camps:so(f.camps), reps:so((f.reps || []).map(mapReportId)), kinds:so(f.kinds), chs:so(f.chs), aud:f.aud || '', quick:q, from:q && q !== 'custom' ? '' : f.from || '', to:q && q !== 'custom' ? '' : f.to || '', sub:f.sub || ''};
+}
+// aktīvā saglabātā filtra nosacījumi (ar perioda datumiem) vai null
+function repSf(){ const c = typeof sfCur === 'function' && SF_CFG.rep ? sfCur('rep') : null; if (!c) return null; const f = repFCanon(c.f); return {...f, ...(f.quick && f.quick !== 'custom' ? quickRange(f.quick) : {}), name:c.name}; }
+// efektīvais periods: filtru rindas periods ∩ saglabātā filtra periods
+function repPer(){
+  const f = ui.rep, sf = repSf(); let from = f.from || '', to = f.to || '';
+  if (sf){ if (sf.from && (!from || sf.from > from)) from = sf.from; if (sf.to && (!to || sf.to < to)) to = sf.to; }
+  return {from, to, sf:!!(sf && (sf.from || sf.to))};
+}
+// saglabātā filtra nosacījumi vēstulei (bez perioda – to ņem repPer)
+const repSfLetter = (x, sf) => !sf || ((!sf.camps.length || sf.camps.includes(String(x.batch))) && (!sf.reps.length || histReps(x).some(r => sf.reps.includes(r)))
+  && (!sf.kinds.length || sf.kinds.includes(baseKind(x.sessionKind))) && (!sf.chs.length || sf.chs.includes(x.channel)) && (!sf.aud || letterAud(x) === sf.aud));
 function repLetters(prev){
-  const f = ui.rep;
-  let from = f.from, to = f.to;
+  const f = ui.rep, sf = repSf(), pr = repPer();
+  let from = pr.from, to = pr.to;
   if (prev){
-    if (!from || f.camp) return [];
+    if (!from || f.camp || (sf && sf.camps.length)) return [];
     const a = parseIso(from), b = parseIso(to || todayIso()), len = dayDiff(b, a) + 1;
     to = isoDate(addDaysTo(a, -1)); from = isoDate(addDaysTo(a, -len));
   }
   return state.sent.filter(x => { const d = isoDate(new Date(x.sentAt));
     return (!f.camp || prev || String(x.batch) === String(f.camp)) && (!f.rep || histReps(x).includes(f.rep)) && (!f.kind || baseKind(x.sessionKind) === f.kind) && (!f.ch || x.channel === f.ch)
-      && (!f.aud || letterAud(x) === f.aud) && (!from || d >= from) && (!to || d <= to); });
+      && (!f.aud || letterAud(x) === f.aud) && repSfLetter(x, sf) && (!from || d >= from) && (!to || d <= to); });
 }
 // klikšķināms elements: atver sūtījumus ar atskaites filtriem un precizējumu (statusu grupa, kanāls, periods u. c.)
 const drillAttr = o => ` data-drill="${esc(JSON.stringify(o))}" tabindex="0" role="button"`;
 function repDrill(o){
-  const f = ui.rep, h = {...histDefaults(), camp:f.camp ? String(f.camp) : '', rep:f.rep || '', kind:f.kind || '', ch:f.ch || '', aud:f.aud || ''};
-  if (f.from || f.to) Object.assign(h, {quick:'custom', from:f.from || '', to:f.to || ''});
+  const f = ui.rep, h = {...histDefaults(), camp:f.camp ? String(f.camp) : '', rep:f.rep || '', kind:f.kind || '', ch:f.ch || '', aud:f.aud || ''}, pr = repPer(), sf = repSf();
+  if (pr.from || pr.to) Object.assign(h, {quick:'custom', from:pr.from || '', to:pr.to || ''});
+  // aktīvais saglabātais filtrs – sūtījumos papildu nosacījums (birka "Atskaišu filtrs: …"); viena kampaņa – tās 2. līmenis
+  if (sf){ h.sfx = {name:sf.name, camps:sf.camps, reps:sf.reps, kinds:sf.kinds, chs:sf.chs, aud:sf.aud}; if (!h.camp && sf.camps.length === 1) h.camp = sf.camps[0]; }
   Object.assign(h, o.f || {});
   if (h.from || h.to) h.quick = 'custom';
   const g = o.g && HIST_GROUPS.find(x => x.k === o.g);
@@ -13022,6 +13050,52 @@ function repDrill(o){
   $('#hist-search').value = h.q || '';
   showTab('vesture');
 }
+// vēstules tikai pēc saglabātā filtra (bez filtru rindas) – tukšā stāvokļa tekstam
+function repLettersNoSf(){ const sf = repSf(); if (!sf) return []; return state.sent.filter(x => { const d = isoDate(new Date(x.sentAt)); return repSfLetter(x, sf) && (!sf.from || d >= sf.from) && (!sf.to || d <= sf.to); }); }
+const REP_CH_L = {eadrese:'eAdrese', epasts:'E-pasts', pasts:'Pasts (drukāta vēstule)'};
+sfRegister('rep', {
+  overlay:true,
+  defLabel:'Izmantot kā noklusējumu, atverot Atskaites',
+  canon:repFCanon,
+  empty:() => repFCanon({}),
+  get:() => repFCanon({}),
+  apply:() => {},
+  render:() => renderReports(),
+  // izvēloties filtru – atveras arī norādītā apakšcilne
+  onPick:x => { const sub = x && repFCanon(x.f).sub; if (sub && REP_SUBS.some(([k]) => k === sub)) ui.repSub = sub; },
+  summary:f => { f = repFCanon(f); const cn = b => (histCampList(state.sent).find(c => String(c.b) === String(b)) || {}).name || `Nr. ${b}`;
+    return [f.camps.length ? (f.camps.length === 1 ? `Kampaņa: ${cn(f.camps[0])}` : `Kampaņas: ${f.camps.length}`) : '',
+      f.reps.length ? `Apsekojums: ${f.reps.map(id => (repById(id) || {}).code || id).join(', ')}` : '',
+      f.kinds.length ? `Veids: ${f.kinds.map(k => (SESS_KINDS[k] || {}).label || k).join(', ')}` : '',
+      f.quick || f.from || f.to ? `Periods: ${perLabel(REP_QUICK, f)}` : '',
+      f.chs.length ? `Kanāls: ${f.chs.map(k => REP_CH_L[k] || k).join(', ')}` : '', f.aud ? `Joma: ${REP_AUD_L[f.aud] || f.aud}` : '',
+      f.sub ? `Apakšcilne: ${(REP_SUBS.find(([k]) => k === f.sub) || [, f.sub])[1]}` : ''].filter(Boolean).join(' · ') || 'Bez filtriem'; },
+  editor:{
+    norm:f => { const c = repFCanon(f); return {...c, per:{quick:c.quick, from:c.from, to:c.to}}; },
+    html:w => { const row = (l, html, id) => `<div class="sf-ed-row"><${id ? `label for="${id}"` : 'span class="sf-ed-l"'}>${l}</${id ? 'label' : 'span'}><div>${html}</div></div>`;
+      const chips = (key, entries, sel) => `<div class="sf-chips" role="group" aria-label="${key}">${entries.map(([k, l]) => `<label class="sf-chip"><input type="checkbox" data-sfm="${key}" value="${esc(k)}"${sel.includes(k) ? ' checked' : ''}><span>${esc(l)}</span></label>`).join('')}</div>`;
+      const plist = (key, ph, items, sel) => `<div class="sf-reps" data-sfl="${key}"><input type="search" data-sfl-q="${key}" placeholder="${esc(ph)}" aria-label="${esc(ph)}"><div class="sf-rep-list" role="group">${items.map(([v, b, t]) => `<label class="sf-rep" data-q="${esc(norm(b + ' ' + t))}"><input type="checkbox" data-sfm="${key}" value="${esc(v)}"${sel.includes(String(v)) ? ' checked' : ''}><span><b>${esc(b)}</b> ${esc(t)}</span></label>`).join('')}<div class="sf-rep-none" hidden>Nav atrasts</div></div><div class="sf-rep-sel" data-sfl-sel="${key}" aria-live="polite"></div></div>`;
+      const camps = histCampList(state.sent).map(c => [String(c.b), c.name, c.desc || '']), reps = histRepList(state.sent).map(r => [r.id, r.code, r.name]);
+      return row('Kampaņa', plist('camps', 'Meklēt kampaņu…', camps, w.camps))
+        + row('Apsekojumi / pārskati', plist('reps', 'Meklēt apsekojumu (indekss vai nosaukums)…', reps, w.reps))
+        + row('Kampaņas veids', chips('kinds', Object.entries(SESS_KINDS).map(([k, v]) => [k, v.label]), w.kinds))
+        + row('Periods', `<div data-per="sfr"></div>`)
+        + row('Kanāls', chips('chs', Object.entries(REP_CH_L), w.chs))
+        + row('Statistikas joma', `<select id="sfr-aud"><option value="">Visas jomas</option>${Object.entries(REP_AUD_L).map(([k, l]) => `<option value="${k}"${w.aud === k ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>`, 'sfr-aud')
+        + row('Atvērt šo apakšcilni', `<select id="sfr-sub"><option value="">— (paliek pašreizējā)</option>${REP_SUBS.map(([k, l]) => `<option value="${k}"${w.sub === k ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>`, 'sfr-sub'); },
+    init:(el, w, upd) => { $$('[data-per]', el).forEach(h => { h.outerHTML = perHtml(h.dataset.per); });
+      $$('[data-sfl]', el).forEach(box => { const k = box.dataset.sfl, sel = () => { const v = $$('[data-sfm]:checked', box).map(i => i.closest('.sf-rep').querySelector('b').textContent); $(`[data-sfl-sel="${k}"]`, box).textContent = v.length ? `Izvēlēti: ${v.length > 3 ? `${v.slice(0, 3).join(', ')} +${v.length - 3}` : v.join(', ')}` : ''; };
+        $(`[data-sfl-q="${k}"]`, box).addEventListener('input', e => { const q = norm(e.target.value); let n = 0; $$('.sf-rep', box).forEach(l => { const on = !q || l.dataset.q.includes(q); l.hidden = !on; n += on; }); $('.sf-rep-none', box).hidden = !!n; });
+        box.addEventListener('change', sel); sel(); });
+      perInit('sfr', () => w.per, v => { Object.assign(w.per, v); perRender('sfr'); upd(); }, {opts:REP_QUICK, range:quickRange}); perRender('sfr'); },
+    read:(el, w) => { const ms = k => $$(`[data-sfm="${k}"]:checked`, el).map(i => i.value);
+      return repFCanon({camps:ms('camps'), reps:ms('reps'), kinds:ms('kinds'), chs:ms('chs'), aud:$('#sfr-aud', el).value, sub:$('#sfr-sub', el).value, quick:w.per.quick || '', from:w.per.from || '', to:w.per.to || ''}); },
+    any:f => !!(f.camps.length || f.reps.length || f.kinds.length || f.chs.length || f.aud || f.quick || f.from || f.to || f.sub),
+  },
+  // testa dati: divi piemēri
+  seed:() => [{id:'sfr-seed-1', name:'Uzņēmumu uzaicinājumi – 12 mēn.', def:false, f:{kinds:['uzaicinajums'], aud:'jur', quick:'12m'}},
+    {id:'sfr-seed-2', name:'1-C Ceļotāji – reakcija', def:false, f:{reps:['a-cel'], sub:'reakcija'}}],
+});
 const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
 const legendHtml = series => `<div class="viz-legend">${series.map(([, l, v]) => `<span><i style="background:var(--${v})"></i>${esc(l)}</span>`).join('')}</div>`;
 // Horizontāli sakrauti stabiņi (kategorija × statuss)
@@ -13075,16 +13149,19 @@ ui.repTime = {part:'camp', obj:''};
 const TP_OBJ = {tpl:'Veidne', ms:'E-pasta satura sagatave', att:'Pielikuma sagatave'};
 const sagWl = id => (state.sagWl || {})[id];
 function timeData(){
-  const f = ui.rep, inP = iso => { const d = iso ? isoDate(new Date(iso)) : ''; return (!f.from || d >= f.from) && (!f.to || d <= f.to); };
+  const f = ui.rep, pr = repPer(), sf = repSf(), inP = iso => { const d = iso ? isoDate(new Date(iso)) : ''; return (!pr.from || d >= pr.from) && (!pr.to || d <= pr.to); };
   // kampaņas: kampaņa, apsekojums (vēstuļu pienākumi), veids, joma, periods (pēc nosūtīšanas datuma)
   const camps = Object.keys(state.campWl || {}).map(b => campWork(b)).filter(o => o && o.done && inP(o.sentAt) && (!f.camp || String(o.batch) === String(f.camp)) && (!f.kind || baseKind(o.kind) === f.kind) && (!f.aud || o.aud === f.aud)
-    && (!f.rep || state.sent.some(x => String(x.batch) === String(o.batch) && histReps(x).includes(f.rep))));
+    && (!f.rep || state.sent.some(x => String(x.batch) === String(o.batch) && histReps(x).includes(f.rep)))
+    && (!sf || ((!sf.camps.length || sf.camps.includes(String(o.batch))) && (!sf.kinds.length || sf.kinds.includes(baseKind(o.kind))) && (!sf.aud || o.aud === sf.aud)
+      && (!sf.reps.length || state.sent.some(x => String(x.batch) === String(o.batch) && histReps(x).some(r => sf.reps.includes(r)))))));
   // veidnes un sagataves: periods (pēc pēdējās saglabāšanas), veids (kategorija), joma (adresāts); kampaņas un apsekojuma filtri neattiecas
   const items = [...(state.templates || []).filter(t => t.wl && t.wl.active).map(t => ({obj:'tpl', id:t.id, name:t.name, aud:t.aud, cat:t.cat, wl:t.wl})),
     ...(state.mailSamples || []).filter(m => sagWl(m.id)).map(m => ({obj:'ms', id:m.id, name:m.name, aud:m.aud, cat:m.cat, wl:sagWl(m.id)})),
     ...allAtts().filter(x => sagWl(x.id)).map(x => ({obj:'att', id:x.id, name:x.name, aud:x.aud, cat:x.cat, wl:sagWl(x.id)}))]
     .map(o => ({...o, saved:o.wl.lastSavedAt || o.wl.lastAt || ''}))
-    .filter(o => inP(o.saved) && (!f.kind || o.cat === f.kind) && (!f.aud || o.aud === f.aud || o.aud === 'visi'));
+    .filter(o => inP(o.saved) && (!f.kind || o.cat === f.kind) && (!f.aud || o.aud === f.aud || o.aud === 'visi')
+      && (!sf || ((!sf.kinds.length || sf.kinds.includes(o.cat)) && (!sf.aud || o.aud === sf.aud || o.aud === 'visi'))));
   const obj = ui.repTime.obj, tpls = items.filter(o => !obj || (obj === 'tpl' ? o.obj === 'tpl' : o.obj !== 'tpl'));
   return {camps, tpls, items};
 }
@@ -13105,7 +13182,7 @@ function campTimeView(){
   const bySteps = WL_STEPS.map((l, i) => ({label:`${i + 1}. ${l}`, v:wlMin(stepAvg[i]), sub:`${Math.round(stepAvg[i] / stepSum * 100)}% no aktīvā laika`}));
   const topI = stepAvg.reduce((m, v, i) => v > stepAvg[m] ? i : m, 0), topStep = bySteps[topI];
   // vidējais kampaņas sagatavošanas laiks pa mēnešiem
-  const a = f.from ? parseIso(f.from) : camps.length ? new Date(Math.min(...camps.map(o => Date.parse(o.sentAt)))) : new Date(), z = f.to ? parseIso(f.to) : new Date(), bs = [];
+  const pr = repPer(), a = pr.from ? parseIso(pr.from) : camps.length ? new Date(Math.min(...camps.map(o => Date.parse(o.sentAt)))) : new Date(), z = pr.to ? parseIso(pr.to) : new Date(), bs = [];
   for (let d = new Date(a.getFullYear(), a.getMonth(), 1); d <= z && bs.length < 36; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)){
     const key = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`, g = camps.filter(o => String(o.sentAt).slice(0, 7) === key);
     bs.push({label:`${d.getFullYear()}. g. ${MONTHS[d.getMonth()]}`, short:`${MONTHS[d.getMonth()].slice(0, 3)}.${d.getMonth() === 0 || !bs.length ? ' ' + d.getFullYear() : ''}`, v:wlMin(avgMs(g.map(o => o.wl.active))), n:g.length});
@@ -13378,7 +13455,7 @@ window.addEventListener('resize', () => { clearTimeout(window.__repRz); window._
   const el = $('#rep-body'); if (ui.tab !== 'atskaites' || !['kopsavilkums', 'piegade'].includes(ui.repSub) || !el || Math.abs(el.clientWidth - repW) < 24) return;
   repW = el.clientWidth; renderReports(); }, 150); });
 function monthBuckets(xs){
-  const f = ui.rep, ds = xs.map(x => new Date(x.sentAt)), today = todayIso();
+  const f = repPer(), ds = xs.map(x => new Date(x.sentAt)), today = todayIso();
   const a = f.from ? parseIso(f.from) : ds.length ? new Date(Math.min(...ds)) : new Date(), b = f.to ? parseIso(f.to) : new Date(), bIso = isoDate(b);
   const out = [];
   for (let d = new Date(a.getFullYear(), a.getMonth(), 1); d <= b && out.length < 36; d = new Date(d.getFullYear(), d.getMonth() + 1, 1)){
@@ -13477,7 +13554,7 @@ function repDelta(cur, prev, unit, good){
 }
 const SUM_COLS = [['name', 'Kampaņa'], ['date', 'Datums'], ['kind', 'Veids'], ['sent', 'Nosūtītas'], ['deliv', 'Piegādātas'], ['fail', 'Neveiksmīgas'], ['rate', 'Piegādes %']];
 function summaryView(xs){
-  const k = repKpis(xs), prevXs = repLetters(true), hasPrev = !!ui.rep.from && !ui.rep.camp && prevXs.length > 0, kp = hasPrev ? repKpis(prevXs) : null;
+  const k = repKpis(xs), prevXs = repLetters(true), hasPrev = !!repPer().from && !ui.rep.camp && prevXs.length > 0, kp = hasPrev ? repKpis(prevXs) : null;
   const relCnt = (a, b) => b ? Math.round((a - b) / b * 100) : null;
   const card = o => `<button type="button" class="card kpi rk-kpi${o.cls ? ' ' + o.cls : ''}"${drillAttr(o.drill).replace(' role="button"', '')} title="${esc(o.title)}"><span class="go" aria-hidden="true">Atvērt →</span><span class="n">${o.n}</span><span class="l">${esc(o.l)}</span>${o.sub ? `<span class="sub">${esc(o.sub)}</span>` : ''}${o.d || ''}</button>`;
   const arr = '<span class="rk-arr" aria-hidden="true">→</span>';
@@ -13536,10 +13613,12 @@ function repCampReact(batch, rep){
     <dl class="proc-dl rcr-dl"><dt>Nosūtīta:</dt><dd>${esc(fmtDateTime(wl.sentAt || x0.sentAt))}</dd><dt>Vēstules:</dt><dd>${esc(parts.join(' · '))}</dd></dl>${reactSectionHtml(batch, xs, rep)}</div>`;
 }
 function reactReportView(){
-  const f = ui.rep, now = Date.now(), H = 3600e3, D = 864e5;
+  const f = ui.rep, now = Date.now(), H = 3600e3, D = 864e5, sf = repSf();
+  // apsekojumu ierobežojums veidlapām: filtru rindas apsekojums, citādi – saglabātā filtra apsekojumi
+  const rs = f.rep ? [f.rep] : sf && sf.reps.length ? sf.reps : [];
   const xs = repLetters()
-    .map(x => { const v = reactView(x, now); return {x, v, res:f.rep ? v.res.filter(fm => fm.d.reportId === f.rep) : v.res}; })
-    .filter(o => !f.rep || o.res.length || o.v.forms.some(fm => fm.d.reportId === f.rep));
+    .map(x => { const v = reactView(x, now); return {x, v, res:rs.length ? v.res.filter(fm => rs.includes(fm.d.reportId)) : v.res}; })
+    .filter(o => !rs.length || o.res.length || o.v.forms.some(fm => rs.includes(fm.d.reportId)));
   const canOpen = o => !['fail', 'held', 'man'].includes(histFinal(o.x)), base = o => Date.parse(o.x.sentAt);
   const openPct = g => { const e = g.filter(canOpen); return {p:pct(e.filter(o => o.v.open).length, e.length), n:e.length, o:e.filter(o => o.v.open).length}; };
   const fs = xs.flatMap(o => o.res.map(fm => ({...fm, o}))), nF = fs.length, ies = fs.filter(fm => fm.st === 'ies'), kl = fs.filter(fm => fm.st === 'kl'), started = fs.filter(fm => fm.st !== 'nav');
@@ -13633,7 +13712,7 @@ function aiSummaryTime(){
 // Pārskata MI teksts: līdz 3 punktiem; kur iespējams – saite uz darbību
 function aiSummaryMain(xs){
   const k = kpiSet(xs), prev = repLetters(true), kp = kpiSet(prev), out = [];
-  const per = ui.rep.from ? `${fmtDate(ui.rep.from)}–${fmtDate(ui.rep.to || todayIso())}` : 'visā periodā';
+  const per = repPer().from ? `${fmtDate(repPer().from)}–${fmtDate(repPer().to || todayIso())}` : 'visā periodā';
   out.push({t:`Periodā ${per} nosūtītas ${k.sent} ${plural(k.sent, 'ziņa', 'ziņas')} ${(n => `${n} ${plural(n, 'kampaņā', 'kampaņās')}`)(new Set(xs.map(x => x.batch)).size)}; piegādes īpatsvars ${k.rate}%${prev.length ? ` (iepriekšējā periodā ${kp.rate}%)` : ''}.`});
   const nd = xs.flatMap(ndrsOf), top = topRule(nd), todo = xs.filter(isTodo).length;
   if (top) out.push({t:`Biežākais NDR/DIV iemesls – ${top.label.toLowerCase()} (${pct(top.v, nd.length)}% paziņojumu).`, go:{f:{rule:top.k}}});
@@ -13680,6 +13759,7 @@ function renderReports(){
   if (!REP_SUBS.some(([k]) => k === ui.repSub)) ui.repSub = REP_SUBS[0][0];
   const f = ui.rep;
   if (!ui.repInit){ Object.assign(f, repFilterDefaults()); ui.repInit = true; }
+  sfBoot('rep'); sfRender('rep');
   $('#rep-sub').innerHTML = subnavHtml(REP_SUBS, ui.repSub, 'rsub');
   repSubFit();
   renderTimePart();
@@ -13689,7 +13769,9 @@ function renderReports(){
   $('#rep-export').disabled = !!v.empty;
   if (v.empty){
     $('#rep-ai').innerHTML = '';
-    $('#rep-body').innerHTML = `<div class="card rep-empty"><p>Šiem filtriem nav datu</p><button type="button" class="link-btn" data-rep-reset>Notīrīt filtrus</button></div>`;
+    const sfc = sfCur('rep');
+    $('#rep-body').innerHTML = sfc && !repLettersNoSf().length ? `<div class="card rep-empty"><p>Nav datu, kas atbilst filtram “${esc(sfc.name)}”</p><button type="button" class="link-btn" data-sf-clear-rep>Noņemt filtru</button></div>`
+      : `<div class="card rep-empty"><p>Šiem filtriem nav datu</p><button type="button" class="link-btn" data-rep-reset>Notīrīt filtrus</button></div>`;
     return;
   }
   const items = aiSummary(xs).slice(0, 3);
@@ -14289,6 +14371,7 @@ $('#tab-atskaites').addEventListener('click', e => {
     renderReports(); const nb = $(isP ? `[data-tpart="${ui.repTime.part}"]` : `[data-tpobj="${ui.repTime.obj}"]`); if (nb) nb.focus(); return; }
   const chip = e.target.closest('[data-rchip]');
   if (chip){ ui.rep[chip.dataset.rchip] = ''; renderReports(); const nxt = $('#rep-chips [data-rchip]') || $('#rep-more-f'); nxt.focus(); return; }
+  if (e.target.closest('[data-sf-clear-rep]')){ sfPick('rep', ''); return; }
   if (e.target.closest('#rep-clear') || e.target.closest('[data-rep-reset]')){ Object.assign(ui.rep, repFilterDefaults()); renderReports(); $('#rep-camp-sum').focus(); return; }
   const md = e.target.closest('[data-rk-mode]');
   if (md){ ui.rep.chart = md.dataset.rkMode; renderReports(); const nb = $(`[data-rk-mode="${ui.rep.chart}"]`); if (nb) nb.focus(); return; }
