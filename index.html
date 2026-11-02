@@ -567,9 +567,10 @@ td.contacts{display:table-cell}
 .wiz-step[aria-current="step"]{font-weight:700}
 .wiz-step[aria-current="step"]:not(.is-done):not(.is-warn) .n{background:var(--surface);border-color:var(--primary);color:var(--primary)}
 /* skatīšanas režīms (nosūtīta / ieplānota kampaņa) */
-.view-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
-.view-bar .vb-acts{margin-left:auto;display:inline-flex;gap:16px}
-.view-bar .link-btn{font-weight:600}
+.view-bar{display:flex;align-items:center;gap:8px;box-sizing:border-box;min-height:28px;padding:3px 10px;margin:0 0 10px;font-size:12.5px;line-height:1.3;color:var(--text-secondary);background:#F3F5F6;border:1px solid var(--border-light);border-radius:var(--radius-sm)}
+.view-bar[hidden]{display:none}
+.view-bar .icon{width:14px;height:14px;flex:none;color:var(--icon-muted)}
+.view-bar .vb-link{font-size:12.5px;font-weight:600;padding:0;margin-left:4px}
 #camp-edit.is-view #wiz .step :is(.btn, .link-btn):not(.view-ok){display:none}
 #camp-edit.is-view #wiz .step button:disabled:not(.btn):not(.link-btn){cursor:default}
 #camp-edit.is-view #wiz .step :is(input, select, textarea):disabled{background:var(--surface-2,#F4F6F7);color:var(--text-muted);cursor:default}
@@ -1445,6 +1446,9 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .th-sort.is-on{color:var(--primary-darker)}
 .th-sort.is-on .sort-ic{color:var(--primary);font-weight:700}
 .camp-table th.num .th-sort{margin:0 -6px 0 auto}
+/* Versija 168: kampaņu sarakstā "Respondenti" – pa kreisi (kā pārējās teksta kolonnas) */
+#camp-scroll .camp-table th.num,#camp-scroll .camp-table td.num{text-align:left}
+#camp-scroll .camp-table th.num .th-sort{margin:0 -6px}
 .ck{display:inline-flex;align-items:center;gap:6px;color:var(--text)}
 .ck .icon{width:15px;height:15px;color:var(--primary-dark);flex:none}
 .ck-sub{color:var(--text-muted);margin-left:6px;font-size:var(--fs-sm)}
@@ -3502,7 +3506,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       </div>
     </div>
     <div class="alert alert-warn apv-note" id="c-apv-note" role="status" hidden></div>
-    <div class="alert alert-info view-bar" id="c-view-bar" role="status" hidden></div>
+    <div class="view-bar" id="c-view-bar" role="status" hidden></div>
     <ol class="wiz-steps" id="wiz-steps" aria-label="Kampaņas soļi"></ol>
     <div class="compose-grid wiz" id="wiz" data-step="1">
       <div class="card wiz-card step-content">
@@ -3846,7 +3850,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 167</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 168</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11884,9 +11888,9 @@ function closeCampView(){
 function renderViewBar(){
   const b = $('#c-view-bar'), v = ui.view; if (!b) return;
   b.hidden = !v; if (!v) return;
-  const when = v.at ? fmtDateTime(v.at) : '';
-  b.innerHTML = `${ICON.info}<span>${v.type === 'planned' ? `Kampaņa ieplānota ${esc(when)}` : `Kampaņa nosūtīta ${esc(when)}`} – tikai skatīšanai.</span>
-    <span class="vb-acts">${v.type === 'sent' ? `<button type="button" class="link-btn" data-action="view-sends">Skatīt sūtījumus</button>` : ''}<button type="button" class="link-btn" data-action="view-copy">Dublēt kampaņu</button></span>`;
+  // Versija 168: viena šaura rinda – "Tikai skatīšanai · nosūtīta DD.MM.GGGG HH:MM" un saite uz sūtījumiem ("Dublēt kampaņu" noņemts)
+  const d = v.at ? new Date(v.at) : null, when = d && !isNaN(d) ? `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}` : '';
+  b.innerHTML = `${ICON.eye}<span>Tikai skatīšanai${when ? ` · ${v.type === 'planned' ? 'ieplānota' : 'nosūtīta'} ${esc(when)}` : ''}</span>${v.type === 'sent' ? `<button type="button" class="link-btn vb-link" data-action="view-sends">Skatīt sūtījumus →</button>` : ''}`;
 }
 // lauki – neaktīvi, rediģēšanas pogas – paslēptas; atļauts tikai skatīt (priekšskatījuma pārlūkošana, rindu izvēršana, pielikumu apskate, filtri tabulā)
 const VIEW_OK = '[data-action="prev"], [data-action="next"], [data-pvch], .row-tg, [data-action="c-row-toggle"], [data-attv], [data-attv-act], [data-kvmore], #c-show-addr, [data-acf], .tip, summary';
@@ -13880,7 +13884,6 @@ const actions = {
   'camp-prep': id => openCampPrep(id),
   'camp-send': id => openCampSend(id),
   'view-sends': () => { const b = ui.view && ui.view.batch; if (b != null) showHistoryOf(b); },
-  'view-copy': () => { const k = ui.view && ui.view.key; if (k) copyCampaign(k); },
   'camp-filt-clear': () => clearCampFilters(),
   'camp-sf-clear': () => { sfPick('camp', ''); const b = $('#camp-search'); if (b) b.focus(); },
   'camp-more-rows': () => {
