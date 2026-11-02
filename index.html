@@ -952,9 +952,12 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .hg-row{position:relative}
 #hist-sub .hg-btn{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .hg-dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--hg-c,var(--primary))}
-.hg-proc{--hg-c:#3B82C4;--hg-bg:#E8F0F8;--hg-ink:#1D5F99}
-.hg-ok{--hg-c:#2E9B5F;--hg-bg:#E6F4EC;--hg-ink:var(--success)}
+.hg-proc{--hg-c:var(--info);--hg-bg:#E8F0F8;--hg-ink:var(--info)}
+.hg-ok{--hg-c:var(--success);--hg-bg:#E6F4EC;--hg-ink:var(--success)}
 .hg-todo{--hg-c:#E07B1F;--hg-bg:#FFF0E0;--hg-ink:var(--orange-ink)}
+/* Versija 173: grupu pogās – tās pašas ikonas un krāsas kā statusos */
+.hg-ic{display:inline-flex;color:var(--hg-c)}
+.hg-ic .icon{width:15px;height:15px}
 #hist-sub .hg-btn.hg-ok[aria-pressed="true"]{background:var(--hg-bg);border-color:var(--hg-c);color:var(--hg-ink)}
 .hg-n{font-weight:600;font-variant-numeric:tabular-nums}
 .hg-n.is-warn{background:#FCE3C6;color:var(--orange-ink);border-radius:var(--radius-pill);padding:0 6px;margin:-1px 0}
@@ -1502,6 +1505,13 @@ button.cst2:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px
 #camp-scroll tr.camp-row.needs-act > td:first-child,.jrn-ctable tr.camp-row.needs-act > td:first-child{box-shadow:inset 3px 0 0 #E08A00}
 #camp-scroll tr.camp-row.needs-act:hover > td,#camp-scroll tr.camp-row.needs-act:focus-within > td,#camp-scroll tr.camp-row.needs-act.is-menu > td,.jrn-ctable tr.camp-row.needs-act:hover > td,.jrn-ctable tr.camp-row.needs-act:focus-within > td{background:#FCEBD3}
 .jrn-ctable tr.camp-row.needs-act button.cst2:hover{background:#F8DDB8}
+/* Versija 173: 2. līmenī / "Visi sūtījumi" – vēstules grupā "Jārisina" izceltas tāpat */
+.hist-table tr.hist-row.needs-act > td{background:#FFF8EE}
+.hist-table tr.hist-row.needs-act > td:first-child{box-shadow:inset 3px 0 0 #E08A00}
+.hist-table tr.hist-row.needs-act:hover > td,.hist-table tr.hist-row.needs-act:focus-within > td,.hist-table tr.hist-row.needs-act:focus > td{background:#FCEBD3}
+/* Versija 173: vienots rindu stils – Kampaņu saraksts, Sūtījumu 1. līmenis, 2. līmenis / "Visi sūtījumi" */
+table.cl-table > thead > tr > th{height:38px;padding-left:8px;padding-right:8px;font-size:12px}
+table.cl-table > tbody > tr > td{height:36px;padding-top:0;padding-bottom:0;padding-left:8px;padding-right:8px;font-size:14px;line-height:21px;vertical-align:middle}
 #camp-scroll tr.camp-row:not(.needs-act):focus-within > td,#camp-scroll tr.camp-row.is-menu:not(.needs-act) > td{background:var(--row-hover)}
 #camp-scroll tr.camp-row.needs-act button.cst2:hover{background:#F8DDB8}
 /* ātrais filtrs "Jārīkojas (N)" statusu pogu rindā */
@@ -3498,7 +3508,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     </div>
     <div class="flt-chips" id="cf-chips" hidden><span class="flt-chip-list" id="cf-chip-list" aria-label="Aktīvie filtri"></span><button type="button" class="link-btn flt-clear" id="cf-clear">Notīrīt visus</button></div>
     <div class="card table-card tc-fit" id="camp-card">
-      <div class="table-wrap camp-scroll tc-area" id="camp-scroll"><table class="camp-table">
+      <div class="table-wrap camp-scroll tc-area" id="camp-scroll"><table class="camp-table cl-table">
         <thead><tr><th class="c-name" aria-sort="none"><button type="button" class="th-sort" data-csort="name">Kampaņa<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="c-kind" aria-sort="none"><button type="button" class="th-sort" data-csort="kind" aria-label="Kampaņas veids – kārtot">Veids<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="num" aria-sort="none"><button type="button" class="th-sort" data-csort="n">Respondenti<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="c-pst" aria-sort="none"><button type="button" class="th-sort" data-csort="prep">Kampaņas statuss<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="c-when" aria-sort="none"><button type="button" class="th-sort" data-csort="when">Nosūtīšanas laiks<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="c-sst" aria-sort="none"><button type="button" class="th-sort" data-csort="send">Sūtīšanas statuss<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="c-res" aria-sort="none"><button type="button" class="th-sort" data-csort="res">Rezultāts<span class="sort-ic" aria-hidden="true">↕</span></button></th><th><span class="sr-only">Darbības</span></th></tr></thead>
         <tbody id="camp-tbody"></tbody></table><div class="tc-empty" id="camp-empty" hidden></div></div>
       <div class="table-foot camp-foot" id="camp-foot"></div>
@@ -3862,7 +3872,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 172</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 173</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -12022,13 +12032,24 @@ const CST_IC = {
   none:'<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/></svg>',
   proc:'<svg class="icon" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v5h-5"/></svg>',
 };
+// Versija 173: kopīgā statusa komponente (ikona + teksts + krāsa; papildinformācija – tikai padomā) – Kampaņu saraksts, Sūtījumu 1. un 2. līmenis
+// o: {ic, cls, label, extra, tip, action, id}; ar action – poga (klikšķis ved uz rīcības vietu), citādi – teksts
+function stBadge(o){
+  const tip = `${o.label}${o.extra || ''}\n${o.tip || ''}`.trim(), inner = `${o.ic || ''}<span>${esc(o.label)}${o.extra ? `<small class="cst-res">${esc(o.extra)}</small>` : ''}</span>`;
+  return o.action ? `<button type="button" class="cst2 ${o.cls}" data-action="${o.action}" data-id="${esc(o.id)}" data-ctip="${esc(tip)}" aria-description="${esc(o.tip || '')}">${inner}</button>`
+    : `<span class="cst2 ${o.cls}" data-ctip="${esc(tip)}" aria-label="${esc(tip.replace(/\n/g, '. '))}">${inner}</span>`;
+}
 function campStHtml(col, x){
-  if (col === 'prep'){ const p = campPrep(x), d = PREP_ST[p.k];
-    return `<button type="button" class="cst2 ${d.cls}" data-action="camp-prep" data-id="${esc(x.key)}" data-ctip="${esc(`${d.label}\n${p.tip}`)}" aria-description="${esc(p.tip)}">${CST_IC[p.k]}<span>${esc(d.label)}</span></button>`; }
+  if (col === 'prep'){ const p = campPrep(x), d = PREP_ST[p.k]; return stBadge({ic:CST_IC[p.k], cls:d.cls, label:d.label, tip:p.tip, action:'camp-prep', id:x.key}); }
   const d = campSend(x);
-  if (d.k === 'none') return `<span class="cst2 cs-none" data-ctip="${esc(d.tip)}" aria-label="${esc(`${SEND_ST.none.label}. ${d.tip}`)}">${CST_IC.none}<span>${esc(SEND_ST.none.label)}</span></span>`;
-  const l = d.k === 'issues' ? `${SEND_ST.issues.label} (${d.n})` : SEND_ST[d.k].label, extra = d.res ? ` · atrisinātas ${d.res}` : '';
-  return `<button type="button" class="cst2 ${SEND_ST[d.k].cls}" data-action="camp-send" data-id="${esc(x.key)}" data-ctip="${esc(`${l}${extra}\n${d.tip}`)}" aria-description="${esc(d.tip)}">${CST_IC[d.k]}<span>${esc(l)}${extra ? `<small class="cst-res">${esc(extra)}</small>` : ''}</span></button>`;
+  if (d.k === 'none') return stBadge({ic:CST_IC.none, cls:SEND_ST.none.cls, label:SEND_ST.none.label, tip:d.tip});
+  return stBadge({ic:CST_IC[d.k], cls:SEND_ST[d.k].cls, label:d.k === 'issues' ? `${SEND_ST.issues.label} (${d.n})` : SEND_ST[d.k].label, extra:d.res ? ` · atrisinātas ${d.res}` : '', tip:d.tip, action:'camp-send', id:x.key});
+}
+// vēstules statuss tabulās – grupas līmenī ar tām pašām ikonām / krāsām kā kampaņas sūtīšanas statuss; detalizētais statuss – padomā
+const LETTER_VIS = {proc:{k:'proc', label:'Procesā'}, ok:{k:'done', label:'Piegādāts'}, todo:{k:'issues', label:'Jārisina'}};
+function letterStHtml(x){
+  const fk = histFinal(x), g = histGroupOf(fk), v = LETTER_VIS[g ? g.k : 'proc'] || LETTER_VIS.proc;
+  return stBadge({ic:CST_IC[v.k], cls:SEND_ST[v.k].cls, label:v.label, tip:`${HIST_FINAL[fk].label}\n${histStTip(x)}`});
 }
 // "Nosūtīšanas laiks": ieplānotā – plānotais, uzsākta / pabeigta – faktiskais, citādi "—"
 const fmtDT = iso => { const d = new Date(iso); return `${fmtDate(isoDate(d))} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
@@ -12160,7 +12181,7 @@ function renderJrnL1(){
   const cPage = cl.slice(0, j.cLimit);
   const empty = !cl.length ? tcEmptyBox(camps.length || q ? 'Nav kampaņu, kas atbilst meklēšanai vai filtriem' : 'Vēl nav nosūtītu kampaņu') : '';
   $('#jrn-camps').innerHTML = `<section class="jrn-sec" aria-label="Kampaņas">
-    <div class="card table-card jrn-card"><div class="table-wrap camp-scroll"><table class="camp-table jrn-table jrn-ctable"><thead><tr id="jrn-head">${sortHead(JRN_COLS, j.sort, 'jsort').replace(/<th class="actions">[\s\S]*$/, '')}</tr></thead>
+    <div class="card table-card jrn-card"><div class="table-wrap camp-scroll"><table class="camp-table cl-table jrn-table jrn-ctable"><thead><tr id="jrn-head">${sortHead(JRN_COLS, j.sort, 'jsort').replace(/<th class="actions">[\s\S]*$/, '')}</tr></thead>
     <tbody>${cPage.map(x => { const r = jrnRes(x), st = jrnSt(x), rt = `Piegādāti ${fmtCount(r.ok)} · Procesā ${fmtCount(r.proc)} · Jārisina ${fmtCount(r.todo)}`;
       return `<tr class="camp-row${jrnAct(x) ? ' needs-act' : ''}" data-action="jrn-open" data-id="${esc(x.id)}"><td><button type="button" class="camp-name" data-action="jrn-open" data-id="${esc(x.id)}" title="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + campKindLabel(x.kind))}">${esc(x.name)}</button></td>
       <td class="num">${esc(fmtCount(jrnAdr(x)))}</td><td class="c-st">${campStHtml('send', x)}</td>
@@ -12638,7 +12659,7 @@ function histGroupsHtml(sel, c){
     const on = g.k ? gSel === g : !sel.length, part = on && g.k && sel.length < g.sts.length;
     const n = (g.k ? (on ? sel : g.sts) : Object.keys(HIST_FINAL)).reduce((s, k) => s + c(k), 0);
     const txt = g.label + (part ? (sel.length === 1 ? `: ${HIST_FINAL[sel[0]].label}` : `: ${sel.length} statusi`) : '');
-    const cnt = `<span class="hg-n${g.k === 'todo' && n > 0 ? ' is-warn' : ''}">(${n})</span>`, dot = g.k ? '<i class="hg-dot" aria-hidden="true"></i>' : '';
+    const cnt = `<span class="hg-n${g.k === 'todo' && n > 0 ? ' is-warn' : ''}">(${n})</span>`, dot = g.k && LETTER_VIS[g.k] ? `<span class="hg-ic" aria-hidden="true">${CST_IC[LETTER_VIS[g.k].k]}</span>` : '';
     if (!g.menu) return `<button type="button" class="hg-btn ${g.cls || ''}" data-hg="${g.k}" aria-pressed="${on}">${dot}${esc(txt)} ${cnt}</button>`;
     const open = ui.hgMenu === g.k;
     return `<span class="hg-split ${g.cls}${on ? ' is-on' : ''}"><button type="button" class="hg-btn hg-main" data-hg="${g.k}" aria-pressed="${on}" title="Rādīt visus grupas “${esc(g.label)}” statusus">${dot}${esc(txt)} ${cnt}</button><button type="button" class="hg-caret" data-hg-menu="${g.k}" aria-haspopup="true" aria-expanded="${open}" aria-controls="hg-menu" aria-label="${esc(g.label)}: izvēlēties statusus">${ICON.chev}</button></span>`;
@@ -12743,13 +12764,13 @@ function renderSent(){
   ui.histList = sorted;
   const hEmpty = !all.length ? tcEmptyBox('Vēl nav nosūtītu vēstuļu', `<button class="btn btn-primary btn-sm" data-action="camp-new">${ICON.plus}Jauna kampaņa</button>`)
     : !list.length ? tcEmptyBox(sel.length && !active && !h.q && !h.camp && !h.rep ? `Nav vēstuļu ar statusu “${sel.length === histGroupOf(sel[0]).sts.length ? histGroupOf(sel[0]).label : sel.map(k => HIST_FINAL[k].label).join(', ')}”` : 'Nav ierakstu, kas atbilst filtriem') : '';
-  $('#hist-body').innerHTML = `<div class="card table-card tc-fit" id="hist-card"><div class="table-wrap camp-scroll hist-scroll tc-area" id="hist-scroll"><table class="camp-table hist-table${va ? ' is-all' : ''}"><colgroup>${(va ? HIST_W_A : HIST_W).map(w => `<col style="width:${w}%">`).join('')}</colgroup>
+  $('#hist-body').innerHTML = `<div class="card table-card tc-fit" id="hist-card"><div class="table-wrap camp-scroll hist-scroll tc-area" id="hist-scroll"><table class="camp-table cl-table hist-table${va ? ' is-all' : ''}"><colgroup>${(va ? HIST_W_A : HIST_W).map(w => `<col style="width:${w}%">`).join('')}</colgroup>
       <thead><tr>${(va ? HIST_COLS_A : HIST_COLS).map(([k, l]) => `<th aria-sort="none"><button type="button" class="th-sort" data-hsort="${k}">${l}<span class="sort-ic" aria-hidden="true">↕</span></button></th>`).join('')}</tr></thead>
       <tbody>${sorted.slice(0, ui.histLimit).map(x => { const k = histFinal(x), f = HIST_FINAL[k];
-        return `<tr class="hist-row${ui.newIds.has(x.id) ? ' is-new' : ''}" data-hrow="${x.id}" tabindex="0" aria-haspopup="dialog">
+        return `<tr class="hist-row${ui.newIds.has(x.id) ? ' is-new' : ''}${TODO_ST.includes(k) ? ' needs-act' : ''}" data-hrow="${x.id}" tabindex="0" aria-haspopup="dialog">
           <td><span class="hist-name" title="${esc(x.recipient)}">${esc(x.recipient)}</span></td>
           ${va ? (cn => `<td><button type="button" class="link-btn hist-camp-l" data-action="jrn-camp-open" data-id="${esc(x.batch)}" title="${esc(cn)}\nAtvērt kampaņas sūtījumus">${esc(cn)}</button></td>`)(x.sessionName || `Kampaņa Nr. ${x.batch}`) : ''}
-          <td><span class="cst hist-st ${f.cls}" title="${esc(f.label)}\n${esc(histStTip(x))}"><i aria-hidden="true"></i>${esc(histShort(k))}</span></td>
+          <td class="c-st">${letterStHtml(x)}</td>
           <td>${esc(x.channel === 'eadrese' ? 'eAdrese' : CHANNELS[x.channel] || '')}</td>
           <td title="${esc(fmtDateTime(x.sentAt))}">${esc(hxDate(x.sentAt))}</td>
           ${reactCellHtml(mailReact(x))}
@@ -14246,6 +14267,8 @@ $('#jrn-q').addEventListener('input', e => { ui.jrn.q = e.target.value; ui.jrn.c
 $('#jrn-kind').addEventListener('change', e => { ui.jrn.kind = e.target.value; renderJrnL1(); });
 $('#jrn-st').addEventListener('change', e => { ui.jrn.st = e.target.value; ui.jrn.cLimit = 50; renderJrnL1(); $('#jrn-st').focus(); });
 // padomi (tāpat kā Kampaņu sarakstā)
+$('#hist-body').addEventListener('mouseover', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
+$('#hist-body').addEventListener('mouseout', e => { const el = e.target.closest('[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
 $('#jrn-camps').addEventListener('mouseover', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
 $('#jrn-camps').addEventListener('mouseout', e => { const el = e.target.closest('[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
 $('#jrn-camps').addEventListener('focusin', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
