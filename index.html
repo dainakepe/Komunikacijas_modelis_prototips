@@ -1323,6 +1323,8 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .jrn-ctable td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cf-jst select{width:220px}
 .jrn-ctable .camp-name{display:block;max-width:100%;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Versija 174: Sūtījumu tabulās kampaņu un respondentu nosaukumi – parastā svarā, tādā pašā izmērā kā pārējās šūnas */
+.jrn-ctable .camp-name,.hist-table .hist-name,.hist-table .hist-name .resp-link,.hist-table .hist-camp-l{font-weight:400;font-size:inherit}
 .jrn-res{white-space:nowrap}
 .jrn-by{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* 2. līmenī lapas virsraksts "Sūtījumi · kampaņas nosaukums" */
@@ -3872,7 +3874,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 173</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 174</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -12043,7 +12045,7 @@ function campStHtml(col, x){
   if (col === 'prep'){ const p = campPrep(x), d = PREP_ST[p.k]; return stBadge({ic:CST_IC[p.k], cls:d.cls, label:d.label, tip:p.tip, action:'camp-prep', id:x.key}); }
   const d = campSend(x);
   if (d.k === 'none') return stBadge({ic:CST_IC.none, cls:SEND_ST.none.cls, label:SEND_ST.none.label, tip:d.tip});
-  return stBadge({ic:CST_IC[d.k], cls:SEND_ST[d.k].cls, label:d.k === 'issues' ? `${SEND_ST.issues.label} (${d.n})` : SEND_ST[d.k].label, extra:d.res ? ` · atrisinātas ${d.res}` : '', tip:d.tip, action:'camp-send', id:x.key});
+  return stBadge({ic:CST_IC[d.k], cls:SEND_ST[d.k].cls, label:d.k === 'issues' ? `${SEND_ST.issues.label} (${d.n})` : SEND_ST[d.k].label, tip:d.tip, action:'camp-send', id:x.key}); // Versija 174: "Pabeigta" bez redzamā "· atrisinātas N" (tikai padomā)
 }
 // vēstules statuss tabulās – grupas līmenī ar tām pašām ikonām / krāsām kā kampaņas sūtīšanas statuss; detalizētais statuss – padomā
 const LETTER_VIS = {proc:{k:'proc', label:'Procesā'}, ok:{k:'done', label:'Piegādāts'}, todo:{k:'issues', label:'Jārisina'}};
