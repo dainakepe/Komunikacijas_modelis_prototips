@@ -870,11 +870,20 @@ Cilnē **Atskaites** (specifikācija F18) ir četras apakšcilnes: **Pārskats �
 - **Eksports** ņem vērā visus filtrus. CSV (semikols, UTF-8 ar BOM): ja apakšcilnē ir vairākas tabulas – tās secīgi ar sadaļu nosaukumiem. Excel – īsts .xlsx fails, katrai sadaļai sava lapa (galvenes rinda treknrakstā). Faila nosaukums `atskaite_<apakšcilne>_<datums>`.
 - Grafikiem ir rīka padoms (pelei un tastatūrai) un datu tabula; krāsas pārbaudītas krāsu redzes traucējumu gadījumam.
 
+**Padomi (tooltipi):** Versija 159 – uz "i" ikonām (arī Atskaitēs grafiku virsrakstos) redzams tikai viens – prototipa gaišais – padoms (agrāk Atskaitēs vienlaikus parādījās arī grafiku padoms). "i" ikonām nav "title" atribūta (tikai aria-label un data-tip).
+
 **Pārskats:**
-- **rādītāji vienā rindā procesa secībā:** Nosūtītas → Piegādātas (skaits un % no nosūtītajām) → Atvērtas e-pasti (%, "aptuveni") → Anketas iesniegtas (%) | **Jārisina** (nepiegādātas, aizturētas, manuāli; oranža kartīte, ja > 0). Starp pirmajām četrām – plānas bultas, pirms "Jārisina" – vertikāls atdalītājs;
+- **rādītāji vienā rindā procesa secībā** (Versija 159 – tie paši nosaukumi un aprēķini kā grafikā "Rādītāji pa mēnešiem"): Nosūtītas → **Piegādes īpatsvars** ("N no M piegādātas") → **Atvēršanas īpatsvars (e-pasts, aptuveni)** ("N no M piegādātiem e-pastiem") → **Iesniegšanas īpatsvars** ("N no M piegādātām vēstulēm ar anketām") | **Jārisina** (nepiegādātas, aizturētas, manuāli, jādrukā; oranža kartīte, ja > 0). Starp pirmajām četrām – plānas bultas, pirms "Jārisina" – vertikāls atdalītājs;
 - **salīdzinājums ar iepriekšējo tāda paša garuma periodu** zem katra rādītāja (ja atlasīta konkrēta kampaņa – netiek rādīts): zaļš – uzlabojums, sarkans – pasliktinājums; rādītājiem procentos izmaiņa procentpunktos ("−3 p. p. pret iepr. periodu"), "Jārisina" – skaita izmaiņa (pieaugums – sarkans), "Nosūtītas" – neitrāla (pelēka; apjoms nav ne labs, ne slikts); bez izmaiņām – "Bez izmaiņām pret iepr. periodu";
-- **līniju grafiks** "Nosūtītās un piegādātās ziņas pa mēnešiem" ar pārslēgu **Skaits / %** (% – piegādes īpatsvars, viena līnija, ass 0–100 %). Pēdējais, nepabeigtais mēnesis – raustītā līnija ar piezīmi "līdz 14.10."; mēneši bez sūtījumiem – pārtraukums līnijā (nevis kritums līdz 0), rīka padomā "Nav sūtījumu"; uzklikšķinot uz mēneša – Vēsture ar šo mēnesi;
-- stabiņu grafiki: ziņas pa kanāliem, pēc kampaņas veida un NDR/DIV iemeslu sadalījums (biežākie iemesli pēc sadaļas "Piegādes statusi un kļūdas");
+- **galvenais līniju grafiks "Rādītāji pa mēnešiem"** (Versija 159; aizstāj "Nosūtītās un piegādātās ziņas pa mēnešiem", kas pārvietots uz apakšcilni "Piegāde" nemainīts – ar pārslēgu Skaits / %): Y ass 0–100 %, trīs līnijas (krāsas no atskaišu paletes, leģenda virs grafika, "i" pie virsraksta – formulas):
+  - **Piegādes īpatsvars** = piegādātās / nosūtītās vēstules;
+  - **Atvēršanas īpatsvars (e-pasts, aptuveni)** = atvērtie e-pasti / piegādātie e-pasti (eAdreses un drukātās vēstules neieskaita);
+  - **Iesniegšanas īpatsvars** = vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (informatīvās vēstules bez anketām neieskaita – citādi mēneši bez anketām rādītu 0 %);
+  - katras līnijas galā (labajā malā) – pēdējā pilnā mēneša vērtība, piem., "91%"; punkts uz līnijas;
+  - padoms uz mēneša – visas trīs vērtības ar skaitļiem, piem., "Piegāde 91% (1 198 no 1 316) · Atvēršana 73% (520 no 712) · Iesniegšana 20% (240 no 1 198)";
+  - nepabeigtais mēnesis – raustīta līnija un piezīme "līdz DD.MM."; mēneši bez sūtījumiem (vai bez saucēja) – pārtraukums līnijā; klikšķis uz mēneša atver Sūtījumus ar šī mēneša periodu;
+  - "Rādīt datu tabulu" un eksports (lapa "Rādītāji pa mēnešiem") – skaitītāji un saucēji katram īpatsvaram;
+- grafiki: ziņas pa kanāliem (apļveida, sk. "Drukāta vēstule"), pēc kampaņas veida un NDR/DIV iemeslu sadalījums (biežākie iemesli pēc sadaļas "Piegādes statusi un kļūdas");
 - tabula **"Kampaņas"** (kārtojama): nosaukums, datums, veids, nosūtītās, piegādātās, neveiksmīgās, piegādes %; rinda atver Vēsturi ar šo kampaņu.
 
 **Piegāde** – sadaļas viena zem otras ar virsrakstiem:
