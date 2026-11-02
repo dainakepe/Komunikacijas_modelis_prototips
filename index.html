@@ -1322,9 +1322,8 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .jrn-ctable th:nth-child(2),.jrn-ctable td:nth-child(2){text-align:right;padding-right:24px}
 .jrn-ctable td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cf-jst select{width:220px}
-.jrn-ctable .camp-name{display:block;max-width:100%;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* Versija 174: Sūtījumu tabulās kampaņu un respondentu nosaukumi – parastā svarā, tādā pašā izmērā kā pārējās šūnas */
-.jrn-ctable .camp-name,.hist-table .hist-name,.hist-table .hist-name .resp-link,.hist-table .hist-camp-l{font-weight:400;font-size:inherit}
+/* Versija 176: nosaukumu šūnas visās tabulās ar klasi cl-table (Kampaņu saraksts, Sūtījumi) – tā pati klase .camp-name, saīsināšana līdz šūnas platumam */
+table.cl-table td.c-name .camp-name{max-width:100%}
 .jrn-res{white-space:nowrap}
 .jrn-by{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* 2. līmenī lapas virsraksts "Sūtījumi · kampaņas nosaukums" */
@@ -3632,8 +3631,8 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
             <label class="prio-sel"><span class="prio-n" aria-hidden="true">2</span><select id="c-prio-1" data-prio="1" aria-label="2. prioritāte"></select></label><span class="prio-arr" aria-hidden="true">→</span>
             <label class="prio-sel"><span class="prio-n" aria-hidden="true">3</span><select id="c-prio-2" data-prio="2" aria-label="3. prioritāte"></select></label>
             <span class="prio-arr" aria-hidden="true">→</span>
-            <div class="prio-print" id="c-prio-print"><span class="prio-pr-h"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><rect x="6" y="14" width="12" height="7"/></svg>Drukāta vēstule<span class="tip" tabindex="0" role="note" aria-label="Ja nav nevienas derīgas e-adreses vai e-pasta, vai piegāde neizdodas, vēstule tiek sagatavota drukāšanai un nosūtīta pa pastu uz respondenta pasta adresi." data-tip="Ja nav nevienas derīgas e-adreses vai e-pasta, vai piegāde neizdodas, vēstule tiek sagatavota drukāšanai un nosūtīta pa pastu uz respondenta pasta adresi.">i</span></span>
-              <label class="switch prio-pr-sw"><input type="checkbox" role="switch" id="c-print"><span class="sw" aria-hidden="true"></span><span>Ja elektroniski nesasniedz – sagatavot drukai</span></label></div>
+            <div class="prio-print" id="c-prio-print" title="Ja respondentu nevar sasniegt elektroniski (nav derīgas e-adreses vai e-pasta, vai piegāde neizdodas), vēstule tiek sagatavota drukāšanai un nosūtīta pa pastu."><label class="prio-pr-h" for="c-print"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><rect x="6" y="14" width="12" height="7"/></svg>Drukāta vēstule</label>
+              <label class="switch prio-pr-sw"><input type="checkbox" role="switch" id="c-print" aria-label="Drukāta vēstule" aria-description="Ja respondentu nevar sasniegt elektroniski (nav derīgas e-adreses vai e-pasta, vai piegāde neizdodas), vēstule tiek sagatavota drukāšanai un nosūtīta pa pastu."><span class="sw" aria-hidden="true"></span></label></div>
           </div>
           <span class="err" id="c-scope-err" hidden></span>
           <h3 class="sub-h">Vēstules dati <span class="tip" tabindex="0" role="note" aria-label="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). {apsekojums} tiek aizpildīts automātiski no izvēlētā apsekojuma." data-tip="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). {apsekojums} tiek aizpildīts automātiski no izvēlētā apsekojuma.">i</span></h3>
@@ -3887,7 +3886,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 175</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 176</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -12208,7 +12207,7 @@ function renderJrnL1(){
   $('#jrn-camps').innerHTML = `<section class="jrn-sec" aria-label="Kampaņas">
     <div class="card table-card jrn-card"><div class="table-wrap camp-scroll"><table class="camp-table cl-table jrn-table jrn-ctable"><thead><tr id="jrn-head">${sortHead(JRN_COLS, j.sort, 'jsort').replace(/<th class="actions">[\s\S]*$/, '')}</tr></thead>
     <tbody>${cPage.map(x => { const r = jrnRes(x), st = jrnSt(x), rt = `Piegādāti ${fmtCount(r.ok)} · Procesā ${fmtCount(r.proc)} · Jārisina ${fmtCount(r.todo)}`;
-      return `<tr class="camp-row${jrnAct(x) ? ' needs-act' : ''}" data-action="jrn-open" data-id="${esc(x.id)}"><td><button type="button" class="camp-name" data-action="jrn-open" data-id="${esc(x.id)}" title="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + campKindLabel(x.kind))}">${esc(x.name)}</button></td>
+      return `<tr class="camp-row${jrnAct(x) ? ' needs-act' : ''}" data-action="jrn-open" data-id="${esc(x.id)}"><td class="c-name"><button type="button" class="camp-name" data-action="jrn-open" data-id="${esc(x.id)}" data-ctip="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + campKindLabel(x.kind))}">${esc(x.name)}</button></td>
       <td class="num">${esc(fmtCount(jrnAdr(x)))}</td><td class="c-st">${campStHtml('send', x)}</td>
       <td><span class="jrn-res" title="${esc(rt)}" aria-label="${esc(`Piegādāti ${r.ok} (${r.pc}%) – ${rt}`)}">Piegādāti ${esc(fmtCount(r.ok))} <span class="muted">(${r.pc}%)</span></span></td>
       <td title="${esc(fmtDateTime(x.ts))}">${esc(dmy(isoDate(new Date(x.ts))))}</td><td><span class="jrn-by" title="${esc(jrnBy(x))}">${esc(jrnBy(x))}</span></td></tr>`; }).join('')}</tbody></table>
@@ -12756,6 +12755,7 @@ function jrnPurgeBtn(){
   b.title = t; b.setAttribute('aria-label', t);
 }
 function renderSent(){
+  hideCTip(); // pārzīmējot – atvērtais padoms (c-tipbox) netiek atstāts virs cita skata
   refreshStatuses();
   // 1. līmenis – kampaņu saraksts; 2. līmenis – izvēlētās kampaņas (vai no atskaitēm – visu kampaņu) vēstules
   // "Visi sūtījumi" – visu kampaņu vēstules (tā pati tabula, filtri un logs kā 2. līmenī, papildus kolonna un filtrs "Kampaņa")
@@ -12794,8 +12794,8 @@ function renderSent(){
       <thead><tr>${(va ? HIST_COLS_A : HIST_COLS).map(([k, l]) => `<th aria-sort="none"><button type="button" class="th-sort" data-hsort="${k}">${l}<span class="sort-ic" aria-hidden="true">↕</span></button></th>`).join('')}</tr></thead>
       <tbody>${sorted.slice(0, ui.histLimit).map(x => { const k = histFinal(x), f = HIST_FINAL[k];
         return `<tr class="hist-row${ui.newIds.has(x.id) ? ' is-new' : ''}${TODO_ST.includes(k) ? ' needs-act' : ''}" data-hrow="${x.id}" tabindex="0" aria-haspopup="dialog">
-          <td><span class="hist-name" title="${esc(x.recipient)}">${esc(x.recipient)}</span></td>
-          ${va ? (cn => `<td><button type="button" class="link-btn hist-camp-l" data-action="jrn-camp-open" data-id="${esc(x.batch)}" title="${esc(cn)}\nAtvērt kampaņas sūtījumus">${esc(cn)}</button></td>`)(x.sessionName || `Kampaņa Nr. ${x.batch}`) : ''}
+          <td class="c-name"><button type="button" class="camp-name" data-hopen="${esc(x.id)}" data-ctip="${esc(x.recipient + (respNmkRaw(x.respondentId) ? '\nNMK ' + respNmkRaw(x.respondentId) : ''))}">${esc(x.recipient)}</button></td>
+          ${va ? (cn => `<td class="c-name"><button type="button" class="camp-name" data-action="jrn-camp-open" data-id="${esc(x.batch)}" data-ctip="${esc(cn)}\nAtvērt kampaņas sūtījumus">${esc(cn)}</button></td>`)(x.sessionName || `Kampaņa Nr. ${x.batch}`) : ''}
           <td class="c-st">${letterStHtml(x)}</td>
           <td>${esc(x.channel === 'eadrese' ? 'eAdrese' : CHANNELS[x.channel] || '')}</td>
           <td title="${esc(fmtDateTime(x.sentAt))}">${esc(hxDate(x.sentAt))}</td>
@@ -14467,6 +14467,7 @@ $('#hist-body').addEventListener('click', e => {
 // vēstules rinda – klikšķis jebkurā rindas vietā (vai Enter / atstarpe) atver vēstules detaļu logu
 $('#hist-body').addEventListener('keydown', e => { const tr = e.target.closest('tr.hist-row'); if (tr && e.target === tr && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); openLetterModal(tr.dataset.hrow); } });
 $('#hist-body').addEventListener('click', e => {
+  { const ho = e.target.closest('[data-hopen]'); if (ho){ openLetterModal(ho.dataset.hopen); return; } }
   if (e.target.closest('button, a, input')) return;
   const tr = e.target.closest('tr.hist-row');
   if (tr) openLetterModal(tr.dataset.hrow);
