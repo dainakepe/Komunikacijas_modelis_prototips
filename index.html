@@ -2849,6 +2849,19 @@ dialog.modal.lm .modal-wrap{height:100%;max-height:none}
 .lm-addr .lm-at{flex:none;width:72px;color:var(--text-muted)}
 .lm-addr .mono{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lm-addr .addr-bad{text-decoration:line-through;color:var(--text-muted)}
+/* Versija 175: adrešu statuss – tāpat kā Respondentu solī (punkts + nosaukums; krāsa tikai problēmām) */
+.lm-addr .lm-ac{display:inline-flex;align-items:center;gap:4px;flex:none;font-size:12px;font-weight:400;cursor:default}
+.lm-addr .lm-ac .q-dot{width:8px;height:8px}
+.lm-addr .lm-ac.q-ok{color:#666} .lm-addr .lm-ac.q-ok .q-dot{width:6px;height:6px}
+/* laika līnija: soļa ikona statusu grupas krāsā (kā tabulās) */
+.timeline li.has-ic::before{display:none}
+.timeline li .tl-ic{position:absolute;left:0;top:1px;width:18px;height:18px;padding:0;margin:0;display:inline-grid;place-items:center;background:var(--surface);border-radius:50%}
+.timeline li .tl-ic .icon{width:14px;height:14px}
+.timeline li.tl-g-issues .tl-ic .icon{color:#E07B1F}
+.timeline li.ev-plan .tl-ic{opacity:.7}
+.tl-reason{font-size:var(--fs-xs);color:var(--text)}
+/* soļi bez piegādes statusa (melnraksts, reakcija, anketas, manuālas darbības) – neitrāls pelēks punkts */
+#lm .timeline li:not(.has-ic)::before{background:var(--surface);border-color:var(--icon-muted)}
 .lm-ast{display:inline-flex;align-items:center;gap:5px;flex:none;color:var(--text-secondary)}
 .lm-ast i{width:8px;height:8px;border-radius:50%;background:var(--success)}
 .lm-ast.is-bad i{background:var(--danger)} .lm-ast.is-none i{background:var(--border)}
@@ -3874,7 +3887,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 174</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 175</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -6301,7 +6314,8 @@ const NDR_ROUTES = {sistema:'Sistēma', darbinieks:'Darbinieks', abi:'Sistēma u
 const ruleOf = k => RULES[k] || {ch:'epasts', reason:k || '—', type:'manual', route:'darbinieks', action:''};
 // klasifikācijas birkas: iemesls, tips un (NDR) "MI klasificēts" ar ticamību vai (DIV) statusa avots
 const rulePills = n => { const r = ruleOf(n.rule), t = NDR_TYPES[r.type] || {label:r.type, cls:''};
-  return `<span class="pill ${t.cls}">${esc(r.reason)}</span> <span class="pill pill-type">${esc(t.label)}</span>${n.ai ? ` <span class="pill pill-ai" title="Ticamība ${Math.round(n.conf * 100)}%">MI klasificēts · ${Math.round(n.conf * 100)}%</span>` : ' <span class="pill pill-div">DIV statuss</span>'}`; };
+  // Versija 175: tāpat kā logā "Piegādes statusi un kļūdas" – iemesls tekstā, tipa birka tipa krāsā
+  return `<span class="tl-reason">${esc(r.reason)}</span> <span class="pill ${t.cls}">${esc(t.label)}</span>${n.ai ? ` <span class="pill pill-ai" title="Ticamība ${Math.round(n.conf * 100)}%">MI klasificēts · ${Math.round(n.conf * 100)}%</span>` : ' <span class="pill pill-div">DIV statuss</span>'}`; };
 // E-pasta servera atbilde vēstulei, kas nav piegādāta (NDR) – ja 72 h laikā NDR nav saņemts, e-pasts uzskatāms par piegādātu
 const EMAIL_CONFIRM_MS = 72 * 3600e3, DIV_STEP_MS = [120e3, 300e3], HOUR = 3600;
 // Deterministisks "nejaušs" skaitlis 0–99 (simulācija atkārtojas vienai un tai pašai vēstulei)
@@ -12037,7 +12051,7 @@ const CST_IC = {
 // Versija 173: kopīgā statusa komponente (ikona + teksts + krāsa; papildinformācija – tikai padomā) – Kampaņu saraksts, Sūtījumu 1. un 2. līmenis
 // o: {ic, cls, label, extra, tip, action, id}; ar action – poga (klikšķis ved uz rīcības vietu), citādi – teksts
 function stBadge(o){
-  const tip = `${o.label}${o.extra || ''}\n${o.tip || ''}`.trim(), inner = `${o.ic || ''}<span>${esc(o.label)}${o.extra ? `<small class="cst-res">${esc(o.extra)}</small>` : ''}</span>`;
+  const tip = o.full || `${o.label}${o.extra || ''}\n${o.tip || ''}`.trim(), inner = `${o.ic || ''}<span>${esc(o.label)}${o.extra ? `<small class="cst-res">${esc(o.extra)}</small>` : ''}</span>`;
   return o.action ? `<button type="button" class="cst2 ${o.cls}" data-action="${o.action}" data-id="${esc(o.id)}" data-ctip="${esc(tip)}" aria-description="${esc(o.tip || '')}">${inner}</button>`
     : `<span class="cst2 ${o.cls}" data-ctip="${esc(tip)}" aria-label="${esc(tip.replace(/\n/g, '. '))}">${inner}</span>`;
 }
@@ -12051,8 +12065,17 @@ function campStHtml(col, x){
 const LETTER_VIS = {proc:{k:'proc', label:'Procesā'}, ok:{k:'done', label:'Piegādāts'}, todo:{k:'issues', label:'Jārisina'}};
 function letterStHtml(x){
   const fk = histFinal(x), g = histGroupOf(fk), v = LETTER_VIS[g ? g.k : 'proc'] || LETTER_VIS.proc;
-  return stBadge({ic:CST_IC[v.k], cls:SEND_ST[v.k].cls, label:v.label, tip:`${HIST_FINAL[fk].label}\n${histStTip(x)}`});
+  return stBadge({ic:CST_IC[v.k], cls:SEND_ST[v.k].cls, label:v.label, full:`${v.label} – ${HIST_FINAL[fk].label}\n${histStTip(x)}`});
 }
+// kampaņas sūtīšanas statuss bez pārejas (respondenta logā – "Citas kampaņas"): tas pats izskats un padoms kā Sūtījumu 1. līmenī
+function campSendBadge(x){ const d = campSend(x);
+  return stBadge({ic:CST_IC[d.k], cls:SEND_ST[d.k].cls, label:d.k === 'issues' ? `${SEND_ST.issues.label} (${d.n})` : SEND_ST[d.k].label, tip:d.tip}); }
+// laika līnijas solis → statusu grupa (tās pašas ikonas un krāsas kā tabulās): zils – procesā, oranžs – jārisina, zaļš – piegādāts
+const EV_GRP_ST = {piegadats:'done', pasts:'done', nosutits:'proc', div_pienemts:'proc', piegade:'proc', rinda:'proc', atkartots:'proc', kluda:'issues', manuali:'issues', admin:'issues', jadruka:'issues'};
+const EV_GRP_CLS = {'ev-ok':'done', 'ev-proc':'proc', 'ev-temp':'proc', 'ev-plan':'proc', 'ev-fail':'issues', 'ev-man':'issues', 'ev-admin':'issues'};
+const EV_GRP_L = {proc:'Procesā', done:'Piegādāts', issues:'Jārisina'};
+// grupa – tikai piegādes soļiem (statuss vai sūtīšanas mēģinājums); reakcija, anketas un manuālās darbības – bez statusa ikonas
+const evGrp = e => (e.st && EV_GRP_ST[e.st]) || (e.type ? EV_GRP_CLS[e.cls] : '') || '';
 // "Nosūtīšanas laiks": ieplānotā – plānotais, uzsākta / pabeigta – faktiskais, citādi "—"
 const fmtDT = iso => { const d = new Date(iso); return `${fmtDate(isoDate(d))} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
 function campWhenHtml(x){
@@ -12412,10 +12435,11 @@ function letterTimeline(x){
   return ev.sort((p, q) => !p.at ? 1 : !q.at ? -1 : p.at.localeCompare(q.at));
 }
 const fmtT = iso => iso ? fmtDateTime(iso) : '';
-const evHtml = e => `<li class="${e.cls}"><div class="tl-head"><b>${esc(e.t)}</b>${e.st ? stPill(e.st) : ''}${e.tag ? `<span class="pill pill-away">${esc(e.tag)}</span>` : ''}${e.manual ? '<span class="pill pill-man">manuāli</span>' : ''}</div>
+const evHtml = e => { const g = evGrp(e);
+  return `<li class="${e.cls}${g ? ` has-ic tl-g-${g}` : ''}">${g ? `<span class="tl-ic cst2 ${SEND_ST[g].cls}" aria-hidden="true">${CST_IC[g]}</span>` : ''}<div class="tl-head"><b>${esc(e.t)}</b>${e.st && g ? stBadge({ic:CST_IC[g], cls:SEND_ST[g].cls, label:EV_GRP_L[g], full:`${EV_GRP_L[g]} – ${(STATUSES[e.st] || HIST_FINAL[e.st] || {label:e.st}).label}`}) : ''}${e.tag ? `<span class="pill pill-away">${esc(e.tag)}</span>` : ''}${e.manual ? '<span class="pill pill-man">manuāli</span>' : ''}</div>
   <small>${esc(fmtT(e.at)) || 'tagad'}${e.type ? ` · ${esc(CHANNELS[e.ch])} · ${esc(addrShort(e.type))}: <span class="mono">${esc(e.address)}</span>` : ''}${e.d ? ` · ${esc(e.d)}` : ''}</small>
   ${e.ndr ? `<div class="tl-ndr">${rulePills(e.ndr)}</div><code class="tl-code">${e.ndrAt ? `${esc(fmtT(e.ndrAt))} · ` : ''}${esc(e.ndr.text)}</code>` : ''}
-  ${e.action ? `<div class="tl-act"><span class="muted">Automātiskā rīcība:</span> ${esc(e.action)}${e.route ? ` <span class="muted">· novirzīts: ${esc(NDR_ROUTES[e.route])}</span>` : ''}</div>` : ''}</li>`;
+  ${e.action ? `<div class="tl-act"><span class="muted">Automātiskā rīcība:</span> ${esc(e.action)}${e.route ? ` <span class="muted">· novirzīts: ${esc(NDR_ROUTES[e.route])}</span>` : ''}</div>` : ''}</li>`; };
 // "Piegādes statusi un kļūdas" (agrāk – "Klasifikācijas noteikumi"; tikai lasīšanai): abas specifikācijas tabulas
 function openRulesModal(){
   // normālā plūsma (starpstatuss un gala statuss – nav kļūdu tipi): tips "—", tabulas augšā; kļūdu rindas zemāk
@@ -12864,12 +12888,13 @@ function renderLetterModal(){
   lmDlg.innerHTML = `<div class="modal-wrap">
     <div class="modal-head lm-head">
       <div class="lm-ttl"><h2 id="lm-title">${esc(x.recipient)}</h2><div class="lm-sub">${esc(nmk || 'NMK nav norādīts')} · ${esc(cn)}</div></div>
-      <div class="lm-hr"><span class="lm-st" title="${esc(histStTip(x))}">${msgBadge(histFinal(x))}</span>
+      <div class="lm-hr"><span class="lm-st">${letterStHtml(x)}</span>
         <button type="button" class="icon-btn" data-lm-close aria-label="Aizvērt">${ICON.x}</button></div></div>
     <div class="ch-tabs lm-tabs" role="tablist" aria-label="Vēstules informācija">${LM_TABS.map(([k, l]) => `<button type="button" role="tab" class="ch-tab lm-tab" id="lm-tab-${k}" data-lm-tab="${k}" aria-selected="${k === t}" aria-controls="lm-pane"${k === t ? '' : ' tabindex="-1"'}>${l}</button>`).join('')}</div>
     <div class="modal-body lm-body" id="lm-pane" role="tabpanel" aria-labelledby="lm-tab-${t}">${t === 'resp' ? lmRespHtml(x) : t === 'path' ? lmPathHtml(x) : lmLetterHtml(x)}</div>
     ${acts ? `<div class="modal-foot lm-foot"><div class="lm-acts" role="group" aria-label="Darbības ar vēstuli">${acts}</div><button type="button" class="btn btn-primary" data-lm-close>Aizvērt</button></div>` : ''}</div>`;
   ui.lm.shown = `${x.id}|${t}`;
+  $$('[data-ctip]', lmDlg).forEach(e => { e.title = e.dataset.ctip; });
   $('.lm-body', lmDlg).scrollTop = top;
   if (keep){ const f = keep && $(keep, lmDlg); (f && !f.disabled ? f : $('.lm-tab[aria-selected="true"]', lmDlg)).focus({preventScroll:true}); }
 }
@@ -12927,21 +12952,25 @@ function lmRespHtml(x){
   const base = `<dl class="lm-kv">${row('Nosaukums', `<b>${esc(r.name)}</b>`)}${row('NMK', r.nmk ? `<span class="mono">${esc(r.nmk)}</span>` : none('nav norādīts'))}
     ${row('Kontaktpersona', r.contact ? esc(r.contact) : none('nav norādīta'))}${r.phone ? row('Tālrunis', esc(r.phone)) : ''}</dl>`;
   // adreses: veids · adrese · statuss (nederīga pēc nepiegādes – pārsvītrota)
-  const adr = ['eadrese', 'email1', 'email2', 'email3'].filter(k => k !== 'email3' || r.email3).map(k => { const v = String(ADDR_TYPES[k].get(r) || '').trim(), m = v && invalidMark(r, k);
-    const st = !v ? ['is-none', 'Nav norādīta'] : m ? ['is-bad', 'Nederīga'] : ['', 'Derīga'];
-    return `<li><span class="lm-at">${esc(addrShort(k))}</span>${v ? `<span class="mono${m ? ' addr-bad' : ''}" title="${esc(v)}">${esc(v)}</span>` : ''}<span class="lm-ast ${st[0]}"${m ? ` title="${esc(`${m.reason} · ${fmtDateTime(m.at)}`)}"` : ''}><i aria-hidden="true"></i>${st[1]}</span></li>`; }).join('');
+  const adrSeen = [];
+  const adr = ['eadrese', 'email1', 'email2', 'email3'].filter(k => k !== 'email3' || r.email3).map(k => { const v = String(ADDR_TYPES[k].get(r) || '').trim(), m = v && invalidMark(r, k), c = v ? validateAddr(k, v) : {status:'empty'};
+    const dup = v && k !== 'eadrese' && adrSeen.includes(v.toLowerCase()); if (v && k !== 'eadrese') adrSeen.push(v.toLowerCase());
+    const st = !v ? ['none', AC_SHORT.none, 'Nav adreses'] : m ? ['bad', AC_SHORT.bad, `Nederīga: ${m.reason} · ${fmtDateTime(m.at)}`] : c.status === 'error' ? ['bad', AC_SHORT.bad, `Nederīga: ${c.msg || ''}`]
+      : dup ? ['none', 'Dublikāts', 'Dublikāts – tā pati adrese jau norādīta iepriekšējā e-pasta laukā'] : c.status === 'pot' ? ['pot', AC_SHORT.pot, `Potenciāli kļūdaina${c.msg ? ` – ${c.msg}` : ''}`] : ['ok', AC_SHORT.ok, 'Derīga'];
+    return `<li><span class="lm-at">${esc(addrShort(k))}</span>${v ? `<span class="mono${m ? ' addr-bad' : ''}" title="${esc(v)}">${esc(v)}</span>` : ''}<span class="ac-st lm-ac q-${st[0]}" title="${esc(st[2])}"><span class="q-dot" aria-hidden="true"></span>${esc(st[1])}</span></li>`; }).join('');
   // apsekojumi: vēstulē iekļautās anketas (statuss pēc vēstules reakcijas datiem) un respondenta citi apsekojumi – katram jaunākais sākušais periods
   const inL = new Map(reactView(x).forms.map(f => [f.d.id, f])), now = Date.now(), seen = new Set();
   const ds = dutiesOf(r.id).slice().sort((a, b) => (inL.has(b.id) - inL.has(a.id)) || periodStart(b.period) - periodStart(a.period))
     .filter(d => { if (inL.has(d.id)){ seen.add(d.reportId); return true; } if (seen.has(d.reportId) || periodStart(d.period) > now) return false; seen.add(d.reportId); return true; });
   const stCell = d => { const f = inL.get(d.id);
-    return f ? `<span class="rx-st rx-${f.st}"><i class="rx-d rx-${f.st}" aria-hidden="true">${FORM_ST[f.st].ic}</i>${esc(FORM_ST[f.st].label)}</span>` : esc(DUTY_ST[dutyStatus(d)].label); };
+    return f ? `<span class="rx-st rx-${f.st}">${esc(FORM_ST[f.st].label)}${f.st === 'kl' ? ` <span class="muted">(${esc(FORM_ST.kl.d)})</span>` : ''}</span>` : esc(DUTY_ST[dutyStatus(d)].label); }; // Versija 175: bez simboliem – kā tabulās
   const duty = ds.length ? `<table class="lm-dt"><thead><tr><th>Apsekojums</th><th>Periods</th><th>Anketas statuss</th></tr></thead><tbody>${ds.slice(0, ui.lm.moreD ? ds.length : LM_LIM).map(d => { const p = repById(d.reportId), t = p ? repTitle(p) : '—';
       return `<tr${inL.has(d.id) ? ' class="is-in" title="Iekļauts šajā vēstulē"' : ''}><td title="${esc(t)}">${esc(t)}</td><td title="${esc(periodLabel(d.period))}">${esc(periodLabel(d.period))}</td><td>${stCell(d)}</td></tr>`; }).join('')}</tbody></table>${more('moreD', ds.length)}`
     : '<p class="hint">Respondentam nav reģistrētu apsekojumu.</p>';
   const others = state.sent.filter(y => y.respondentId === r.id && String(y.batch) !== String(x.batch)).sort((a, b) => String(b.sentAt).localeCompare(String(a.sentAt)));
+  const cr = new Map(campRows().filter(c => c.type === 'sent').map(c => [String(c.id), c]));
   const camps = others.length ? `<ul class="lm-camps">${others.slice(0, ui.lm.moreC ? others.length : LM_LIM).map(y => { const n = y.sessionName || `Kampaņa Nr. ${y.batch}`;
-      return `<li><button type="button" class="lm-camp" data-lm-camp="${esc(y.id)}" title="${esc(n)} – atvērt kampaņas sūtījumus"><span class="lm-camp-n">${esc(n)}</span><span class="lm-camp-d">${esc(dmy(isoDate(new Date(y.sentAt))))}</span>${msgBadge(histFinal(y))}</button></li>`; }).join('')}</ul>${more('moreC', others.length)}`
+      return `<li><button type="button" class="lm-camp" data-lm-camp="${esc(y.id)}" title="${esc(n)} – atvērt kampaņas sūtījumus"><span class="lm-camp-n">${esc(n)}</span><span class="lm-camp-d">${esc(dmy(isoDate(new Date(y.sentAt))))}</span>${cr.has(String(y.batch)) ? campSendBadge(cr.get(String(y.batch))) : ''}</button></li>`; }).join('')}</ul>${more('moreC', others.length)}`
     : '<p class="hint">Respondents nav bijis citās kampaņās.</p>';
   return `<div class="lm-rs"><section class="lm-sec"><h3>Respondents</h3>${base}</section><section class="lm-sec"><h3>Adreses</h3><ul class="lm-addr">${adr}</ul></section>
     <section class="lm-sec"><h3>Apsekojumi (${ds.length})</h3>${duty}</section><section class="lm-sec"><h3>Citas kampaņas (${others.length})</h3>${camps}</section></div>`;
