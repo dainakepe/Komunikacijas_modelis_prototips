@@ -1396,9 +1396,6 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .hf-desc{display:block;font-size:11px;color:var(--text-muted);font-weight:400}
 .camp-name:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:var(--radius-xs)}
 .camp-table th:first-child{width:27%}
-.camp-table th.c-wl{width:70px;white-space:normal;line-height:1.15}
-.camp-table th.c-wl .th-sort{white-space:normal;text-align:right}
-.camp-table td.c-wl{color:var(--text-muted);font-size:var(--fs-sm)}
 /* kārtošana pēc kolonnas */
 .th-sort{appearance:none;border:0;background:none;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;padding:4px 6px;margin:0 -6px;border-radius:var(--radius-xs);cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .th-sort:hover{background:rgba(41,119,133,.10);color:var(--primary-darker)}
@@ -1412,15 +1409,19 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .ck-sub{color:var(--text-muted);margin-left:6px;font-size:var(--fs-sm)}
 /* kampaņu sarakstā: "pirms / pēc termiņa" – otrā rindā zem veida (tabula ietilpst platumā arī ar kolonnu "Darba laiks") */
 #camp-scroll .ck-sub{display:block;margin:1px 0 0 22px;font-size:var(--fs-xs);line-height:1.2}
-#camp-scroll .camp-name{max-width:min(440px,34vw)}
+#camp-scroll .camp-name{max-width:min(620px,46vw)}
 #camp-scroll .camp-table th:first-child{width:auto}
 /* kolonnu platumi: "Veids" un "Respondenti" bez lielas tukšas vietas starp tām; atbrīvotais platums – nosaukumam */
-#camp-scroll .camp-table th:nth-child(2){width:150px}
+#camp-scroll .camp-table th:nth-child(2){width:64px}
+#camp-scroll .camp-table td.c-kind{text-align:center}
+.ck-ic{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;color:var(--primary-dark);cursor:default}
+.ck-ic:hover{background:var(--primary-50)}
+.ck-ic .icon{width:16px;height:16px}
 #camp-scroll .camp-table th:nth-child(3){width:104px}
 #camp-scroll .camp-table th:nth-child(4){width:138px}
 #camp-scroll .camp-table th:nth-child(5){width:178px}
 #camp-scroll .camp-table th:nth-child(6){width:108px}
-#camp-scroll .camp-table th:nth-child(8){width:40px}
+#camp-scroll .camp-table th:nth-child(7){width:40px}
 #camp-scroll .camp-table th,#camp-scroll .camp-table td{padding-left:8px;padding-right:8px}
 .ck,.ck-sub{vertical-align:middle}
 .cst{display:inline-flex;align-items:center;gap:7px;font-weight:500;font-size:var(--fs-sm)}
@@ -1447,6 +1448,39 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .camp-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .c-tipbox{position:fixed;z-index:80;max-width:320px;background:var(--tt-bg);color:var(--tt-fg);border:1px solid var(--tt-border);font-size:var(--fs-xs);line-height:1.45;padding:6px 9px;border-radius:var(--radius-sm);box-shadow:var(--tt-shadow);pointer-events:none;white-space:pre-line}
 .c-tipbox[hidden]{display:none}
+/* "Mani filtri" (kopīga komponente) */
+.sf{position:relative;flex:none}
+.sf-btn{display:inline-flex;align-items:center;gap:6px;height:38px;box-sizing:border-box;padding:0 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font:inherit;font-size:var(--fs-sm);cursor:pointer;white-space:nowrap;max-width:300px}
+.sf-btn .icon{width:16px;height:16px;color:var(--icon-muted);flex:none}
+.sf-btn.is-on{border-color:var(--primary-300);color:var(--primary-darker)}
+.sf-btn.is-on .icon{color:#E0A100;fill:#F5C542}
+.sf-btn:hover{border-color:var(--primary-300)}
+.sf-btn:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px}
+.sf-name{overflow:hidden;text-overflow:ellipsis;min-width:0;font-weight:600;color:var(--text)}
+.sf-mod{color:var(--orange-ink);font-size:var(--fs-xs)}
+.sf-caret{font-size:10px;color:var(--text-muted)}
+.sf-menu{position:absolute;z-index:45;left:0;top:calc(100% + 4px);min-width:260px;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:6px}
+.sf-menu[hidden]{display:none}
+.sf-menu [role="menuitem"]{display:flex;align-items:center;gap:8px;width:100%;appearance:none;border:0;background:none;text-align:left;font:inherit;font-size:var(--fs-sm);padding:7px 10px;border-radius:var(--radius-xs);color:var(--text);cursor:pointer}
+.sf-menu [role="menuitem"]:hover:not([disabled]),.sf-menu [role="menuitem"]:focus{background:var(--row-hover);outline:none}
+.sf-menu [role="menuitem"][disabled]{color:var(--text-muted);cursor:not-allowed}
+.sf-menu [role="menuitem"] .icon{width:14px;height:14px}
+.sf-menu hr{border:0;border-top:1px solid var(--border-light);margin:5px 0}
+.sf-chk{width:14px;flex:none;color:var(--primary-dark);font-weight:700}
+.sf-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sf-def{flex:none;font-size:var(--fs-xs);color:var(--text-muted);border:1px solid var(--border);border-radius:var(--radius-pill);padding:0 7px}
+.sf-dlg .field{margin-bottom:10px}
+.sf-defl{display:flex;align-items:center;gap:7px;font-size:var(--fs-sm);margin-bottom:12px;cursor:pointer}
+.sf-sum{font-size:var(--fs-sm);padding:9px 11px;background:var(--bg);border-radius:var(--radius-sm);line-height:1.45}
+.sf-table td{vertical-align:middle}
+.sf-table .sf-ren{width:100%;box-sizing:border-box;font-size:var(--fs-sm);padding:5px 8px}
+.sf-table{width:100%;table-layout:auto}
+.sf-table th:nth-child(2),.sf-table td:nth-child(2){width:110px}
+.sf-table td:nth-child(3){width:70px}
+.sf-table td:nth-child(4){width:90px}
+.sf-row-sum{display:block;margin-top:3px;color:var(--text-muted);font-size:var(--fs-xs);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sf-table .sf-c{text-align:center}
+.sf-ord{white-space:nowrap}
 .ac-tipbox{white-space:nowrap;max-width:min(460px,calc(100vw - 16px));overflow:hidden;text-overflow:ellipsis}
 #c-list .ac-val[data-actip]:focus-visible{outline:2px solid var(--focus-ring);outline-offset:1px;border-radius:3px}
 .camp-more{width:30px;height:30px}
@@ -3326,6 +3360,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     <button type="button" class="btn btn-secondary btn-sm cf-toggle" id="cf-toggle" aria-expanded="false" aria-controls="camp-filters"><svg class="icon" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4 2v-8z"/></svg>Filtri <span class="cnt" id="cf-cnt" hidden></span></button>
     <div class="flt" id="camp-filters" role="search" aria-label="Kampaņu filtri">
       <div class="flt-row">
+        <div class="sf" id="sf-camp"></div>
         <label class="search flt-search"><span class="sr-only">Meklēt pēc kampaņas nosaukuma</span>
           <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input type="search" id="camp-search" placeholder="Meklēt pēc nosaukuma…">
@@ -3342,7 +3377,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     <div class="flt-chips" id="cf-chips" hidden><span class="flt-chip-list" id="cf-chip-list" aria-label="Aktīvie filtri"></span><button type="button" class="link-btn flt-clear" id="cf-clear">Notīrīt visus</button></div>
     <div class="card table-card tc-fit" id="camp-card">
       <div class="table-wrap camp-scroll tc-area" id="camp-scroll"><table class="camp-table">
-        <thead><tr><th aria-sort="none"><button type="button" class="th-sort" data-csort="name">Kampaņa<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="kind">Veids<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="num" aria-sort="none"><button type="button" class="th-sort" data-csort="n">Respondenti<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="when">Nosūtīšana<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="st">Statuss<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="res">Rezultāts<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="num c-wl" aria-sort="none"><button type="button" class="th-sort" data-csort="wl">Darba laiks<span class="sort-ic" aria-hidden="true">↕</span></button></th><th><span class="sr-only">Darbības</span></th></tr></thead>
+        <thead><tr><th aria-sort="none"><button type="button" class="th-sort" data-csort="name">Kampaņa<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="c-kind" aria-sort="none"><button type="button" class="th-sort" data-csort="kind" aria-label="Kampaņas veids – kārtot">Veids<span class="sort-ic" aria-hidden="true">↕</span></button></th><th class="num" aria-sort="none"><button type="button" class="th-sort" data-csort="n">Respondenti<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="when">Nosūtīšana<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="st">Statuss<span class="sort-ic" aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="th-sort" data-csort="res">Rezultāts<span class="sort-ic" aria-hidden="true">↕</span></button></th><th><span class="sr-only">Darbības</span></th></tr></thead>
         <tbody id="camp-tbody"></tbody></table><div class="tc-empty" id="camp-empty" hidden></div></div>
       <div class="table-foot camp-foot" id="camp-foot"></div>
     </div>
@@ -3702,7 +3737,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 159</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 160</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5567,7 +5602,7 @@ function newSession(full){
   clearTimeout(draftTimer); state.activeDraft = compose.draftId;
   alBaseline();
 }
-const ui = {campView:'list', camp:{q:'', kind:'', status:'', creator:'', quick:'', from:'', to:''}, hist:{q:'', kind:'', sts:[], camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histLimit:50, cardId:'',
+const ui = {campView:'list', camp:{q:'', kind:'', status:'', st:'', creator:'', quick:'', from:'', to:''}, hist:{q:'', kind:'', sts:[], camp:'', ch:'', nmk:'', creator:'', quick:'', from:'', to:''}, histRaw:{}, histLimit:50, cardId:'',
   rep:{from:'', to:'', camp:'', kind:'', ch:'', aud:'', rep:'', sort:{key:'date', dir:'desc'}},
   tplView:'veidnes', sagGroup:'mail', sag:{q:'', aud:'', cat:'', lang:''}, newIds:new Set(), tplAud:'', tplSearch:'', tplCat:'', tplKind:'', tplSts:['aktiva', 'melnraksts'], tplRt:'', tplSv:'', tplSort:{k:'', dir:0}, tplLimit:20, sagSort:{k:'', dir:0}, sagLimit:20, attSearch:'', attAud:'', attCat:'', attLang:''};
 // Sakļautie kategoriju bloki (tikai šajā kampaņā – pēc noklusējuma visi izvērsti)
@@ -6933,7 +6968,7 @@ function showTab(name, opts = {}){
   if (name === 'kampanas'){
     if (ui.campView === 'edit' && !opts.edit) flushDraft();
     ui.campView = opts.edit ? 'edit' : 'list';
-    if (!opts.edit){ ui.campSub = 'all'; ui.campLimit = CAMP_PAGE; }
+    if (!opts.edit){ if (!sfActive('camp')) ui.campSub = 'all'; ui.campLimit = CAMP_PAGE; }
     $('#camp-list').hidden = ui.campView === 'edit'; $('#camp-edit').hidden = ui.campView !== 'edit';
   }
   ui.tab = name;
@@ -11176,10 +11211,11 @@ function withSnap(snap, fn){
 }
 const kindOpts = cur => optList(Object.entries(SESS_KINDS).map(([k, v]) => [k, v.label]), cur, 'Visi veidi');
 const baseKind = k => k && k.startsWith('atg') ? 'atgadinajums' : k;
-const campFiltOn = () => !!(ui.camp.q.trim() || ui.camp.kind || ui.camp.creator || ui.camp.from || ui.camp.to);
+const campFiltOn = () => !!(ui.camp.q.trim() || ui.camp.kind || ui.camp.creator || ui.camp.from || ui.camp.to || ui.camp.st);
 const campFiltCount = () => [ui.camp.q.trim(), ui.camp.kind, ui.camp.creator, ui.camp.from || ui.camp.to].filter(Boolean).length;
 function campChips(){
   const c = ui.camp, out = [];
+  if (c.st && CAMP_ST[c.st]) out.push(['st', `Statuss: ${CAMP_ST[c.st].label}`]);
   if (c.q.trim()) out.push(['q', `Meklēt: ${c.q.trim()}`]);
   if (c.kind) out.push(['kind', `Veids: ${SESS_KINDS[c.kind] ? SESS_KINDS[c.kind].label : c.kind}`]);
   out.push(...perChip(c));
@@ -11229,6 +11265,11 @@ const fmtShort = (d, time) => { d = d instanceof Date ? d : new Date(d); const d
   return d.getFullYear() === new Date().getFullYear() ? `${dm}${time ? ` ${time}` : ''}` : `${dm}${d.getFullYear()}.`; };
 const fmtShortIso = iso => { const d = new Date(iso); return fmtShort(d, `${pad(d.getHours())}:${pad(d.getMinutes())}`); };
 const fmtShortDay = (date, time) => fmtShort(new Date(date + 'T00:00:00'), time);
+// kampaņu sarakstā – tikai ikona (veida nosaukums – padomā)
+function campKindIcon(k){
+  const base = k && k.startsWith('atg') ? 'atgadinajums' : k, l = campKindLabel(k) || '—';
+  return `<span class="ck-ic" role="img" aria-label="${esc(l)}" data-ctip="${esc(l)}">${ICON[KIND_IC[base]] || '—'}</span>`;
+}
 function campKindCell(k){
   const base = k && k.startsWith('atg') ? 'atgadinajums' : k, l = SESS_KINDS[base] ? SESS_KINDS[base].label : '—';
   return `<span class="ck">${ICON[KIND_IC[base]] || ''}${esc(l)}</span>${k === 'atg-pirms' ? '<span class="ck-sub">pirms termiņa</span>' : k === 'atg-pec' ? '<span class="ck-sub">pēc termiņa</span>' : ''}`;
@@ -11335,25 +11376,26 @@ function renderCampaigns(){
   refreshStatuses();
   if (ui.campView === 'edit') flushDraft();
   const menuKey = campMenuBtn && campMenuBtn.dataset.id;
+  sfBoot('camp');
   const rows = campRows();
   renderCampFilters(rows);
+  sfRender('camp');
   if (!CAMP_SUBS.some(([k]) => k === ui.campSub)) ui.campSub = 'all';
   $('#camp-sub').innerHTML = subnavHtml(CAMP_SUBS, ui.campSub, 'csub');
   const q = norm(ui.camp.q);
   hideCTip();
   const c = ui.camp;
-  const list = campSorted(rows.filter(x => (ui.campSub === 'all' || CAMP_ST[x.st].sub === ui.campSub) && (!c.kind || baseKind(x.kind) === c.kind) && (!q || norm(`${x.name} ${x.desc || ''}`).includes(q)) &&
+  const list = campSorted(rows.filter(x => (ui.campSub === 'all' || CAMP_ST[x.st].sub === ui.campSub) && (!c.st || x.st === c.st) && (!c.kind || baseKind(x.kind) === c.kind) && (!q || norm(`${x.name} ${x.desc || ''}`).includes(q)) &&
     (!c.creator || x.creator === c.creator) && perMatch(c, campPerDate(x))));
   renderCampSort();
   const row = x => `<tr class="camp-row" data-action="camp-row" data-id="${esc(x.key)}">
       <td><button type="button" class="camp-name" data-action="camp-row" data-id="${esc(x.key)}" data-ctip="${esc(x.name + (x.desc ? '\n' + x.desc : '') + '\n' + x.meta)}" aria-description="${esc((x.desc ? x.desc + ' · ' : '') + x.meta)}">${esc(x.name)}</button></td>
-      <td>${campKindCell(x.kind)}</td>
+      <td class="c-kind">${campKindIcon(x.kind)}</td>
       <td class="num">${x.n}</td>
       <td>${esc(x.when)}</td>
       <td>${x.st === 'appr' || x.st === 'apvok' ? `<button type="button" class="cst cst-btn ${CAMP_ST[x.st].cls}" data-action="camp-row" data-id="${esc(x.key)}" data-ctip="${esc(`${CAMP_ST[x.st].label}\n${x.meta}`)}" aria-description="${esc(x.meta)}"><i aria-hidden="true"></i>${CAMP_ST[x.st].label}</button>`
         : `<span class="cst ${CAMP_ST[x.st].cls}"><i aria-hidden="true"></i>${CAMP_ST[x.st].label}</span>`}${campPubTag(x)}</td>
       <td>${campResult(x)}</td>
-      <td class="num c-wl">${campWlMs(x) != null ? esc(fmtDur(campWlMs(x))) : '<span class="muted">—</span>'}</td>
       <td class="actions"><button type="button" class="icon-btn camp-more" data-action="camp-menu" data-id="${esc(x.key)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.name)}" title="Darbības">${ICON.dots}</button></td></tr>`;
   const page = list.slice(0, ui.campLimit), shown = page.length, html = page.map(row).join('');
   $('#camp-tbody').innerHTML = list.length ? html : '';
@@ -11371,6 +11413,134 @@ function renderCampaigns(){
   }
 }
 const campByKey = key => campRows().find(x => x.key === key);
+// ===== "Mani filtri" – personalizēti (saglabāti) filtri; kopīga komponente (šobrīd – Kampaņas; paredzēta arī Sūtījumiem un Veidnēm) =====
+// Katram skatam – konfigurācija: get() (pašreizējie filtri), apply(f) (uzstāda bez pārzīmēšanas), render(), empty(), summary(f).
+// Filtri ir personīgi (katram lietotājam savi); prototipā – pārlūka krātuvē (atsevišķa atslēga, "Atjaunot testa datus" tos nedzēš).
+const SF_CFG = {}, SF_KEY = 'csp-my-filters', SF_MAX = 40;
+ui.sf = {};
+function sfAll(){ try { return JSON.parse(localStorage.getItem(SF_KEY) || '{}') || {}; } catch (e) { return {}; } }
+function sfList(view){
+  const all = sfAll(), u = all[CURRENT_USER] || {};
+  if (!u[view] && SF_CFG[view] && SF_CFG[view].seed){ u[view] = SF_CFG[view].seed(); all[CURRENT_USER] = u; try { localStorage.setItem(SF_KEY, JSON.stringify(all)); } catch (e) {} }
+  return u[view] || [];
+}
+function sfSave(view, list){ const all = sfAll(); (all[CURRENT_USER] = all[CURRENT_USER] || {})[view] = list; try { localStorage.setItem(SF_KEY, JSON.stringify(all)); } catch (e) { toast('Pārlūka krātuve nav pieejama – filtru nevar saglabāt.', true); } }
+const sfSig = f => JSON.stringify(f, Object.keys(f).sort());
+const sfCur = view => { const id = (ui.sf[view] || {}).active; return id ? sfList(view).find(x => x.id === id) || null : null; };
+const sfActive = view => !!sfCur(view);
+const sfChanged = view => { const c = sfCur(view); return !!c && sfSig(c.f) !== sfSig(SF_CFG[view].get()); };
+function sfRegister(view, cfg){ SF_CFG[view] = cfg; ui.sf[view] = ui.sf[view] || {active:'', open:false, booted:false}; }
+// atverot skatu pirmo reizi (pēc lapas ielādes) – noklusējuma filtrs
+function sfBoot(view){
+  const st = ui.sf[view]; if (!st || st.booted) return; st.booted = true;
+  const d = sfList(view).find(x => x.def); if (d){ SF_CFG[view].apply(clone(d.f)); st.active = d.id; }
+}
+function sfPick(view, id){
+  const cfg = SF_CFG[view], x = id ? sfList(view).find(y => y.id === id) : null;
+  ui.sf[view].active = x ? x.id : ''; ui.sf[view].open = false;
+  cfg.apply(x ? clone(x.f) : cfg.empty()); cfg.render();
+  const b = $(`#sf-${view} .sf-btn`); if (b) b.focus();
+}
+function sfRender(view){
+  const host = $(`#sf-${view}`), cfg = SF_CFG[view]; if (!host || !cfg) return;
+  const st = ui.sf[view], list = sfList(view), cur = sfCur(view), ch = sfChanged(view), empty = sfSig(cfg.get()) === sfSig(cfg.empty());
+  const STAR = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>';
+  const it = (attrs, html, cls = '') => `<button type="button" role="menuitem" tabindex="-1" class="${cls}" ${attrs}>${html}</button>`;
+  host.innerHTML = `<button type="button" class="sf-btn${cur ? ' is-on' : ''}" aria-haspopup="menu" aria-expanded="${st.open}" aria-controls="sf-menu-${view}">${STAR}<span class="sf-l">Mani filtri:</span> <b class="sf-name">${esc(cur ? cur.name : 'Visi')}</b>${ch ? ' <span class="sf-mod">(mainīts)</span>' : ''}<span class="sf-caret" aria-hidden="true">▾</span></button>
+    <div class="sf-menu" id="sf-menu-${view}" role="menu" aria-label="Mani filtri"${st.open ? '' : ' hidden'}>
+      ${it('data-sf-pick=""', `<span class="sf-chk" aria-hidden="true">${!cur ? '✓' : ''}</span>Visi (bez filtra)`)}
+      ${list.map(x => it(`data-sf-pick="${esc(x.id)}" title="${esc(cfg.summary(x.f))}"`, `<span class="sf-chk" aria-hidden="true">${cur && cur.id === x.id ? '✓' : ''}</span><span class="sf-n">${esc(x.name)}</span>${x.def ? '<span class="sf-def">noklusējums</span>' : ''}`)).join('')}
+      <hr>
+      ${cur && ch ? it('data-sf-act="update"', `Atjaunināt “${esc(cur.name)}”`) + it('data-sf-act="save"', 'Saglabāt kā jaunu…') : it(`data-sf-act="save"${empty ? ' disabled aria-disabled="true"' : ''}`, `${ICON.plus}Saglabāt pašreizējos filtrus…`, empty ? 'is-dis' : '')}
+      ${it(`data-sf-act="manage"${list.length ? '' : ' disabled aria-disabled="true"'}`, 'Pārvaldīt filtrus…', list.length ? '' : 'is-dis')}
+    </div>`;
+}
+function sfToggle(view, open){
+  const st = ui.sf[view]; st.open = open ?? !st.open; sfRender(view);
+  if (st.open){ const f = $(`#sf-menu-${view} [role="menuitem"]:not([disabled])`); if (f) f.focus(); }
+}
+// "Saglabāt pašreizējos filtrus…" / "Saglabāt kā jaunu…": nosaukums (obligāts, ≤ 40, unikāls), noklusējums, kopsavilkums
+function sfSaveDlg(view){
+  const cfg = SF_CFG[view], f = cfg.get(), list = sfList(view);
+  const {el} = openModal({title:'Saglabāt filtrus', content:`<div class="sf-dlg">
+      <div class="field"><label for="sf-name">Nosaukums <span class="req">*</span></label><input type="text" id="sf-name" maxlength="${SF_MAX}" placeholder="piem., Mani melnraksti" aria-describedby="sf-name-err"><span class="err" id="sf-name-err" hidden></span></div>
+      <label class="sf-defl"><input type="checkbox" id="sf-def"> Izmantot kā noklusējumu, atverot šo skatu</label>
+      <div class="sf-sum"><span class="muted">Tiks saglabāts:</span> ${esc(cfg.summary(f))}</div></div>`,
+    actions:[{label:'Atcelt'}, {label:'Saglabāt', cls:'btn-primary', onClick:c => {
+      const inp = $('#sf-name', el), nm = inp.value.trim(), err = $('#sf-name-err', el);
+      const msg = !nm ? 'Norādiet nosaukumu.' : nm.length > SF_MAX ? `Nosaukums nedrīkst būt garāks par ${SF_MAX} simboliem.` : list.some(x => x.name.toLowerCase() === nm.toLowerCase()) ? 'Filtrs ar šādu nosaukumu jau ir.' : '';
+      if (msg){ err.hidden = false; err.textContent = msg; inp.setAttribute('aria-invalid', 'true'); inp.focus(); return; }
+      const def = $('#sf-def', el).checked, x = {id:'sf' + uid(), name:nm, def, f:clone(f)};
+      sfSave(view, [...list.map(y => def ? {...y, def:false} : y), x]);
+      ui.sf[view].active = x.id; c(); cfg.render(); toast(`Filtrs “${nm}” saglabāts${def ? ' (noklusējums)' : ''}.`);
+    }}]});
+  const inp = $('#sf-name', el); inp.focus();
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('[data-act="1"]', el).click(); } });
+}
+function sfUpdate(view){
+  const cfg = SF_CFG[view], cur = sfCur(view); if (!cur) return;
+  sfSave(view, sfList(view).map(x => x.id === cur.id ? {...x, f:clone(cfg.get())} : x));
+  ui.sf[view].open = false; cfg.render(); toast(`Filtrs “${cur.name}” atjaunināts.`);
+}
+// "Pārvaldīt filtrus…": pārsaukšana, noklusējums (viens), secība (↑↓), dzēšana (ar apstiprinājumu); izmaiņas – ar "Saglabāt"
+function sfManage(view){
+  const cfg = SF_CFG[view]; let w = clone(sfList(view));
+  const body = () => w.length ? `<p class="hint" style="margin-top:0">Noklusējuma filtrs ielādējas automātiski, atverot šo skatu.</p>
+    <table class="rep-table sf-table"><thead><tr><th>Nosaukums</th><th>Noklusējums</th><th><span class="sr-only">Secība</span></th><th><span class="sr-only">Dzēst</span></th></tr></thead><tbody>${w.map((x, i) => `<tr data-sf-row="${esc(x.id)}">
+      <td><input type="text" class="sf-ren" value="${esc(x.name)}" maxlength="${SF_MAX}" aria-label="Nosaukums: ${esc(x.name)}"><small class="sf-row-sum">${esc(cfg.summary(x.f))}</small></td>
+      <td class="sf-c"><input type="radio" name="sf-def" value="${esc(x.id)}"${x.def ? ' checked' : ''} aria-label="Noklusējums: ${esc(x.name)}"></td>
+      <td class="sf-ord"><button type="button" class="icon-btn" data-sf-up="${i}" aria-label="Pārvietot augšup: ${esc(x.name)}"${i ? '' : ' disabled'}>↑</button><button type="button" class="icon-btn" data-sf-down="${i}" aria-label="Pārvietot lejup: ${esc(x.name)}"${i < w.length - 1 ? '' : ' disabled'}>↓</button></td>
+      <td><button type="button" class="btn btn-danger-ghost btn-sm" data-sf-del="${i}">${ICON.trash}Dzēst</button></td></tr>`).join('')}
+      <tr><td class="muted">Bez noklusējuma</td><td class="sf-c"><input type="radio" name="sf-def" value=""${w.some(x => x.def) ? '' : ' checked'} aria-label="Bez noklusējuma"></td><td></td><td></td></tr></tbody></table>
+    <span class="err" id="sf-m-err" hidden></span>` : '<p class="hint">Saglabātu filtru nav.</p>';
+  const sync = () => { $$('.sf-table tr[data-sf-row]', el).forEach(tr => { const x = w.find(y => y.id === tr.dataset.sfRow); if (x) x.name = $('.sf-ren', tr).value; });
+    const d = $('input[name="sf-def"]:checked', el); w.forEach(x => { x.def = !!d && d.value === x.id; }); };
+  const redraw = focusSel => { sync(); $('.modal-body', el).innerHTML = body(); const f = focusSel && $(focusSel, el); if (f) f.focus(); };
+  const {el} = openModal({title:'Pārvaldīt filtrus', content:body(), actions:[{label:'Atcelt'}, {label:'Saglabāt', cls:'btn-primary', onClick:c => {
+    sync(); const names = w.map(x => x.name.trim()), bad = names.findIndex(n => !n) >= 0 ? 'Nosaukums nedrīkst būt tukšs.' : new Set(names.map(n => n.toLowerCase())).size !== names.length ? 'Nosaukumiem jābūt unikāliem.' : '';
+    if (bad){ const e = $('#sf-m-err', el); e.hidden = false; e.textContent = bad; return; }
+    w.forEach(x => { x.name = x.name.trim(); }); sfSave(view, w);
+    if (!w.some(x => x.id === ui.sf[view].active)) ui.sf[view].active = '';
+    c(); cfg.render(); toast('Filtri saglabāti.'); }}]});
+  el.classList.add('mid');
+  el.querySelector('.modal-body').addEventListener('click', async e => {
+    const up = e.target.closest('[data-sf-up]'), dn = e.target.closest('[data-sf-down]'), del = e.target.closest('[data-sf-del]');
+    if (up || dn){ sync(); const i = +(up || dn).dataset[up ? 'sfUp' : 'sfDown'], j = up ? i - 1 : i + 1; [w[i], w[j]] = [w[j], w[i]]; redraw(`[data-sf-${up ? 'up' : 'down'}="${j}"]`); }
+    if (del){ sync(); const i = +del.dataset.sfDel, x = w[i];
+      if (await subConfirm({title:'Dzēst filtru?', message:`Saglabātais filtrs <b>${esc(x.name)}</b> tiks dzēsts.`, okLabel:'Dzēst'})){ w.splice(i, 1); redraw('.sf-ren'); } }
+  });
+}
+document.addEventListener('click', e => {
+  const host = e.target.closest('.sf'); const view = host && host.id.replace(/^sf-/, '');
+  Object.keys(ui.sf).forEach(v => { if (ui.sf[v].open && v !== view){ ui.sf[v].open = false; sfRender(v); } });
+  if (!host || !SF_CFG[view]) return;
+  if (e.target.closest('.sf-btn')){ sfToggle(view); return; }
+  const pk = e.target.closest('[data-sf-pick]'); if (pk){ sfPick(view, pk.dataset.sfPick); return; }
+  const a = e.target.closest('[data-sf-act]'); if (!a || a.disabled) return;
+  ui.sf[view].open = false; sfRender(view);
+  if (a.dataset.sfAct === 'save') sfSaveDlg(view); else if (a.dataset.sfAct === 'update') sfUpdate(view); else if (a.dataset.sfAct === 'manage') sfManage(view);
+});
+document.addEventListener('keydown', e => {
+  const m = e.target.closest && e.target.closest('.sf-menu'); if (!m) return;
+  const view = m.id.replace(/^sf-menu-/, ''), its = $$('[role="menuitem"]:not([disabled])', m), i = its.indexOf(document.activeElement);
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); const n = its[(i + (e.key === 'ArrowDown' ? 1 : its.length - 1)) % its.length]; if (n) n.focus(); }
+  if (e.key === 'Escape'){ e.preventDefault(); ui.sf[view].open = false; sfRender(view); $(`#sf-${view} .sf-btn`).focus(); }
+});
+// Kampaņas: saglabā meklēšanu, statusu (sadaļa un precizētais statuss), veidu, periodu, papildu filtrus un kārtošanu
+const CAMP_SORT_L = {name:'Kampaņa', kind:'Veids', n:'Respondenti', when:'Nosūtīšana', st:'Statuss', res:'Rezultāts'};
+sfRegister('camp', {
+  empty:() => ({q:'', sub:'all', st:'', kind:'', creator:'', quick:'', from:'', to:'', sort:{k:'', dir:0}}),
+  get:() => { const c = ui.camp; return {q:c.q.trim(), sub:ui.campSub, st:c.st || '', kind:c.kind, creator:c.creator, quick:c.quick || '', from:c.quick && c.quick !== 'custom' ? '' : c.from, to:c.quick && c.quick !== 'custom' ? '' : c.to, sort:{k:ui.campSort.k || '', dir:ui.campSort.k ? ui.campSort.dir : 0}}; },
+  apply:f => { const rg = f.quick && f.quick !== 'custom' ? histRange(f.quick) : {from:f.from || '', to:f.to || ''};
+    Object.assign(ui.camp, {q:f.q || '', st:f.st || '', kind:f.kind || '', creator:f.creator || '', quick:f.quick || '', ...rg}); ui.campSub = f.sub || 'all'; ui.campSort = {k:(f.sort || {}).k || '', dir:(f.sort || {}).dir || 0}; ui.campLimit = CAMP_PAGE; },
+  render:() => renderCampaigns(),
+  summary:f => [f.st && CAMP_ST[f.st] ? `Statuss: ${CAMP_ST[f.st].label}` : f.sub && f.sub !== 'all' ? `Statuss: ${(CAMP_SUBS.find(([k]) => k === f.sub) || [, f.sub])[1]}` : '',
+    f.kind ? `Veids: ${(SESS_KINDS[f.kind] || {}).label || f.kind}` : '', f.quick || f.from || f.to ? `Periods: ${perLabel(HF_QUICK, f)}` : '', f.creator ? `Veidotājs: ${f.creator}` : '',
+    f.q ? `Meklēšana: “${f.q}”` : '', f.sort && f.sort.k ? `Kārtošana: ${CAMP_SORT_L[f.sort.k] || f.sort.k} ${f.sort.dir > 0 ? '↑' : '↓'}` : ''].filter(Boolean).join(' · ') || 'Bez filtriem',
+  // testa dati: divi piemēri
+  seed:() => [{id:'sf-seed-1', name:'Mani melnraksti', def:false, f:{q:'', sub:'draft', st:'', kind:'', creator:CURRENT_USER, quick:'', from:'', to:'', sort:{k:'', dir:0}}},
+    {id:'sf-seed-2', name:'Gaida saskaņojumu', def:false, f:{q:'', sub:'active', st:'appr', kind:'', creator:'', quick:'', from:'', to:'', sort:{k:'name', dir:1}}}],
+});
 $('#camp-scroll .camp-table thead').addEventListener('click', e => {
   const b = e.target.closest('[data-csort]'); if (!b) return;
   const k = b.dataset.csort, cur = ui.campSort;
@@ -13454,7 +13624,7 @@ $('#cf-creator-list').addEventListener('keydown', e => { const os = $$('#cf-crea
   if (e.key === 'Escape'){ $('#cf-creator').open = false; $('#cf-creator-sum').focus(); } });
 $('#cf-creator-list').addEventListener('click', e => { const o = e.target.closest('[data-cf-creator]'); if (!o) return; ui.camp.creator = o.dataset.cfCreator; ui.campLimit = CAMP_PAGE; $('#cf-creator').open = false; renderCampaigns(); $('#cf-creator-sum').focus(); });
 document.addEventListener('click', e => { const d = $('#cf-creator'); if (d && d.open && !d.contains(e.target)) d.open = false; });
-const clearCampFilters = () => { Object.assign(ui.camp, {q:'', kind:'', creator:'', quick:'', from:'', to:''}); ui.campLimit = CAMP_PAGE; renderCampaigns(); $('#camp-search').focus(); };
+const clearCampFilters = () => { Object.assign(ui.camp, {q:'', kind:'', st:'', creator:'', quick:'', from:'', to:''}); ui.campLimit = CAMP_PAGE; renderCampaigns(); $('#camp-search').focus(); };
 $('#cf-clear').addEventListener('click', clearCampFilters);
 // "Papildu filtri" un aktīvo filtru birku noņemšana
 $('#cf-adv-btn').addEventListener('click', () => { const row = $('#cf-adv'), b = $('#cf-adv-btn'); row.hidden = !row.hidden; b.setAttribute('aria-expanded', String(!row.hidden)); });
@@ -13477,6 +13647,7 @@ function showCTip(el){
   t.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px';
   t.style.top = (r.bottom + 6 + h > innerHeight - 8 ? r.top - h - 6 : r.bottom + 6) + 'px';
 }
+// veida ikonas padoms – arī ar tastatūru nav vajadzīgs (aria-label); peles padoms – tas pats komponents
 $('#camp-tbody').addEventListener('mouseover', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
 $('#camp-tbody').addEventListener('mouseout', e => { const el = e.target.closest('[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
 $('#camp-tbody').addEventListener('focusin', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
