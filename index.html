@@ -1480,6 +1480,7 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .cres-n.has-bad{color:var(--orange-ink);font-weight:600}
 #camp-scroll .cres-bar{width:70px}
 .cst2.cs-none .icon{opacity:.8}
+.cst-res{font-size:inherit;color:var(--text-muted);font-weight:400}
 #camp-scroll .camp-table th:nth-child(8){width:44px}
 #camp-scroll .camp-table td{overflow:hidden;text-overflow:ellipsis}
 #camp-scroll .camp-table td.actions{overflow:visible}
@@ -3861,7 +3862,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 171</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 172</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11595,7 +11596,7 @@ function renderCampaigns(){
       <td class="num">${x.n}</td>
       <td class="c-st">${campStHtml('prep', x)}</td>
       <td class="c-when">${campWhenHtml(x)}</td>
-      <td class="c-st">${campStHtml('send', x)}${campPubTag(x, true)}</td>
+      <td class="c-st">${campStHtml('send', x)}</td>
       <td>${campResult(x)}</td>
       <td class="actions"><button type="button" class="icon-btn camp-more" data-action="camp-menu" data-id="${esc(x.key)}" aria-haspopup="menu" aria-expanded="false" aria-label="Darbības: ${esc(x.name)}" title="Darbības">${ICON.dots}</button></td></tr>`;
   const page = list.slice(0, ui.campLimit), shown = page.length, html = page.map(row).join('');
@@ -11919,9 +11920,10 @@ $('#camp-edit').addEventListener('click', e => {
 }, true);
 // Sarakstā – divi statusi: "Sagatavošana" (kampaņas definēšana) un "Sūtīšana" (sūtīšanas process)
 // Versija 165: "Kampaņas statuss" (sagatavošana un apstiprināšana) – "Atgriezta labošanai" apvienots ar "Jālabo";
-// "Sūtīšanas statuss" (nosūtīšanas process) – "Pabeigta ar problēmām" saglabā sākotnējo piegādes rezultātu
+// "Sūtīšanas statuss" (nosūtīšanas process) – Versija 172: "Jārisina (N)" – neatrisinātās vēstules; visas atrisinātas – "Pabeigta · atrisinātas N";
+// sākotnējais piegādes rezultāts ("Rezultāts", Atskaites) nemainās
 const PREP_ST = {draft:{label:'Melnraksts', cls:'cs-draft'}, appr:{label:'Gaida saskaņojumu', cls:'cs-blue'}, fix:{label:'Jālabo', cls:'cs-ret'}, ready:{label:'Gatava', cls:'cs-done'}};
-const SEND_ST = {none:{label:'Nav sākta', cls:'cs-none'}, planned:{label:'Ieplānota', cls:'cs-plan'}, proc:{label:'Procesā', cls:'cs-blue'}, done:{label:'Pabeigta', cls:'cs-done'}, issues:{label:'Pabeigta ar problēmām', cls:'cs-part'}};
+const SEND_ST = {none:{label:'Nav sākta', cls:'cs-none'}, planned:{label:'Ieplānota', cls:'cs-plan'}, proc:{label:'Procesā', cls:'cs-blue'}, done:{label:'Pabeigta', cls:'cs-done'}, issues:{label:'Jārisina', cls:'cs-part'}};
 // agrākās vērtības (saglabātos filtros)
 const PREP_OLD = {ret:'fix'};
 // kampaņas statistikas joma (melnrakstam / ieplānotajai – no iestatījumiem, nosūtītajai – no kampaņas momentuzņēmuma)
@@ -11945,16 +11947,22 @@ function campDeliv(x){
   const f = x.xs.map(histFinal), ok = f.filter(k => k === 'ok').length, bad = f.filter(k => CAMP_BAD.includes(k)).length, res = f.filter(k => CAMP_RESOLVED.includes(k)).length;
   return (x._dl = {n:x.xs.length, ok, bad, res, open:bad - res, proc:x.xs.length - ok - bad, f});
 }
+// ieplānotās kampaņas nepublicētie apsekojumi – teksts padomam (Versija 172: ne birka aiz statusa)
+function campPubTip(x){
+  const xs = pubIssues((x.pl && x.pl.reps) || ((x.pl && x.pl.snap && x.pl.snap.sel && x.pl.snap.sel.reports) || []).map(id => `${id}|`));
+  return xs.map(i => `Apsekojums ${i.code} vēl nav publicēts (${i.pubDate ? `plānots ${pubDateTxt(i.pubDate)}` : 'publicēšanas datums nav zināms'})`).join(' · ');
+}
 function campSend(x){
-  if (x.type === 'planned') return {k:'planned', tip:`Ieplānota: ${fmtWhen(x.pl.sendDate, x.pl.sendTime || '09:00')}`};
+  if (x.type === 'planned'){ const pt = campPubTip(x); return {k:'planned', tip:`Ieplānota ${fmtDT(`${x.pl.sendDate}T${x.pl.sendTime || '09:00'}`).replace(/^(\d\d\.\d\d\.\d{4})\./, '$1')}${pt ? ` · ${pt}` : ''}`}; }
   if (x.type !== 'sent') return {k:'none', tip:'Nosūtīšana nav uzsākta un nav ieplānota'};
   const dl = campDeliv(x), sent = `Nosūtīta ${fmtStamp(x.ts)}`;
   if (dl.proc) return {k:'proc', tip:`Procesā: ${dl.proc} no ${dl.n} vēstulēm · ${sent}`};
-  if (dl.bad){
-    const parts = [['print', 'Jādrukā'], ['man', 'Manuāli'], ['fail', 'Nepiegādāts'], ['held', 'Aizturēts'], ['post', 'Nosūtīts pa pastu']].map(([k, l]) => [l, dl.f.filter(v => v === k).length]).filter(([, n]) => n).map(([l, n]) => `${l} ${n}`).join(' · ');
-    return {k:'issues', open:dl.open, tip:`Neveiksmīgas piegādes: ${dl.bad} no ${dl.n} (${parts})\nAtrisinātas ${dl.res} no ${dl.bad}${dl.open ? '' : ' – visas problēmas atrisinātas'}\n${sent}`};
+  if (dl.open){
+    const parts = [['print', 'Jādrukā'], ['man', 'Manuāli'], ['fail', 'Nepiegādāts'], ['held', 'Aizturēts']].map(([k, l]) => [l, dl.f.filter(v => v === k).length]).filter(([, n]) => n).map(([l, n]) => `${l} ${n}`).join(' · ');
+    return {k:'issues', n:dl.open, open:dl.open, tip:`${parts}${dl.res ? `\nAtrisinātas ${dl.res} no ${dl.bad}` : ''}\n${sent} · klikšķis – atvērt sūtījumus ar “Jārisina”`};
   }
-  return {k:'done', tip:`${sent} · visas vēstules piegādātas`};
+  if (dl.bad) return {k:'done', res:dl.bad, open:0, tip:`Sākotnēji neizdevās elektroniski piegādāt ${dl.bad} ${plural(dl.bad, 'vēstuli', 'vēstules')}; visas atrisinātas.\n${sent}`};
+  return {k:'done', open:0, tip:`${sent} · visas vēstules piegādātas`};
 }
 // vienots atlases nosacījums (parastie filtri un saglabātais filtrs): f – {sub, st, prep, send, kind, preps, sends, kinds, aud, reps, act, creator, q, from, to}
 function campMatch(x, f){
@@ -12002,11 +12010,11 @@ function renderCampMs(){
   if (as && al){ as.textContent = c.aud && AUDS[c.aud] ? `Statistikas joma: ${AUDS[c.aud].field}` : 'Statistikas joma: visas'; as.classList.toggle('is-on', !!c.aud);
     al.innerHTML = [['', 'Visas jomas'], ...CAMP_AUDS.map(k => [k, AUDS[k].field])].map(([k, l]) => `<button type="button" role="option" data-cf-aud="${k}" aria-selected="${(c.aud || '') === k}">${esc(l)}</button>`).join(''); }
 }
-// rīcība vajadzīga: Kampaņas statuss – Jālabo; Sūtīšanas statuss – Pabeigta ar problēmām, kurām ne visas problēmas atrisinātas
-const campAct = x => campPrep(x).k === 'fix' || (campSend(x).k === 'issues' && campSend(x).open > 0);
+// rīcība vajadzīga: Kampaņas statuss – Jālabo; Sūtīšanas statuss – Jārisina (neatrisinātas vēstules)
+const campAct = x => campPrep(x).k === 'fix' || campSend(x).k === 'issues';
 // statusu ikonas (tādā pašā līnijas stilā kā pārējās ikonas)
 const CST_IC = {
-  // Versija 167: bez izsaukuma zīmēm – "Jālabo" – uzgrieznis (atšķiras no "Melnraksts" zīmuļa); "Pabeigta ar problēmām" – aploksne ar krustiņu
+  // Versija 167: bez izsaukuma zīmēm – "Jālabo" – uzgrieznis (atšķiras no "Melnraksts" zīmuļa); "Jārisina" – aploksne ar krustiņu
   draft:ICON.edit, fix:'<svg class="icon" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/></svg>', ret:'<svg class="icon" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg>',
   appr:'<svg class="icon" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12"/><path d="M7.5 3v2.5c0 2 1.8 3.6 4.5 6.5 2.7-2.9 4.5-4.5 4.5-6.5V3M7.5 21v-2.5c0-2 1.8-3.6 4.5-6.5 2.7 2.9 4.5 4.5 4.5 6.5V21"/></svg>',
   ready:ICON.check, planned:ICON.clock, done:ICON.check,
@@ -12019,8 +12027,8 @@ function campStHtml(col, x){
     return `<button type="button" class="cst2 ${d.cls}" data-action="camp-prep" data-id="${esc(x.key)}" data-ctip="${esc(`${d.label}\n${p.tip}`)}" aria-description="${esc(p.tip)}">${CST_IC[p.k]}<span>${esc(d.label)}</span></button>`; }
   const d = campSend(x);
   if (d.k === 'none') return `<span class="cst2 cs-none" data-ctip="${esc(d.tip)}" aria-label="${esc(`${SEND_ST.none.label}. ${d.tip}`)}">${CST_IC.none}<span>${esc(SEND_ST.none.label)}</span></span>`;
-  const l = SEND_ST[d.k].label;
-  return `<button type="button" class="cst2 ${SEND_ST[d.k].cls}" data-action="camp-send" data-id="${esc(x.key)}" data-ctip="${esc(`${l}\n${d.tip}`)}" aria-description="${esc(d.tip)}">${CST_IC[d.k]}<span>${esc(l)}</span></button>`;
+  const l = d.k === 'issues' ? `${SEND_ST.issues.label} (${d.n})` : SEND_ST[d.k].label, extra = d.res ? ` · atrisinātas ${d.res}` : '';
+  return `<button type="button" class="cst2 ${SEND_ST[d.k].cls}" data-action="camp-send" data-id="${esc(x.key)}" data-ctip="${esc(`${l}${extra}\n${d.tip}`)}" aria-description="${esc(d.tip)}">${CST_IC[d.k]}<span>${esc(l)}${extra ? `<small class="cst-res">${esc(extra)}</small>` : ''}</span></button>`;
 }
 // "Nosūtīšanas laiks": ieplānotā – plānotais, uzsākta / pabeigta – faktiskais, citādi "—"
 const fmtDT = iso => { const d = new Date(iso); return `${fmtDate(isoDate(d))} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
@@ -12041,7 +12049,7 @@ function openCampSend(key){
   if (x.type === 'planned'){ openCampView(key, 5); return; }
   if (x.type !== 'sent') return;
   const s = campSend(x); showHistoryOf(x.id);
-  if (s.k === 'issues' && s.open > 0){ ui.hist.sts = [...HIST_GROUPS.find(g => g.k === 'todo').sts]; renderSent(); }
+  if (s.k === 'issues'){ ui.hist.sts = [...HIST_GROUPS.find(g => g.k === 'todo').sts]; renderSent(); }
 }
 function openPlanned(pl){
   const sn = pl.snap || {};
@@ -12114,7 +12122,7 @@ function renderJrnViews(){
 const JRN_COLS = [['name', 'Kampaņa'], ['n', 'Adresāti'], ['st', 'Sūtīšanas statuss'], ['res', 'Rezultāts'], ['ts', 'Nosūtīts'], ['by', 'Nosūtītājs']];
 // Versija 171: kampaņas sūtīšanas statuss Sūtījumos – tā pati funkcija kā Kampaņu sarakstā (campSend / SEND_ST / campStHtml)
 const jrnSt = x => SEND_ST[campSend(x).k];
-const jrnAct = x => { const d = campSend(x); return d.k === 'issues' && d.open > 0; };
+const jrnAct = x => campSend(x).k === 'issues';
 // rezultāts: piegādāti / procesā / jārisina (tās pašas grupas kā 2. līmeņa statusu pogas)
 function jrnRes(x){
   if (!x.res){ const ok = x.xs.filter(y => histFinal(y) === 'ok').length, todo = x.xs.filter(isTodo).length;
@@ -12136,7 +12144,7 @@ const respNmkRaw = id => (state.respondents.find(y => y.id === id) || {}).nmk ||
 function renderJrnL1(){
   const j = ui.jrn, q = norm(j.q.trim()), per = ui.hist;
   $('#jrn-kind').innerHTML = `<option value="">Visi veidi</option>` + Object.entries(SESS_KINDS).map(([k, v]) => `<option value="${k}" ${k === j.kind ? 'selected' : ''}>${esc(v.label)}</option>`).join('');
-  // sūtīšanas statusa filtrs – tās pašas vērtības kā Kampaņu sarakstā (1. līmenī – tikai nosūtītas kampaņas: Procesā / Pabeigta / Pabeigta ar problēmām)
+  // sūtīšanas statusa filtrs – tās pašas vērtības kā Kampaņu sarakstā (1. līmenī – tikai nosūtītas kampaņas: Procesā / Pabeigta / Jārisina)
   $('#jrn-st').innerHTML = `<option value="">Sūtīšanas statuss: visi</option>` + ['proc', 'done', 'issues'].map(k => `<option value="${k}"${k === j.st ? ' selected' : ''}>${esc(SEND_ST[k].label)}</option>`).join('');
   perRender('jrn');
   if (document.activeElement !== $('#jrn-q')) $('#jrn-q').value = j.q;
@@ -12999,7 +13007,7 @@ const TODO_ST = ['fail', 'held', 'man', 'print'];
 const isTodo = x => TODO_ST.includes(histFinal(x));
 // statusu sērijas grafikos (fiksēta krāsu secība; pārbaudīta krāsu redzes traucējumiem)
 const REP_SERIES = [['piegadats', 'Piegādāta', 's1'], ['fail', 'Neveiksmīga', 's2'], ['proc', 'Procesā', 's3']];
-const repStatus = x => isDeliv(x) ? 'piegadats' : ST_FAIL.includes(x.status) || x.status === 'jadruka' ? 'fail' : 'proc';
+const repStatus = x => isDeliv(x) ? 'piegadats' : ST_FAIL.includes(x.status) || x.status === 'jadruka' || x.status === 'pasts' ? 'fail' : 'proc';
 // NDR / DIV paziņojumi pa iemesliem (noteikumiem) un tipiem
 const ndrByRule = nd => Object.entries(RULES).map(([k, r]) => ({label:`${CHANNELS[r.ch]}: ${r.reason}`, v:nd.filter(n => n.rule === k).length, sub:`${NDR_TYPES[r.type].label} · ${r.action}`})).filter(r => r.v).sort((a, b) => b.v - a.v);
 const ndrByType = nd => Object.entries(NDR_TYPES).map(([k, t]) => ({label:t.label, v:nd.filter(n => ruleOf(n.rule).type === k).length})).filter(r => r.v).sort((a, b) => b.v - a.v);
@@ -13450,7 +13458,8 @@ function deliveryView(xs){
 const ndrByRuleK = nd => Object.entries(RULES).map(([k, r]) => ({k, label:`${CHANNELS[r.ch]}: ${r.reason}`, v:nd.filter(n => n.rule === k).length, sub:`${NDR_TYPES[r.type].label} · ${r.action}`})).filter(r => r.v).sort((a, b) => b.v - a.v);
 // Nosūtīšanas kopsavilkums: rādītāji, grafiki un kārtojama kampaņu tabula
 const isSent = x => !!x.sentAt;
-const isDeliv = x => x.status === 'piegadats' || x.status === 'pasts';
+// Versija 172: piegādātas – elektroniski piegādātas; vēlāk pa pastu nosūtītās paliek neveiksmīgas (sākotnējais rezultāts)
+const isDeliv = x => x.status === 'piegadats';
 function kpiSet(xs){
   const sent = xs.filter(isSent).length, deliv = xs.filter(isDeliv).length;
   return {sent, deliv, fail:xs.filter(x => ST_FAIL.includes(x.status) || x.status === 'jadruka').length, retr:xs.filter(isRetried).length, rate:pct(deliv, sent)};
@@ -13520,7 +13529,7 @@ function repKpis(xs){
   return {...r, delivP:r.delivP ?? 0, openP:r.openP ?? 0, subP:r.subP ?? 0, nF:fs.length, ies, iesP:pct(ies, fs.length), todo:xs.filter(isTodo).length};
 }
 const RATE_SER = [['delivP', 'Piegādes īpatsvars', 's1'], ['openP', 'Atvēršanas īpatsvars (e-pasts, aptuveni)', 's3'], ['subP', 'Iesniegšanas īpatsvars', 's4']];
-const RATE_TIP = 'Piegādes īpatsvars = piegādātās / nosūtītās vēstules. Atvēršanas īpatsvars (e-pasts, aptuveni) = atvērtie e-pasti / piegādātie e-pasti (eAdreses un drukātās vēstules neieskaita; atvēršana – pēc izsekošanas attēla). Iesniegšanas īpatsvars = vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (informatīvās vēstules bez anketām neieskaita). Uz mēneša var uzklikšķināt – atver sūtījumus ar šo periodu.';
+const RATE_TIP = 'Piegādes īpatsvars = elektroniski piegādātās / nosūtītās vēstules (vēstules, kas pēc neveiksmes nosūtītas pa pastu, paliek neveiksmīgas – sākotnējais rezultāts). Atvēršanas īpatsvars (e-pasts, aptuveni) = atvērtie e-pasti / piegādātie e-pasti (eAdreses un drukātās vēstules neieskaita; atvēršana – pēc izsekošanas attēla). Iesniegšanas īpatsvars = vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (informatīvās vēstules bez anketām neieskaita). Uz mēneša var uzklikšķināt – atver sūtījumus ar šo periodu.';
 const rateTxt = r => `Piegāde ${r.delivP ?? '—'}${r.delivP != null ? '%' : ''} (${fmtCount(r.deliv)} no ${fmtCount(r.sent)}) · Atvēršana ${r.openP ?? '—'}${r.openP != null ? '%' : ''} (${fmtCount(r.open)} no ${fmtCount(r.em)}) · Iesniegšana ${r.subP ?? '—'}${r.subP != null ? '%' : ''} (${fmtCount(r.sub)} no ${fmtCount(r.delivF)})`;
 // Līniju grafiks "Rādītāji pa mēnešiem" (Y ass 0–100 %): trīs īpatsvari; līniju galā – pēdējā pilnā mēneša vērtība; nepabeigtais mēnesis – raustīta līnija;
 // mēneši bez sūtījumiem (vai bez saucēja) – pārtraukums līnijā; mēnesis – klikšķināms (atver sūtījumus ar mēneša periodu)
