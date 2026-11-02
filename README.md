@@ -914,6 +914,17 @@ Cilnē **Atskaites** (specifikācija F18) ir četras apakšcilnes: **Pārskats �
 
 **KPI kartītes** (Versija 156; vienots stils visās apakšcilnēs): augšā rādītāja nosaukums (14 px, treknraksts, #1F5E69), zem tā liels skaitlis, zem skaitļa mazs pelēks papildteksts / salīdzinājums ar iepriekšējo periodu; klikšķināmajām kartītēm "Atvērt →" – augšējā labajā stūrī.
 
+**"Mani filtri"** (Versija 170; tā pati kopīgā komponente kā Kampaņu sarakstā – `sfRegister('rep', …)`, tāda pati uzvedība):
+- filtru rindas sākumā poga **"★ Mani filtri: {nosaukums vai "Visi"} ▾"**; izvēlnē **"Visi (bez filtra)"** · saglabātie filtri · **"+ Jauns filtrs"** · **"Pārvaldīt filtrus…"**;
+- **"+ Jauns filtrs"** – logs: **Nosaukums*** un kritēriji (visi neobligāti): **Kampaņa** (vairākizvēle ar meklēšanu) · **Apsekojumi / pārskati** (vairākizvēle ar meklēšanu; "indekss nosaukums") · **Kampaņas veids** · **Periods** (Šis mēnesis, Pēdējie 3/6/12 mēneši, Cits periods) · **Kanāls** · **Statistikas joma** · **"Atvērt šo apakšcilni"** (Pārskats / Piegāde / Reakcija un iesniegšana / Patērētais laiks – izvēloties filtru, atveras arī šī apakšcilne); rūtiņa **"Izmantot kā noklusējumu, atverot Atskaites"**; "Atcelt" / "Saglabāt" (neaktīva bez nosaukuma vai kritērija);
+- izvēloties filtru, visas atskaites (kartītes, grafiki, tabulas, patērētais laiks, reakcija un iesniegšana) uzreiz tiek pārrēķinātas; filtru rindas lauki netiek aizpildīti, birkas netiek rādītas, "Filtri" panelis neatveras; redzams tikai nosaukums pogā (izcelts; garš – ar "…") un **×**; padomā – kopsavilkums (piem., "Apsekojums: 1-DSA · Periods: Pēdējie 6 mēneši");
+- parastie filtri tiek piemēroti papildus; **periods** – filtru rindas un saglabātā filtra periodu pārklāšanās (piem., rindā "Pēdējie 12 mēneši" un filtrā "Pēdējie 6 mēneši" → pēdējie 6 mēneši; arī mēnešu grafikos un salīdzinājumā ar iepriekšējo periodu);
+- nosacījumi redzami un maināmi tikai "Pārvaldīt filtrus…" → **"Labot"**; pārvaldībā – pārsaukt, labot, noklusējums, secība, dzēst;
+- ja saglabātajam filtram nav datu – "Nav datu, kas atbilst filtram “…”" un "Noņemt filtru";
+- **drill-down** uz Sūtījumiem ņem vērā arī aktīvo saglabāto filtru: sūtījumos papildu nosacījums ar birku **"Atskaišu filtrs: {nosaukums} ×"** (periods – pārklāšanās; ja filtrā viena kampaņa – atveras tās 2. līmenis);
+- filtri ir personīgi un atsevišķi no Kampaņu filtriem (savs saraksts; pārlūka krātuvē); testa datos 2 piemēri: **"Uzņēmumu uzaicinājumi – 12 mēn."** (Uzaicinājums, Uzņēmumu statistika, pēdējie 12 mēneši) un **"1-C Ceļotāji – reakcija"** (apsekojums 1-C, atver apakšcilni "Reakcija un iesniegšana");
+- filtru rinda ar "Mani filtri" ietilpst 1280 px platumā (Kampaņa un Apsekojums – 150 px, Veids – 140 px, Periods – 170 px).
+
 **Filtru rinda** (tie paši komponenti un stils kā Sūtījumos; viena rinda, vadīklu augstums 34 px; ietilpst arī 1280 px platumā, šaurākā ekrānā pārnesas). Filtri ir kopīgi visām apakšcilnēm un saglabājas, tās pārslēdzot:
 - **Kampaņa** – izkrītošā izvēlne ar meklēšanu ("Visas kampaņas" + atlasītā perioda kampaņas, pelēkā – datums);
 - **Apsekojums** – izkrītošā izvēlne ar meklēšanu (indekss treknrakstā + nosaukums pelēkā; laukā – indekss);
