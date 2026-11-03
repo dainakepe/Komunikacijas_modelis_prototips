@@ -6,6 +6,7 @@ CSP datu vākšanas sistēmas komunikācijas moduļa prototips: komunikācijas k
 
 Prototips ir vienā failā `index.html`, un serveris nav vajadzīgs. Failu var atvērt tieši pārlūkā vai publicēt ar GitHub Pages. Pielikumu bibliotēkas PDF faili atrodas mapē `pielikumi/`, attēli (piem., sākumlapas ilustrācija) – mapē `atteli/`. Tie tiek ielādēti ar relatīvu ceļu.
 
+- **Publicēšana (GitHub Pages):** pēc katra pull request apvienošanas ar `main` zaru GitHub automātiski publicē lapu (Actions → "pages build and deployment"). Pašreizējā versija redzama kājenē ("Versija N"); ja pēc publicēšanas redzams vecāks numurs, pārlādējiet lapu ar Ctrl+Shift+R. Ja publicēšana neizdodas GitHub servera kļūdas dēļ (piem., "status: 500"), to var palaist vēlreiz ("Re-run all jobs") vai tā notiks ar nākamo apvienoto pull request.
 - Visi testa dati ir izdomāti. E-pasta adresēm ir rezervētais domēns `.example`, un e-adrešu numuri sākas ar `0000…`.
 - Dati glabājas tikai pārlūka `localStorage`. Kājenē ir poga, ar kuru var atjaunot sākotnējos testa datus.
 - Nosūtīšana ir simulācija. E-pasti uz domēnu `nepiegadajams.example` simulācijā "neizdodas", lai var redzēt kļūdas statusu.
