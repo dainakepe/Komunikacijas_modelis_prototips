@@ -2260,6 +2260,17 @@ button.ac-tag.t-risk:hover,button.ac-tag.t-risk[aria-expanded="true"]{border-col
 .sh-opts input{accent-color:var(--primary);width:15px;height:15px;margin:0}
 .sh-table td:nth-child(2){white-space:nowrap}
 .exc-acts{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px}
+/* Versija 188: logs "Pārbaudiet atlasi" – kompakts */
+.sc-dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 16px;margin:0;font-size:var(--fs-base)}
+.sc-dl dt{color:var(--text-muted)}
+.sc-dl dd{margin:0}
+.sc-sub,.sc-names,.sc-warn{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:3px;font-size:var(--fs-sm)}
+.sc-sub > li::before{content:'· ';color:var(--text-muted)}
+.sc-names{margin-left:14px}
+.sc-names li{display:flex;align-items:baseline;gap:10px}
+.sc-warn li{display:flex;align-items:center;gap:7px}
+.sc-dot{width:8px;height:8px;border-radius:50%;background:#E08A00;flex:none}
+.sc-ack{display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid var(--border-light);font-size:var(--fs-sm);font-weight:600}
 .pre-list{margin:0 0 10px;padding-left:18px;line-height:1.6}
 .ac-pills .ac-pill.is-zero{color:var(--icon-muted);border-color:var(--border-light);background:#FAFBFB;cursor:default}
 .ac-acts{display:flex;align-items:center;gap:6px;margin-left:auto}
@@ -2287,6 +2298,8 @@ button.ac-tag.t-risk:hover,button.ac-tag.t-risk[aria-expanded="true"]{border-col
 .ac-lab{appearance:none;font:inherit;font-size:var(--fs-2xs);font-weight:600;padding:0 8px;border-radius:var(--radius-xl);border:1px solid var(--primary-200);background:var(--primary-50);color:var(--primary-dark);cursor:pointer;margin-top:3px;display:inline-flex;align-items:center;gap:3px}
 .ac-lab:hover,.ac-lab[aria-expanded="true"]{background:var(--primary-100)}
 .ac-lab:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px}
+.ac-pop .ac-pop-undo{font-weight:600}
+button.ac-fixed{border:0;background:none;padding:0;font:inherit;cursor:pointer}
 .ac-pop{position:fixed;z-index:70;max-width:300px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 8px 24px rgba(16,40,48,.16);padding:9px 11px;font-size:var(--fs-sm)}
 .ac-pop[hidden]{display:none}
 .ac-pop p{margin:0 0 6px;word-break:break-all} .ac-pop small{display:block;color:var(--text-muted);font-size:var(--fs-xs);word-break:normal}
@@ -3722,7 +3735,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                 </label>
                 <label class="rep-filter"><span>Apsekojums</span><select id="c-rep-filter"></select></label>
                 <label class="switch addr-toggle"><input type="checkbox" role="switch" id="c-show-addr"><span class="sw" aria-hidden="true"></span><span>Rādīt adreses</span></label>
-                <span class="r-bulk" role="group" aria-label="Visi tabulā redzamie respondenti"><button type="button" class="link-btn" data-action="c-all" title="Iekļaut kampaņā visus tabulā redzamos respondentus">Iekļaut visus</button><span class="r-bulk-sep" aria-hidden="true">·</span><button type="button" class="link-btn" data-action="c-none" title="Izņemt no kampaņas visus tabulā redzamos respondentus">Izņemt visus</button></span>
               </div>
               <div class="flt-chips r-acf" id="c-acf-chip" hidden></div>
               <div class="r-list" id="c-list"></div>
@@ -3831,7 +3843,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                   <button type="button" class="dt-btn" id="c5-letter-cal" aria-label="Izvēlēties vēstules datumu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
                   <input type="date" id="c5-letter-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div>
                 <span class="hint" id="c5-letter-hint"></span><span class="err" id="c5-letter-err" hidden></span></div>
-              <dl class="s3-kv" id="c5-kv"></dl>
             </section>
           </div>
           <div class="s3-check" id="c-send-check" role="status"></div>
@@ -3948,7 +3959,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 187</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 188</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5963,6 +5974,7 @@ const AL_T = {
   plan:{l:'Ieplānoja nosūtīšanu', c:'nos', i:'calendar'}, unplan:{l:'Atcēla ieplānošanu', c:'nos', i:'calX', k:'warn'}, send:{l:'Nosūtīja', c:'nos', i:'send', k:'pri'},
   remind:{l:'Izveidoja atgādinājumu no šīs kampaņas', c:'nos', i:'bell'},
   fixHand:{l:'Nodeva labošanai', c:'atlase', i:'handoff'},
+  addrUndo:{l:'Atsauca automātisko adreses labojumu', c:'atlase', i:'undo', k:'warn'}, addrRedo:{l:'Atjaunoja automātisko adreses labojumu', c:'atlase', i:'check'},
   pubWarn:{l:'Turpināja, neskatoties uz brīdinājumu', c:'nos', i:'bell', k:'warn'},
 };
 const AL_SYS = 'Sistēma';
@@ -6350,7 +6362,8 @@ function addrCheck(r, k){
     c = v.status === 'error' || v.status === 'empty' ? {...v, src:'edit'} : {status:'edit', value:v.value, src:'edit', mi:!!(compose.addrMi || {})[key]};
   } else {
     c = validateAddr(k, raw);
-    if (c.status === 'fixed' && (compose.addrUndo || {})[key]) c = {status:'error', msg:c.why, value:raw.trim(), undone:true};
+    // Versija 188: atsaukts automātiskais labojums – sākotnējā adrese, statuss "Potenciāli kļūdaina" (labojumu var atjaunot)
+    if (c.status === 'fixed' && (compose.addrUndo || {})[key]) c = {status:'pot', msg:`labojums atsaukts – ${String(c.why || '').toLowerCase()}`, value:raw.trim(), undone:true, fixedVal:c.value};
     // noraidīts MI ieteikums – adrese paliek kā ievadīta (potenciāli kļūdaina, bet tiek izmantota)
     if (c.status === 'pot' && c.mi && (compose.miRej || {})[key]) c = {status:'pot', value:c.value, msg:'MI ieteikums noraidīts', rej:true};
   }
@@ -10045,15 +10058,52 @@ function fzBlocks(){
   const el = $(compose.sel.reports[0] ? '#c-fz-year' : '#c-fz-rep'); if (el){ el.scrollIntoView({block:'center'}); el.focus(); }
   return true;
 }
-// 2. solis: pirms pārejas tālāk – brīdinājums par neizvērtētām koplietojamām adresēm un nederīgām adresēm ("Pārskatīt" / "Turpināt")
+// Versija 188: 2. solis – pirms turpināšanas logs "Pārbaudiet atlasi" (kopsavilkums: atlasīti, tiks / netiks nosūtīti, brīdinājumi);
+// pēc apstiprināšanas logs vairs netiek rādīts, kamēr atlase nav mainīta
+const SC_CH = [['eadrese', 'e-adrese'], ['epasts', 'e-pasts'], ['pasts', 'drukāta vēstule']];
+function selCheckData(){
+  const m = state.respondents.filter(matchesFilt), recs = recipients(), byCh = {};
+  recs.forEach(r => { const ch = pvChOf(r); byCh[ch] = (byCh[ch] || 0) + 1; });
+  const man = m.filter(r => compose.excluded.has(r.id) || (compose.exc || {})[r.id]);
+  const ns = m.filter(r => !man.includes(r) && nsOut(r));
+  const noAddr = printOn() ? [] : m.filter(r => !isOut(r) && !(addrPlan(r).length));
+  const ks = acKeys(), cs = recs.flatMap(r => ks.map(k => addrCheck(r, k)));
+  const sm = sharedMap(), shared = [...sm].filter(([, ids]) => ids.some(id => recs.some(r => r.id === id))).length;
+  const warn = {pot:cs.filter(c => c.status === 'pot').length, fixed:cs.filter(c => c.status === 'fixed').length, shared, dup:cs.filter(c => c.status === 'dup').length};
+  return {m, recs, byCh, man, ns, noAddr, warn};
+}
+const selCheckSig = d => JSON.stringify([d.recs.map(r => r.id), d.man.map(r => r.id), d.ns.map(r => r.id), d.warn]);
 function acBlocks(target){
   if (compose.step !== 2) return false;
-  const pend = sharedPending(), bad = acNoSend();
-  if (!pend.length && !bad.length) return false;
-  openModal({title:'Pārskatīt pirms turpināšanas', content:`<ul class="pre-list">${pend.length ? `<li><b>${pend.length}</b> ${plural(pend.length, 'neizvērtēta koplietojama adrese', 'neizvērtētas koplietojamas adreses')}: ${pend.slice(0, 3).map(esc).join(', ')}${pend.length > 3 ? ' …' : ''}</li>` : ''}${bad.length ? `<li><b>${bad.length}</b> ${plural(bad.length, 'respondentam', 'respondentiem')} nav nevienas derīgas adreses – netiks nosūtīti: ${bad.slice(0, 4).map(r => esc(r.name)).join(', ')}${bad.length > 4 ? ` un vēl ${bad.length - 4}` : ''}</li>` : ''}</ul>
-    <p class="hint">Respondenti bez nevienas derīgas adreses vēstuli nesaņems. Turpinot, atlase tiek apstiprināta kā ir.</p>`,
-    actions:[{label:'Pārskatīt', cls:'btn-secondary', onClick: close => { close(); compose.acF = pend.length ? 'shared' : 'nosend'; renderComposeList(); const b = $(`[data-acf="${compose.acF}"]`); if (b){ b.scrollIntoView({block:'center'}); b.focus(); } }},
-      {label:'Turpināt', cls:'btn-primary', onClick: close => { close(); compose.stepsOk.add(2); setStep(target); }}]});
+  const d0 = selCheckData();
+  if (compose.selCheck && compose.selCheck === selCheckSig(d0)) return false;
+  const body = d => {
+    const out = d.man.length + d.ns.length + d.noAddr.length, warnN = Object.values(d.warn).reduce((a, b) => a + b, 0);
+    const chs = SC_CH.filter(([k]) => d.byCh[k]).map(([k, l]) => `${l} ${d.byCh[k]}`).join(' · ');
+    const names = d.man.slice(0, 5).map(r => `<li><span>${esc(r.name)}</span><button type="button" class="link-btn" data-sc-incl="${esc(r.id)}">Iekļaut atpakaļ</button></li>`).join('');
+    const W = [['pot', 'potenciāli kļūdainas adreses'], ['fixed', 'automātiski labotas'], ['shared', 'koplietojamas adreses'], ['dup', 'dublikāti']].filter(([k]) => d.warn[k]);
+    return `<dl class="sc-dl"><dt>Atlasīti</dt><dd><b>${d.m.length}</b></dd>
+      <dt>Tiks nosūtīti</dt><dd><b>${d.recs.length}</b>${chs ? ` <span class="muted">– pa kanāliem: ${chs}</span>` : ''}</dd>
+      ${out ? `<dt>Netiks nosūtīti</dt><dd><b>${out}</b><ul class="sc-sub">
+        ${d.man.length ? `<li>izņemti manuāli: <b>${d.man.length}</b><ul class="sc-names">${names}${d.man.length > 5 ? `<li class="muted">un vēl ${d.man.length - 5}</li>` : ''}</ul></li>` : ''}
+        ${d.ns.length ? `<li>neiesniegšanas kods: <b>${d.ns.length}</b></li>` : ''}
+        ${d.noAddr.length ? `<li>nav derīgas adreses: <b>${d.noAddr.length}</b></li>` : ''}</ul></dd>` : ''}
+      ${warnN ? `<dt>Brīdinājumi</dt><dd><ul class="sc-warn">${W.map(([k, l]) => `<li><span class="sc-dot" aria-hidden="true"></span>${l}: <b>${d.warn[k]}</b></li>`).join('')}</ul></dd>` : ''}</dl>
+      ${d.man.length || warnN ? `<label class="sc-ack"><input type="checkbox" id="sc-ack"> Esmu pārbaudījis izņemtos respondentus un brīdinājumus</label>` : ''}`;
+  };
+  const {el, close} = openModal({title:'Pārbaudiet atlasi', content:`<div class="sc-body" id="sc-body">${body(d0)}</div>`, actions:[
+    {label:'← Atgriezties pie respondentiem', cls:'btn-secondary'},
+    {label:'Apstiprināt un turpināt', cls:'btn-primary', onClick:c => { const ack = $('#sc-ack', el); if (ack && !ack.checked) return;
+      c(); compose.selCheck = selCheckSig(selCheckData()); compose.stepsOk.add(2); setStep(target); saveDraft(); }}]});
+  const ok = $('[data-act="1"]', el), sync = () => { const ack = $('#sc-ack', el); ok.disabled = !!ack && !ack.checked; };
+  el.addEventListener('change', e => { if (e.target.id === 'sc-ack') sync(); });
+  el.addEventListener('click', e => { const b = e.target.closest('[data-sc-incl]'); if (!b) return; const id = b.dataset.scIncl;
+    compose.excluded.delete(id); if (compose.exc) delete compose.exc[id];
+    { const r = state.respondents.find(x => x.id === id); if (r && nsAutoCode(r)) compose.nsIncl = [...new Set([...(compose.nsIncl || []), id])]; }
+    renderComposeList(); renderComposePreview(); saveDraft();
+    const ack = $('#sc-ack', el), was = !!(ack && ack.checked); $('#sc-body', el).innerHTML = body(selCheckData()); const a2 = $('#sc-ack', el); if (a2) a2.checked = was; sync();
+    const nb = $('[data-sc-incl]', el); (nb || ok).focus(); });
+  sync();
   return true;
 }
 // Kopīgā soļu navigācijas josla – vienīgā navigācija visos soļos (soļa satura apakšā, ārpus kartēm).
@@ -10367,6 +10417,8 @@ function renderComposeList(){
       const shNames = shIds.map(id => (state.respondents.find(x => x.id === id) || {}).name).filter(Boolean);
       const flags = (shA ? `<button type="button" class="ac-flag${shDec ? ' is-dec' : ''}" data-shared="${esc(shA)}" aria-haspopup="dialog" data-actip="${esc(`Koplietojama adrese – izmanto ${shIds.length} ${plural(shIds.length, 'respondents', 'respondenti')}: ${shNames.join(', ')}${shDec ? `\nLēmums: ${SHARED_DEC[shDec]}` : '\nLēmums nav pieņemts – uzklikšķiniet, lai izvērtētu'}`)}" aria-label="${esc(nm)}: koplietojama adrese${shDec ? ` (lēmums: ${SHARED_DEC[shDec]})` : ''} – atvērt lēmumu">${AC_FLAG_IC.shared}${shDec ? '<span class="ac-flag-ok" aria-hidden="true">✓</span>' : ''}</button>` : '')
         + (c.status === 'pot' && c.mi ? `<button type="button" class="ac-flag" data-mi-open="${esc(key)}" aria-haspopup="dialog" data-actip="${esc(`MI ieteikums: ${c.mi}${c.rej ? ' (noraidīts)' : ''}\nUzklikšķiniet, lai apstiprinātu vai noraidītu`)}" aria-label="${esc(nm)}: MI ieteikums ${esc(c.mi)} – apstiprināt">${AC_FLAG_IC.mi}</button>` : '');
+      if (c.status === 'fixed' && !ui.view)
+        return `<td class="c-addr${show ? '' : ' c-addr-st'}"><div class="cell1"><button type="button" class="ac-val ac-st ac-v2 ac-fixed q-${st.cls} ${cls}" data-ac-lab="${key}" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(nm)}: ${esc(atip)} – sākotnējā adrese un atsaukšana">${inner2}</button>${flags}</div></td>`;
       return `<td class="c-addr${show ? '' : ' c-addr-st'}"><div class="cell1"><span class="ac-val ac-st ac-v2 q-${c.status === 'dup' ? 'dup' : st.cls} ${cls}" tabindex="0" data-actip="${esc(atip)}" aria-label="${esc(nm)}: ${esc(atip)}">${inner2}</span>${flags}</div></td>`;
     }
     const rk = c.status === 'pot' && c.risk;
@@ -10376,7 +10428,7 @@ function renderComposeList(){
     const link = (attr, txt, t) => `<button type="button" class="link-btn ac-lnk" ${attr}="${key}" title="${esc(t)}" aria-label="${esc(nm)}: ${esc(t)}">${txt}</button>`;
     const acts = [];
     if (c.status === 'fixed' || c.status === 'edit') acts.push(`<button type="button" class="ac-lab${c.mi ? ' is-mi' : ''}" data-ac-lab="${key}" aria-expanded="false" aria-haspopup="dialog" aria-label="${c.mi ? 'Labots (MI)' : 'Labots'}: ${esc(nm)}${c.status === 'fixed' ? ' (automātiski)' : ''} – sākotnējā vērtība un Atsaukt">${c.mi ? '✨ Labots' : 'Labots'}</button>`);
-    if (c.status === 'error' && c.undone) acts.push(link('data-ac-redo', 'Labot', 'Labot automātiski'));
+    if (c.undone) acts.push(link('data-ac-redo', 'Atjaunot labojumu', `Atjaunot automātisko labojumu: ${c.fixedVal || ''}`));
     if (c.status === 'error' && c.src === 'edit') acts.push(link('data-ac-reset', 'Atsaukt', 'Atsaukt labojumu'));
     if (c.status === 'dup') acts.push(link('data-ac-dupundo', 'Atsaukt', `${c.msg || 'Dublikāts noņemts'} – atsaukt`));
     if (c.shout){ const n = (sm.get(c.value.toLowerCase()) || []).length;
@@ -10781,16 +10833,12 @@ function renderSend3(){
   const msg = plan ? planError() : '';
   $('#c5-when-err').hidden = !msg; $('#c5-when-err').textContent = msg;
   ['date', 'time'].forEach(k => $(`#c5-plan-${k}`).setAttribute('aria-invalid', String(!!msg && msg.toLowerCase().includes(k === 'date' ? 'datum' : 'laik'))));
-  const recs = recipients(), byCh = {};
-  recs.forEach(r => { if (!prePlan(r).length){ if (printOn() && noSend(r)) byCh.pasts = (byCh.pasts || 0) + 1; return; } const ch = ADDR_TYPES[finalAttempt(preAttempts(r)).type].ch; byCh[ch] = (byCh[ch] || 0) + 1; });
+  const recs0 = null, byCh = {}; (recs0 || []).forEach(r => { if (!prePlan(r).length){ if (printOn() && noSend(r)) byCh.pasts = (byCh.pasts || 0) + 1; return; } const ch = ADDR_TYPES[finalAttempt(preAttempts(r)).type].ch; byCh[ch] = (byCh[ch] || 0) + 1; });
   syncLetterDate();
   { const el = $('#c5-letter-date'); if (document.activeElement !== el || !ui.letterDateRaw) el.value = ui.letterDateRaw ?? dmy(compose.f.date);
     $('#c5-letter-hint').textContent = compose.f.dateManual ? 'Mainīts manuāli' : isPlanned() ? 'Plānotās nosūtīšanas datums' : 'Šodienas datums';
     const bad = !!ui.letterDateRaw; $('#c5-letter-err').hidden = !bad; $('#c5-letter-err').textContent = bad ? 'Ievadiet datumu formātā DD.MM.GGGG.' : ''; el.setAttribute('aria-invalid', String(bad)); }
-  $('#c5-kv').innerHTML = `<dt>Kanāls</dt><dd>${Object.keys(byCh).length ? Object.entries(byCh).map(([ch, c]) => ch === 'pasts' ? `Drukāta vēstule: ${c}` : `${esc(CHANNELS[ch] || ch)} ${c}`).join(' · ') : '—'}${eaLater() ? ` <span class="muted">· eAdrese: ${eaLaterHtml()}</span>` : ''}</dd>
-    <dt>Respondenti</dt><dd>${selectedResp().length} · ${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}</dd>
-    <dt>Laiks</dt><dd id="c5-time">${esc(sendTimeText())}</dd>
-    ${(st => { const p = [st.noAddr && !printOn() ? `${st.noAddr} (nav derīgas adreses)` : '', st.ns ? `${st.ns} (neiesniegšanas kods)` : ''].filter(Boolean); return p.length ? `<dt>Netiks nosūtīti</dt><dd class="muted">${p.join(' · ')}</dd>` : ''; })(selStats())}`;
+  // Versija 188: kopsavilkums (Kanāls, Respondenti, Laiks) noņemts
 }
 // saskaņošanas soļi (kompakti; soļa iekšienē – paralēli): birkas ar grupām / personām, pievienošana un noņemšana
 // ctx: 'c' – kampaņa (pielāgojums tikai šai kampaņai), 're' – maršruta redaktors (arī soļu secība ↑↓)
@@ -15084,7 +15132,21 @@ function acSave(key){
   toast(c.usable ? `Adrese saglabāta${toResp ? ' (arī respondenta datos)' : ''}.` : `Adrese saglabāta, bet tai ir kļūda: ${c.msg || 'nav adreses'}.`, !c.usable);
   const el = $(`#c-list [data-ac-edit="${key}"]`); if (el) el.focus();
 }
-function acUndo(key){ hideAcPop(); compose.addrUndo = {...(compose.addrUndo || {}), [key]: true}; acChanged(); const el = $(`#c-list [data-ac-edit="${key}"]`); if (el) el.focus(); toast('Automātiskais labojums atsaukts – adrese jālabo manuāli.'); }
+// Versija 188: automātiskā labojuma atsaukšana (un atjaunošana) – ar ierakstu darbību vēsturē
+function acUndo(key){
+  hideAcPop(); const [rid, k] = key.split('|'), r = state.respondents.find(x => x.id === rid), c0 = r ? addrCheck(r, k) : null;
+  compose.addrUndo = {...(compose.addrUndo || {}), [key]: true};
+  alAddC('addrUndo', `${r ? r.name + ', ' : ''}${addrShort(k)}: ${c0 ? `${c0.value} → ${String(c0.raw || '').trim()}` : ''}`);
+  acChanged(); saveDraft();
+  const el = $(`#c-list [data-ac-lab="${key}"], #c-list [data-ac-edit="${key}"]`); if (el) el.focus();
+  toast('Labojums atsaukts', false, {label:'Atcelt', fn:() => acRedo(key)});
+}
+function acRedo(key){
+  const [rid, k] = key.split('|'), r = state.respondents.find(x => x.id === rid);
+  delete (compose.addrUndo || {})[key];
+  alAddC('addrRedo', `${r ? r.name + ', ' : ''}${addrShort(k)}`);
+  acChanged(); saveDraft(); toast('Labojums atjaunots');
+}
 function acReset(key){ hideAcPop(); const [rid, k] = key.split('|'); if (compose.addrFix && compose.addrFix[rid]) delete compose.addrFix[rid][k]; if (compose.addrMi) delete compose.addrMi[key]; acChanged(); const el = $(`#c-list [data-ac-edit="${key}"]`); if (el) el.focus(); toast('Labojums atsaukts – atjaunota sākotnējā vērtība.'); }
 // birka "Labots": uznirstošais logs ar sākotnējo vērtību un pogu "Atsaukt" (uzbraucot ar peli vai uzklikšķinot)
 let acPopBtn = null, acPopT = null;
@@ -15110,8 +15172,11 @@ function showAcPop(btn, focus){
   }
   if (acPopBtn && acPopBtn !== btn) acPopBtn.setAttribute('aria-expanded', 'false');
   pop.setAttribute('aria-label', `Labots: ${addrShort(k)}`);
-  pop.innerHTML = `<p><small>${c.status === 'fixed' ? `Automātiski labots${c.why ? ` – ${esc(c.why.toLowerCase())}` : ''}` : c.mi ? 'Labots pēc MI ieteikuma' : 'Labots manuāli'}</small>Sākotnējā vērtība: <b>${esc(c.raw.trim() ? c.raw : '—')}</b></p>
-    <button type="button" class="btn btn-secondary btn-sm" ${c.status === 'fixed' ? `data-pop-undo="${key}"` : `data-pop-reset="${key}"`}>Atsaukt</button>`;
+  pop.innerHTML = c.status === 'fixed'
+    ? `<p><small>Derīga (labota automātiski)${c.why ? ` – ${esc(c.why.toLowerCase())}` : ''}</small>Sākotnējā: <b>${esc(c.raw.trim() ? c.raw.trim() : '—')}</b> → Labotā: <b>${esc(c.value)}</b></p>
+    <button type="button" class="link-btn ac-pop-undo" data-pop-undo="${key}">Atsaukt labojumu</button>`
+    : `<p><small>${c.mi ? 'Labots pēc MI ieteikuma' : 'Labots manuāli'}</small>Sākotnējā vērtība: <b>${esc(c.raw.trim() ? c.raw : '—')}</b></p>
+    <button type="button" class="btn btn-secondary btn-sm" data-pop-reset="${key}">Atsaukt</button>`;
   pop.hidden = false; acPopBtn = btn; btn.setAttribute('aria-expanded', 'true');
   const rc = btn.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
   pop.style.left = Math.max(8, Math.min(rc.left, innerWidth - w - 8)) + 'px';
@@ -15206,7 +15271,7 @@ $('#c-list').addEventListener('click', e => {
   if (sv){ acSave(sv.dataset.acSave); return; }
   if (e.target.closest('[data-ac-cancel]')){ const k = ui.acEdit; ui.acEdit = ''; renderComposeList(); const el = $(`#c-list [data-ac-edit="${k}"]`); if (el) el.focus(); return; }
   if (un){ acUndo(un.dataset.acUndo); return; }
-  if (rd){ delete (compose.addrUndo || {})[rd.dataset.acRedo]; acChanged(); return; }
+  if (rd){ acRedo(rd.dataset.acRedo); return; }
   // MI ieteikums: pieņemt (adrese labota, birka "Labots (MI)") / noraidīt (paliek kā ievadīta)
   const mo = e.target.closest('[data-mi-ok]'), mn = e.target.closest('[data-mi-no]');
   if (mo || mn){ miDecide((mo || mn).dataset[mo ? 'miOk' : 'miNo'], !!mo); return; }
