@@ -3843,6 +3843,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     <!-- 1. līmenis: kampaņu saraksts -->
     <div id="jrn-l1">
       <div class="flt jrn-filters" role="search" aria-label="Kampaņu filtri"><div class="flt-row">
+        <div class="sf" id="sf-jrn"></div>
         <label class="search flt-search"><span class="sr-only">Meklēt kampaņu</span>
           <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input type="search" id="jrn-q" placeholder="Meklēt kampaņu…"></label>
@@ -3929,7 +3930,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 179</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 180</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -12326,12 +12327,17 @@ function renderJrnL1(){
   $('#jrn-chips').innerHTML = chips.map(([k, l]) => `<span class="ms-tag"><span>${esc(l)}</span><button type="button" data-jchip="${k}" aria-label="Noņemt filtru: ${esc(l)}">×</button></span>`).join('');
   const kindOk = k => !j.kind || baseKind(k) === j.kind;
   // tikai kampaņas ar vismaz vienu nosūtītu vēstuli (arī izpildē); melnraksti un ieplānotās – nē; periods – pēc kampaņas nosūtīšanas datuma
-  const camps = campRows().filter(x => x.type === 'sent' && kindOk(x.kind) && (!j.st || campSend(x).k === j.st) && perMatch(per, x.ts));
+  // Versija 180: saglabātais filtrs ("Mani filtri") – atsevišķs slānis; parastie filtri – papildus
+  sfBoot('jrn'); sfRender('jrn');
+  const sfc = sfCur('jrn'), sff = sfc ? jrnSfMatchF(sfc.f) : null;
+  const sentRows = campRows().filter(x => x.type === 'sent'), inSf = sff ? sentRows.filter(x => jrnSfMatch(x, sff)) : sentRows;
+  const camps = inSf.filter(x => kindOk(x.kind) && (!j.st || campSend(x).k === j.st) && perMatch(per, x.ts));
   const cl = sortList(camps.filter(x => !q || norm(`${x.name} ${x.desc || ''}`).includes(q)), j.sort, jrnSortVal);
   ui.jrnList = cl;
   // kampaņas
   const cPage = cl.slice(0, j.cLimit);
-  const empty = !cl.length ? tcEmptyBox(camps.length || q ? 'Nav kampaņu, kas atbilst meklēšanai vai filtriem' : 'Vēl nav nosūtītu kampaņu') : '';
+  const empty = !cl.length && sfc && !inSf.length ? tcEmptyBox(`Nav kampaņu, kas atbilst filtram “${sfc.name}”`, '<button type="button" class="link-btn" data-sf-clear-jrn>Noņemt filtru</button>')
+    : !cl.length ? tcEmptyBox(camps.length || q ? 'Nav kampaņu, kas atbilst meklēšanai vai filtriem' : 'Vēl nav nosūtītu kampaņu') : '';
   $('#jrn-camps').innerHTML = `<section class="jrn-sec" aria-label="Kampaņas">
     <div class="card table-card jrn-card"><div class="table-wrap camp-scroll"><table class="camp-table cl-table jrn-table jrn-ctable"><thead><tr id="jrn-head">${sortHead(JRN_COLS, j.sort, 'jsort').replace(/<th class="actions">[\s\S]*$/, '')}</tr></thead>
     <tbody>${cPage.map(x => { const r = jrnRes(x), st = jrnSt(x), rt = `Piegādāti ${fmtCount(r.ok)} · Procesā ${fmtCount(r.proc)} · Jārisina ${fmtCount(r.todo)}`;
@@ -13266,6 +13272,58 @@ function repDrill(o){
 // vēstules tikai pēc saglabātā filtra (bez filtru rindas) – tukšā stāvokļa tekstam
 function repLettersNoSf(){ const sf = repSf(); if (!sf) return []; return state.sent.filter(x => { const d = isoDate(new Date(x.sentAt)); return repSfLetter(x, sf) && (!sf.from || d >= sf.from) && (!sf.to || d <= sf.to); }); }
 const REP_CH_L = {eadrese:'eAdrese', epasts:'E-pasts', pasts:'Pasts (drukāta vēstule)'};
+// ===== Sūtījumi (1. līmenis "Pa kampaņām"): "Mani filtri" (Versija 180) – tā pati kopīgā komponente, slāņa režīms =====
+const JRN_SF_QUICK = [['', 'Jebkurā laikā'], ['today', 'Šodien'], ['7d', 'Pēdējās 7 dienas'], ['30d', 'Pēdējās 30 dienas'], ['month', 'Šis mēnesis'], ['year', 'Šis gads'], ['custom', 'Cits periods…']];
+const JRN_SF_SENDS = ['proc', 'done', 'issues'];
+function jrnFCanon(f){
+  f = f || {}; const so = a => [...new Set((a || []).map(String))].sort(), q = f.quick || '';
+  return {q:(f.q || '').trim(), reps:so((f.reps || []).map(mapReportId)), kinds:so(f.kinds), sends:so(f.sends), sender:f.sender || '', aud:f.aud || '', quick:q, from:q && q !== 'custom' ? '' : f.from || '', to:q && q !== 'custom' ? '' : f.to || ''};
+}
+const jrnSfMatchF = f => { const c = jrnFCanon(f); return {...c, ...(c.quick && c.quick !== 'custom' ? histRange(c.quick) : {})}; };
+function jrnSfMatch(x, f){
+  const q = norm(f.q || '');
+  return (!q || norm(`${x.name} ${x.desc || ''}`).includes(q)) && (!f.reps.length || campRepsOf(x).some(r => f.reps.includes(r))) && (!f.kinds.length || f.kinds.includes(baseKind(x.kind)))
+    && (!f.sends.length || f.sends.includes(campSend(x).k)) && (!f.sender || jrnBy(x) === f.sender) && (!f.aud || campAudOf(x) === f.aud) && perMatch(f, x.ts);
+}
+sfRegister('jrn', {
+  overlay:true,
+  defLabel:'Izmantot kā noklusējumu, atverot Sūtījumus',
+  canon:jrnFCanon,
+  empty:() => jrnFCanon({}),
+  get:() => jrnFCanon({}),
+  apply:() => {},
+  render:() => { ui.jrn.cLimit = 50; renderJrnL1(); },
+  summary:f => { f = jrnFCanon(f);
+    return [f.q ? `Meklēšana: “${f.q}”` : '', f.reps.length ? `Apsekojums: ${f.reps.map(id => (repById(id) || {}).code || id).join(', ')}` : '',
+      f.kinds.length ? `Veids: ${f.kinds.map(k => (SESS_KINDS[k] || {}).label || k).join(', ')}` : '', f.sends.length ? `Sūtīšanas statuss: ${f.sends.map(k => (SEND_ST[k] || {}).label || k).join(', ')}` : '',
+      f.quick || f.from || f.to ? `Periods: ${perLabel(JRN_SF_QUICK, f)}` : '', f.sender ? `Nosūtītājs: ${f.sender}` : '', f.aud && AUDS[f.aud] ? `Joma: ${AUDS[f.aud].field}` : ''].filter(Boolean).join(' · ') || 'Bez filtriem'; },
+  editor:{
+    norm:f => { const c = jrnFCanon(f); return {...c, per:{quick:c.quick, from:c.from, to:c.to}}; },
+    html:w => { const row = (l, html, id) => `<div class="sf-ed-row"><${id ? `label for="${id}"` : 'span class="sf-ed-l"'}>${l}</${id ? 'label' : 'span'}><div>${html}</div></div>`;
+      const chips = (key, entries, sel) => `<div class="sf-chips" role="group" aria-label="${key}">${entries.map(([k, l]) => `<label class="sf-chip"><input type="checkbox" data-sfm="${key}" value="${esc(k)}"${sel.includes(k) ? ' checked' : ''}><span>${esc(l)}</span></label>`).join('')}</div>`;
+      const reps = histRepList(state.sent).map(r => [r.id, r.code, r.name]);
+      const plist = `<div class="sf-reps" data-sfl="reps"><input type="search" data-sfl-q="reps" placeholder="Meklēt apsekojumu (indekss vai nosaukums)…" aria-label="Meklēt apsekojumu"><div class="sf-rep-list" role="group">${reps.map(([v, b, t]) => `<label class="sf-rep" data-q="${esc(norm(b + ' ' + t))}"><input type="checkbox" data-sfm="reps" value="${esc(v)}"${w.reps.includes(v) ? ' checked' : ''}><span><b>${esc(b)}</b> ${esc(t)}</span></label>`).join('')}<div class="sf-rep-none" hidden>Nav atrasts</div></div><div class="sf-rep-sel" data-sfl-sel="reps" aria-live="polite"></div></div>`;
+      const senders = [...new Set(campRows().filter(x => x.type === 'sent').map(jrnBy).filter(n => n && n !== '—'))].sort((a, b) => a.localeCompare(b, 'lv'));
+      return row('Meklēšanas teksts', `<input type="search" id="sfj-q" value="${esc(w.q)}" placeholder="Daļa no kampaņas nosaukuma">`, 'sfj-q')
+        + row('Apsekojumi / pārskati', plist)
+        + row('Kampaņas veids', chips('kinds', Object.entries(SESS_KINDS).map(([k, v]) => [k, v.label]), w.kinds))
+        + row('Sūtīšanas statuss', chips('sends', JRN_SF_SENDS.map(k => [k, SEND_ST[k].label]), w.sends))
+        + row('Periods', `<div data-per="sfj"></div>`)
+        + row('Nosūtītājs', `<select id="sfj-sender"><option value="">Visi nosūtītāji</option>${senders.map(n => `<option${w.sender === n ? ' selected' : ''}>${esc(n)}</option>`).join('')}</select>`, 'sfj-sender')
+        + row('Statistikas joma', `<select id="sfj-aud"><option value="">Visas jomas</option>${CAMP_AUDS.map(k => `<option value="${k}"${w.aud === k ? ' selected' : ''}>${esc(AUDS[k].field)}</option>`).join('')}</select>`, 'sfj-aud'); },
+    init:(el, w, upd) => { $$('[data-per]', el).forEach(h => { h.outerHTML = perHtml(h.dataset.per); });
+      $$('[data-sfl]', el).forEach(box => { const sel = () => { const v = $$('[data-sfm]:checked', box).map(i => i.closest('.sf-rep').querySelector('b').textContent); $('[data-sfl-sel]', box).textContent = v.length ? `Izvēlēti: ${v.length > 3 ? `${v.slice(0, 3).join(', ')} +${v.length - 3}` : v.join(', ')}` : ''; };
+        $('[data-sfl-q]', box).addEventListener('input', e => { const q = norm(e.target.value); let n = 0; $$('.sf-rep', box).forEach(l => { const on = !q || l.dataset.q.includes(q); l.hidden = !on; n += on; }); $('.sf-rep-none', box).hidden = !!n; });
+        box.addEventListener('change', sel); sel(); });
+      perInit('sfj', () => w.per, v => { Object.assign(w.per, v); perRender('sfj'); upd(); }, {opts:JRN_SF_QUICK, range:histRange}); perRender('sfj'); },
+    read:(el, w) => { const ms = k => $$(`[data-sfm="${k}"]:checked`, el).map(i => i.value);
+      return jrnFCanon({q:$('#sfj-q', el).value, reps:ms('reps'), kinds:ms('kinds'), sends:ms('sends'), sender:$('#sfj-sender', el).value, aud:$('#sfj-aud', el).value, quick:w.per.quick || '', from:w.per.from || '', to:w.per.to || ''}); },
+    any:f => !!(f.q || f.reps.length || f.kinds.length || f.sends.length || f.sender || f.aud || f.quick || f.from || f.to),
+  },
+  // testa dati: divi piemēri
+  seed:() => [{id:'sfj-seed-1', name:'Mani sūtījumi – šis mēnesis', def:false, f:{sender:CURRENT_USER, quick:'month'}},
+    {id:'sfj-seed-2', name:'Jārisina', def:false, f:{sends:['issues']}}],
+});
 sfRegister('rep', {
   overlay:true,
   defLabel:'Izmantot kā noklusējumu, atverot Atskaites',
@@ -14445,6 +14503,7 @@ function hfDd(key, pick){
 // Sūtījumi – 1. līmeņa meklēšana, filtri un kārtošana (saglabājas, atgriežoties ar "← Visas kampaņas")
 $('#jrn-q').addEventListener('input', e => { ui.jrn.q = e.target.value; ui.jrn.cLimit = 50; renderJrnL1(); });
 $('#jrn-kind').addEventListener('change', e => { ui.jrn.kind = e.target.value; renderJrnL1(); });
+document.addEventListener('click', e => { if (e.target.closest('[data-sf-clear-jrn]')){ sfPick('jrn', ''); const q = $('#jrn-q'); if (q) q.focus(); } });
 $('#jrn-st').addEventListener('change', e => { ui.jrn.st = e.target.value; ui.jrn.cLimit = 50; renderJrnL1(); $('#jrn-st').focus(); });
 // padomi (tāpat kā Kampaņu sarakstā)
 $('#hist-body').addEventListener('mouseover', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
