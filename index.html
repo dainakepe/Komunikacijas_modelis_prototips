@@ -1374,6 +1374,9 @@ table.cl-table td.c-name .camp-name{max-width:100%}
 .jrn-sep{color:var(--text-muted);font-weight:400;margin:0 2px}
 /* kampaņas nosaukums aiz "Sūtījumi" – mazāks, normāls svars, akcenta zilzaļš */
 .jrn-tn{font-size:var(--fs-base);font-weight:400;color:var(--primary);letter-spacing:0}
+.jrn-tn-link{appearance:none;border:0;background:none;padding:0;margin:0;font-family:inherit;line-height:inherit;cursor:pointer;text-align:left}
+.jrn-tn-link:hover{text-decoration:underline;text-underline-offset:3px}
+.jrn-tn-link:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:var(--radius-xs)}
 .hf-per{display:flex;align-items:center;gap:6px;flex:none}
 .hf-per-l{font-size:var(--fs-sm);color:var(--text-muted);white-space:nowrap}
 .hf-per .hf-dd{width:170px}
@@ -3930,7 +3933,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 180</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 181</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -12350,7 +12353,8 @@ function renderJrnL1(){
 }
 // lapas virsraksts: 1. līmenī "Sūtījumi" ar (i); 2. līmenī "Sūtījumi · kampaņas nosaukums" (bez (i) un statusa)
 function renderJrnTitle(name){
-  $('#jrn-title-t').innerHTML = name ? `Sūtījumi <span class="jrn-sep" aria-hidden="true">·</span> <span class="jrn-tn">${esc(name)}</span>` : 'Sūtījumi';
+  // Versija 181: 2. līmenī kampaņas nosaukums – saite uz kampaņu (padoms "Atvērt kampaņu")
+  $('#jrn-title-t').innerHTML = name ? `Sūtījumi <span class="jrn-sep" aria-hidden="true">·</span> <button type="button" class="jrn-tn jrn-tn-link" data-action="jrn-open-camp" data-ctip="Atvērt kampaņu" aria-label="${esc(name)} – atvērt kampaņu">${esc(name)}</button>` : 'Sūtījumi';
   $('#jrn-title-tip').hidden = !!name;
 }
 // 2. līmeņa galvene: virs virsraksta "← Sūtījumi" (atgriež 1. līmenī tajā apakšcilnē, no kuras kampaņa atvērta – ar saglabātiem filtriem); nosaukums – lapas virsrakstā
@@ -14238,7 +14242,18 @@ const actions = {
   'camp-row': id => openCampRow(id),
   'camp-prep': id => openCampPrep(id),
   'camp-send': id => openCampSend(id),
-  'view-sends': () => { const b = ui.view && ui.view.batch; if (b != null) showHistoryOf(b); },
+  'view-sends': () => { const b = ui.view && ui.view.batch; if (b == null) return;
+    // atgriešanās no kampaņas, kas atvērta no Sūtījumu 2. līmeņa – ar to pašu statusu grupu un filtriem
+    const r = ui.jrnRet; ui.jrnRet = null;
+    if (r && String(r.camp) === String(b)){ jrnSetView('camp'); Object.assign(ui.hist, r.hist); ui.jrn.camp = String(b); ui.jrn.from = r.from; ui.histLimit = r.limit || 50;
+      $('#hist-search').value = ui.hist.q || ''; showTab('vesture'); return; }
+    showHistoryOf(b); },
+  // Versija 181: Sūtījumu 2. līmenis → kampaņa (nosūtītā – skatīšanās režīmā 5. solī; nenosūtīta – kā atverot no kampaņu saraksta)
+  'jrn-open-camp': () => { const c = ui.jrn.camp; if (c == null) return; hideCTip();
+    ui.jrnRet = {camp:String(c), hist:JSON.parse(JSON.stringify(ui.hist)), from:ui.jrn.from, limit:ui.histLimit};
+    const x = campRows().find(y => String(y.id) === String(c) && y.type === 'sent');
+    if (x) openCampView(x.key, 5);
+    else { const d = campRows().find(y => String(y.id) === String(c)); if (d) (d.type === 'draft' ? openEditor(d.id) : openCampView(d.key, 5)); } },
   'camp-filt-clear': () => clearCampFilters(),
   'camp-sf-clear': () => { sfPick('camp', ''); const b = $('#camp-search'); if (b) b.focus(); },
   'camp-more-rows': () => {
@@ -14508,6 +14523,8 @@ $('#jrn-st').addEventListener('change', e => { ui.jrn.st = e.target.value; ui.jr
 // padomi (tāpat kā Kampaņu sarakstā)
 $('#hist-body').addEventListener('mouseover', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
 $('#hist-body').addEventListener('mouseout', e => { const el = e.target.closest('[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
+$('#jrn-title-t').addEventListener('mouseover', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
+$('#jrn-title-t').addEventListener('mouseout', e => { const el = e.target.closest('[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
 $('#jrn-camps').addEventListener('mouseover', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
 $('#jrn-camps').addEventListener('mouseout', e => { const el = e.target.closest('[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
 $('#jrn-camps').addEventListener('focusin', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
