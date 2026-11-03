@@ -1377,6 +1377,8 @@ table.cl-table td.c-name .camp-name{max-width:100%}
 .jrn-sep{color:var(--text-muted);font-weight:400;margin:0 2px}
 /* kampaņas nosaukums aiz "Sūtījumi" – mazāks, normāls svars, akcenta zilzaļš */
 .jrn-tn{font-size:var(--fs-base);font-weight:400;color:var(--primary);letter-spacing:0}
+.jrn-docnr{margin-top:2px;font-size:var(--fs-sm);font-weight:400;color:var(--text-muted)}
+.jrn-docnr[hidden]{display:none}
 .jrn-tn-link{appearance:none;border:0;background:none;padding:0;margin:0;font-family:inherit;line-height:inherit;cursor:pointer;text-align:left}
 .jrn-tn-link:hover{text-decoration:underline;text-underline-offset:3px}
 .jrn-tn-link:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:var(--radius-xs)}
@@ -3698,7 +3700,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <span class="err" id="c-scope-err" hidden></span>
           <h3 class="sub-h">Vēstules dati <span class="tip" tabindex="0" role="note" aria-label="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). {apsekojums} tiek aizpildīts automātiski no izvēlētā apsekojuma." data-tip="{termiņš} un {sākums} tiek ņemti automātiski no pārskata un perioda datiem (katram respondentam – viņa atlasītie pienākumi). {apsekojums} tiek aizpildīts automātiski no izvēlētā apsekojuma.">i</span></h3>
           <div class="form-grid">
-            <div class="field"><label for="cf-docnr">Dokumenta Nr. <span class="muted">{dok_nr}</span></label><input type="text" id="cf-docnr" class="ro-input" readonly aria-readonly="true" placeholder="Tiks piešķirts automātiski" data-ctip="Dokumenta numuru piešķir sistēma." aria-description="Dokumenta numuru piešķir sistēma."></div>
+            <div class="field"><label for="cf-docnr">Dokumenta Nr. <span class="muted">{dok_nr}</span></label><input type="text" id="cf-docnr" class="ro-input" readonly aria-readonly="true" placeholder="Tiks piešķirts nosūtot" data-ctip="Dokumenta numuru piešķir sistēma nosūtīšanas brīdī." aria-description="Dokumenta numuru piešķir sistēma nosūtīšanas brīdī."></div>
             <div class="field merge-fld" id="c-merge-fld"><span class="label" id="c-merge-l">Apvienot pēc NMK</span>
               <label class="switch"><input type="checkbox" role="switch" id="c-opt-merge" aria-labelledby="c-merge-l c-merge-t"><span class="sw" aria-hidden="true"></span><span id="c-merge-t">Viena vēstule respondentam ar vairākiem apsekojumiem vai periodiem</span></label></div>
           </div>
@@ -3851,6 +3853,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       <div>
         <button type="button" class="btn btn-ghost btn-sm back-link" id="jrn-back-top" data-action="jrn-back" hidden>← Sūtījumi</button>
         <h1 id="jrn-title"><span id="jrn-title-t">Sūtījumi</span> <span class="tip" id="jrn-title-tip" tabindex="0" role="note" aria-label="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts." data-tip="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts.">i</span></h1>
+        <div class="jrn-docnr" id="jrn-docnr" hidden></div>
       </div>
       <div class="toolbar jrn-tools"><button type="button" class="btn-mini" data-action="rules-open" title="NDR (e-pasts) un DIV (e-adrese) statusu klasifikācija: iemesls → tips → automātiskā rīcība"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>Piegādes statusi un kļūdas</button>
         <span class="jrn-top" id="jrn-top"><button type="button" class="btn-mini btn-print" id="print-q-btn" data-action="print-queue"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><rect x="6" y="14" width="12" height="7"/></svg><span id="print-q-l">Drukas rinda (0)</span></button><button type="button" class="al-link" data-action="audit-open" data-id="*"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Darbību vēsture</button>
@@ -3864,7 +3867,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         <div class="sf" id="sf-jrn"></div>
         <label class="search flt-search"><span class="sr-only">Meklēt kampaņu</span>
           <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="jrn-q" placeholder="Meklēt kampaņu…"></label>
+          <input type="search" id="jrn-q" placeholder="Meklēt kampaņu vai dok. Nr.…"></label>
         <label class="cf-f cf-kind"><span class="sr-only">Veids</span><select id="jrn-kind" aria-label="Veids"></select></label>
         <label class="cf-f cf-jst"><span class="sr-only">Sūtīšanas statuss</span><select id="jrn-st" aria-label="Sūtīšanas statuss"></select></label>
         <div data-per="jrn"></div>
@@ -3883,7 +3886,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       <div class="flt-row hf-row">
         <label class="search flt-search hf-q"><span class="sr-only">Meklēt respondentu, NMK vai adresi</span>
           <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          <input type="search" id="hist-search" placeholder="Meklēt respondentu, NMK vai adresi…">
+          <input type="search" id="hist-search" placeholder="Meklēt respondentu, NMK, adresi vai dok. Nr.…">
         </label>
         <details class="dd hf-dd hf-camp" id="hist-camp-dd"><summary id="hist-camp-sum" aria-label="Kampaņa">Visas kampaņas</summary>
           <div class="dd-list cf-dd hf-list"><input type="search" id="hist-camp-q" placeholder="Meklēt kampaņu…" aria-label="Meklēt kampaņu"><div id="hist-camp-list" role="listbox" aria-label="Kampaņa"></div></div></details>
@@ -3948,7 +3951,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 185</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 186</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4876,7 +4879,7 @@ const DEFAULT_LAYOUT = {
   address:'Parauga iela 1, Rīga, LV-1000, tālr. 60000000, e-pasts pasts@csp.example, www.csp.example',
   city:'Rīgā',
   phone:'80000000',
-  docPrefix:'0100-16/',
+  docPrefix:'2-6/',
   closing:'Cerot uz veiksmīgu sadarbību,',
   confTitle:'Iegūtie dati ir konfidenciāli un drošībā',
   confHtml:'<p>Mēs esam valsts iestāde, un uz mums attiecas stingras datu aizsardzības prasības. Atbilstoši spēkā esošajiem Eiropas Savienības un Latvijas Republikas normatīvajiem aktiem CSP ir tiesības vākt un apstrādāt personu datus. Mūsu pienākums ir nodrošināt Jūsu sniegto datu aizsardzību un konfidencialitāti. Visus datus publicējam tikai apkopotā veidā, nodrošinot, ka nevienu personu nevar identificēt.</p>',
@@ -5575,15 +5578,25 @@ function save(){
 let state = loadState() || seedData();
 if (!state.matSeeded) seedMaterials(state);
 
-// Versija 185: dokumenta numuru piešķir sistēma – nosūtot (vai saskaņojot); melnrakstiem numura nav ("Tiks piešķirts automātiski")
-const docNrN = () => Math.max(state.seq || 0, state.docSeq || 0) + 1;
-const nextDocNr = () => `${state.layout.docPrefix}${new Date().getFullYear()}/${docNrN()}`;
-const takeDocNr = () => { const n = docNrN(); state.docSeq = n; return `${state.layout.docPrefix}${new Date().getFullYear()}/${n}`; };
+// Versija 186: dokumenta numuru piešķir sistēma NOSŪTĪŠANAS brīdī (arī simulācijā) – viens numurs visām kampaņas vēstulēm,
+// fiktīvs formāts "2-6/1234" (prefikss + kārtas numurs pēc kampaņas numura); līdz nosūtīšanai – "Tiks piešķirts nosūtot"
+const DOC_NR_BASE = 1100;
+const docNrFor = batch => `${(state.layout || {}).docPrefix || '2-6/'}${DOC_NR_BASE + (+batch || 0)}`;
+const nextDocNr = () => docNrFor((state.seq || 0) + 1);
+const DOC_NR_PENDING = '[tiks piešķirts]';
 const renderDocNr = () => { const i = $('#cf-docnr'); if (i) i.value = compose.f.docNr || ''; };
-// testa dati / agrāk saglabātie: melnrakstiem un ieplānotajām numurs noņemts, saskaņotajiem – piešķirts
+// kampaņas (nosūtītās) dokumenta numurs
+const campDocNr = x => x && x.type === 'sent' ? ((x.xs || []).find(y => y.docNr) || {}).docNr || '' : '';
+// testa dati / agrāk saglabātie: nosūtītajām kampaņām – numurs jaunajā formātā (arī vēstuļu tekstos); melnrakstiem, saskaņošanā, gatavām un ieplānotām – nav
 function migrateDocNr(){
-  (state.drafts || []).forEach(d => { d.f = d.f || {};
-    if (d.apv && d.apv.status === 'approved'){ if (!d.f.docNr) d.f.docNr = takeDocNr(); } else d.f.docNr = ''; });
+  if (state.layout && (!state.layout.docPrefix || state.layout.docPrefix === '0100-16/')) state.layout.docPrefix = '2-6/';
+  (state.sent || []).forEach(x => { const nw = docNrFor(x.batch), old = x.docNr;
+    if (old && old !== nw){ ['bodyHtml', 'bodyText', 'subject', 'eaText', 'eaSubject'].forEach(k => { if (typeof x[k] === 'string') x[k] = x[k].split(old).join(nw); });
+      // personalizētās vēstules (PDF) pielikumos – tas pats numurs
+      const oldF = old.replace(/\//g, '-'), nwF = nw.replace(/\//g, '-');
+      ['attachments', 'main', 'files'].forEach(k => { if (x[k]){ const j = JSON.stringify(x[k]); if (j.includes(old) || j.includes(oldF)) x[k] = JSON.parse(j.split(old).join(nw).split(oldF).join(nwF)); } }); }
+    x.docNr = nw; });
+  (state.drafts || []).forEach(d => { d.f = d.f || {}; d.f.docNr = ''; });
   (state.planned || []).forEach(pl => { if (pl.snap && pl.snap.f) pl.snap.f.docNr = ''; });
 }
 // noklusējuma nosaukums – unikāls (ņem vērā arī citus melnrakstus un ieplānotās kampaņas)
@@ -6244,7 +6257,7 @@ function ctxFor(r, f = compose.f, lang = 'lv'){
     'apsekojuma_epasts': v.email || '',
     'apsekojuma_vietne': v.web || '',
     'datums': fmtDate(f.date),
-    'dok_nr': f.docNr || nextDocNr(),
+    'dok_nr': f.docNr || DOC_NR_PENDING,
     'tālrunis': L.phone || '',
     'pārskatu_tabula': r ? msgDuties(r).map(d => `${(repById(d.reportId) || {}).name || d.reportId}${d.respondentId !== r.id ? ` (${(state.respondents.find(x => x.id === d.respondentId) || {}).name})` : ''} – ${periodLabel(d.period)} (termiņš ${fmtDate(d.deadline)})`).join('; ') : '',
     __strip: true, __duties: r ? msgDuties(r) : null, __rid: r ? r.id : null, __lang: lang,
@@ -9107,7 +9120,7 @@ function openFixedInfo(){
     <div class="fi-grid">
       ${sec('Veidlapas galva', `<div class="doc fi-doc">${formHeadHtml(L)}</div>`, 'Personalizētās vēstules (PDF) augšā: valsts ģerbonis, iestāde, rekvizīti un vieta.')}
       ${sec('Rekvizīti', `<dl class="fi-dl"><dt>Iestāde</dt><dd>${esc(L.org)}</dd><dt>Rekvizīti</dt><dd>${esc(L.address)}</dd><dt>Vieta</dt><dd>${esc(L.city)}</dd>
-        <dt>Dokumenta Nr.</dt><dd>${esc(L.docPrefix)}gads/kārtas Nr. <span class="muted">(piem., ${esc(L.docPrefix)}2026/1)</span></dd><dt>Informatīvais tālrunis</dt><dd>${esc(L.phone)} <span class="muted">– lauks ${F('tālrunis')}</span></dd></dl>`)}
+        <dt>Dokumenta Nr.</dt><dd>${esc(L.docPrefix)}kārtas Nr. <span class="muted">(piem., ${esc(L.docPrefix)}1234; piešķir sistēma nosūtīšanas brīdī)</span></dd><dt>Informatīvais tālrunis</dt><dd>${esc(L.phone)} <span class="muted">– lauks ${F('tālrunis')}</span></dd></dl>`)}
       ${sec('Noslēguma frāze', `<div class="doc fi-doc fi-doc-close"><div class="doc-close"><div>${esc(L.closing)}<br>${esc(L.org)}</div></div></div>`, 'Personalizētās vēstules beigās.')}
       ${sec('Kājene', `<div class="mail-foot fi-foot">${chips(L.emailFooter)}</div>`, 'Formatētā e-pasta apakšā.')}
       ${sec('Konfidencialitāte', `<div class="doc fi-doc fi-doc-text"><div class="rich"><h3>${esc(L.confTitle)}</h3>${L.confHtml}</div></div>`, 'Personalizētajā vēstulē, ja atzīmēta rūtiņa “Konfidencialitāte”.')}
@@ -11095,7 +11108,6 @@ async function apvApprove(j = 0){
   if (last){
     // pēdējais solis – kampaņa saskaņota; nosūta / ieplāno sagatavotājs ar pogu 5. solī
     compose.apv = {...a, status:'approved', approvedAt:now, approvedBy:pk.by};
-    if (!compose.f.docNr) compose.f.docNr = takeDocNr();
     flushDraft(true); renderWizard(); renderCounts();
     toast(`Kampaņa “${compose.name}” saskaņota (${pk.by}) – to var ${isPlanned() ? 'ieplānot' : 'nosūtīt'}.`);
     return;
@@ -11181,7 +11193,7 @@ async function send({skipConfirm = false, approved = false} = {}){
   }
   const ok = skipConfirm || await confirmDialog({title:'Nosūtīt vēstules?', okLabel:`Nosūtīt ${n} ${plural(n, 'vēstuli', 'vēstules')}`,
     message:`Kampaņa <b>${esc(compose.name)}</b> (${esc(SESS_LABELS[sessKindKey()])}): ${esc(compose.content.source === 'tpl' ? 'veidne' : 'saturs')} <b>${esc(contentName(t))}</b> tiks nosūtīts <b>${n}</b> ${plural(n, 'adresātam', 'adresātiem')} pēc adrešu prioritātes <b>${esc(prioLabel(compose.prio))}</b>${t.kind === 'pielikums' ? (t.main ? ` ar pielikumu “${esc(mainNameOf(t))}”` : ' ar ģenerētu PDF pielikumu') : ''}.
-      <br>Dokumenta Nr.: <b>${esc(compose.f.docNr || nextDocNr())}</b>${compose.f.docNr ? '' : ' (tiks piešķirts)'}
+      <br>Dokumenta Nr.: tiks piešķirts nosūtot (<b>${esc(nextDocNr())}</b>)
       <br><br><span class="muted">Šī ir simulācija – vēstules reāli netiek sūtītas.</span>`});
   if (!ok) return;
   compose.nameAuto = false;
@@ -11201,9 +11213,9 @@ function doSend(meta = {}){
   if (!meta.seed) syncLetterDate();
   const t = currentTemplate(), recs = recipients();
   if (!t || !recs.length) return null;
-  if (!compose.f.docNr) compose.f.docNr = takeDocNr();
   state.seq = (state.seq || 0) + 1;
   const batch = state.seq, now = meta.sentAt || new Date().toISOString();
+  compose.f.docNr = docNrFor(batch);
   if (!meta.final) ui.newIds = new Set();
   // testa datiem: pirmās adreses iznākums pēc kanāla (klasifikācijas noteikums)
   const fq = meta.force ? {epasts:[...meta.force.epasts], eadrese:[...meta.force.eadrese]} : null;
@@ -11258,7 +11270,6 @@ function runPlanned(id){
   alLog('planned:' + id);
   const keep = sessionSnapshot();
   applySnapshot(pl.snap);
-  compose.f.docNr = nextDocNr();
   const res = doSend({plannedFor:pl.sendDate});
   applySnapshot(keep);
   if (res && compose.f.docNr === pl.snap.f.docNr) compose.f.docNr = '';
@@ -11327,7 +11338,7 @@ function seedArchive(){
         stampAttempts(attempts, sentAt);
         const rec = {id:'s' + uid(), batch, seed:true, archived:true, sessionName:sname, sessionDesc:sname, campBase:cb, sessionKind:c.kind, plannedFor:'', contentSource:'tpl', sentAt,
           templateId:t.id, templateName:t.name, kind:t.kind, respondentId:r.id, recipient:r.name, address:fin.address, addrType:fin.type, channel:ADDR_TYPES[fin.type].ch,
-          prio:c.prio.filter(Boolean), attempts, docNr:`${state.layout.docPrefix}${c.at.getFullYear()}/${batch}`, subject:fillText(t.subject, ctxFor(r, f)), bodyHtml:'', bodyText:'', footer:'',
+          prio:c.prio.filter(Boolean), attempts, docNr:docNrFor(batch), subject:fillText(t.subject, ctxFor(r, f)), bodyHtml:'', bodyText:'', footer:'',
           lang:'lv', wantLang:'lv', fallback:false, org:state.layout.org, attachments:[], main:null, files:[], status:'rinda', note:'', manual:[]};
         finalizeStatus(rec); rec.statusAt = sentAt;
         state.sent.push(rec);
@@ -11348,7 +11359,6 @@ function seedHistoryAll(){
   SEED_HIST.forEach(x => {
     if (!state.templates.some(t => t.id === x.snap.content.templateId)) return;
     applySnapshot({...x.snap, desc:x.snap.name, f:{...keep.f, date:isoDate(addDays(x.days || 0)), dateManual:true}});
-    compose.f.docNr = nextDocNr();
     const at = x.minsAgo ? new Date(Date.now() - x.minsAgo * 60e3) : addDays(x.days);
     if (!x.minsAgo) at.setHours(x.h, 5, 0, 0);
     doSend({sentAt:at.toISOString(), final:true, seed:true, force:x.force});
@@ -12189,12 +12199,12 @@ ui.view = null;
 function openCampView(key, step, from = 'list'){
   const x = campByKey(key), sn = x && campSnapOf(x); if (!sn) return;
   if (!ui.view){ if (ui.campView === 'edit') flushDraft(); ui.view = {keep:{snap:sessionSnapshot(), draftId:compose.draftId, plannedId:compose.plannedId || null, activeDraft:state.activeDraft, open:compose.open}}; }
-  Object.assign(ui.view, {key, type:x.type, batch:x.type === 'sent' ? x.id : null, at:x.type === 'sent' ? x.ts : x.pl ? `${x.pl.sendDate}T${x.pl.sendTime || '09:00'}` : '', name:x.name, from});
+  Object.assign(ui.view, {key, type:x.type, batch:x.type === 'sent' ? x.id : null, at:x.type === 'sent' ? x.ts : x.pl ? `${x.pl.sendDate}T${x.pl.sendTime || '09:00'}` : '', name:x.name, from, docNr:campDocNr(x)});
   applySnapshot(clone(sn));
   Object.assign(compose, {draftId:'view:' + key, name:x.name, nameSfx:splitCampName(x.name).sfx, nameAuto:false, open:new Set(), search:'', repF:'', acF:'', tried:new Set()});
   compose.step = Math.min(5, Math.max(1, step || 1));
   if (!compose.selRun) compose.selRun = 'legacy';
-  if (x.type === 'sent' && !compose.f.docNr) compose.f.docNr = ((x.xs || [])[0] || {}).docNr || '';
+  compose.f.docNr = campDocNr(x);
   ui.campView = 'edit';
   showTab('kampanas', {edit:true});
 }
@@ -12210,7 +12220,7 @@ function renderViewBar(){
   b.hidden = !v; if (!v) return;
   // Versija 168: viena šaura rinda – "Tikai skatīšanai · nosūtīta DD.MM.GGGG HH:MM" un saite uz sūtījumiem ("Dublēt kampaņu" noņemts)
   const d = v.at ? new Date(v.at) : null, when = d && !isNaN(d) ? `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}` : '';
-  b.innerHTML = `${ICON.eye}<span>Tikai skatīšanai${when ? ` · ${v.type === 'planned' ? 'ieplānota' : 'nosūtīta'} ${esc(when)}` : ''}</span>${v.type === 'sent' ? `<button type="button" class="link-btn vb-link" data-action="view-sends">${v.from === 'jrn' ? '← Atpakaļ uz sūtījumiem' : 'Skatīt sūtījumus →'}</button>` : ''}`;
+  b.innerHTML = `${ICON.eye}<span>Tikai skatīšanai${when ? ` · ${v.type === 'planned' ? 'ieplānota' : 'nosūtīta'} ${esc(when)}` : ''}${v.docNr ? ` · Dok. Nr. ${esc(v.docNr)}` : ''}</span>${v.type === 'sent' ? `<button type="button" class="link-btn vb-link" data-action="view-sends">${v.from === 'jrn' ? '← Atpakaļ uz sūtījumiem' : 'Skatīt sūtījumus →'}</button>` : ''}`;
 }
 // lauki – neaktīvi, rediģēšanas pogas – paslēptas; atļauts tikai skatīt (priekšskatījuma pārlūkošana, rindu izvēršana, pielikumu apskate, filtri tabulā)
 const VIEW_OK = '#cf-docnr, [data-action="prev"], [data-action="next"], [data-pvch], .row-tg, [data-action="c-row-toggle"], [data-attv], [data-attv-act], [data-kvmore], #c-show-addr, [data-acf], .tip, summary';
@@ -12498,7 +12508,7 @@ function renderJrnL1(){
   const sfc = sfCur('jrn'), sff = sfc ? jrnSfMatchF(sfc.f) : null;
   const sentRows = campRows().filter(x => x.type === 'sent'), inSf = sff ? sentRows.filter(x => jrnSfMatch(x, sff)) : sentRows;
   const camps = inSf.filter(x => kindOk(x.kind) && (!j.st || campSend(x).k === j.st) && perMatch(per, x.ts));
-  const cl = sortList(camps.filter(x => !q || norm(`${x.name} ${x.desc || ''}`).includes(q)), j.sort, jrnSortVal);
+  const cl = sortList(camps.filter(x => !q || norm(`${x.name} ${x.desc || ''} ${campDocNr(x)}`).includes(q)), j.sort, jrnSortVal);
   ui.jrnList = cl;
   // kampaņas
   const cPage = cl.slice(0, j.cLimit);
@@ -12519,11 +12529,14 @@ function renderJrnTitle(name){
   // Versija 181: 2. līmenī kampaņas nosaukums – saite uz kampaņu (padoms "Atvērt kampaņu")
   $('#jrn-title-t').innerHTML = name ? `Sūtījumi <span class="jrn-sep" aria-hidden="true">·</span> <button type="button" class="jrn-tn jrn-tn-link" data-action="jrn-open-camp" data-ctip="Atvērt kampaņu" aria-label="${esc(name)} – atvērt kampaņu">${esc(name)}</button>` : 'Sūtījumi';
   $('#jrn-title-tip').hidden = !!name;
+  if (!name){ const d = $('#jrn-docnr'); if (d) d.hidden = true; }
 }
 // 2. līmeņa galvene: virs virsraksta "← Sūtījumi" (atgriež 1. līmenī tajā apakšcilnē, no kuras kampaņa atvērta – ar saglabātiem filtriem); nosaukums – lapas virsrakstā
 function renderJrnCtx(){
   const c = ui.jrn.camp, x = campRows().find(y => y.type === 'sent' && String(y.id) === String(c));
   renderJrnTitle(x ? x.name : `Kampaņa Nr. ${c}`);
+  // Versija 186: dokumenta numurs – mazā pelēkā rindā zem virsraksta
+  { const d = $('#jrn-docnr'), n = campDocNr(x); if (d){ d.textContent = n ? `Dok. Nr. ${n}` : ''; d.hidden = !n; } }
 }
 function openJrnCamp(batch, extra = {}){
   ui.jrn.from = jrnVA() ? 'all' : 'camp';
@@ -12630,7 +12643,7 @@ function histMatch(x, h){
   const q = norm(h.q), d = h.from || h.to ? isoDate(new Date(x.sentAt)) : '';
   return (!h.camp || String(x.batch) === String(h.camp)) && (!h.rep || histReps(x).includes(h.rep)) && (!h.kind || baseKind(x.sessionKind) === h.kind) && (!h.ch || x.channel === h.ch) &&
     letterInJoma(x, h.aud) && (!h.rule || ndrsOf(x).some(n => n.rule === h.rule)) &&
-    (!h.from || d >= h.from) && (!h.to || d <= h.to) && (!q || norm([x.recipient, x.address, respNmk(x.respondentId)].join(' ')).includes(q)) &&
+    (!h.from || d >= h.from) && (!h.to || d <= h.to) && (!q || norm([x.recipient, x.address, respNmk(x.respondentId), x.docNr || ''].join(' ')).includes(q)) &&
     (!h.mr || mailReact(x).k === h.mr) && (!h.fa || faKey(x) === h.fa) && (!h.sfx || repSfLetter(x, h.sfx));
 }
 // perioda teksts: ātrā izvēle vai "01.10.–14.10." (cits gads – ar gadu)
@@ -13237,7 +13250,7 @@ function lmLetterHtml(x){
     <section class="lm-sec lm-mail"><h3>Nosūtītais saturs</h3>${lmMailHtml(x)}</section>`;
 }
 function lmMailHtml(x){
-  if (x.archived) return '<p class="hint">Vēstules saturs testa datu arhīvā nav saglabāts.</p>';
+  if (x.archived) return `${x.docNr ? `<p class="lm-docnr">Dok. Nr. ${esc(x.docNr)}</p>` : ''}<p class="hint">Vēstules saturs testa datu arhīvā nav saglabāts.</p>`;
   // versijas: nosūtītā (pēc kanāla) un – ja kampaņā bija abas – otra, tikai apskatei
   const sv = sentVer(x), vers = sv.fb ? [] : [...(x.hasEp !== false && x.bodyHtml ? ['epasts'] : []), ...(x.eaText != null ? ['eadrese'] : [])];
   const ver = vers.length > 1 && vers.includes(ui.lm.ver) ? ui.lm.ver : sv.ver, own = ver === sv.ver, ch = own ? x.channel : ver;
@@ -13248,7 +13261,8 @@ function lmMailHtml(x){
     subjectHtml:esc(own ? sv.subject : ver === 'eadrese' ? x.eaSubject : x.subject),
     bodyHtml:text != null ? `<div class="mail-plain">${esc(text)}</div>` : resolveImages(x.bodyHtml),
     bodyTextHtml:esc(text != null ? text : x.bodyText), footerHtml:esc(x.footer || ''), variant:x.variant || '',
-    org:x.org || state.layout.org, lang:x.lang || '', wantLang:x.wantLang || '', fallback:!!x.fallback});
+    org:x.org || state.layout.org, lang:x.lang || '', wantLang:x.wantLang || '', fallback:!!x.fallback,
+    extraMeta:x.docNr ? `<dt>Dok. Nr.</dt><dd>${esc(x.docNr)}</dd>` : ''});
 }
 const lmExt = n => (String(n).split('.').pop() || '').toUpperCase().slice(0, 4);
 function lmAttItems(x){
@@ -13452,7 +13466,7 @@ function jrnFCanon(f){
 const jrnSfMatchF = f => { const c = jrnFCanon(f); return {...c, ...(c.quick && c.quick !== 'custom' ? histRange(c.quick) : {})}; };
 function jrnSfMatch(x, f){
   const q = norm(f.q || '');
-  return (!q || norm(`${x.name} ${x.desc || ''}`).includes(q)) && (!f.reps.length || campRepsOf(x).some(r => f.reps.includes(r))) && (!f.kinds.length || f.kinds.includes(baseKind(x.kind)))
+  return (!q || norm(`${x.name} ${x.desc || ''} ${campDocNr(x)}`).includes(q)) && (!f.reps.length || campRepsOf(x).some(r => f.reps.includes(r))) && (!f.kinds.length || f.kinds.includes(baseKind(x.kind)))
     && (!f.sends.length || f.sends.includes(campSend(x).k)) && (!f.sender || jrnBy(x) === f.sender) && (!f.jomas.length || campJomas(x).some(j => f.jomas.includes(j))) && perMatch(f, x.ts);
 }
 sfRegister('jrn', {
@@ -14535,7 +14549,7 @@ const actions = {
       message:'Visas veidnes, nemainīgā informācija, respondentu dati, kampaņas un komunikācijas vēsture tiks aizstāta ar sākotnējiem testa datiem.'});
     if (!ok) return;
     state = seedData(); state.drafts = []; state.planned = [];
-    newSession(true); seedPostAddr(); seedHistory(); assignCreators(); seedApvData(state); seedApvDrafts(); seedCampStates(); seedPrint(); seedNameSfx(); state.nameSfxV = 1; migrateDocNr(); state.docNrV = 1; save();
+    newSession(true); seedPostAddr(); seedHistory(); assignCreators(); seedApvData(state); seedApvDrafts(); seedCampStates(); seedPrint(); seedNameSfx(); state.nameSfxV = 1; migrateDocNr(); state.docNrV = 2; save();
     ui.campView = 'list';
     renderAll(); showTab(ui.tab === 'veidnes' ? 'veidnes' : ui.tab === 'vesture' ? 'vesture' : 'kampanas'); toast('Testa dati atjaunoti.');
   },
@@ -14732,13 +14746,13 @@ document.addEventListener('click', e => {
 // pēc noklusējuma – tabulā redzamās kolonnas; izvēle saglabājas sesijas laikā (katram skatam atsevišķi)
 const expRx = r => r.at ? `${r.t} · ${fmtDateTime(r.at)}${r.more ? ` +${r.more}` : ''}` : r.t;
 const EXP_F = {
-  hist:[['resp', 'Respondents', x => x.recipient], ['nmk', 'NMK', x => respNmkRaw(x.respondentId)], ['camp', 'Kampaņa', x => x.sessionName || `Kampaņa Nr. ${x.batch}`],
+  hist:[['resp', 'Respondents', x => x.recipient], ['nmk', 'NMK', x => respNmkRaw(x.respondentId)], ['camp', 'Kampaņa', x => x.sessionName || `Kampaņa Nr. ${x.batch}`], ['doc', 'Dokumenta Nr.', x => x.docNr || ''],
     ['rep', 'Apsekojums', x => histReps(x).map(id => (repById(id) || {}).code).filter(Boolean).join(', ')], ['st', 'Statuss', x => HIST_FINAL[histFinal(x)].label],
     ['ch', 'Kanāls', x => x.channel === 'eadrese' ? 'eAdrese' : CHANNELS[x.channel] || ''], ['addr', 'Izmantotā adrese', x => x.address || ''], ['at', 'Nosūtīts', x => fmtDateTime(x.sentAt)],
     ['open', 'E-pasta reakcija', x => expRx(mailReact(x))], ['sub', 'Anketas aktivitāte', x => expRx(formAct(x))],
     ['tries', 'Mēģinājumu skaits', x => (x.attempts || []).filter(a => attKind(a) !== 'skip' && a.at && Date.parse(a.at) <= Date.now()).length],
     ['err', 'Kļūdas iemesls', x => { const n = lastNdrOf(x); return n && histFinal(x) !== 'ok' ? ruleOf(n.rule).reason : ''; }]],
-  camps:[['name', 'Kampaņa', x => x.name], ['kind', 'Veids', x => campKindLabel(x.kind)], ['n', 'Adresāti', x => jrnAdr(x)], ['st', 'Sūtīšanas statuss', x => jrnSt(x).label],
+  camps:[['name', 'Kampaņa', x => x.name], ['doc', 'Dokumenta Nr.', x => campDocNr(x)], ['kind', 'Veids', x => campKindLabel(x.kind)], ['n', 'Adresāti', x => jrnAdr(x)], ['st', 'Sūtīšanas statuss', x => jrnSt(x).label],
     ['res', 'Rezultāts', x => `Piegādāti ${jrnRes(x).ok} (${jrnRes(x).pc}%)`], ['ok', 'Piegādāti', x => jrnRes(x).ok], ['proc', 'Procesā', x => jrnRes(x).proc], ['todo', 'Jārisina', x => jrnRes(x).todo],
     ['ts', 'Nosūtīts', x => dmy(isoDate(new Date(x.ts)))], ['by', 'Nosūtītājs', x => jrnBy(x)]],
 };
@@ -15835,7 +15849,7 @@ function seedCampStates(){
   state.activeDraft = compose.draftId;
 }
 if (state.campStSeedV !== 1) seedCampStates();
-if (state.docNrV !== 1){ migrateDocNr(); state.docNrV = 1; const d0 = state.drafts.find(x => x.id === compose.draftId); compose.f.docNr = d0 ? (d0.f || {}).docNr || '' : ''; save(); }
+if (state.docNrV !== 2){ migrateDocNr(); state.docNrV = 2; const d0 = state.drafts.find(x => x.id === compose.draftId); compose.f.docNr = d0 ? (d0.f || {}).docNr || '' : ''; save(); }
 if (state.nameSfxV !== 1){ seedNameSfx(); state.nameSfxV = 1; const d0 = state.drafts.find(x => x.id === compose.draftId); if (d0) compose.nameSfx = nameSfxOf(d0), compose.name = d0.name; save(); }
 if (refreshDraftNames()){ const d0 = state.drafts.find(x => x.id === compose.draftId); if (d0) compose.name = d0.name; save(); }
 save();
