@@ -3944,7 +3944,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 183</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 184</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5817,6 +5817,9 @@ let draftTimer = null;
 function flushDraft(force){
   clearTimeout(draftTimer);
   if (ui.view) return;
+  if (compose.plannedId){ const pl = (state.planned || []).find(x => x.id === compose.plannedId);
+    if (pl){ alOnFlush(false); syncPlanned(pl); save(); renderDraftInfo(); renderCounts(); return; }
+    compose.plannedId = null; }
   const i = state.drafts.findIndex(x => x.id === compose.draftId);
   if (force || sessionDirty()){
     const d = {...sessionSnapshot(), id:compose.draftId, savedAt:new Date().toISOString()};
@@ -5843,7 +5846,7 @@ function renderDraftInfo(){
 }
 // Jauna kampaņa (pēc nosūtīšanas – saglabā apsekojuma datus un adrešu prioritāti)
 function newSession(full){
-  Object.assign(compose, {draftId:'k' + uid(), nameAuto:true, nameSfx:'', createdAt:new Date().toISOString(), content:null, excluded:new Set(), open:new Set(), index:0, noneOpen:false});
+  Object.assign(compose, {draftId:'k' + uid(), plannedId:null, nameAuto:true, nameSfx:'', createdAt:new Date().toISOString(), content:null, excluded:new Set(), open:new Set(), index:0, noneOpen:false});
   // jaunai kampaņai – noklusējuma veids un atlase; pēc nosūtīšanas saglabājas adresāts, apsekojuma dati un adrešu prioritāte
   Object.assign(compose, {desc:'', kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', repF:'', when:'now', sendTime:'09:00', apv:defaultApv(), review:null, tests:[], selRun:null, wl:wlNew(), custom:{}, step:1, stepsOk:new Set(), pvCh:'', tried:new Set(), varOvr:{}, addrFix:{}, addrUndo:{}, exc:{}, dupKeep:{}, shared:{}, miRej:{}, addrMi:{}, riskOk:{}, riskSkip:{}, regSent:{}, acF:''});
   if (full) Object.assign(compose, {aud:'fiz', surveyIdx:0, prio:prioDefault('fiz'), prioManual:false, filt:{},
@@ -6015,7 +6018,7 @@ function alLog(key){
   L.sort((a, b) => a.at.localeCompare(b.at));
   return (S[key] = L);
 }
-const alKeyC = () => 'draft:' + compose.draftId;
+const alKeyC = () => compose.plannedId ? 'planned:' + compose.plannedId : 'draft:' + compose.draftId;
 // jauns ieraksts (līdzīgi secīgi labojumi viena lietotāja 30 min laikā tiek apvienoti vienā ierakstā)
 function alAdd(key, e){
   const L = alLog(key);
@@ -7251,7 +7254,7 @@ function openEditor(draftId){
   if (ui.view) closeCampView();
   if (draftId && draftId !== compose.draftId){
     const d = (state.drafts || []).find(x => x.id === draftId);
-    if (d){ flushDraft(); applySnapshot(d); compose.draftId = d.id; if (apvLocked() || apvApproved()) compose.step = 5; compose.open = new Set(); compose.search = ''; compose.repF = ''; compose.acF = ''; alBaseline();
+    if (d){ flushDraft(); applySnapshot(d); compose.draftId = d.id; compose.plannedId = null; if (apvLocked() || apvApproved()) compose.step = 5; compose.open = new Set(); compose.search = ''; compose.repF = ''; compose.acF = ''; alBaseline();
       // prombūtne sākusies, kamēr uzdevums gaida – uzdevums automātiski pārnests aizvietotājam
       if (apvLocked() && apvAutoTransfer(compose.apv)){ flushDraft(true); alBaseline(); } }
   }
@@ -10005,6 +10008,7 @@ function renderStepNav(n){
     const nx = $('#wiz-next'); nx.hidden = n >= WIZ_STEPS.length; nx.disabled = false; nx.removeAttribute('aria-disabled'); nx.title = ''; nx.innerHTML = `Tālāk: ${WIZ_STEPS[n] || ''} →`;
     return; }
   $('#wiz-save').hidden = false; $('#wiz-next').hidden = false;
+  $('#wiz-save').textContent = compose.plannedId ? 'Saglabāt izmaiņas' : 'Saglabāt melnrakstu';
   // 1. solī – "← Uz kampaņu sarakstu" (tajā pašā vietā un stilā kā "← Atpakaļ" pārējos soļos)
   const prev = $('#wiz-prev'), first = n <= 1 || apvApproved();
   prev.dataset.action = first ? 'wiz-list' : 'wiz-prev';
@@ -10831,6 +10835,7 @@ async function finalSubmit(){
     message:`Kampaņa <b>${esc(compose.name)}</b> (${esc(SESS_LABELS[sessKindKey()])}, ${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}) tiks nodota ${who}.
       <br>Pēc saskaņojuma: ${isPlanned() ? `ieplānošana (${esc(whenLabel())})` : 'nosūtīšana'}.${a0.due ? `<br>Saskaņot līdz: ${esc(fmtDate(a0.due))}.` : ''}${compose.apv.comment ? `<br>Komentārs: “${esc(compose.apv.comment)}”` : ''}`}))) return;
   compose.nameAuto = false;
+  planDetach();
   const now = new Date().toISOString(), name = compose.name;
   compose.apv = {...compose.apv, steps, approver:one ? one.id : compose.apv.approver, status:'pending', at:now, by:CURRENT_USER, returnComment:'', prog:steps.map(() => ({appr:[]})), history:[...(compose.apv.history || []), {act:'submit', at:now, by:CURRENT_USER, comment:compose.apv.comment || ''}]};
   alAddC('apvSub', one ? `Saskaņotājs: ${one.name}` : `${route ? `Maršruts “${route.name}”${a0.custom ? ' (pielāgots)' : ''}: ` : ''}${stepsText(steps)}`, compose.apv.comment ? {cmt:compose.apv.comment} : {});
@@ -11107,9 +11112,12 @@ async function send({skipConfirm = false, approved = false} = {}){
     if (!ok) return;
     compose.nameAuto = false;
     state.planned = state.planned || [];
-    state.planned.unshift({id:'pl' + uid(), name:compose.name, desc:compose.desc || '', kindKey:sessKindKey(), sendDate:compose.sel.sendDate, sendTime:compose.sendTime, target:remindTarget(),
+    // Versija 184: labota ieplānotā kampaņa – tas pats ieraksts (noņem veco, jaunais ar to pašu id)
+    const plId = compose.plannedId, plOld = plId ? state.planned.findIndex(x => x.id === plId) : -1;
+    if (plOld >= 0) state.planned.splice(plOld, 1);
+    state.planned.unshift({id:plOld >= 0 ? plId : 'pl' + uid(), name:compose.name, desc:compose.desc || '', kindKey:sessKindKey(), sendDate:compose.sel.sendDate, sendTime:compose.sendTime, target:remindTarget(),
       contentName:contentName(t), contentLabel:contentLabel(), prio:compose.prio.filter(Boolean), count:n, createdAt:compose.createdAt || new Date().toISOString(), createdBy:CURRENT_USER, snap:sessionSnapshot(), reps:campRepPairs()});
-    alMove(alKeyC(), 'planned:' + state.planned[0].id);
+    if (alKeyC() !== 'planned:' + state.planned[0].id) alMove(alKeyC(), 'planned:' + state.planned[0].id);
     alAdd('planned:' + state.planned[0].id, alE('plan', approved ? AL_SYS : CURRENT_USER, `${alWhen(compose.sel.sendDate, compose.sendTime)}${approved ? ' · automātiski pēc saskaņojuma' : ''}`));
     removeDraft(compose.draftId);
     newSession(false); save();
@@ -11125,6 +11133,7 @@ async function send({skipConfirm = false, approved = false} = {}){
   if (!ok) return;
   compose.nameAuto = false;
   const name = compose.name, res = doSend();
+  if (res && compose.plannedId) state.planned = (state.planned || []).filter(x => x.id !== compose.plannedId);
   if (res){ const k = 'sent:' + res.batch; alMove(alKeyC(), k);
     alAdd(k, alE('send', approved ? AL_SYS : CURRENT_USER, `${alCnt(res.n, 'vēstule', 'vēstules')}${approved ? ' · automātiski pēc saskaņojuma' : ''}`)); }
   // nākamā kampaņa sākas no jauna (apsekojuma dati, adrešu prioritāte un atlases iestatījumi saglabājas)
@@ -12079,19 +12088,55 @@ function placeCampMenu(){
 document.addEventListener('click', e => { if (campMenuBtn && !e.target.closest('#cm-menu') && e.target.closest('[data-action$="-menu"]') !== campMenuBtn) closeCampMenu(); }, true);
 window.addEventListener('resize', () => placeCampMenu());
 window.addEventListener('scroll', () => placeCampMenu(), true);
-// Rindas atvēršana: melnraksts – rediģēšanai, ieplānotā – pārskats, nosūtītā – sūtījumos
-function openCampRow(key){
-  const x = campByKey(key); if (!x) return;
-  if (x.type === 'draft') openEditor(x.id);
-  else openCampView(key);
+// Versija 184: viena kampaņas atvēršanas funkcija visiem ceļiem (Kampaņu saraksts, statusu klikšķi, Sūtījumi):
+// kampaņa ar sūtījumiem – VIENMĒR skatīšanās režīmā ar joslu "Tikai skatīšanai"; ieplānota (vēl nenosūtīta) un melnraksts – rediģēšanai.
+// o.from: 'list' (noklusējums) | 'jrn' (Sūtījumu 2. līmenis – joslā "← Atpakaļ uz sūtījumiem"); o.step – atveramais solis
+const campHasSends = x => !!x && x.type === 'sent' && (state.sent || []).some(y => String(y.batch) === String(x.id));
+function openCampaign(key, o = {}){
+  const x = campByKey(key); if (!x) return false;
+  if (o.from !== 'jrn') ui.jrnRet = null;
+  if (campHasSends(x)) openCampView(key, o.step, o.from || 'list');
+  else if (x.type === 'planned') openPlannedEdit(x.pl, o.step);
+  else if (x.type === 'draft'){ openEditor(x.id); if (o.step && !apvLocked() && !apvApproved()) setStep(o.step); }
+  else openCampView(key, o.step, o.from || 'list');
+  return true;
+}
+function openCampRow(key){ openCampaign(key); }
+// Ieplānotās kampaņas labošana (Versija 184): iestatījumi tiek ielādēti redaktorā; izmaiņas saglabājas pašā ieplānotajā kampaņā (tā paliek ieplānota),
+// "Ieplānot nosūtīšanu" atjauno plānu, "Nosūtīt" (pārslēdzot uz "Tūlīt") – nosūta, "Nodot saskaņošanai" – kampaņa kļūst par melnrakstu saskaņošanā
+function openPlannedEdit(pl, step){
+  if (!pl || !pl.snap) return;
+  if (ui.view) closeCampView();
+  if (ui.campView === 'edit') flushDraft();
+  applySnapshot(clone(pl.snap));
+  Object.assign(compose, {draftId:'pl:' + pl.id, plannedId:pl.id, name:pl.name, nameSfx:splitCampName(pl.name).sfx, nameAuto:false, desc:pl.desc || compose.desc || '', open:new Set(), search:'', repF:'', acF:'', tried:new Set()});
+  compose.when = 'plan'; compose.sel.sendDate = pl.sendDate || compose.sel.sendDate; compose.sendTime = pl.sendTime || compose.sendTime || '09:00';
+  if (!compose.selRun) compose.selRun = 'legacy';
+  compose.step = Math.min(5, Math.max(1, step || compose.step || 1));
+  alBaseline();
+  showTab('kampanas', {edit:true});
+}
+// ieplānotās kampaņas ieraksta atjaunošana no redaktora
+function syncPlanned(pl){
+  let n = pl.count; try { n = recipients().length; } catch (e) {}
+  const t = currentTemplate();
+  Object.assign(pl, {name:compose.name, desc:compose.desc || '', kindKey:sessKindKey(), target:remindTarget(), contentName:t ? contentName(t) : pl.contentName, contentLabel:contentLabel(),
+    prio:compose.prio.filter(Boolean), count:n, snap:sessionSnapshot(), reps:campRepPairs()}, isPlanned() ? {sendDate:compose.sel.sendDate, sendTime:compose.sendTime} : {});
+  pl.savedAt = new Date().toISOString();
+}
+// ieplānotā kampaņa vairs nav ieplānota (nosūtīta / nodota saskaņošanai) – ieraksts tiek noņemts
+function planDetach(){
+  if (!compose.plannedId) return;
+  const old = alKeyC(); state.planned = (state.planned || []).filter(x => x.id !== compose.plannedId);
+  compose.plannedId = null; compose.draftId = 'k' + uid(); alMove(old, alKeyC());
 }
 // ===== Skatīšanas režīms: nosūtītas / ieplānotas kampaņas soļi – tikai lasāmi =====
 // Kampaņas iestatījumi tiek ielādēti redaktorā (pašreizējais melnraksts – saglabāts un atjaunots, aizverot skatu); nekas netiek saglabāts.
 ui.view = null;
-function openCampView(key, step){
+function openCampView(key, step, from = 'list'){
   const x = campByKey(key), sn = x && campSnapOf(x); if (!sn) return;
-  if (!ui.view){ if (ui.campView === 'edit') flushDraft(); ui.view = {keep:{snap:sessionSnapshot(), draftId:compose.draftId, activeDraft:state.activeDraft, open:compose.open}}; }
-  Object.assign(ui.view, {key, type:x.type, batch:x.type === 'sent' ? x.id : null, at:x.type === 'sent' ? x.ts : x.pl ? `${x.pl.sendDate}T${x.pl.sendTime || '09:00'}` : '', name:x.name});
+  if (!ui.view){ if (ui.campView === 'edit') flushDraft(); ui.view = {keep:{snap:sessionSnapshot(), draftId:compose.draftId, plannedId:compose.plannedId || null, activeDraft:state.activeDraft, open:compose.open}}; }
+  Object.assign(ui.view, {key, type:x.type, batch:x.type === 'sent' ? x.id : null, at:x.type === 'sent' ? x.ts : x.pl ? `${x.pl.sendDate}T${x.pl.sendTime || '09:00'}` : '', name:x.name, from});
   applySnapshot(clone(sn));
   Object.assign(compose, {draftId:'view:' + key, name:x.name, nameSfx:splitCampName(x.name).sfx, nameAuto:false, open:new Set(), search:'', repF:'', acF:'', tried:new Set()});
   compose.step = Math.min(5, Math.max(1, step || 1));
@@ -12102,23 +12147,30 @@ function openCampView(key, step){
 function closeCampView(){
   if (!ui.view) return;
   const k = ui.view.keep; ui.view = null;
-  applySnapshot(k.snap); compose.draftId = k.draftId; compose.open = k.open || new Set(); state.activeDraft = k.activeDraft;
+  applySnapshot(k.snap); compose.draftId = k.draftId; compose.plannedId = k.plannedId || null; compose.open = k.open || new Set(); state.activeDraft = k.activeDraft;
   $('#camp-edit').classList.remove('is-view'); $('#c-view-bar').hidden = true;
+  viewUnlock();
 }
 function renderViewBar(){
   const b = $('#c-view-bar'), v = ui.view; if (!b) return;
   b.hidden = !v; if (!v) return;
   // Versija 168: viena šaura rinda – "Tikai skatīšanai · nosūtīta DD.MM.GGGG HH:MM" un saite uz sūtījumiem ("Dublēt kampaņu" noņemts)
   const d = v.at ? new Date(v.at) : null, when = d && !isNaN(d) ? `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}` : '';
-  b.innerHTML = `${ICON.eye}<span>Tikai skatīšanai${when ? ` · ${v.type === 'planned' ? 'ieplānota' : 'nosūtīta'} ${esc(when)}` : ''}</span>${v.type === 'sent' ? `<button type="button" class="link-btn vb-link" data-action="view-sends">Skatīt sūtījumus →</button>` : ''}`;
+  b.innerHTML = `${ICON.eye}<span>Tikai skatīšanai${when ? ` · ${v.type === 'planned' ? 'ieplānota' : 'nosūtīta'} ${esc(when)}` : ''}</span>${v.type === 'sent' ? `<button type="button" class="link-btn vb-link" data-action="view-sends">${v.from === 'jrn' ? '← Atpakaļ uz sūtījumiem' : 'Skatīt sūtījumus →'}</button>` : ''}`;
 }
 // lauki – neaktīvi, rediģēšanas pogas – paslēptas; atļauts tikai skatīt (priekšskatījuma pārlūkošana, rindu izvēršana, pielikumu apskate, filtri tabulā)
 const VIEW_OK = '[data-action="prev"], [data-action="next"], [data-pvch], .row-tg, [data-action="c-row-toggle"], [data-attv], [data-attv-act], [data-kvmore], #c-show-addr, [data-acf], .tip, summary';
 function viewLock(){
   const on = !!ui.view, ed = $('#camp-edit'); ed.classList.toggle('is-view', on);
   if (!on) return;
-  $$('#wiz .step input, #wiz .step select, #wiz .step textarea, #wiz .step button').forEach(el => { if (el.matches(VIEW_OK)) el.classList.add('view-ok'); else el.disabled = true; });
-  $$('#wiz .step [contenteditable="true"]').forEach(el => el.setAttribute('contenteditable', 'false'));
+  // Versija 184: skatīšanās režīmā atslēgtie lauki tiek atzīmēti, lai, aizverot skatu, tos atkal ieslēgtu (citādi melnrakstā paliktu neaktīvi)
+  $$('#wiz .step input, #wiz .step select, #wiz .step textarea, #wiz .step button').forEach(el => { if (el.matches(VIEW_OK)) el.classList.add('view-ok'); else if (!el.disabled){ el.disabled = true; el.dataset.vlock = '1'; } });
+  $$('#wiz .step [contenteditable="true"]').forEach(el => { el.setAttribute('contenteditable', 'false'); el.dataset.vlockCe = '1'; });
+}
+function viewUnlock(){
+  $$('#wiz [data-vlock]').forEach(el => { el.disabled = false; delete el.dataset.vlock; });
+  $$('#wiz [data-vlock-ce]').forEach(el => { el.setAttribute('contenteditable', 'true'); delete el.dataset.vlockCe; });
+  $$('#wiz .view-ok').forEach(el => el.classList.remove('view-ok'));
 }
 $('#camp-edit').addEventListener('click', e => {
   if (!ui.view) return;
@@ -12268,13 +12320,13 @@ function campWhenHtml(x){
 // klikšķis uz statusa – uz vietu, kur rīkoties
 function openCampPrep(key){
   const x = campByKey(key); if (!x) return;
-  if (x.type !== 'draft'){ openCampView(key); return; }
+  if (x.type !== 'draft'){ openCampaign(key); return; }
   const p = campPrep(x); openEditor(x.id);
   if (p.step && !apvLocked() && !apvApproved()) setStep(p.step);
 }
 function openCampSend(key){
   const x = campByKey(key); if (!x) return;
-  if (x.type === 'planned'){ openCampView(key, 5); return; }
+  if (x.type === 'planned'){ openCampaign(key, {step:5}); return; }
   if (x.type !== 'sent') return;
   const s = campSend(x); showHistoryOf(x.id);
   if (s.k === 'issues'){ ui.hist.sts = [...HIST_GROUPS.find(g => g.k === 'todo').sts]; renderSent(); }
@@ -14257,7 +14309,7 @@ const actions = {
   // uz sarakstu: ja kampaņā kas mainīts – vispirms saglabā melnrakstu (kā automātiskā saglabāšana); neaizpildīta jauna kampaņa melnrakstu neveido
   'wiz-list': () => { const dirty = sessionDirty(); showTab('kampanas'); if (dirty && state.drafts.some(x => x.id === compose.draftId)) toast(`Melnraksts “${compose.name}” saglabāts.`); },
   'wiz-next': () => { if (ui.view){ setStep(compose.step + 1); return; } if (compose.step === 1 && !selCanGo()) return; if (compose.step === 4) return reviewContinue(); if (compose.step === 5) return finalSubmit(); markTried(compose.step); if (fzBlocks() || acBlocks(compose.step + 1)) return; compose.stepsOk.add(compose.step); setStep(compose.step + 1); },
-  'wiz-save': () => { markTried(compose.step); flushDraft(true); renderWizard(); toast(`Melnraksts “${compose.name}” saglabāts.`); },
+  'wiz-save': () => { markTried(compose.step); const pl = !!compose.plannedId; flushDraft(true); renderWizard(); toast(pl ? `Ieplānotās kampaņas “${compose.name}” izmaiņas saglabātas.` : `Melnraksts “${compose.name}” saglabāts.`); },
   'c-customize': id => openLetterCustomizer(id),
   'c-uncustom': id => { delete compose.custom[id]; renderComposeList(); renderComposePreview(); toast('Vēstule atjaunota atbilstoši kampaņas saturam.'); },
   'audit-open': id => openAudit(id === 'compose' ? (ui.view ? ui.view.key : alKeyC()) : id),
@@ -14295,17 +14347,16 @@ const actions = {
   'camp-prep': id => openCampPrep(id),
   'camp-send': id => openCampSend(id),
   'view-sends': () => { const b = ui.view && ui.view.batch; if (b == null) return;
-    // atgriešanās no kampaņas, kas atvērta no Sūtījumu 2. līmeņa – ar to pašu statusu grupu un filtriem
-    const r = ui.jrnRet; ui.jrnRet = null;
+    // atgriešanās no kampaņas, kas atvērta no Sūtījumu 2. līmeņa – ar to pašu statusu grupu un 1. līmeņa filtriem (arī "Mani filtri")
+    const r = ui.view.from === 'jrn' ? ui.jrnRet : null; ui.jrnRet = null;
     if (r && String(r.camp) === String(b)){ jrnSetView('camp'); Object.assign(ui.hist, r.hist); ui.jrn.camp = String(b); ui.jrn.from = r.from; ui.histLimit = r.limit || 50;
       $('#hist-search').value = ui.hist.q || ''; showTab('vesture'); return; }
     showHistoryOf(b); },
   // Versija 181: Sūtījumu 2. līmenis → kampaņa (nosūtītā – skatīšanās režīmā 5. solī; nenosūtīta – kā atverot no kampaņu saraksta)
   'jrn-open-camp': () => { const c = ui.jrn.camp; if (c == null) return; hideCTip();
     ui.jrnRet = {camp:String(c), hist:JSON.parse(JSON.stringify(ui.hist)), from:ui.jrn.from, limit:ui.histLimit};
-    const x = campRows().find(y => String(y.id) === String(c) && y.type === 'sent');
-    if (x) openCampView(x.key, 5);
-    else { const d = campRows().find(y => String(y.id) === String(c)); if (d) (d.type === 'draft' ? openEditor(d.id) : openCampView(d.key, 5)); } },
+    const x = campRows().find(y => String(y.id) === String(c) && y.type === 'sent') || campRows().find(y => String(y.id) === String(c));
+    if (x) openCampaign(x.key, {step:5, from:'jrn'}); },
   'camp-filt-clear': () => clearCampFilters(),
   'camp-sf-clear': () => { sfPick('camp', ''); const b = $('#camp-search'); if (b) b.focus(); },
   'camp-more-rows': () => {
