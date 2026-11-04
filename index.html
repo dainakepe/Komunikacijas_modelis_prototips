@@ -1657,7 +1657,7 @@ dialog.modal.sf-edm{width:min(660px,calc(100vw - 32px))}
 .sf-ed .hf-per .hf-dd{width:220px}
 .sf-ed-carry{font-size:var(--fs-sm);color:var(--text-muted);padding-top:7px}
 .sf-ed .sf-defl{margin:0}
-.sf-ed-hint{margin:2px 0 0;font-size:var(--fs-sm);color:var(--text-muted)}
+.sf-ed-err{display:block;margin:2px 0 0}
 .sf-acts{white-space:nowrap}
 @media (max-width:600px){.sf-ed-row{grid-template-columns:minmax(0,1fr)}.sf-ed-row > label,.sf-ed-l{padding-top:0}}
 .sf-defl{display:flex;align-items:center;gap:7px;font-size:var(--fs-sm);margin-bottom:12px;cursor:pointer}
@@ -3982,7 +3982,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 191</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 192</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -12137,19 +12137,25 @@ function sfEditDlg(view, o = {}){
       <div class="sf-ed-row"><label for="sf-name">Nosaukums <span class="req">*</span></label><div><input type="text" id="sf-name" maxlength="${SF_MAX}" value="${ed ? esc(ed.name) : ''}" placeholder="piem., Mani melnraksti" aria-describedby="sf-name-err"><span class="err" id="sf-name-err" hidden></span></div></div>
       ${E.html(w)}
       <div class="sf-ed-row"><span></span><label class="sf-defl"><input type="checkbox" id="sf-def"${ed && ed.def ? ' checked' : ''}> ${esc(`Piemērot automātiski, atverot sadaļu “${cfg.sec || ''}”`)}</label></div>
-      <p class="sf-ed-hint" id="sf-ed-hint" aria-live="polite"></p></div>`,
+      <span class="err sf-ed-err" id="sf-ed-err" role="alert" hidden></span></div>`,
     actions:[{label:'Atcelt'}, {label:'Saglabāt', cls:'btn-primary', onClick:c => {
       const inp = $('#sf-name', el), nm = inp.value.trim(), err = $('#sf-name-err', el), f = E.read(el, w);
       const msg = !nm ? 'Norādiet nosaukumu.' : nm.length > SF_MAX ? `Nosaukums nedrīkst būt garāks par ${SF_MAX} simboliem.` : list.some(x => x.id !== (ed && ed.id) && x.name.toLowerCase() === nm.toLowerCase()) ? 'Filtrs ar šādu nosaukumu jau ir.' : !E.any(f) ? 'Norādiet vismaz vienu kritēriju.' : '';
-      if (msg){ err.hidden = false; err.textContent = msg; inp.setAttribute('aria-invalid', String(!nm || msg.startsWith('Filtrs') || msg.startsWith('Nosaukums'))); inp.focus(); return; }
+      // Versija 192: kļūdas – tikai mēģinot saglabāt nepilnīgu filtru (nosaukums – pie lauka, kritēriji – loga apakšā)
+      if (msg){ const nmErr = !nm || msg.startsWith('Filtrs') || msg.startsWith('Nosaukums'), ce = $('#sf-ed-err', el);
+        err.hidden = !nmErr; err.textContent = nmErr ? msg : ''; inp.setAttribute('aria-invalid', String(nmErr));
+        ce.hidden = nmErr; ce.textContent = nmErr ? '' : msg;
+        if (nmErr) inp.focus(); return; }
       const def = $('#sf-def', el).checked, x = {id:ed ? ed.id : 'sf' + uid(), name:nm, def, f};
       sfSave(view, ed ? list.map(y => y.id === ed.id ? x : def ? {...y, def:false} : y) : [...list.map(y => def ? {...y, def:false} : y), x]);
       ui.sf[view].active = x.id; ui.sf[view].open = false; c(); if (cfg.overlay){ sfSort(view, f); if (cfg.onPick) cfg.onPick(x); } else cfg.apply(clone(f)); cfg.render();
       toast(`Filtrs “${nm}” ${ed ? 'saglabāts' : 'izveidots un piemērots'}${def ? ' (noklusējums)' : ''}.`);
     }}]});
   el.classList.add('sf-edm');
+  // Versija 192: kopsavilkuma rinda ("Tiks saglabāts: …") noņemta; parādītā kļūda pazūd, tiklīdz tā novērsta
   const ok = $('[data-act="1"]', el), upd = () => { const nm = $('#sf-name', el).value.trim(), any = E.any(E.read(el, w));
-    ok.disabled = !nm || !any; $('#sf-ed-hint', el).textContent = !nm ? 'Norādiet nosaukumu.' : !any ? 'Norādiet vismaz vienu kritēriju.' : `Tiks saglabāts: ${cfg.summary(E.read(el, w))}`; };
+    if (nm){ const er = $('#sf-name-err', el); if (er.textContent === 'Norādiet nosaukumu.'){ er.hidden = true; er.textContent = ''; $('#sf-name', el).setAttribute('aria-invalid', 'false'); } }
+    if (any){ const ce = $('#sf-ed-err', el); ce.hidden = true; ce.textContent = ''; } };
   E.init(el, w, upd);
   el.querySelector('.sf-ed').addEventListener('input', upd); el.querySelector('.sf-ed').addEventListener('change', upd);
   upd(); $('#sf-name', el).focus();
