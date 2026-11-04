@@ -644,6 +644,27 @@ input.ro-input::placeholder{color:var(--text-muted);opacity:1}
 #c-list .ac-val.ac-v2.q-ok{color:#555} #c-list .ac-val.ac-v2.q-ok .icon{color:var(--success)}
 #c-list .ac-val.ac-v2.q-pot{color:var(--orange-ink)} #c-list .ac-val.ac-v2.q-pot .icon{color:#E07B1F}
 #c-list .ac-val.ac-v2.q-bad{color:var(--danger)} #c-list .ac-val.ac-v2.q-bad .icon{color:var(--danger)}
+.ac-fx{position:relative;display:inline-flex;flex:none;width:14px;height:14px;color:var(--primary)}
+.ac-fx > .icon{width:14px;height:14px;color:var(--primary)!important}
+.ac-fx .ac-pen{position:absolute;right:-4px;bottom:-3px;width:9px;height:9px;border-radius:50%;background:var(--primary);display:grid;place-items:center;box-shadow:0 0 0 1.5px var(--surface)}
+.ac-fx .ac-pen svg{width:6px;height:6px;stroke:#fff;fill:none;stroke-width:3}
+.ac-fx .ac-pen.is-mi{background:transparent;box-shadow:none;width:10px;height:10px;right:-5px;bottom:-4px}
+.ac-fx .ac-pen.is-mi svg{width:10px;height:10px;stroke:#6B4FC8;fill:#EDE7FB;stroke-width:1.6}
+#c-list .ac-val.ac-v2.q-fix{color:#555} #c-list .ac-val.ac-v2.q-fix .ac-tx{font-weight:400}
+.ac-fixlist{font-size:var(--fs-xs);font-weight:600;align-self:center;margin-right:4px}
+/* Versija 198: kontaktu imports un laboto adrešu logs */
+.imp-s{margin:0 0 14px}
+.imp-s h4{margin:0 0 6px;font-size:var(--fs-sm)}
+.imp-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.imp-cols{display:flex;flex-wrap:wrap;gap:6px 16px}
+.imp-cnt{margin:4px 0 8px;font-size:var(--fs-sm)}
+.imp-cnt b{font-variant-numeric:tabular-nums}
+.imp-err td{color:var(--danger)}
+.imp-kind{display:inline-block;padding:0 6px;border-radius:var(--radius-pill);font-size:11px;font-weight:600;background:var(--primary-50);color:var(--primary-darker)}
+.imp-kind.is-err{background:#FDECEC;color:var(--danger)}
+.imp-arr{color:var(--text-muted);margin:0 4px}
+.fx-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px}
+.fx-table td.fx-chk,.fx-table th.fx-chk{width:32px;text-align:center}
 #c-list .ac-val.ac-v2.q-dup,#c-list .ac-val.ac-v2.q-none{color:var(--text-muted)} #c-list .ac-val.ac-v2.q-dup .icon{color:var(--icon-muted)}
 #c-list .c-addr-st .ac-val.ac-v2 .ac-tx{font-size:13px}
 /* Versija 179: mazās pelēkās pazīmju ikonas aiz statusa (koplietojama adrese, MI ieteikums) */
@@ -3948,7 +3969,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 197</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 198</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5842,7 +5863,7 @@ const compose = {
 const sessionSnapshot = () => ({wl:clone(compose.wl || wlNew(compose.createdAt)), print:compose.print !== false, stepsOk:[...(compose.stepsOk || [])], name:compose.name, nameSfx:compose.nameSfx || '', aud:compose.aud, kind:compose.kind, remind:compose.remind, sel:clone(compose.sel),
   excluded:[...compose.excluded], nsIncl:[...(compose.nsIncl || [])], surveyIdx:compose.surveyIdx, f:{...compose.f}, prio:[...compose.prio], filt:{...compose.filt},
   content: compose.content ? clone(compose.content) : null, when:compose.when, sendTime:compose.sendTime,
-  custom:clone(compose.custom), step:compose.step, wiz:3, apv:clone(compose.apv || defaultApv()), review:compose.review ? clone(compose.review) : null, tests:clone(compose.tests || []), selRun:compose.selRun === 'legacy' ? 'legacy' : compose.selRun ? clone(compose.selRun) : null, prioManual:!!compose.prioManual, varOvr:clone(compose.varOvr), addrFix:clone(compose.addrFix || {}), addrUndo:clone(compose.addrUndo || {}), exc:clone(compose.exc || {}), dupKeep:clone(compose.dupKeep || {}), shared:clone(compose.shared || {}), miRej:clone(compose.miRej || {}), addrMi:clone(compose.addrMi || {}), riskOk:clone(compose.riskOk || {}), riskSkip:clone(compose.riskSkip || {}), regSent:clone(compose.regSent || {}), nameAuto:!!compose.nameAuto, desc:compose.desc || '', createdAt:compose.createdAt || ''});
+  custom:clone(compose.custom), step:compose.step, wiz:3, apv:clone(compose.apv || defaultApv()), review:compose.review ? clone(compose.review) : null, tests:clone(compose.tests || []), selRun:compose.selRun === 'legacy' ? 'legacy' : compose.selRun ? clone(compose.selRun) : null, prioManual:!!compose.prioManual, varOvr:clone(compose.varOvr), addrFix:clone(compose.addrFix || {}), addrUndo:clone(compose.addrUndo || {}), exc:clone(compose.exc || {}), dupKeep:clone(compose.dupKeep || {}), shared:clone(compose.shared || {}), miRej:clone(compose.miRej || {}), addrMi:clone(compose.addrMi || {}), addrMeta:clone(compose.addrMeta || {}), riskOk:clone(compose.riskOk || {}), riskSkip:clone(compose.riskSkip || {}), regSent:clone(compose.regSent || {}), nameAuto:!!compose.nameAuto, desc:compose.desc || '', createdAt:compose.createdAt || ''});
 // Versija 182: papildinājums no saglabātā melnraksta; agrākiem – sadalot nosaukumu (brīvi ievadīts nosaukums → papildinājums)
 function nameSfxOf(d){
   if (d.nameSfx !== undefined) return cleanNameSfx(d.nameSfx);
@@ -5862,7 +5883,7 @@ function applySnapshot(d){
     when: d.when || (d.sel && d.sel.sendDate > todayIso() ? 'plan' : 'now'), sendTime: d.sendTime || '09:00',
     custom: clone(d.custom || {}), step: d.wiz === 3 ? d.step || 1 : d.wiz === 2 ? ({4:5, 5:4}[d.step] || d.step || 1) : ({5:1, 6:4}[d.step] || d.step || 1), prioManual: d.wiz >= 2 ? !!d.prioManual : true,
     apv: {...defaultApv(), ...clone(d.apv || {})}, review: d.review ? clone(d.review) : null, tests: clone(d.tests || []), selRun: d.selRun ? clone(d.selRun) : (d.step || 1) > 1 ? 'legacy' : null, wl: wlOf(d), pvCh: '', tried: new Set(), varOvr: clone(d.varOvr || {}),
-    addrFix: clone(d.addrFix || {}), addrUndo: clone(d.addrUndo || {}), exc: excNoShared(d.exc, d.shared), dupKeep: clone(d.dupKeep || {}), shared: clone(d.shared || {}), miRej: clone(d.miRej || {}), addrMi: clone(d.addrMi || {}), riskOk: clone(d.riskOk || {}), riskSkip: clone(d.riskSkip || {}), regSent: clone(d.regSent || {}), acF: '',
+    addrFix: clone(d.addrFix || {}), addrUndo: clone(d.addrUndo || {}), exc: excNoShared(d.exc, d.shared), dupKeep: clone(d.dupKeep || {}), shared: clone(d.shared || {}), miRej: clone(d.miRej || {}), addrMi: clone(d.addrMi || {}), addrMeta: clone(d.addrMeta || {}), riskOk: clone(d.riskOk || {}), riskSkip: clone(d.riskSkip || {}), regSent: clone(d.regSent || {}), acF: '',
   });
 }
 // Kampaņu melnraksti (agrāk – viens melnraksts state.draft)
@@ -5932,7 +5953,7 @@ function renderDraftInfo(){
 function newSession(full){
   Object.assign(compose, {draftId:'k' + uid(), plannedId:null, nameAuto:true, nameSfx:'', createdAt:new Date().toISOString(), content:null, excluded:new Set(), nsIncl:[], open:new Set(), index:0, noneOpen:false});
   // jaunai kampaņai – noklusējuma veids un atlase; pēc nosūtīšanas saglabājas adresāts, apsekojuma dati un adrešu prioritāte
-  Object.assign(compose, {desc:'', kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', repF:'', when:'now', sendTime:'09:00', apv:defaultApv(), review:null, tests:[], selRun:null, wl:wlNew(), custom:{}, step:1, stepsOk:new Set(), pvCh:'', tried:new Set(), varOvr:{}, addrFix:{}, addrUndo:{}, exc:{}, dupKeep:{}, shared:{}, miRej:{}, addrMi:{}, riskOk:{}, riskSkip:{}, regSent:{}, acF:''});
+  Object.assign(compose, {desc:'', kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', repF:'', when:'now', sendTime:'09:00', apv:defaultApv(), review:null, tests:[], selRun:null, wl:wlNew(), custom:{}, step:1, stepsOk:new Set(), pvCh:'', tried:new Set(), varOvr:{}, addrFix:{}, addrUndo:{}, exc:{}, dupKeep:{}, shared:{}, miRej:{}, addrMi:{}, addrMeta:{}, riskOk:{}, riskSkip:{}, regSent:{}, acF:''});
   if (full) Object.assign(compose, {aud:'fiz', surveyIdx:0, prio:prioDefault('fiz'), prioManual:false, filt:{},
     f:{...SURVEYS[0], start:isoDate(addDays(3)), deadline:isoDate(addDays(30)), date:isoDate(new Date())}});
   // jaunai kampaņai uzņēmumu statistikā – "Apvienot pēc NMK" ieslēgts (melnrakstā saglabātā izvēle netiek pārrakstīta)
@@ -5979,7 +6000,8 @@ const AL_T = {
   plan:{l:'Ieplānoja nosūtīšanu', c:'nos', i:'calendar'}, unplan:{l:'Atcēla ieplānošanu', c:'nos', i:'calX', k:'warn'}, send:{l:'Nosūtīja', c:'nos', i:'send', k:'pri'},
   remind:{l:'Izveidoja atgādinājumu no šīs kampaņas', c:'nos', i:'bell'},
   fixHand:{l:'Nodeva labošanai', c:'atlase', i:'handoff'},
-  addrUndo:{l:'Atsauca automātisko adreses labojumu', c:'atlase', i:'undo', k:'warn'}, addrRedo:{l:'Atjaunoja automātisko adreses labojumu', c:'atlase', i:'check'},
+  addrUndo:{l:'Atsauca adreses labojumu', c:'atlase', i:'undo', k:'warn'}, addrRedo:{l:'Atjaunoja automātisko adreses labojumu', c:'atlase', i:'check'},
+  addrImport:{l:'Importēja kontaktus', c:'atlase', i:'check'},
   pubWarn:{l:'Turpināja, neskatoties uz brīdinājumu', c:'nos', i:'bell', k:'warn'},
 };
 const AL_SYS = 'Sistēma';
@@ -6445,7 +6467,7 @@ const AC_IC2 = {ok:'<svg class="icon" viewBox="0 0 24 24"><path d="m5 12 5 5 9-1
   bad:'<svg class="icon" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>',
   dup:'<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>'};
 // kartes "Kontaktu kvalitāte" filtru nosaukumi (birka virs respondentu tabulas)
-const ACF_LABELS = {...Object.fromEntries(AC_STATES), nosend:'Netiks nosūtīti', nsout:'Netiks nosūtīti (neiesniegšanas kods)', shared:'Koplietojamas', dup:'Dublikāti', mi:'MI ieteikumi'};
+const ACF_LABELS = {...Object.fromEntries(AC_STATES), nosend:'Netiks nosūtīti', nsout:'Netiks nosūtīti (neiesniegšanas kods)', shared:'Koplietojamas', dup:'Dublikāti', mi:'MI ieteikumi', fix:'Labotas'};
 // izņemts no kampaņas: noņemta atzīme "Iekļaut" vai pievienots izņēmumiem
 const isOut = r => compose.excluded.has(r.id) || !!(compose.exc || {})[r.id] || nsOut(r);
 const EMAIL_KEYS = ['email1', 'email2', 'email3'];
@@ -6473,6 +6495,7 @@ function acMatch(r, f, sm){
   if (f === 'nosend') return printOn() ? noSend(r) : noSend(r) || nsOut(r);
   if (f === 'nsout') return nsOut(r);
   if (f === 'mi') return hasMi(r);
+  if (f === 'fix') return acKeys().some(k => isFixSt(addrCheck(r, k)));
   if (f === 'dup') return hasDup(r);
   if (f === 'shared') return sharedOf(r, sm || sharedMap()).length > 0;
   if (f === 'alt') return usableCount(r) > 1;
@@ -10155,7 +10178,7 @@ function selCheckData(){
   const noAddr = printOn() ? [] : m.filter(r => !isOut(r) && !(addrPlan(r).length));
   const ks = acKeys(), cs = recs.flatMap(r => ks.map(k => addrCheck(r, k)));
   const sm = sharedMap(), shared = [...sm].filter(([, ids]) => ids.some(id => recs.some(r => r.id === id))).length;
-  const warn = {pot:cs.filter(c => c.status === 'pot').length, fixed:cs.filter(c => c.status === 'fixed').length, shared, dup:cs.filter(c => c.status === 'dup').length};
+  const warn = {pot:cs.filter(c => c.status === 'pot').length, fixed:cs.filter(isFixSt).length, shared, dup:cs.filter(c => c.status === 'dup').length};
   return {m, recs, byCh, man, ns, noAddr, warn};
 }
 const selCheckSig = d => JSON.stringify([d.recs.map(r => r.id), d.man.map(r => r.id), d.ns.map(r => r.id), d.warn]);
@@ -10167,7 +10190,7 @@ function acBlocks(target){
     const out = d.man.length + d.ns.length + d.noAddr.length, warnN = Object.values(d.warn).reduce((a, b) => a + b, 0);
     const chs = SC_CH.filter(([k]) => d.byCh[k]).map(([k, l]) => `${l} ${d.byCh[k]}`).join(' · ');
     const names = d.man.slice(0, 5).map(r => `<li><span>${esc(r.name)}</span><button type="button" class="link-btn" data-sc-incl="${esc(r.id)}">Iekļaut atpakaļ</button></li>`).join('');
-    const W = [['pot', 'potenciāli kļūdainas adreses'], ['fixed', 'automātiski labotas'], ['shared', 'koplietojamas adreses'], ['dup', 'dublikāti']].filter(([k]) => d.warn[k]);
+    const W = [['pot', 'potenciāli kļūdainas adreses'], ['fixed', 'labotas adreses'], ['shared', 'koplietojamas adreses'], ['dup', 'dublikāti']].filter(([k]) => d.warn[k]);
     return `<dl class="sc-dl"><dt>Atlasīti</dt><dd><b>${d.m.length}</b></dd>
       <dt>Tiks nosūtīti</dt><dd><b>${d.recs.length}</b>${chs ? ` <span class="muted">– pa kanāliem: ${chs}</span>` : ''}</dd>
       ${out ? `<dt>Netiks nosūtīti</dt><dd><b>${out}</b><ul class="sc-sub">
@@ -10420,16 +10443,17 @@ function renderAcBar(){
   const ks = acKeys(), nDup = rs.reduce((a, r) => a + ks.filter(k => addrCheck(r, k).status === 'dup').length, 0);
   const nShared = [...sm].filter(([, ids]) => ids.some(id => rs.some(r => r.id === id))).length, nPend = sharedPending(sm).length;
   const nMi = rs.reduce((a, r) => a + ks.filter(k => { const c = addrCheck(r, k); return c.status === 'pot' && c.mi; }).length, 0);
+  const nFix = fixList().length;
   const sub = (k, n, txt, title) => `<button type="button" class="q-sub${k === 'shared' && nPend ? ' has-pend' : ''}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${n ? '' : 'disabled'} title="${esc(title)}${n ? ' – filtrēt tabulu' : ''}">${txt} <b>${n}</b></button>`;
   $('#c-ac').innerHTML = `<h4 id="c-q-h"><span class="scope-ic" aria-hidden="true">${ICON.shieldOk}</span>Kontaktu kvalitāte${tip(printOn() ? 'Nederīgās adreses tiks izlaistas – vēstule tiks sūtīta uz nākamo derīgo adresi. “Drukāt” – respondenti bez nevienas derīgas elektroniskās adreses: vēstule tiks izdrukāta un nosūtīta pa pastu.' : 'Nederīgās adreses tiks izlaistas – vēstule tiks sūtīta uz nākamo derīgo adresi. “Netiks nosūtīti” – respondenti bez nevienas derīgas adreses.')}</h4>
     ${eaLater() ? `<p class="q-ea">eAdrese: ${eaLaterHtml()}</p>` : ''}<ul class="q-list" role="group" aria-label="Adrešu kvalitāte (filtrē tabulu)">${AC_STATES.map(([k, l]) => `<li><button type="button" class="q-item q-${k}" data-acf="${k}" aria-pressed="${compose.acF === k}" ${cnt[k] ? '' : 'disabled'} title="${esc(l)}: ${cnt[k]}${cnt[k] ? ' – filtrēt tabulu' : ''}"><span class="q-ic" aria-hidden="true">${AC_IC2[k] || '—'}</span><span class="q-l">${esc(l)}</span><b>${cnt[k]}</b></button></li>`).join('')}</ul>
     ${printOn() ? `<ul class="q-list q-list-ns" role="group" aria-label="Drukāt (filtrē tabulu)"><li><button type="button" class="q-item q-nosend q-print" data-acf="nosend" aria-pressed="${compose.acF === 'nosend'}" ${nNo ? '' : 'disabled'} title="Respondenti bez nevienas derīgas elektroniskās adreses – vēstule tiks izdrukāta un nosūtīta pa pastu: ${nNo}${nNo ? ' – filtrēt tabulu' : ''}">${ICON.print}<span class="q-l">Drukāt:</span><b>${nNo}</b></button></li>${nNs ? `<li><button type="button" class="q-item q-nosend" data-acf="nsout" aria-pressed="${compose.acF === 'nsout'}" title="Netiks nosūtīti – neiesniegšanas kods ar pazīmi “Nav jāsūta vēstules”: ${nNs} – filtrēt tabulu"><span class="q-l">Netiks nosūtīti:</span><b>${nNs}</b></button></li>` : ''}</ul>`
       : `<ul class="q-list q-list-ns" role="group" aria-label="Netiks nosūtīti (filtrē tabulu)"><li><button type="button" class="q-item q-nosend" data-acf="nosend" aria-pressed="${compose.acF === 'nosend'}" ${nNo ? '' : 'disabled'} title="Netiks nosūtīti: ${nNo}${nNs ? ` (neiesniegšanas kods: ${nNs}; bez derīgas adreses: ${nNo - nNs})` : ' – nav nevienas derīgas adreses'}${nNo ? ' – filtrēt tabulu' : ''}"><span class="q-l">Netiks nosūtīti:</span><b>${nNo}</b></button></li></ul>`}
-    <div class="q-auto" role="group" aria-label="Automātiski konstatētais (filtrē tabulu)">${sub('shared', nShared, 'Koplietojamas', `Viena e-pasta adrese vairākiem respondentiem${nPend ? ` – neizvērtētas: ${nPend}` : ''}`)}<span class="q-sep" aria-hidden="true">·</span>${sub('dup', nDup, 'Dublikāti', 'Vienam respondentam vienāda adrese vairākos e-pasta laukos – dublikāts noņemts')}<span class="q-sep" aria-hidden="true">·</span>${sub('mi', nMi, 'MI<span class="q-long"> ieteikumi</span>', 'MI ieteikumi pārrakstīšanās kļūdām')}</div>
-    <div class="q-acts"><button type="button" class="btn btn-secondary btn-sm ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button>${
+    <div class="q-auto" role="group" aria-label="Automātiski konstatētais (filtrē tabulu)">${sub('shared', nShared, 'Koplietojamas', `Viena e-pasta adrese vairākiem respondentiem${nPend ? ` – neizvērtētas: ${nPend}` : ''}`)}<span class="q-sep" aria-hidden="true">·</span>${sub('dup', nDup, 'Dublikāti', 'Vienam respondentam vienāda adrese vairākos e-pasta laukos – dublikāts noņemts')}<span class="q-sep" aria-hidden="true">·</span>${sub('mi', nMi, 'MI<span class="q-long"> ieteikumi</span>', 'MI ieteikumi pārrakstīšanās kļūdām')}${nFix ? `<span class="q-sep" aria-hidden="true">·</span>${sub('fix', nFix, 'Labotas', 'Adreses, kas labotas pēc sākotnējās ielādes (MI, automātiski, manuāli, imports)')}` : ''}</div>
+    <div class="q-acts">${nFix ? `<button type="button" class="link-btn ac-fixlist" data-ac-fixlist aria-haspopup="dialog">Labotās adreses (${nFix})</button>` : ''}<button type="button" class="btn btn-secondary btn-sm ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button>${
       // nederīgās adreses – Respondentu pārvaldībai labošanai (kampaņā tās netiek izmantotas); pēc nodošanas – neaktīva, līdz parādās jaunas
       regPend.length ? `<button type="button" class="btn btn-secondary btn-sm ac-reg" data-ac-reg title="Nederīgās adreses tiks nodotas Respondentu pārvaldībai labošanai. Kampaņā tās netiek izmantotas.">${ICON.edit}Nodot labošanai (${regPend.length})</button>`
-      : `<button type="button" class="btn btn-secondary btn-sm ac-reg" disabled title="${bads.length ? 'Visas nederīgās adreses jau nodotas Respondentu pārvaldībai labošanai.' : 'Nederīgu adrešu nav.'}">${bads.length ? `${ICON.check}Nodots labošanai` : `${ICON.edit}Nodot labošanai (0)`}</button>`}<button type="button" class="btn btn-secondary btn-sm" data-ci-export>${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Eksportēt kontaktus</button>${nNo && !printOn() ? `<button type="button" class="btn btn-secondary btn-sm ac-excl-btn" data-ac-excl>Izņemt bez derīgas adreses (${nNo})</button>` : ''}</div>`;
+      : `<button type="button" class="btn btn-secondary btn-sm ac-reg" disabled title="${bads.length ? 'Visas nederīgās adreses jau nodotas Respondentu pārvaldībai labošanai.' : 'Nederīgu adrešu nav.'}">${bads.length ? `${ICON.check}Nodots labošanai` : `${ICON.edit}Nodot labošanai (0)`}</button>`}<button type="button" class="btn btn-secondary btn-sm" data-ci-export>${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Eksportēt kontaktus</button><button type="button" class="btn btn-secondary btn-sm" data-ci-import aria-haspopup="dialog">${ICON.upload}Importēt kontaktus</button>${nNo && !printOn() ? `<button type="button" class="btn btn-secondary btn-sm ac-excl-btn" data-ac-excl>Izņemt bez derīgas adreses (${nNo})</button>` : ''}</div>`;
   // "Koplietojamas · Dublikāti · MI ieteikumi" – vienā rindā; ja neietilpst – "MI" (pilnais nosaukums padomā)
   { const q = $('#c-ac .q-auto'); if (q){ q.classList.remove('is-short'); if (q.scrollWidth > q.clientWidth + 1) q.classList.add('is-short'); } }
 }
@@ -10459,8 +10483,25 @@ function addrDotState(c, prim){
   if (c.status === 'dup') return {cls:'none', tip:'Dublikāts – noņemts'};
   if (c.status === 'skip') return {cls:'pot', tip:`Netiek izmantota: ${c.shout ? 'koplietojama adrese' : `riskanta adrese${c.risk ? ` (${c.risk})` : ''}`}`};
   if (c.status === 'pot') return {cls:'pot', tip:c.mi ? 'Jāpārskata: MI ieteikums' : c.risk ? `Riskanta adrese: ${c.risk}` : `Jāpārskata${c.msg ? `: ${c.msg}` : ''}`};
-  return {cls:'ok', tip:`Derīga${c.status === 'fixed' ? ' (labota automātiski)' : c.status === 'edit' ? ' (labota)' : ''}${prim ? ' – primārā' : ''}`};
+  return {cls:'ok', fix:isFixSt(c), tip:`Derīga${isFixSt(c) ? ' (labota)' : ''}${prim ? ' – primārā' : ''}`};
 }
+// ===== Versija 198: statuss "Derīga (labota)" – adrese mainīta pēc sākotnējās ielādes (MI ieteikums, automātisks labojums, manuāls labojums, imports) =====
+const isFixSt = c => c.status === 'fixed' || c.status === 'edit';
+const FIX_SRC = {mi:'MI', auto:'Automātiski', edit:'Manuāli', import:'Imports'};
+const ADDR_FIELD = {eadrese:'eaddress', email1:'email', email2:'email2', email3:'email3'};
+// labojuma informācija: avots, kas un kad labojis, sākotnējā adrese
+function fixInfo(c){
+  const m = (compose.addrMeta || {})[c.key] || {};
+  const src = c.status === 'fixed' ? 'auto' : m.src || (c.mi ? 'mi' : 'edit');
+  const at = c.status === 'fixed' ? ((compose.selRun && compose.selRun.at) || compose.createdAt || '') : m.at || '';
+  return {src, srcL:FIX_SRC[src], by:c.status === 'fixed' ? 'Sistēma (adrešu pārbaude)' : m.by || CURRENT_USER, at, orig:m.orig != null ? m.orig : String(c.raw || '').trim(), file:m.file || '', why:c.why || ''};
+}
+const fixWhen = at => at ? fmtShortIso(at) : '';
+const fixTipText = c => { const f = fixInfo(c); return `Labota · ${f.srcL}${f.why ? ` (${f.why.toLowerCase()})` : ''} · ${f.by}${f.at ? `, ${fixWhen(f.at)}` : ''} · Sākotnējā: ${f.orig || '—'}`; };
+const AC_PEN = '<svg viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16z"/></svg>';
+const fixIcon = c => `<span class="ac-fx" aria-hidden="true">${AC_IC2.ok}<span class="ac-pen${fixInfo(c).src === 'mi' ? ' is-mi' : ''}">${fixInfo(c).src === 'mi' ? AC_FLAG_IC.mi : AC_PEN}</span></span>`;
+// labotās adreses kampaņā (iekļautajiem respondentiem, adrešu prioritātē)
+const fixList = () => acActive().flatMap(r => acKeys().map(k => ({r, k, c:addrCheck(r, k)}))).filter(o => isFixSt(o.c));
 function renderComposeList(){
   hideAcTip();
   { const sw = $('#c-show-addr'); if (sw) sw.checked = showAddr(); }
@@ -10482,14 +10523,14 @@ function renderComposeList(){
     const c = addrCheck(r, k), key = c.key;
     if (full && ui.acEdit === key) return `<td class="c-addr">${acEditor(r, k, c)}</td>`;
     const prim = c.usable && primOf(r) === k, st = addrDotState(c, prim), show = (full || showAddr()) && !!c.value;
-    const lbl = c.status === 'dup' ? 'Dublikāts' : AC_SHORT[st.cls];
+    const lbl = c.status === 'dup' ? 'Dublikāts' : st.fix ? 'Derīga (labota)' : AC_SHORT[st.cls];
     const stTip = st.cls === 'pot' ? `Potenciāli kļūdaina – ${st.tip.replace(/^Jāpārskata: |^Jāpārskata$/, '') || 'jāpārskata'}` : st.tip;
     const tip0 = show ? `${c.value} – ${stTip}` : stTip, nm = addrShort(k);
     const tip = c.verified ? `${tip0} (pārbaudīta riskanta adrese)` : tip0;
     const cls = !show ? '' : c.status === 'error' ? 'is-err' : ['dup', 'skip'].includes(c.status) ? 'is-dup' : c.status === 'pot' ? 'is-pot' : c.usable && !prim ? 'is-alt' : '';
     const inner = `<span class="q-dot" aria-hidden="true"></span><span class="ac-tx">${show ? esc(c.value) : esc(lbl)}</span>`;
     // Versija 177: tabulā – vienotais statusu stils (maza ikona + teksts parastā svarā), piezīmes – tikai padomā
-    const inner2 = `${AC_IC2[c.status === 'dup' ? 'dup' : st.cls] || ''}<span class="ac-tx">${show ? esc(c.value) : esc(lbl)}</span>`;
+    const inner2 = `${st.fix ? fixIcon(c) : AC_IC2[c.status === 'dup' ? 'dup' : st.cls] || ''}<span class="ac-tx">${show ? esc(c.value) : esc(lbl)}</span>`;
     const sa = c.usable || c.status === 'pot' ? (c.value || '').toLowerCase() : '';
     if (!full){
       if (c.status === 'empty') return `<td class="c-addr c-addr-st" title="${esc(st.tip)}"><div class="cell1"><span class="muted">—</span></div></td>`;
@@ -10497,15 +10538,15 @@ function renderComposeList(){
       const notes = [c.shout ? `koplietojama – neizmantot šim respondentam${shN ? ` (izmanto ${shN} respondenti)` : ''}` : sa && sm.has(sa) ? `koplietojama ar ${shN} ${plural(shN, 'respondentu', 'respondentiem')}${sharedDec(sa, r.id) ? ` (${SHARED_DEC[sharedDec(sa, r.id)]})` : ' – lēmums nav pieņemts'}` : '',
         c.status === 'pot' && c.mi ? `MI ieteikums: ${c.mi}` : '', c.dupKept ? `dublikāts (= ${c.dupKept}) – saglabāts` : show && c.status === 'dup' ? 'dublikāts' : ''].filter(Boolean);
       // padoms (pele un tastatūra): pati adrese un statuss, piem., "laura.kaleja@pasts.example – Derīga", "_DEFAULT@… (eAdrese) – Derīga", "… – Nederīga: nav domēna"
-      const atip = `${c.value ? `${c.value}${k === 'eadrese' ? ' (eAdrese)' : ''} – ` : ''}${c.status === 'pot' && c.mi ? AC_SHORT.pot : stTip}${c.verified ? ' (pārbaudīta riskanta adrese)' : ''}${notes.length ? ` – ${notes.join(' – ')}` : ''}`;
+      const atip = `${c.value ? `${c.value}${k === 'eadrese' ? ' (eAdrese)' : ''} – ` : ''}${c.status === 'pot' && c.mi ? AC_SHORT.pot : stTip}${c.verified ? ' (pārbaudīta riskanta adrese)' : ''}${notes.length ? ` – ${notes.join(' – ')}` : ''}${st.fix ? `\n${fixTipText(c)}` : ''}`;
       // pazīmes: koplietojama adrese (lēmuma logs), MI ieteikums (apstiprināšana) – mazas pelēkas ikonas, informācija padomā
       const shA = c.shout ? c.value.toLowerCase() : sa && sm.has(sa) ? sa : '', shIds = shA ? (sm.get(shA) || []) : [], shDec = shA ? sharedDec(shA, r.id) : '';
       const shNames = shIds.map(id => (state.respondents.find(x => x.id === id) || {}).name).filter(Boolean);
       const flags = (shA ? `<button type="button" class="ac-flag${shDec ? ' is-dec' : ''}" data-shared="${esc(shA)}" aria-haspopup="dialog" data-actip="${esc(`Koplietojama adrese – izmanto ${shIds.length} ${plural(shIds.length, 'respondents', 'respondenti')}: ${shNames.join(', ')}${shDec ? `\nLēmums: ${SHARED_DEC[shDec]}` : '\nLēmums nav pieņemts – uzklikšķiniet, lai izvērtētu'}`)}" aria-label="${esc(nm)}: koplietojama adrese${shDec ? ` (lēmums: ${SHARED_DEC[shDec]})` : ''} – atvērt lēmumu">${AC_FLAG_IC.shared}${shDec ? '<span class="ac-flag-ok" aria-hidden="true">✓</span>' : ''}</button>` : '')
         + (c.status === 'pot' && c.mi ? `<button type="button" class="ac-flag" data-mi-open="${esc(key)}" aria-haspopup="dialog" data-actip="${esc(`MI ieteikums: ${c.mi}${c.rej ? ' (noraidīts)' : ''}\nUzklikšķiniet, lai apstiprinātu vai noraidītu`)}" aria-label="${esc(nm)}: MI ieteikums ${esc(c.mi)} – apstiprināt">${AC_FLAG_IC.mi}</button>` : '');
-      if (c.status === 'fixed' && !ui.view)
-        return `<td class="c-addr${show ? '' : ' c-addr-st'}"><div class="cell1"><button type="button" class="ac-val ac-st ac-v2 ac-fixed q-${st.cls} ${cls}" data-ac-lab="${key}" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(nm)}: ${esc(atip)} – sākotnējā adrese un atsaukšana">${inner2}</button>${flags}</div></td>`;
-      return `<td class="c-addr${show ? '' : ' c-addr-st'}"><div class="cell1"><span class="ac-val ac-st ac-v2 q-${c.status === 'dup' ? 'dup' : st.cls} ${cls}" tabindex="0" data-actip="${esc(atip)}" aria-label="${esc(nm)}: ${esc(atip)}">${inner2}</span>${flags}</div></td>`;
+      if (st.fix && !ui.view)
+        return `<td class="c-addr${show ? '' : ' c-addr-st'}"><div class="cell1"><button type="button" class="ac-val ac-st ac-v2 ac-fixed q-${st.cls} q-fix ${cls}" data-ac-lab="${key}" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(nm)}: ${esc(atip)} – sākotnējā adrese un atsaukšana">${inner2}</button>${flags}</div></td>`;
+      return `<td class="c-addr${show ? '' : ' c-addr-st'}"><div class="cell1"><span class="ac-val ac-st ac-v2 q-${c.status === 'dup' ? 'dup' : st.cls}${st.fix ? ' q-fix' : ''} ${cls}" tabindex="0" data-actip="${esc(atip)}" aria-label="${esc(nm)}: ${esc(atip)}">${inner2}</span>${flags}</div></td>`;
     }
     const rk = c.status === 'pot' && c.risk;
     const main = ['dup', 'skip'].includes(c.status) ? `<span class="ac-val ac-st q-${st.cls} ${cls}" title="${esc(tip)}">${inner}</span>`
@@ -10513,7 +10554,7 @@ function renderComposeList(){
       : `<button type="button" class="ac-val ac-st q-${st.cls} ${cls}" data-ac-edit="${key}" title="${esc(tip)} – ${c.value ? 'labot' : 'pievienot'}" aria-label="${c.value ? 'Labot' : 'Pievienot'} ${esc(nm)}: ${esc(stTip)}">${inner}</button>`;
     const link = (attr, txt, t) => `<button type="button" class="link-btn ac-lnk" ${attr}="${key}" title="${esc(t)}" aria-label="${esc(nm)}: ${esc(t)}">${txt}</button>`;
     const acts = [];
-    if (c.status === 'fixed' || c.status === 'edit') acts.push(`<button type="button" class="ac-lab${c.mi ? ' is-mi' : ''}" data-ac-lab="${key}" aria-expanded="false" aria-haspopup="dialog" aria-label="${c.mi ? 'Labots (MI)' : 'Labots'}: ${esc(nm)}${c.status === 'fixed' ? ' (automātiski)' : ''} – sākotnējā vērtība un Atsaukt">${c.mi ? '✨ Labots' : 'Labots'}</button>`);
+    if (c.status === 'fixed' || c.status === 'edit') acts.push(`<button type="button" class="ac-lab${c.mi ? ' is-mi' : ''}" data-ac-lab="${key}" aria-expanded="false" aria-haspopup="dialog" aria-label="Derīga (labota): ${esc(nm)} · ${esc(fixInfo(c).srcL)} – sākotnējā vērtība un Atsaukt">${fixInfo(c).src === 'mi' ? '✨ Labota' : 'Labota'}</button>`);
     if (c.undone) acts.push(link('data-ac-redo', 'Atjaunot labojumu', `Atjaunot automātisko labojumu: ${c.fixedVal || ''}`));
     if (c.status === 'error' && c.src === 'edit') acts.push(link('data-ac-reset', 'Atsaukt', 'Atsaukt labojumu'));
     if (c.status === 'dup') acts.push(link('data-ac-dupundo', 'Atsaukt', `${c.msg || 'Dublikāts noņemts'} – atsaukt`));
@@ -14858,7 +14899,7 @@ const actions = {
       message:'Visas veidnes, nemainīgā informācija, respondentu dati, kampaņas un komunikācijas vēsture tiks aizstāta ar sākotnējiem testa datiem.'});
     if (!ok) return;
     state = seedData(); state.drafts = []; state.planned = [];
-    newSession(true); seedPostAddr(); seedHistory(); assignCreators(); seedApvData(state); seedApvDrafts(); seedCampStates(); seedPrint(); seedNameSfx(); state.nameSfxV = 1; migrateDocNr(); state.docNrV = 2; addCoverSamples(state); state.msCoverV = 1; save();
+    newSession(true); seedPostAddr(); seedHistory(); assignCreators(); seedApvData(state); seedApvDrafts(); seedCampStates(); seedFixDemo(); seedPrint(); seedNameSfx(); state.nameSfxV = 1; migrateDocNr(); state.docNrV = 2; addCoverSamples(state); state.msCoverV = 1; save();
     ui.campView = 'list';
     renderAll(); showTab(ui.tab === 'veidnes' ? 'veidnes' : ui.tab === 'vesture' ? 'vesture' : 'kampanas'); toast('Testa dati atjaunoti.');
   },
@@ -15322,19 +15363,9 @@ const acChanged = () => { compose.index = 0; renderComposeList(); renderComposeP
 $('#c-ac').addEventListener('click', e => {
   const f = e.target.closest('[data-acf]');
   if (f){ compose.acF = compose.acF === f.dataset.acf ? '' : f.dataset.acf; renderComposeList(); const b = $(`#c-ac [data-acf="${f.dataset.acf}"]`); if (b) b.focus(); return; }
-  if (e.target.closest('[data-ac-recheck]')){
-    // ~1 s "Pārbauda…", pēc tam atjauno skaitītājus un tabulu un īsi paziņo (pārbaudes laiks netiek rādīts)
-    if (ui.acBusy) return;
-    const id = ui.acBusy = compose.draftId; renderAcBar();
-    setTimeout(() => {
-      ui.acBusy = '';
-      if (compose.draftId !== id) return;
-      renderComposeList();
-      const b = $('#c-ac [data-ac-recheck]'); if (b) b.focus();
-      toast('Adreses pārbaudītas');
-    }, 1000);
-    return;
-  }
+  if (e.target.closest('[data-ac-recheck]')){ acRecheck(); return; }
+  if (e.target.closest('[data-ac-fixlist]')){ openFixList(); return; }
+  if (e.target.closest('[data-ci-import]')){ openImport(); return; }
   if (e.target.closest('[data-ac-excl]')) acExclude();
   if (e.target.closest('[data-ac-reg]')){
     // simulācija: uzdevums kontaktu aktualizēšanai Respondentu pārvaldībā; kampaņā adreses netiek dzēstas
@@ -15346,6 +15377,167 @@ $('#c-ac').addEventListener('click', e => {
   }
   if (e.target.closest('[data-ci-export]')) exportContacts();
 });
+// adrešu pārbaude: ~1 s "Pārbauda…", pēc tam atjauno skaitītājus un tabulu un īsi paziņo (pārbaudes laiks netiek rādīts)
+function acRecheck(msg = 'Adreses pārbaudītas', focus = true){
+  if (ui.acBusy) return;
+  const id = ui.acBusy = compose.draftId; renderAcBar();
+  setTimeout(() => {
+    ui.acBusy = '';
+    if (compose.draftId !== id) return;
+    renderComposeList();
+    if (focus){ const b = $('#c-ac [data-ac-recheck]'); if (b) b.focus(); }
+    toast(msg);
+  }, 1000);
+}
+// ===== Versija 198: kontaktu imports (veidne → fails → kolonnas → priekšskatījums → imports) =====
+const IMP_COLS = [['uuk', 'UUK'], ['nmk', 'NMK'], ['name', 'Nosaukums'], ['email1', 'E-pasts 1'], ['email2', 'E-pasts 2'], ['email3', 'E-pasts 3']];
+const IMP_KEYS = ['email1', 'email2', 'email3'];
+const csvQ = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
+function dlCsv(rows, name){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + rows.map(x => x.map(csvQ).join(';')).join('\r\n')], {type:'text/csv;charset=utf-8'}));
+  a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+}
+const impResp = () => state.respondents.filter(matchesFilt);
+function impTemplate(){
+  const rows = [IMP_COLS.map(c => c[1]), ...impResp().map(r => [r.uuk || '', r.nmk || '', r.name, ...IMP_KEYS.map(k => String(ADDR_TYPES[k].get(r) || '').trim())])];
+  rows.push(['Varat aizpildīt tikai vajadzīgās kolonnas. Tukša šūna adresi nemaina.']);
+  dlCsv(rows, `kontaktu_imports_${safeFileName(compose.name || 'kampana').replace(/\.[a-z]+$/i, '')}.csv`);
+  toast('Lejupielādēta veidne ar pašreizējām adresēm.');
+}
+// prototipā: simulēts fails – 5–8 izmaiņas (mainīti E-pasti 1, jauni E-pasti 2), 1 kļūdains e-pasts un 1 nezināms UUK; E-pasts 3 – tukšs
+function impSample(){
+  const rs = impResp(), dom = r => { const e = String(r.email || r.email2 || '').trim().toLowerCase(), d = e.split('@')[1]; return d && /\./.test(d) ? d : `${(r.nmk || r.id).replace(/\D/g, '').slice(-6) || 'resp'}.example`; };
+  const rows = rs.map(r => ({uuk:r.uuk || '', nmk:r.nmk || '', name:r.name, email1:String(r.email || '').trim(), email2:'', email3:''}));
+  const used = new Set(), pick = (fn, n) => rs.filter(r => !used.has(r.id) && fn(r)).slice(0, n).map(r => { used.add(r.id); return rows[rs.indexOf(r)]; });
+  pick(r => addrCheck(r, 'email1').status === 'ok', 3).forEach((x, i) => { x.email1 = `${['dati', 'statistika', 'parskati'][i]}@${dom(rs.find(r => r.name === x.name))}`; });
+  pick(r => !String(r.email || '').trim(), 1).forEach(x => { x.email1 = `kontakti@${dom(rs.find(r => r.name === x.name))}`; });
+  pick(r => !String(r.email2 || '').trim(), 2).forEach(x => { x.email2 = `atskaites@${dom(rs.find(r => r.name === x.name))}`; });
+  if (!rows.some(x => x.email2)) pick(r => addrCheck(r, 'email2').status === 'error', 2).forEach(x => { x.email2 = `atskaites@${dom(rs.find(r => r.name === x.name))}`; });
+  pick(r => true, 1).forEach(x => { x.email1 = `gramatvediba@@${dom(rs.find(r => r.name === x.name))}`; });
+  rows.push({uuk:'90000099999', nmk:'40000099999', name:'SIA “Ziemeļu Testa Serviss”', email1:'info@ziemelu-serviss.example', email2:'', email3:''});
+  return {name:'kontakti_atjaunoti.xlsx', rows};
+}
+// CSV faila nolasīšana (atdalītājs ; , vai tab; virsraksti – kā veidnē)
+function impParse(text){
+  const lines = String(text).replace(/^﻿/, '').split(/\r?\n/).filter(l => l.trim());
+  if (!lines.length) return [];
+  const d = [';', '\t', ','].find(x => lines[0].includes(x)) || ';';
+  const cells = l => { const out = []; let cur = '', q = false; for (let i = 0; i < l.length; i++){ const ch = l[i];
+    if (q){ if (ch === '"' && l[i + 1] === '"'){ cur += '"'; i++; } else if (ch === '"') q = false; else cur += ch; }
+    else if (ch === '"') q = true; else if (ch === d){ out.push(cur); cur = ''; } else cur += ch; } out.push(cur); return out; };
+  const nk = h => { const x = norm(h).replace(/[\s-]+/g, ''); return x === 'uuk' ? 'uuk' : x === 'nmk' ? 'nmk' : /nosauk/.test(x) ? 'name' : /pasts1|email1/.test(x) ? 'email1' : /pasts2|email2/.test(x) ? 'email2' : /pasts3|email3/.test(x) ? 'email3' : ''; };
+  const head = cells(lines[0]).map(nk);
+  return lines.slice(1).map(l => { const c = cells(l), o = {}; head.forEach((k, i) => { if (k) o[k] = (c[i] || '').trim(); }); return o; }).filter(o => o.uuk || o.nmk);
+}
+function impPreview(f){
+  const cnt = {nw:0, ch:0, same:0, err:0}, items = [], rs = impResp();
+  f.rows.forEach(row => {
+    const r = rs.find(x => row.uuk ? String(x.uuk || '') === row.uuk : row.nmk && String(x.nmk || '') === row.nmk);
+    const vals = f.cols.filter(k => (row[k] || '').trim());
+    if (!r){ if (vals.length){ cnt.err++; items.push({err:'Respondents nav atlasē (nezināms UUK)', name:row.name || row.uuk || row.nmk, sub:row.uuk ? `UUK ${row.uuk}` : `NMK ${row.nmk}`, k:vals[0], cur:'', nv:row[vals[0]]}); } return; }
+    vals.forEach(k => {
+      const v = row[k].trim(), cur = addrCheck(r, k).value || String(ADDR_TYPES[k].get(r) || '').trim();
+      if (cur && cur.toLowerCase() === v.toLowerCase()){ cnt.same++; return; }
+      const vr = validateAddr(k, v);
+      if (vr.status === 'error'){ cnt.err++; items.push({err:`Nederīgs formāts: ${vr.msg.replace(/^./, x => x.toLowerCase())}`, r, name:r.name, k, cur, nv:v}); return; }
+      const kind = cur ? 'ch' : 'nw'; cnt[kind]++; items.push({r, name:r.name, k, cur, nv:vr.value, kind});
+    });
+  });
+  return {cnt, items, ok:items.filter(x => !x.err)};
+}
+function openImport(){
+  ui.imp = {file:null, cols:[], toResp:false};
+  const body = () => {
+    const f = ui.imp.file, pv = f ? impPreview({...f, cols:ui.imp.cols}) : null;
+    return `<div class="imp">
+      <section class="imp-s"><h4>1. Veidne</h4><div class="imp-row"><button type="button" class="btn btn-secondary btn-sm" data-imp-tpl>${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Lejupielādēt veidni</button><span class="hint">Kolonnas: UUK, NMK, Nosaukums, E-pasts 1, E-pasts 2, E-pasts 3 – aizpildītas ar pašreizējām vērtībām. Varat aizpildīt tikai vajadzīgās kolonnas.</span></div></section>
+      <section class="imp-s"><h4>2. Fails</h4><div class="imp-row"><input type="file" id="imp-file" accept=".csv,.xlsx,.xls" aria-label="Izvēlēties failu (CSV vai Excel)"><button type="button" class="btn btn-secondary btn-sm" data-imp-sample>Izmantot parauga failu</button>${f ? `<span class="muted">Fails: <b>${esc(f.name)}</b> · ${f.rows.length} ${plural(f.rows.length, 'rinda', 'rindas')}</span>` : '<span class="hint">Prototipā – parauga fails ar izmaiņām</span>'}</div></section>
+      ${f ? `<section class="imp-s"><h4>3. Kuras adreses atjaunināt</h4><div class="imp-cols">${IMP_KEYS.map(k => `<label><input type="checkbox" data-imp-col="${k}"${ui.imp.cols.includes(k) ? ' checked' : ''}> ${esc(addrShort(k))}${f.rows.some(r => (r[k] || '').trim()) ? '' : ' <span class="muted">(failā tukša)</span>'}${compose.prio.includes(k) ? '' : ' <span class="muted">(nav kampaņas adrešu prioritātē)</span>'}</label>`).join('')}</div></section>
+      <section class="imp-s"><h4>4. Priekšskatījums</h4><p class="imp-cnt">Jaunas <b>${pv.cnt.nw}</b> · Mainītas <b>${pv.cnt.ch}</b> · Bez izmaiņām <b>${pv.cnt.same}</b> · Kļūdas <b>${pv.cnt.err}</b></p>
+        ${pv.items.length ? `<div class="table-card tc-modal"><div class="table-wrap tc-area"><table class="rep-table imp-table"><thead><tr><th>Respondents</th><th>Adrese</th><th>Pašreizējā → Jaunā</th><th>Izmaiņa</th></tr></thead><tbody>
+          ${pv.items.map(x => `<tr${x.err ? ' class="imp-err"' : ''}><td><b>${esc(x.name)}</b>${x.sub ? `<span class="cell-sub">${esc(x.sub)}</span>` : ''}</td><td>${esc(addrShort(x.k))}</td><td><span class="mono">${esc(x.cur || '—')}</span><span class="imp-arr" aria-hidden="true">→</span><span class="mono">${esc(x.nv || '—')}</span></td>
+            <td>${x.err ? `<span class="imp-kind is-err">Kļūda</span> ${esc(x.err)} – netiks importēta` : `<span class="imp-kind">${x.kind === 'nw' ? 'Jauna' : 'Mainīta'}</span>`}</td></tr>`).join('')}</tbody></table></div></div>` : '<p class="hint">Izvēlētajās kolonnās izmaiņu nav.</p>'}
+        <label class="imp-resp"><input type="checkbox" id="imp-resp"${ui.imp.toResp ? ' checked' : ''}> Atjaunināt arī respondenta kontaktos (Respondentu pārvaldība)</label></section>` : ''}
+    </div>`;
+  };
+  const okN = () => ui.imp.file ? impPreview({...ui.imp.file, cols:ui.imp.cols}).ok.length : 0;
+  const {el} = openModal({title:'Importēt kontaktus', wide:true, content:body(), actions:[{label:'Atcelt'}, {label:'Importēt adreses', cls:'btn-primary', onClick:c => { if (impApply()) c(); }}]});
+  const foot = () => { const b = $$('.modal-foot [data-act]', el)[1]; if (b){ const n = okN(); b.disabled = !n; b.textContent = `Importēt ${n} ${plural(n, 'adresi', 'adreses')}`; } };
+  const redraw = () => { const y = $('.modal-body', el).scrollTop; $('.modal-body', el).innerHTML = body(); $('.modal-body', el).scrollTop = y; foot(); };
+  const setFile = f => { ui.imp.file = f; ui.imp.cols = IMP_KEYS.filter(k => f.rows.some(r => (r[k] || '').trim())); redraw(); };
+  foot();
+  const mb = $('.modal-body', el);
+  mb.addEventListener('click', e => {
+    if (e.target.closest('[data-imp-tpl]')) impTemplate();
+    if (e.target.closest('[data-imp-sample]')) setFile(impSample());
+  });
+  mb.addEventListener('change', e => {
+    const col = e.target.closest('[data-imp-col]');
+    if (col){ const k = col.dataset.impCol; ui.imp.cols = col.checked ? IMP_KEYS.filter(x => x === k || ui.imp.cols.includes(x)) : ui.imp.cols.filter(x => x !== k); redraw(); const n = $(`[data-imp-col="${k}"]`, el); if (n) n.focus(); return; }
+    if (e.target.id === 'imp-resp'){ ui.imp.toResp = e.target.checked; return; }
+    if (e.target.id === 'imp-file' && e.target.files[0]){
+      const file = e.target.files[0];
+      if (/\.csv$/i.test(file.name)) file.text().then(t => { const rows = impParse(t); if (!rows.length){ toast('Failā nav atrasta neviena rinda ar UUK vai NMK.', true); return; } setFile({name:file.name, rows}); });
+      else { toast('Prototipā Excel faila saturs netiek nolasīts – izmantots parauga fails.'); setFile({...impSample(), name:file.name}); }
+    }
+  });
+}
+function impApply(){
+  const f = ui.imp && ui.imp.file; if (!f) return false;
+  const pv = impPreview({...f, cols:ui.imp.cols}), at = new Date().toISOString(), toResp = ui.imp.toResp;
+  if (!pv.ok.length) return false;
+  compose.addrFix = compose.addrFix || {}; compose.addrMeta = compose.addrMeta || {};
+  pv.ok.forEach(x => {
+    const r = x.r, k = x.k, key = `${r.id}|${k}`, orig = String(ADDR_TYPES[k].get(r) || '').trim();
+    compose.addrFix[r.id] = {...(compose.addrFix[r.id] || {}), [k]:x.nv};
+    if (compose.addrMi) delete compose.addrMi[key]; delete (compose.addrUndo || {})[key];
+    compose.addrMeta[key] = {src:'import', by:CURRENT_USER, at, orig, file:f.name, ...(toResp ? {resp:true} : {})};
+    if (toResp){ r[ADDR_FIELD[k]] = x.nv; if (k === 'email3'){ r.email3By = CURRENT_USER; r.email3At = at; } }
+    if (k === 'email3' && !compose.prio.includes('email3')){ const i = compose.prio.indexOf(''); if (i > 0){ compose.prio[i] = 'email3'; renderPrio(); } }
+  });
+  if (toResp){ save(); refreshCard(); }
+  alAddC('addrImport', `${alCnt(pv.ok.length, 'adrese', 'adreses')} no faila “${f.name}” (jaunas ${pv.cnt.nw}, mainītas ${pv.cnt.ch}; kļūdas – netika importētas: ${pv.cnt.err})${toResp ? ' · atjauninātas arī respondentu kontaktos' : ''}`);
+  acChanged(); saveDraft();
+  // pēc importa – adrešu pārbaude automātiski
+  acRecheck(`Importētas ${pv.ok.length} ${plural(pv.ok.length, 'adrese', 'adreses')}; adreses pārbaudītas${pv.cnt.err ? ` (kļūdainas rindas netika importētas: ${pv.cnt.err})` : ''}.`, false);
+  return true;
+}
+// ===== Versija 198: logs "Labotās adreses" =====
+function openFixList(){
+  ui.fx = {src:'', sel:new Set()};
+  const rows = () => fixList().map(o => ({...o, key:o.c.key, fi:fixInfo(o.c)})).filter(o => !ui.fx.src || o.fi.src === ui.fx.src);
+  const body = () => {
+    const all = fixList().map(o => fixInfo(o.c).src), L = rows(); ui.fx.sel = new Set([...ui.fx.sel].filter(k => L.some(o => o.key === k)));
+    const allSel = L.length && L.every(o => ui.fx.sel.has(o.key));
+    return `<div class="fx-bar"><div class="seg" role="group" aria-label="Avots">${[['', 'Visi'], ...Object.entries(FIX_SRC)].map(([k, l]) => `<button type="button" data-fx-src="${k}" aria-pressed="${ui.fx.src === k}">${esc(l)} <span class="muted">${k ? all.filter(x => x === k).length : all.length}</span></button>`).join('')}</div>
+      <div class="imp-row"><button type="button" class="btn btn-secondary btn-sm" data-fx-undo-sel${ui.fx.sel.size ? '' : ' disabled'}>Atsaukt atlasītos${ui.fx.sel.size ? ` (${ui.fx.sel.size})` : ''}</button><button type="button" class="btn btn-secondary btn-sm" data-fx-export>${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Eksportēt</button></div></div>
+      ${L.length ? `<div class="table-card tc-modal"><div class="table-wrap tc-area"><table class="rep-table fx-table"><thead><tr><th class="fx-chk"><input type="checkbox" data-fx-all aria-label="Atlasīt visas"${allSel ? ' checked' : ''}></th><th>Respondents</th><th>Adrese</th><th>Sākotnējā</th><th>Labotā</th><th>Avots</th><th>Laboja</th><th>Laiks</th><th><span class="sr-only">Darbības</span></th></tr></thead><tbody>
+        ${L.map(o => `<tr><td class="fx-chk"><input type="checkbox" data-fx="${esc(o.key)}" aria-label="Atlasīt: ${esc(o.r.name)}, ${esc(addrShort(o.k))}"${ui.fx.sel.has(o.key) ? ' checked' : ''}></td><td><b>${esc(o.r.name)}</b></td><td>${esc(addrShort(o.k))}</td>
+          <td><span class="mono">${esc(o.fi.orig || '—')}</span></td><td><span class="mono">${esc(o.c.value)}</span></td><td>${esc(o.fi.srcL)}${o.fi.why ? `<span class="cell-sub">${esc(o.fi.why)}</span>` : ''}</td><td>${esc(o.fi.by)}</td><td>${esc(fixWhen(o.fi.at) || '—')}</td>
+          <td><button type="button" class="link-btn" data-fx-undo="${esc(o.key)}">Atsaukt</button></td></tr>`).join('')}</tbody></table></div></div>`
+      : `<p class="hint">${fixList().length ? 'Ar šo avotu labotu adrešu nav.' : 'Labotu adrešu nav.'}</p>`}`;
+  };
+  const {el, close} = openModal({title:'Labotās adreses', wide:true, info:'Adreses, kas mainītas pēc sākotnējās ielādes: MI ieteikums, automātisks labojums, manuāls labojums vai imports. Atsaucot – atjaunota sākotnējā adrese un iepriekšējais statuss; darbība tiek reģistrēta darbību vēsturē.', content:body(), actions:[{label:'Aizvērt', cls:'btn-primary'}]});
+  const redraw = focusSel => { $('.modal-body', el).innerHTML = body(); const f = focusSel && $(focusSel, el); if (f) f.focus(); };
+  const undo = keys => { const n = fixRevert(keys); keys.forEach(k => ui.fx.sel.delete(k)); if (n) toast(`${n === 1 ? 'Labojums atsaukts' : `Atsaukti ${n} labojumi`} – atjaunotas sākotnējās adreses.`);
+    if (!fixList().length){ close(); return; } redraw('[data-fx-undo]'); };
+  const mb = $('.modal-body', el);
+  mb.addEventListener('click', e => {
+    const s = e.target.closest('[data-fx-src]'); if (s){ ui.fx.src = s.dataset.fxSrc; redraw(`[data-fx-src="${s.dataset.fxSrc}"]`); return; }
+    const u = e.target.closest('[data-fx-undo]'); if (u){ undo([u.dataset.fxUndo]); return; }
+    if (e.target.closest('[data-fx-undo-sel]')){ undo([...ui.fx.sel]); return; }
+    if (e.target.closest('[data-fx-export]')){
+      dlCsv([['Respondents', 'NMK', 'Adrese', 'Sākotnējā', 'Labotā', 'Avots', 'Laboja', 'Laiks'], ...rows().map(o => [o.r.name, o.r.nmk || '', addrShort(o.k), o.fi.orig, o.c.value, o.fi.srcL + (o.fi.why ? ` (${o.fi.why})` : ''), o.fi.by, o.fi.at ? fmtDateTime(o.fi.at) : ''])],
+        `labotas_adreses_${safeFileName(compose.name || 'kampana').replace(/\.[a-z]+$/i, '')}.csv`);
+      toast('Eksportēts laboto adrešu saraksts.');
+    }
+  });
+  mb.addEventListener('change', e => {
+    const a = e.target.closest('[data-fx-all]'); if (a){ rows().forEach(o => a.checked ? ui.fx.sel.add(o.key) : ui.fx.sel.delete(o.key)); redraw('[data-fx-all]'); return; }
+    const c = e.target.closest('[data-fx]'); if (c){ c.checked ? ui.fx.sel.add(c.dataset.fx) : ui.fx.sel.delete(c.dataset.fx); redraw(`[data-fx="${c.dataset.fx}"]`); }
+  });
+}
 // "Izņemt nederīgos": respondenti, kuriem jālabo adreses vai nav adreses (ar apstiprinājumu)
 async function acExclude(){
   const xs = acNoSend(), n = xs.length;
@@ -15375,7 +15567,7 @@ function acSave(key){
     if (k === 'email3'){ r.email3By = v ? CURRENT_USER : ''; r.email3At = v ? new Date().toISOString() : ''; }
     if (compose.addrFix[rid]) delete compose.addrFix[rid][k];
     save(); refreshCard();
-  } else compose.addrFix[rid] = {...(compose.addrFix[rid] || {}), [k]: v};
+  } else { compose.addrFix[rid] = {...(compose.addrFix[rid] || {}), [k]: v}; compose.addrMeta = {...(compose.addrMeta || {}), [key]:{src:'edit', by:CURRENT_USER, at:new Date().toISOString(), orig:String(ADDR_TYPES[k].get(r) || '').trim()}}; if (compose.addrMi) delete compose.addrMi[key]; }
   // manuālais e-pasts tiek izmantots tikai tad, ja tas ir kādā prioritātē
   if (k === 'email3' && v && !compose.prio.includes('email3')){ const i = compose.prio.indexOf(''); if (i > 0){ compose.prio[i] = 'email3'; renderPrio(); } }
   ui.acEdit = '';
@@ -15399,7 +15591,29 @@ function acRedo(key){
   alAddC('addrRedo', `${r ? r.name + ', ' : ''}${addrShort(k)}`);
   acChanged(); saveDraft(); toast('Labojums atjaunots');
 }
-function acReset(key){ hideAcPop(); const [rid, k] = key.split('|'); if (compose.addrFix && compose.addrFix[rid]) delete compose.addrFix[rid][k]; if (compose.addrMi) delete compose.addrMi[key]; acChanged(); const el = $(`#c-list [data-ac-edit="${key}"]`); if (el) el.focus(); toast('Labojums atsaukts – atjaunota sākotnējā vērtība.'); }
+function acReset(key){ hideAcPop(); fixRevert([key]); const el = $(`#c-list [data-ac-edit="${key}"], #c-list [data-ac-lab="${key}"]`); if (el) el.focus(); toast('Labojums atsaukts – atjaunota sākotnējā adrese.'); }
+// labojuma atsaukšana (viens vai vairāki): automātiskais – sākotnējā adrese ("labojums atsaukts"); MI / manuāls / imports – sākotnējā adrese un iepriekšējais statuss
+function fixRevert(keys){
+  const parts = [];
+  keys.forEach(key => {
+    const [rid, k] = key.split('|'), r = state.respondents.find(x => x.id === rid); if (!r) return;
+    const c = addrCheck(r, k); if (!isFixSt(c) && !(c.src === 'edit' && c.status === 'error')) return;
+    const fi = fixInfo(c);
+    if (c.status === 'fixed') compose.addrUndo = {...(compose.addrUndo || {}), [key]:true};
+    else {
+      const m = (compose.addrMeta || {})[key];
+      if (m && m.resp){ r[ADDR_FIELD[k]] = m.orig || ''; save(); }
+      if (compose.addrFix && compose.addrFix[rid]) delete compose.addrFix[rid][k];
+      if (compose.addrMi) delete compose.addrMi[key];
+    }
+    if (compose.addrMeta) delete compose.addrMeta[key];
+    parts.push(`${r.name}, ${addrShort(k)}: ${c.value} → ${fi.orig || '—'} (${fi.srcL})`);
+  });
+  if (!parts.length) return 0;
+  alAddC('addrUndo', parts.length === 1 ? parts[0] : `${alCnt(parts.length, 'adrese', 'adreses')}: ${parts.slice(0, 3).join('; ')}${parts.length > 3 ? ' u. c.' : ''}`);
+  acChanged(); saveDraft();
+  return parts.length;
+}
 // birka "Labots": uznirstošais logs ar sākotnējo vērtību un pogu "Atsaukt" (uzbraucot ar peli vai uzklikšķinot)
 let acPopBtn = null, acPopT = null;
 function hideAcPop(focusBtn){
@@ -15412,7 +15626,7 @@ function showAcPop(btn, focus){
   const key = btn.dataset.acLab, [rid, k] = key.split('|'), r = state.respondents.find(x => x.id === rid);
   if (!r) return;
   const c = addrCheck(r, k);
-  if (c.status !== 'fixed' && c.status !== 'edit') return;
+  if (!isFixSt(c)) return;
   let pop = $('#ac-pop');
   if (!pop){
     pop = document.createElement('div'); pop.id = 'ac-pop'; pop.className = 'ac-pop'; pop.setAttribute('role', 'dialog'); pop.hidden = true; document.body.appendChild(pop);
@@ -15424,11 +15638,10 @@ function showAcPop(btn, focus){
   }
   if (acPopBtn && acPopBtn !== btn) acPopBtn.setAttribute('aria-expanded', 'false');
   pop.setAttribute('aria-label', `Labots: ${addrShort(k)}`);
-  pop.innerHTML = c.status === 'fixed'
-    ? `<p><small>Derīga (labota automātiski)${c.why ? ` – ${esc(c.why.toLowerCase())}` : ''}</small>Sākotnējā: <b>${esc(c.raw.trim() ? c.raw.trim() : '—')}</b> → Labotā: <b>${esc(c.value)}</b></p>
-    <button type="button" class="link-btn ac-pop-undo" data-pop-undo="${key}">Atsaukt labojumu</button>`
-    : `<p><small>${c.mi ? 'Labots pēc MI ieteikuma' : 'Labots manuāli'}</small>Sākotnējā vērtība: <b>${esc(c.raw.trim() ? c.raw : '—')}</b></p>
-    <button type="button" class="btn btn-secondary btn-sm" data-pop-reset="${key}">Atsaukt</button>`;
+  // Versija 198: "Labota · avots · kas, kad · Sākotnējā" un "Atsaukt labojumu" (visiem avotiem vienādi)
+  const fi = fixInfo(c);
+  pop.innerHTML = `<p><small>Derīga (labota)</small>Labota · ${esc(fi.srcL)}${fi.why ? ` (${esc(fi.why.toLowerCase())})` : ''} · ${esc(fi.by)}${fi.at ? `, ${esc(fixWhen(fi.at))}` : ''}${fi.file ? `<br><span class="muted">Fails: ${esc(fi.file)}</span>` : ''}<br>Sākotnējā: <b>${esc(fi.orig || '—')}</b> → Labotā: <b>${esc(c.value)}</b></p>
+    <button type="button" class="link-btn ac-pop-undo" data-${c.status === 'fixed' ? 'pop-undo' : 'pop-reset'}="${key}">Atsaukt labojumu</button>`;
   pop.hidden = false; acPopBtn = btn; btn.setAttribute('aria-expanded', 'true');
   const rc = btn.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
   pop.style.left = Math.max(8, Math.min(rc.left, innerWidth - w - 8)) + 'px';
@@ -15567,7 +15780,8 @@ function exportContacts(){
 function miDecide(key, ok){
   const [rid, k] = key.split('|'), r = state.respondents.find(x => x.id === rid), c = r && addrCheck(r, k);
   if (!c || !c.mi) return;
-  if (ok){ compose.addrFix = compose.addrFix || {}; compose.addrFix[rid] = {...(compose.addrFix[rid] || {}), [k]:c.mi}; compose.addrMi = {...(compose.addrMi || {}), [key]:true}; delete (compose.miRej || {})[key]; }
+  if (ok){ compose.addrFix = compose.addrFix || {}; compose.addrFix[rid] = {...(compose.addrFix[rid] || {}), [k]:c.mi}; compose.addrMi = {...(compose.addrMi || {}), [key]:true}; delete (compose.miRej || {})[key];
+    compose.addrMeta = {...(compose.addrMeta || {}), [key]:{src:'mi', by:CURRENT_USER, at:new Date().toISOString(), orig:String(ADDR_TYPES[k].get(r) || '').trim()}}; }
   else compose.miRej = {...(compose.miRej || {}), [key]:true};
   acChanged(); toast(ok ? `MI ieteikums pieņemts: ${c.mi}.` : 'MI ieteikums noraidīts – adrese paliek kā ievadīta.');
   const el = $(`#c-list [data-ac-edit="${key}"], #c-list [data-mi-open="${key}"]`); if (el) el.focus();
@@ -16149,6 +16363,43 @@ function seedCampStates(){
   state.activeDraft = compose.draftId;
 }
 if (state.campStSeedV !== 1) seedCampStates();
+// Versija 198 (testa dati): melnraksts 2. solī ar labotām adresēm – MI 2, automātiski 2, manuāli 1, imports 2
+function seedFixDemo(){
+  state.fixDemoV = 1;
+  const keep = state.activeDraft, ago = (d, h, m = 10) => { const x = new Date(Date.now() - d * 864e5); x.setHours(h, m, 0, 0); return x.toISOString(); };
+  try {
+    const want = ['r14', 'r16', 'r19', 'r20'];
+    newSession(true);
+    Object.assign(compose, {aud:'jur', kind:'uzaicinajums', prio:prioDefault('jur'), createdAt:ago(2, 9)});
+    // ceturkšņa pārskats, kurā ir respondenti ar automātiski labojamām adresēm un MI ieteikumiem
+    compose.sel.reports = ['p-ds'].filter(id => repById(id) && (state.duties || []).some(d => d.reportId === id && want.includes(d.respondentId)));
+    compose.sel.mergeNmk = true;
+    compose.selRun = makeSelRun();
+    // respondents ar neiesniegšanas kodu iekļauts manuāli (tā eAdrese labota automātiski)
+    if (state.respondents.some(r => r.id === 'r14' && matchesFilt(r) && nsAutoCode(r))) compose.nsIncl = ['r14'];
+    compose.content = {source:'tpl', templateId:'t8'};
+    compose.nameSfx = 'adresu-labojumi'; compose.nameAuto = true; syncAutoName();
+    const rs = state.respondents.filter(matchesFilt), set = (r, k, v, m) => { compose.addrFix[r.id] = {...(compose.addrFix[r.id] || {}), [k]:v}; compose.addrMeta[`${r.id}|${k}`] = {orig:String(ADDR_TYPES[k].get(r) || '').trim(), ...m}; };
+    compose.addrFix = {}; compose.addrMeta = {}; compose.addrMi = {};
+    // MI ieteikumi (2)
+    rs.flatMap(r => ['email1', 'email2'].map(k => ({r, k, c:addrCheck(r, k)}))).filter(o => o.c.status === 'pot' && o.c.mi).slice(0, 2).forEach((o, i) => {
+      set(o.r, o.k, o.c.mi, {src:'mi', by:['Elīna Izdomāta', CURRENT_USER][i], at:ago(1, 10 + i, 25)}); compose.addrMi[`${o.r.id}|${o.k}`] = true; });
+    // manuāls labojums (1) – nederīgai adresei
+    const bad = rs.flatMap(r => ['email1', 'email2'].map(k => ({r, k, c:addrCheck(r, k)}))).find(o => o.c.status === 'error' && o.c.value);
+    if (bad){ const v0 = String(bad.c.value).trim().toLowerCase(), v1 = (v0.includes('@') ? v0.replace(/@+/g, '@') : v0.replace('.', '@')).replace(/[^a-z0-9.@_-]/g, '');
+      const v = validateAddr(bad.k, v1).status === 'ok' ? v1 : `kontakti@${(bad.r.nmk || '').slice(-4) || 'resp'}-birojs.example`;
+      set(bad.r, bad.k, v, {src:'edit', by:'Rūta Testa', at:ago(1, 14, 5)}); }
+    // imports (2) – E-pasts 1
+    rs.filter(r => addrCheck(r, 'email1').status === 'ok' && !compose.addrFix[r.id]).slice(0, 2).forEach((r, i) => {
+      const d = String(r.email).split('@')[1]; set(r, 'email1', `${['dati', 'statistika'][i]}@${d}`, {src:'import', by:CURRENT_USER, at:ago(0, 9, 40), file:'kontakti_atjaunoti.xlsx'}); });
+    compose.step = 2; compose.stepsOk = new Set([1]);
+    state.drafts.unshift({...sessionSnapshot(), id:compose.draftId, savedAt:ago(0, 9, 45), createdBy:CURRENT_USER, seedFix:true});
+  } catch (e) { console.warn('seedFixDemo', e); }
+  const d0 = state.drafts.find(x => x.id === keep);
+  if (d0){ applySnapshot(d0); compose.draftId = d0.id; } else newSession(true);
+  state.activeDraft = compose.draftId;
+}
+if (state.fixDemoV !== 1) seedFixDemo();
 if (state.msCoverV !== 1){ addCoverSamples(state); state.msCoverV = 1; save(); }
 if (state.docNrV !== 2){ migrateDocNr(); state.docNrV = 2; const d0 = state.drafts.find(x => x.id === compose.draftId); compose.f.docNr = d0 ? (d0.f || {}).docNr || '' : ''; save(); }
 if (state.nameSfxV !== 1){ seedNameSfx(); state.nameSfxV = 1; const d0 = state.drafts.find(x => x.id === compose.draftId); if (d0) compose.nameSfx = nameSfxOf(d0), compose.name = d0.name; save(); }
