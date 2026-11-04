@@ -277,6 +277,14 @@ details.more summary{cursor:pointer;font-weight:600;color:var(--primary-dark);fo
 .swatch{appearance:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--surface);box-shadow:0 0 0 1px var(--border);cursor:pointer;padding:0}
 .swatch:hover,.swatch[aria-pressed="true"]{box-shadow:0 0 0 2px var(--primary-darker)}
 .hex-input{width:96px !important;padding:5px 8px !important;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:var(--fs-sm)}
+/* Versija 191: atsaukt / atkārtot, pavadteksta sagataves */
+.rte-bar .rte-hist{font-size:16px;line-height:1;min-width:28px}
+.rte-bar .rte-hist:disabled{opacity:.35;cursor:default;background:transparent;border-color:transparent}
+.rte-bar .rte-cov{font-weight:600;color:var(--primary-dark)}
+.rte-covers{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px;border-bottom:1px solid var(--border-light);background:var(--primary-50)}
+.rte-covers[hidden]{display:none}
+.rte-covers [data-cov]{appearance:none;border:1px solid var(--primary-200);background:var(--surface);border-radius:var(--radius-pill);padding:3px 10px;font-size:var(--fs-sm);cursor:pointer;color:var(--primary-dark)}
+.rte-covers [data-cov]:hover{background:var(--primary-100)}
 .rte-link{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px;border-bottom:1px solid var(--border-light);background:var(--primary-50)}
 .rte-link input[type=text]{flex:1 1 140px;width:auto;padding:5px 8px;font-size:var(--fs-sm)}
 .rte-link label{font-size:var(--fs-sm);display:flex;align-items:center;gap:5px}
@@ -725,7 +733,7 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .rv-test-card[hidden]{display:none}
 /* paraugvēstuļu josla: skaitītājs, birka (kāpēc izvēlēts), saite uz citu respondentu */
 .pv-tag{display:inline-flex;align-items:center;padding:1px 8px;border-radius:var(--radius-pill);background:var(--primary-100);color:var(--primary-darker);font-size:var(--fs-xs);font-weight:600;white-space:nowrap;line-height:18px}
-/* priekšskatījuma galvene vienā rindā: virsraksts · E-pasts / eAdrese · Iezīmēt laukus · ‹ 1 / 3 › */
+/* priekšskatījuma galvene vienā rindā: virsraksts · E-pasts / eAdrese · Iezīmēt mainīgos laukus · ‹ 1 / 3 › */
 .rv-main .preview-head{flex-wrap:nowrap;gap:10px}
 .rv-main .preview-head .toolbar{flex-wrap:nowrap;gap:10px;margin-left:auto}
 .rv-main .preview-head .r-main-h{white-space:nowrap}
@@ -2632,8 +2640,15 @@ a.att:hover,button.att:hover{border-color:var(--primary)}
 .mail-body{padding:12px 22px 18px;line-height:1.65;word-break:break-word}
 .mail-plain{white-space:pre-wrap;font-size:14.5px}
 .mail-foot{background:var(--bg);border-top:1px solid var(--border-light);padding:10px 22px;font-size:12.5px;color:var(--text-muted)}
+/* Versija 191: priekšskatījuma paraugi – "Ielādēt vēl 3", "Meklēt respondentu…" */
+.pv-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 8px;font-size:var(--fs-sm)}
+.pv-find input{width:220px;padding:5px 9px;font-size:var(--fs-sm)}
+#c-pvtools{margin:0;padding:10px 16px 2px}
+.ms-kind{margin-left:6px;font-size:var(--fs-xs);color:var(--text-muted);border:1px solid var(--border);border-radius:var(--radius-pill);padding:0 7px;white-space:nowrap}
 .mail-note{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:var(--info);background:var(--info-bg);padding:8px 18px}
 .mail-note .icon{margin-top:2px;width:14px;height:14px}
+.mail-note.ea-plain-note{background:#FFF8E1;color:#5C4600;border-left:3px solid #E0B000}
+.mail-note.ea-plain-note .icon{color:#B08600}
 .att-area{display:flex;flex-direction:column;gap:8px;padding:12px 22px;border-top:1px solid var(--border-light);background:#FBFCFC}
 .att-title{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);font-weight:700;color:var(--text-muted)}
 .att-list{display:flex;flex-wrap:wrap;gap:8px}
@@ -3793,7 +3808,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                     <div class="seg" role="group" aria-label="Kanāls" id="c-pvch">
                       <button type="button" data-pvch="epasts">E-pasts</button><button type="button" data-pvch="eadrese">eAdrese</button>
                     </div>
-                    <label class="preview-opts"><input type="checkbox" id="c-hl" checked> Iezīmēt laukus</label>
+                    <label class="preview-opts"><input type="checkbox" id="c-hl" checked> Iezīmēt mainīgos laukus</label>
                     <div class="preview-nav" id="c-nav">
                       <button class="icon-btn" data-action="prev" id="c-prev" aria-label="Iepriekšējais paraugs"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button>
                       <span class="pos" id="c-pos" aria-live="polite">0 / 0</span>
@@ -3801,6 +3816,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
                     </div>
                   </div>
                 </div>
+                <div class="pv-tools" id="c-pvtools"><button type="button" class="link-btn" data-pvmore>Ielādēt vēl 3</button><span class="pv-find"><input type="search" data-pvfind list="c-pvdl" placeholder="Meklēt respondentu…" aria-label="Meklēt respondentu (nosaukums, UUK vai NMK)" autocomplete="off"><datalist id="c-pvdl"></datalist></span></div>
                 <div class="pv-filter" id="c-pv-filter" hidden></div>
                 <div class="preview-body hl" id="c-preview"></div>
               </section>
@@ -3966,7 +3982,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 190</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 191</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -6711,12 +6727,9 @@ function chMsg(msg, ch){
   if (!msg.hasEp && msg.ea) return {ver:'eadrese', fb:true, subjectHtml:msg.ea.subject, bodyHtml:`<div class="mail-plain">${msg.ea.text}</div>`, ...vx};
   return {ver:'epasts', subjectHtml:msg.subject, bodyHtml:msg.bodyHtml, ...vx};
 }
-// eAdreses ziņā vizuālie elementi netiek attēloti (poga – teksts ar saiti)
-function visNoteOf(els){
-  if (!els || !els.length) return '';
-  const hid = els.filter(e => e !== 'poga');
-  return `eAdrese atbalsta tikai vienkāršu tekstu: ${hid.length ? `${hid.join(' un ')} netiek ${hid.length > 1 ? 'attēloti' : 'attēlots'}` : ''}${hid.length && els.includes('poga') ? '; ' : ''}${els.includes('poga') ? 'poga – kā teksts ar saiti' : ''}.`;
-}
+// Versija 191: viens kopīgs eAdreses paziņojums (satura redaktors, Saturs, Pārbaude, Sūtījumi)
+const EA_PLAIN_NOTE = 'eAdrese atbalsta tikai vienkāršu tekstu: logo, baneris, pogas, citi vizuālie elementi un teksta formatējums netiek attēloti.';
+function visNoteOf(){ return EA_PLAIN_NOTE; }
 const chVis = c => ({visNote:c.visNote || ''});
 const verNote = (c, ch) => c.fb ? `<div class="alert alert-warn ver-fb">${ICON.warn}<span>${ch === 'eadrese' ? 'Nav eAdreses versijas – eAdresē tiks nosūtīts e-pasta teksts bez noformējuma.' : 'Nav e-pasta versijas – e-pastā tiks nosūtīts eAdreses teksts.'}</span></div>` : '';
 function buildMessage(t0, r, mark, attrs = respAttrs(r)){
@@ -6773,7 +6786,7 @@ function mailView({toName, toAddr, channel, subjectHtml, bodyHtml, bodyTextHtml,
          <div class="mail-brand"><span class="mlogo" role="img" aria-label="CSP logo">CSP</span>${esc(org)}</div>
          <div class="mail-body rich">${bodyHtml}</div>${attHtml}
          <div class="mail-foot">${footerHtml}</div></div></div>`
-      : `${visNote ? `<div class="mail-note">${ICON.info}<span>${esc(visNote)}</span></div>` : ''}
+      : `${visNote ? `<div class="mail-note ea-plain-note" role="note">${ICON.info}<span>${esc(visNote)}</span></div>` : ''}
          <div class="mail-body mail-plain">${bodyTextHtml}</div>${attHtml}`}
   </article>`;
 }
@@ -6796,9 +6809,35 @@ function printDoc(html, name){
 /* =====================================================================
    FORMATĒŠANAS REDAKTORS
    ===================================================================== */
-function createEditor(host, html, {onChange, compact = false, cta = true, media = false} = {}){
+// Versija 191: temata (teksta lauka) atsaukšanas vēsture – kopīga visiem redaktoriem (Ctrl+Z / Ctrl+Y, rīkjoslas ↶ ↷)
+function inputHist(inp){
+  if (inp._h) return inp._h;
+  const h = {inp, st:[inp.value], i:0, t:0, busy:false, subs:new Set()};
+  const ping = () => h.subs.forEach(f => f());
+  const set = v => { h.busy = true; inp.value = v; inp.dispatchEvent(new Event('input', {bubbles:true})); h.busy = false; h.t = 0; ping(); };
+  Object.assign(h, {canUndo:() => h.i > 0, canRedo:() => h.i < h.st.length - 1,
+    undo:() => { if (h.i > 0) set(h.st[--h.i]); }, redo:() => { if (h.i < h.st.length - 1) set(h.st[++h.i]); }});
+  inp.addEventListener('input', () => { if (h.busy) return; const v = inp.value; if (h.st[h.i] === v) return; const now = Date.now();
+    if (now - h.t < 900 && h.i === h.st.length - 1 && h.i > 0) h.st[h.i] = v; else { h.st = h.st.slice(0, h.i + 1); h.st.push(v); if (h.st.length > 100) h.st.shift(); h.i = h.st.length - 1; }
+    h.t = now; ping(); });
+  inp.addEventListener('keydown', e => { if (!(e.ctrlKey || e.metaKey) || e.altKey) return; const k = e.key.toLowerCase();
+    if (k === 'z' && !e.shiftKey){ e.preventDefault(); h.undo(); } else if (k === 'y' || (k === 'z' && e.shiftKey)){ e.preventDefault(); h.redo(); } });
+  return (inp._h = h);
+}
+// Versija 191: pavadteksta sagataves – no sadaļas "Veidnes › Sagataves" (e-pasta satura sagataves ar veidu "Pavadteksts"; tikai nearhivētās)
+function addCoverSamples(s){
+  s.mailSamples = s.mailSamples || [];
+  COVER_SAMPLES.forEach((c, i) => { const id = 'msc-' + c.key; if (s.mailSamples.some(x => x.id === id)) return; const body = coverBody(c.key, 'visi');
+    s.mailSamples.push({id, name:`Pavadteksts – ${c.label.toLowerCase()}`, aud:'visi', cat:c.key, kind:'pavadteksts', body, ea:{body:emailToPlain(body)}, builtin:true,
+      updated:`2026-0${7 + i}-1${2 + i}T09:30:00.000Z`, updatedBy:'Testa Darbinieks'}); });
+}
+const coverSamples = aud => (state.mailSamples || []).filter(x => x.kind === 'pavadteksts' && !x.archived && (!aud || aud === 'visi' || x.aud === aud || x.aud === 'visi'));
+function createEditor(host, html, {onChange, compact = false, cta = true, media = false, covers = null, isBlank = null} = {}){
   host.innerHTML = `<div class="rte">
     <div class="rte-bar" role="toolbar" aria-label="Formatēšana">
+      <button type="button" data-cmd="undo" class="rte-hist" title="Atsaukt (Ctrl+Z)" aria-label="Atsaukt" disabled>↶</button>
+      <button type="button" data-cmd="redo" class="rte-hist" title="Atkārtot (Ctrl+Y vai Ctrl+Shift+Z)" aria-label="Atkārtot" disabled>↷</button>
+      <span class="sep"></span>
       <select class="rte-style" aria-label="Teksta stils" title="Teksta stils">
         <option value="p">Parasts teksts</option><option value="h1">Virsraksts 1</option><option value="h2">Virsraksts 2</option><option value="h3">Virsraksts 3</option></select>
       <span class="sep"></span>
@@ -6820,7 +6859,9 @@ function createEditor(host, html, {onChange, compact = false, cta = true, media 
       ${cta ? '<button type="button" data-cmd="cta" title="Poga ar saiti, piem., “EDV”">Poga</button>' : ''}
       <span class="sep"></span>
       <select class="rte-field" aria-label="Ievietot lauku"><option value="">+ Ievietot lauku…</option>${fieldOptions()}<optgroup label="Bloki"><option value="__rtab">{pārskatu_tabula} – Pārskatu tabula</option></optgroup></select>
+      ${covers ? '<span class="sep"></span><button type="button" data-cmd="covers" class="rte-cov" title="Pavadteksta sagataves (Veidnes › Sagataves)" aria-haspopup="true" aria-expanded="false">Pavadteksta sagataves ▾</button>' : ''}
     </div>
+    <div class="rte-covers" role="menu" aria-label="Pavadteksta sagataves" hidden></div>
     <div class="rte-color" hidden>
       <span class="label">Teksta krāsa:</span>
       <div class="swatches">${paletteColors().map(c => `<button type="button" class="swatch" data-hex="${c.hex}" style="background:${c.hex}" title="${esc(c.name)} ${c.hex}" aria-label="${esc(c.name)}"></button>`).join('')}</div>
@@ -6862,6 +6903,20 @@ function createEditor(host, html, {onChange, compact = false, cta = true, media 
   function paintCta(a){ const bg = normHex(a.dataset.bg) || cssVar('--primary'); a.style.background = bg; a.style.color = ctaInk(bg); }
   area.innerHTML = sanitize(html || '<p><br></p>');
   lock(); decorate();
+  // Versija 191: atsaukšana / atkārtošana – teksts, lauki, pogas, attēli, sagataves; papildus – saistītais temats un ārējais stāvoklis (piem., baneris)
+  let extra = null, linked = null, lastFoc = 'area';
+  const snap = () => ({h:area.innerHTML, x:extra ? extra.get() : ''});
+  const H = {st:[snap()], i:0, t:0, typing:false};
+  const areaH = {canUndo:() => H.i > 0, canRedo:() => H.i < H.st.length - 1,
+    undo:() => { if (H.i > 0){ H.i--; applySnap(H.st[H.i]); } }, redo:() => { if (H.i < H.st.length - 1){ H.i++; applySnap(H.st[H.i]); } }};
+  const histTarget = () => lastFoc === 'inp' && linked ? linked : areaH;
+  const histBtns = () => { if (!bar.isConnected) return; const tg = histTarget(); $('[data-cmd="undo"]', bar).disabled = !tg.canUndo(); $('[data-cmd="redo"]', bar).disabled = !tg.canRedo(); };
+  const record = typing => { const sn = snap(), top = H.st[H.i]; if (top && top.h === sn.h && top.x === sn.x) return;
+    const now = Date.now();
+    if (typing && H.typing && now - H.t < 900 && H.i === H.st.length - 1 && H.i > 0) H.st[H.i] = sn;
+    else { H.st = H.st.slice(0, H.i + 1); H.st.push(sn); if (H.st.length > 100) H.st.shift(); H.i = H.st.length - 1; }
+    H.t = now; H.typing = !!typing; histBtns(); };
+  function applySnap(sn){ area.innerHTML = sn.h; lock(); decorate(); if (extra) extra.set(sn.x); H.typing = false; onChange && onChange(); histBtns(); }
   let saved = null;
   const saveSel = () => { const s = getSelection(); if (s.rangeCount && area.contains(s.anchorNode)) saved = s.getRangeAt(0).cloneRange(); };
   const restore = () => {
@@ -6873,7 +6928,7 @@ function createEditor(host, html, {onChange, compact = false, cta = true, media 
     if (saved) s.addRange(saved);
     else { const r = document.createRange(); r.selectNodeContents(area); r.collapse(false); s.addRange(r); }
   };
-  const changed = () => { saveSel(); onChange && onChange(); };
+  const changed = typing => { saveSel(); record(typing === true); onChange && onChange(); };
   // Ievieto elementus kursora vietā (insertHTML dažkārt ievieto elementu ārpus rindkopas)
   const insertNodes = (...nodes) => {
     restore();
@@ -6972,7 +7027,10 @@ function createEditor(host, html, {onChange, compact = false, cta = true, media 
   $('.rc-hex', colorBox).addEventListener('input', () => colorErr(''));
   $('.rcl-remove', colorBox).onclick = () => { colorBox.hidden = true; removeColor(); };
   $('.rcl-cancel', colorBox).onclick = () => { colorBox.hidden = true; restore(); };
-  area.addEventListener('input', changed);
+  area.addEventListener('input', () => changed(true));
+  area.addEventListener('focus', () => { lastFoc = 'area'; histBtns(); });
+  area.addEventListener('keydown', e => { if (!(e.ctrlKey || e.metaKey) || e.altKey) return; const k = e.key.toLowerCase();
+    if (k === 'z' && !e.shiftKey){ e.preventDefault(); areaH.undo(); } else if (k === 'y' || (k === 'z' && e.shiftKey)){ e.preventDefault(); areaH.redo(); } });
   area.addEventListener('paste', e => {
     e.preventDefault();
     const h = e.clipboardData.getData('text/html'), txt = e.clipboardData.getData('text/plain');
@@ -6980,10 +7038,28 @@ function createEditor(host, html, {onChange, compact = false, cta = true, media 
     lock(); changed();
   });
   bar.addEventListener('mousedown', e => { if (e.target.closest('button')) e.preventDefault(); });
+  // pavadteksta sagataves: izvēlne (padomā – nosaukums un pēdējo izmaiņu datums)
+  const covBox = $('.rte-covers', host);
+  async function pickCover(id){
+    const x = (covers ? covers() : []).find(c => c.id === id); covBox.hidden = true; const cb = $('[data-cmd="covers"]', bar); if (cb) cb.setAttribute('aria-expanded', 'false');
+    if (!x) return;
+    const cur = sanitize(area.innerHTML), blank = isBlank ? isBlank(cur) : !htmlToText(cur).trim();
+    if (!blank && !(await subConfirm({title:'Aizstāt tekstu?', message:`Pašreizējais teksts tiks aizstāts ar sagatavi “${esc(x.name)}”. Turpināt?`, okLabel:'Aizstāt'}))) return;
+    setHTML(x.body);
+  }
+  covBox.addEventListener('click', e => { const b = e.target.closest('[data-cov]'); if (b) pickCover(b.dataset.cov); });
+  covBox.addEventListener('keydown', e => { if (e.key === 'Escape'){ covBox.hidden = true; const cb = $('[data-cmd="covers"]', bar); if (cb){ cb.setAttribute('aria-expanded', 'false'); cb.focus(); } } });
   bar.addEventListener('click', e => {
     const b = e.target.closest('button[data-cmd]');
     if (!b) return;
     const cmd = b.dataset.cmd;
+    if (cmd === 'undo' || cmd === 'redo'){ const tg = histTarget(); tg[cmd](); if (tg === linked) linked.inp.focus(); return; }
+    if (cmd === 'covers'){ const open = covBox.hidden, list = covers ? covers() : [];
+      covBox.innerHTML = list.length ? list.map(x => { const u = updOf('ms', x); return `<button type="button" role="menuitem" data-cov="${esc(x.id)}" title="${esc(`${x.name}${u.at ? `\nPēdējās izmaiņas: ${fmtDate(String(u.at).slice(0, 10))}` : ''}`)}">${esc(x.name)}</button>`; }).join('')
+        : '<span class="muted">Nav pavadteksta sagatavju (Veidnes › Sagataves).</span>';
+      covBox.hidden = !open; b.setAttribute('aria-expanded', String(open)); linkBox.hidden = true; colorBox.hidden = true;
+      if (open){ const f = $('[data-cov]', covBox); if (f) f.focus(); }
+      return; }
     restore();
     try { document.execCommand('styleWithCSS', false, false); } catch (err) {}
     if (cmd.startsWith('al-')){ applyAlign(cmd.slice(3)); return; }
@@ -7063,7 +7139,10 @@ function createEditor(host, html, {onChange, compact = false, cta = true, media 
     sel.value = '';
     insertNodes(span, document.createTextNode('\u200B'));
   });
-  return { getHTML: () => sanitize(area.innerHTML), area };
+  function setHTML(h){ area.innerHTML = sanitize(h || '<p><br></p>'); lock(); decorate(); changed(); }
+  return { getHTML: () => sanitize(area.innerHTML), area, setHTML, record:() => record(false),
+    linkInput(inp){ linked = inputHist(inp); linked.subs.add(histBtns); inp.addEventListener('focus', () => { lastFoc = 'inp'; histBtns(); }); histBtns(); },
+    trackExtra(o){ extra = o; H.st = [snap()]; H.i = 0; histBtns(); } };
 }
 
 /* =====================================================================
@@ -7817,7 +7896,7 @@ function openTplSources(aud, onPick, survey = ''){
       <div class="tsp-pv editor-preview">
         <div class="pv-head"><h3>Priekšskatījums</h3>
           <div class="seg" id="tsp-ch" role="group" aria-label="Priekšskatījuma veids"><button type="button" data-tspch="epasts">E-pasts</button><button type="button" data-tspch="eadrese">eAdrese</button></div>
-          <label class="preview-opts"><input type="checkbox" id="tsp-hl" checked> Iezīmēt laukus</label></div>
+          <label class="preview-opts"><input type="checkbox" id="tsp-hl" checked> Iezīmēt mainīgos laukus</label></div>
         <div id="tsp-pv" class="hl" aria-live="polite"></div>
       </div>
     </div>`, actions:[{label:'Atcelt', cls:'btn-secondary left'}, {label:`${ICON.check}<span id="tsp-use-l">Izmantot</span>`, cls:'btn-primary', onClick:() => use()}]});
@@ -7918,7 +7997,7 @@ function openTemplateEditor(id, preset = {}){
   const sampleFor = (aud, veids) => state.respondents.find(r => respAttrs(r).veids === (veids || AUDS[aud].veids)) || state.respondents[0] ||
     {name:'Vārds Uzvārds', contact:'', eaddress:'_PRIVATE@00000000000', email:'vards@pasts.example'};
   // kampaņā priekšskatījums – ar kampaņā atzīmētajiem respondentiem (pārslēdz ar ← →)
-  const sessRecs = sess ? recipients() : [];
+  let sessRecs = sess ? pvList(recipients()).map(o => o.r) : [];
   let si = 0;
   let sample = sessRecs[0] || sampleFor(t.aud);
   // Kā sākts e-pasta teksts: false – jaunai veidnei vēl nav izvēlēts (cilnes un redaktors paslēpti); 'sample' – no sagataves; 'blank' – "+ Veidot jaunu"; true – esoša veidne / kampaņas saturs
@@ -7971,7 +8050,6 @@ function openTemplateEditor(id, preset = {}){
           <input type="text" id="te-subject" maxlength="200"><span class="err" id="te-subject-err" hidden></span></div>
         <div id="te-content">
           <div class="field te-lf"><span class="label"><span id="te-body-label"></span> ${tip('', 'te-body-hint')}</span>
-            <div class="cover-samples" id="te-cover" hidden><span>Pavadteksta sagataves:</span>${COVER_SAMPLES.map(c => `<button type="button" class="chip-btn" data-cover="${c.key}">${esc(c.label)}</button>`).join('')}</div>
             <div id="te-body"></div>
             <span class="err" id="te-body-err" hidden></span></div>
         </div>
@@ -8028,10 +8106,11 @@ function openTemplateEditor(id, preset = {}){
         <div class="pv-head"><h3>Priekšskatījums</h3>
           <div class="seg" id="te-pv" role="group" aria-label="Priekšskatījuma veids">
             <button type="button" data-pv="epasts">E-pasts</button><button type="button" data-pv="eadrese">eAdrese</button></div>
-          <label class="preview-opts"><input type="checkbox" id="te-hl" checked> Iezīmēt laukus</label></div>
+          <label class="preview-opts"><input type="checkbox" id="te-hl" checked> Iezīmēt mainīgos laukus</label></div>
         <p class="hint">${sess && sessRecs.length ? `Kampaņas respondents: <span class="rec-nav"><button type="button" class="icon-btn" id="te-rprev" aria-label="Iepriekšējais respondents"><svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></button><span class="pos" id="te-rpos"></span><button type="button" class="icon-btn" id="te-rnext" aria-label="Nākamais respondents"><svg class="icon" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button></span> `
           : sess ? 'Nav atzīmētu respondentu – parauga dati: ' : 'Ar parauga datiem: '}<span id="te-sample">${esc(sample.name)}</span>
           <select class="mini" id="te-sample-sel" aria-label="Parauga respondents"><option value="privatpersona">Privātpersona</option><option value="uznemums">Uzņēmums</option></select> · <span id="te-pv-sv">${esc(compose.f.survey)}</span></p>
+        ${sess && sessRecs.length ? pvToolsHtml('te') : ''}
         <div id="te-preview" class="hl"></div>
         <div id="te-docpv" class="te-docpv" hidden></div>
       </div>
@@ -8172,12 +8251,17 @@ function openTemplateEditor(id, preset = {}){
   function loadLang(){
     const v = versions[lang];
     subj.value = v.subject; $('#te-doc-file').value = v.fileName || '';
-    bodyEd = createEditor($('#te-body'), v.body, {onChange:update, media:true});
+    bodyEd = createEditor($('#te-body'), v.body, {onChange:update, media:true, covers:() => coverSamples(aud()),
+      isBlank:h => !htmlToText(h).trim() || sameText(h, blankBody(aud())) || coverSamples().some(c => sameText(h, c.body))});
     docEd = createEditor($('#te-doc-body'), v.docBody || '<p><br></p>', {onChange:update, cta:false});
+    // Versija 191: atsaukšana – arī temats un baneris
+    bodyEd.linkInput(subj);
+    bodyEd.trackExtra({get:() => JSON.stringify(curVis()), set:v => { try { setVisUI(JSON.parse(v)); } catch (e) {} }});
     update();
   }
   // Ielādē tekstu redaktorā
   function setBody(html){
+    if (bodyEd && lang === 'lv'){ bodyEd.setHTML(html); return; }
     collect();
     if (!versions[lang]) lang = 'lv';
     versions[lang].body = html;
@@ -8239,8 +8323,6 @@ function openTemplateEditor(id, preset = {}){
     renderFiles();
     $('#te-ea-label').textContent = isDoc ? 'eAdreses pavadteksts' : 'eAdreses ziņas teksts';
     $('#te-doc').hidden = !gen || !docOpen;
-    // pavadteksta sagataves – ja veidnei ir personalizētā vēstule pielikumā
-    $('#te-cover').hidden = !gen;
     $('#te-body-label').textContent = 'Teksts';
     const hint = isDoc ? 'E-pasta teksts, kas tiek nosūtīts kopā ar pielikumiem. Noformējums (virsraksti, saraksti, saites, poga) redzams e-pastā; eAdresei – savs teksts cilnē “eAdrese”.' : 'Noformējums (virsraksti, treknraksts, saraksti, saites, poga, pārskatu tabula) redzams e-pastā. eAdresei – atsevišķs vienkāršs teksts cilnē “eAdrese”.';
     $('#te-body-hint').dataset.tip = hint; $('#te-body-hint').setAttribute('aria-label', hint);
@@ -8412,13 +8494,6 @@ function openTemplateEditor(id, preset = {}){
     loadLang(); syncAud(); syncSv(); syncKind(); markLoaded();
     toast(`Izveidota kopija no veidnes “${src.name}” – pielāgojiet to un saglabājiet.`);
   }
-  // Pavadteksta sagataves
-  $$('[data-cover]', modal).forEach(b => b.addEventListener('click', async () => {
-    const cur = bodyEd.getHTML();
-    const untouched = sameText(cur, blankBody(aud())) || COVER_SAMPLES.some(c => sameText(cur, coverBody(c.key, aud())));
-    if (!untouched && !(await subConfirm({title:'Aizstāt pavadtekstu?', message:'Pašreizējais pavadteksts tiks aizstāts ar sagatavi. Turpināt?', okLabel:'Aizstāt'}))) return;
-    setBody(coverBody(b.dataset.cover, aud()));
-  }));
   $$('#te-pv button').forEach(b => b.addEventListener('click', () => { pv = b.dataset.pv; if (pv !== 'doc') setTab(pv, true); update(); }));
   // Cilnes "E-pasts" / "eAdrese" (sinhronizētas ar priekšskatījuma pārslēgu)
   function setTab(ch, fromPv){
@@ -8468,6 +8543,7 @@ function openTemplateEditor(id, preset = {}){
   });
   $('#te-sample-sel').addEventListener('change', () => { syncAud(); update(); });
   if (sessRecs.length){
+    pvToolsBind($('#te-pvtools'), {recs:() => recipients(), onPick:i => { sessRecs = pvList(recipients()).map(o => o.r); si = Math.max(0, i); syncAud(); update(); }});
     $('#te-rprev').addEventListener('click', () => { si = Math.max(0, si - 1); syncAud(); update(); });
     $('#te-rnext').addEventListener('click', () => { si = Math.min(sessRecs.length - 1, si + 1); syncAud(); update(); });
   }
@@ -8475,14 +8551,14 @@ function openTemplateEditor(id, preset = {}){
   $('#te-subj-field').addEventListener('change', e => {
     if (!e.target.value) return;
     subj.setRangeText(`{${e.target.value}}`, subj.selectionStart ?? subj.value.length, subj.selectionEnd ?? subj.value.length, 'end');
-    e.target.value = ''; subj.focus(); update();
+    e.target.value = ''; subj.focus(); subj.dispatchEvent(new Event('input'));
   });
   ['te-subject', 'te-doc-file'].forEach(fid => $('#' + fid).addEventListener('input', update));
   ['te-doc-banner', 'te-doc-conf', 'te-doc-info'].forEach(fid => $('#' + fid).addEventListener('change', update));
   $('#te-doc-banner').addEventListener('change', syncVis);
   // Vizuālie elementi: jebkura izmaiņa – uzreiz priekšskatījumā
   $('#te-vis-toggle').addEventListener('click', () => { visOpen = !visOpen; keepScroll(syncVis); });
-  $('#te-vis-body').addEventListener('change', e => { if (e.target.name === 'te-bn') update(); });
+  $('#te-vis-body').addEventListener('change', e => { if (e.target.name === 'te-bn'){ update(); if (bodyEd) bodyEd.record(); } });
   // Pašu baneri: augšupielāde, pārsaukšana, dzēšana (režģis tiek pārzīmēts, izvēle saglabājas)
   const renderBnGrid = sel => { $('#te-bn-grid').innerHTML = bnGridHtml(sel); update(); };
   function uploadBanner(){
@@ -8866,7 +8942,7 @@ function renderSagataves(){
   $('#sag-head').innerHTML = sortHead(SAG_COLS[ui.sagGroup], ui.sagSort, 'ssort');
   // filtru maiņa – meklēšanas laikā sakļautās grupas atkal izvērstas
   { const sig = JSON.stringify([ui.sagGroup, ui.sag.q, ui.sag.aud, ui.sag.cat, ui.sag.kind]); if (sig !== ui.sagFSig){ ui.sagFSig = sig; ui.sagCollF.clear(); } }
-  const nameCell = (x, action) => `<td class="sag-name"><button type="button" class="camp-name" data-action="${action}" data-id="${esc(x.id)}" title="${esc(x.name + (x.desc ? '\n' + x.desc : ''))}">${esc(x.name)}</button></td>`;
+  const nameCell = (x, action) => `<td class="sag-name"><button type="button" class="camp-name" data-action="${action}" data-id="${esc(x.id)}" title="${esc(x.name + (x.desc ? '\n' + x.desc : ''))}">${esc(x.name)}</button>${x.kind === 'pavadteksts' ? '<span class="ms-kind" title="Veids: Pavadteksts – e-pasta teksts vēstulei pielikumā">Pavadteksts</span>' : ''}</td>`;
   const mailRow = x => { const v = msVerOnly(x);
     return `<tr class="camp-row sag-row" data-action="ms-edit" data-id="${esc(x.id)}">
       ${nameCell(x, 'ms-edit')}
@@ -8903,7 +8979,8 @@ function openMailSampleForm(id){
     <div id="ms-form"><div class="form-grid">
       <div class="field full"><label for="ms-name">Nosaukums <span class="req">*</span></label><input type="text" id="ms-name" value="${esc(x.name)}" maxlength="120"><span class="err" id="ms-name-err" hidden></span></div>
       <div class="field"><label for="ms-aud">Adresāts</label><select id="ms-aud">${opts(Object.keys(AUDS).map(k => [k, attAudLabel(k)]), x.aud)}</select></div>
-      <div class="field"><label for="ms-cat">Kategorija</label><select id="ms-cat">${opts(CATS.map(c => [c.key, c.one]), x.cat)}</select></div></div>
+      <div class="field"><label for="ms-cat">Kategorija</label><select id="ms-cat">${opts(CATS.map(c => [c.key, c.one]), x.cat)}</select></div>
+      <div class="field"><label for="ms-kind">Veids</label><select id="ms-kind">${opts([['saturs', 'E-pasta saturs'], ['pavadteksts', 'Pavadteksts']], x.kind === 'pavadteksts' ? 'pavadteksts' : 'saturs')}</select></div></div>
       <div class="ch-tabs" role="tablist" aria-label="Saturs pa kanāliem">
         <button type="button" role="tab" class="ch-tab" id="ms-tab-ep" data-mstab="epasts" aria-selected="true" aria-controls="ms-pane-ep">${ICON.mail}E-pasts <span class="ch-st" id="ms-st-ep"></span></button>
         <button type="button" role="tab" class="ch-tab" id="ms-tab-ea" data-mstab="eadrese" aria-selected="false" aria-controls="ms-pane-ea" tabindex="-1">${ICON.building}eAdrese <span class="ch-st" id="ms-st-ea"></span></button></div>
@@ -8957,7 +9034,7 @@ function openMailSampleForm(id){
       }},
     ]});
   sagWlStart('ms:' + (ex ? ex.id : 'new-' + uid()));
-  const cur = () => ({name:$('#ms-name').value.trim(), aud:$('#ms-aud').value, cat:$('#ms-cat').value, body:ed.getHTML(),
+  const cur = () => ({name:$('#ms-name').value.trim(), aud:$('#ms-aud').value, cat:$('#ms-cat').value, kind:$('#ms-kind').value === 'pavadteksts' ? 'pavadteksts' : '', body:ed.getHTML(),
     ea:{body:$('#ms-ea-body').value.replace(/[ \t]+$/gm, '').replace(/\s+$/, '')}});
   const sampleOf = aud => state.respondents.find(r => respAttrs(r).veids === (AUDS[aud].veids || 'privatpersona')) || state.respondents[0] || {name:'Vārds Uzvārds', email:'vards@pasts.example', eaddress:'_PRIVATE@00000000000'};
   function update(){
@@ -10529,15 +10606,47 @@ function pvSamples(recs = pvRecs()){
   while (out.length < Math.min(PV_SAMPLES, recs.length) && pick(() => true, '')){ const o = out[out.length - 1]; o.tag = ch(o.r) === 'eadrese' ? 'eAdrese' : 'E-pasts'; }
   return out;
 }
+// Versija 191: priekšskatījuma paraugi – kopīga komponente (Pārbaude, satura redaktors): 3 automātiski paraugi,
+// "Ielādēt vēl 3" (nejauši citi adresāti) un "Meklēt respondentu…" (nosaukums, UUK, NMK); visu respondentu saraksts netiek ielādēts
+ui.pvExtra = {k:'', ids:[]};
+const pvExtraIds = () => { if (ui.pvExtra.k !== compose.draftId) ui.pvExtra = {k:compose.draftId, ids:[]}; return ui.pvExtra.ids; };
+function pvList(recs = pvRecs()){
+  const base = pvSamples(recs), have = new Set(base.map(o => o.r.id)), all = recipients();
+  return [...base, ...pvExtraIds().map(id => all.find(r => r.id === id)).filter(r => r && !have.has(r.id)).map(r => ({r, tag:''}))];
+}
+function pvMore(recs){
+  const list = pvList(recs), have = new Set(list.map(o => o.r.id)), rest = recipients().filter(r => !have.has(r.id));
+  for (let i = rest.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [rest[i], rest[j]] = [rest[j], rest[i]]; }
+  const add = rest.slice(0, 3); pvExtraIds().push(...add.map(r => r.id));
+  return add.length ? list.length : -1;
+}
+function pvFindAdd(id, recs){
+  let i = pvList(recs).findIndex(o => o.r.id === id); if (i >= 0) return i;
+  if (!recipients().some(r => r.id === id)) return -1;
+  pvExtraIds().push(id); return pvList(recs).findIndex(o => o.r.id === id);
+}
+const pvOptLabel = r => [r.name, r.uuk, r.nmk].filter(Boolean).join(' · ');
+const pvToolsHtml = p => `<div class="pv-tools" id="${p}-pvtools"><button type="button" class="link-btn" data-pvmore>Ielādēt vēl 3</button><span class="pv-find">${ICON.search || ''}<input type="search" data-pvfind list="${p}-pvdl" placeholder="Meklēt respondentu…" aria-label="Meklēt respondentu (nosaukums, UUK vai NMK)" autocomplete="off"><datalist id="${p}-pvdl"></datalist></span></div>`;
+function pvToolsBind(root, {recs, onPick}){
+  if (!root) return;
+  root.addEventListener('click', e => { if (!e.target.closest('[data-pvmore]')) return; const i = pvMore(recs()); if (i < 0) toast('Citu adresātu nav – visi jau ir priekšskatījumā.'); else onPick(i); });
+  root.addEventListener('focusin', e => { const inp = e.target.closest('[data-pvfind]'); if (!inp) return; const dl = $('#' + inp.getAttribute('list')); if (dl) dl.innerHTML = recipients().map(r => `<option value="${esc(pvOptLabel(r))}"></option>`).join(''); });
+  const pick = inp => { const q = norm(inp.value.trim()); if (!q) return; const all = recipients();
+    const r = all.find(x => norm(pvOptLabel(x)) === q) || all.find(x => norm(pvOptLabel(x)).includes(q));
+    if (!r){ toast('Respondents nav atrasts starp kampaņas adresātiem.', true); return; }
+    const i = pvFindAdd(r.id, recs()); inp.value = ''; if (i >= 0) onPick(i); };
+  root.addEventListener('input', e => { const inp = e.target.closest('[data-pvfind]'); if (inp && (!e.inputType || e.inputType === 'insertReplacementText')) pick(inp); });
+  root.addEventListener('keydown', e => { const inp = e.target.closest('[data-pvfind]'); if (inp && e.key === 'Enter'){ e.preventDefault(); pick(inp); } });
+}
 // pašlaik priekšskatījumā atvērtais paraugs (to sūta arī testa vēstule)
-function pvCurrent(){ const xs = pvSamples(); return xs[Math.min(compose.index, xs.length - 1)] || null; }
+function pvCurrent(){ const xs = pvList(); return xs[Math.min(compose.index, xs.length - 1)] || null; }
 function renderComposePreview(){
   syncAutoName(); syncLetterDate();
   renderContent();
   saveDraft();
   const t = currentTemplate();
   // priekšskatījumā – paraugvēstules (filtrs no pārbaudēm – no problemātiskajām)
-  const recs = pvRecs(), fk = pvFilterKey(), samples = pvSamples(recs);
+  const recs = pvRecs(), fk = pvFilterKey(), samples = pvList(recs);
   const n = samples.length;
   if (compose.index >= n) compose.index = Math.max(0, n - 1);
   const cur = samples[compose.index] || null; ui.pvCur = cur;
@@ -10626,7 +10735,7 @@ function openLetterCustomizer(rid){
         close(); renderComposeList(); renderComposePreview();
         toast(`Vēstule respondentam ${r.name} pielāgota.`);
       }}]});
-  ed = createEditor($('#lc-body'), cur ? cur.body : v.body, {media:true});
+  ed = createEditor($('#lc-body'), cur ? cur.body : v.body, {media:true}); ed.linkInput($('#lc-subject'));
   renderFiles();
   $('#lc-add').onclick = () => openLibPicker({title:'Pievienot pielikumu', aud:t.aud, onPick: a => {
     if (files.some(f => f.lib === a.id)){ toast('Šis pielikums jau ir pievienots.', true); return; }
@@ -14625,7 +14734,7 @@ const actions = {
       message:'Visas veidnes, nemainīgā informācija, respondentu dati, kampaņas un komunikācijas vēsture tiks aizstāta ar sākotnējiem testa datiem.'});
     if (!ok) return;
     state = seedData(); state.drafts = []; state.planned = [];
-    newSession(true); seedPostAddr(); seedHistory(); assignCreators(); seedApvData(state); seedApvDrafts(); seedCampStates(); seedPrint(); seedNameSfx(); state.nameSfxV = 1; migrateDocNr(); state.docNrV = 2; save();
+    newSession(true); seedPostAddr(); seedHistory(); assignCreators(); seedApvData(state); seedApvDrafts(); seedCampStates(); seedPrint(); seedNameSfx(); state.nameSfxV = 1; migrateDocNr(); state.docNrV = 2; addCoverSamples(state); state.msCoverV = 1; save();
     ui.campView = 'list';
     renderAll(); showTab(ui.tab === 'veidnes' ? 'veidnes' : ui.tab === 'vesture' ? 'vesture' : 'kampanas'); toast('Testa dati atjaunoti.');
   },
@@ -15557,6 +15666,7 @@ $('#c5-when').addEventListener('click', e => {
   renderBasics(); selChanged(); renderWizard(); saveDraft();
   if (compose.when === 'plan') $('#c5-plan-date').focus();
 });
+pvToolsBind($('#c-pvtools'), {recs:() => pvRecs(), onPick:i => { compose.index = i; renderComposePreview(); }});
 $('#c5-plan-date').addEventListener('input', e => {
   const el = e.target, dg = el.value.replace(/\D/g, '').slice(0, 8);
   if (!/^\d{4}-/.test(el.value) && e.inputType !== 'deleteContentBackward') el.value = [dg.slice(0, 2), dg.slice(2, 4), dg.slice(4)].filter(Boolean).join('.');
@@ -15933,6 +16043,7 @@ function seedCampStates(){
   state.activeDraft = compose.draftId;
 }
 if (state.campStSeedV !== 1) seedCampStates();
+if (state.msCoverV !== 1){ addCoverSamples(state); state.msCoverV = 1; save(); }
 if (state.docNrV !== 2){ migrateDocNr(); state.docNrV = 2; const d0 = state.drafts.find(x => x.id === compose.draftId); compose.f.docNr = d0 ? (d0.f || {}).docNr || '' : ''; save(); }
 if (state.nameSfxV !== 1){ seedNameSfx(); state.nameSfxV = 1; const d0 = state.drafts.find(x => x.id === compose.draftId); if (d0) compose.nameSfx = nameSfxOf(d0), compose.name = d0.name; save(); }
 if (refreshDraftNames()){ const d0 = state.drafts.find(x => x.id === compose.draftId); if (d0) compose.name = d0.name; save(); }
