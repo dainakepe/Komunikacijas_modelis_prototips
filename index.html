@@ -3982,7 +3982,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 195</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 196</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5737,7 +5737,7 @@ function assignCampNames(){
   });
 }
 // Versija 182 (testa dati): dažām kampaņām – papildinājums nosaukuma beigās
-function seedNameSfx(){
+function seedNameSfx(sentOnly){
   const by = new Map(); (state.sent || []).forEach(x => { if (!by.has(x.batch)) by.set(x.batch, []); by.get(x.batch).push(x); });
   const camps = [...by.values()].filter(xs => CAMP_SPLIT_RE.test(xs[0].sessionName) && !splitCampName(xs[0].sessionName).sfx)
     .sort((a, b) => String(b[0].sentAt).localeCompare(String(a[0].sentAt)));
@@ -5745,6 +5745,7 @@ function seedNameSfx(){
   const uz = camps.filter(xs => xs[0].sessionKind === 'uzaicinajums');
   add(uz[1], 'atkartots');
   add(camps.find(xs => xs !== uz[1] && xs.length >= 5 && /^1-/.test(xs[0].sessionName)) || camps.find(xs => xs !== uz[1]), 'lielie-uzn');
+  if (sentOnly) return;
   const d = (state.drafts || []).find(x => !(x.apv && ['pending', 'approved'].includes(x.apv.status)) && CAMP_SPLIT_RE.test(x.name || '') && !splitCampName(x.name).sfx);
   if (d){ d.nameSfx = 'pilotgrupa'; d.name = joinCampName(d.name, d.nameSfx); }
 }
@@ -11465,7 +11466,9 @@ function doSend(meta = {}){
       lang:msg.lang, wantLang:msg.wantLang, fallback:msg.fallback, org:msg.org,
       attachments:msg.attachments.map(a => ({name:a.name, html:a.html})), main:msg.main || null, files:msg.files, customized:!!compose.custom[r.id],
       status:'rinda', note:''};
-    if (meta.final){ finalizeStatus(rec); rec.statusAt = now; } else ui.newIds.add(rec.id);
+    // Versija 196: testa kampaņa ar kontrolētu iznākumu – mēģinājumi un statuss tiek noteikti vēlāk (shapeRepSeed)
+    if (meta.ctl) rec._ctl = 'full';
+    else if (meta.final){ finalizeStatus(rec); rec.statusAt = now; } else ui.newIds.add(rec.id);
     rec.manual = [];
     return rec;
   });
@@ -11477,7 +11480,7 @@ function doSend(meta = {}){
     state.campWl = state.campWl || {};
     state.campWl[batch] = {...wl, createdAt:compose.createdAt || wl.createdAt, sentAt:now, kind:sessKindKey(), aud:compose.aud, source:(compose.content || {}).source || '', waitApv:wa, hadApv:!!(compose.apv && (compose.apv.history || []).length)}; }
   save();
-  if (!meta.final) queueFinalize(created);
+  if (!meta.final && !meta.ctl) queueFinalize(created);
   return {batch, n:created.length};
 }
 // Simulēta piegāde pēc dažām sekundēm
@@ -11519,6 +11522,9 @@ const SEED_HIST = [
   // nesen nosūtīta kampaņa (pirms 1 min): procesā esošie statusi un dažādi klasifikācijas noteikumi (force – pirmās adreses iznākums)
   {minsAgo:1, snap:{name:'Informācija par datu iesniegšanas kalendāru', aud:'jur', kind:'info', sel:{pf:pfOnly({gads:'all', pusg:'all', cet:'all', men:'all'})}, prio:['email1', 'eadrese', 'email2'], content:{source:'tpl', templateId:'t10'}},
     force:{epasts:['e-full', 'e-server', 'e-size', 'e-sender', 'e-manual', 'e-away', 'e-perm'], eadrese:['d-transit', 'd-late', 'd-full', 'd-rejdiv']}},
+  // Versija 196: tekošā mēneša sākums (pirms 2 un 1 dienas) – reakcija un iesniegšana vēl tikai sākas (ctl – testa reakcijas dati pēc mēneša mērķiem)
+  {days:-2, h:9, ctl:true, snap:{name:'Ceturkšņa pārskati – uzaicinājums', aud:'jur', kind:'uzaicinajums', sel:{pf:pfOnly({cet:'all'})}, prio:['eadrese', 'email1', 'email2'], content:{source:'tpl', templateId:'t8'}}},
+  {days:-1, h:9, ctl:true, all:true, snap:{name:'Ceļotāju apsekojums – uzaicinājums', aud:'fiz', kind:'uzaicinajums', sel:{reports:['a-cel'], fz:{year:'', period:periodBack('men', 1), rounds:null}}, prio:['eadrese', 'email1', 'email2'], content:{source:'tpl', templateId:'t2'}}},
   // nosūtīta pirms 4 dienām (e-pasta 72 h logs beidzies): lielākā daļa piegādāta, dažas nepiegādātas, viena vēl procesā
   {days:-4, h:10, snap:{name:'Mēneša pārskati – uzaicinājums (oktobris)', aud:'jur', kind:'uzaicinajums', sel:{pf:pfOnly({men:'all'})}, content:{source:'tpl', templateId:'t8'}},
     force:{epasts:[], eadrese:['d-ok', 'd-ok', 'd-rejdiv', 'd-ok', 'd-transit']}},
@@ -11534,14 +11540,15 @@ const archBase = (codes, per, kind) => at => {
   return {base:`${idx}_${d.getFullYear()}_${pc}`, kind};
 };
 // Testa arhīvs: kampaņas par pēdējiem 12 mēnešiem un dažas, kas vecākas par 2 gadiem (vēstules bez satura – tikai piegādes dati)
-function seedArchive(){
+function seedArchive(allR = state.respondents){
   const jur = state.respondents.filter(r => respType(r) === 'jur'), fiz = state.respondents.filter(r => respType(r) === 'fiz');
   const tplOf = id => state.templates.find(t => t.id === id);
   const plan = [];
   [31, 28, 25].forEach((m, i) => plan.push({m, day:[12, 9, 16][i], name:['Gada pārskati – atgādinājums', 'Darbaspēka apsekojums – uzaicinājums', 'Mēneša pārskati – atgādinājums'][i],
     kind:['atg-pec', 'uzaicinajums', 'atg-pirms'][i], tpl:['t9', 't2', 't9'][i], list:[jur, fiz, jur][i], share:55, prio:DEFAULT_PRIO,
     base:[archBase(() => jurRepCodes('gads'), 'gads', 'AT'), archBase(['1-DSA'], 'cet', 'UZ'), archBase(() => jurRepCodes('men'), 'men', 'AT')][i]}));
-  for (let m = 23; m >= 3; m--){
+  // Versija 196: pēdējie 11 pilnie mēneši – kontrolētās testa kampaņas (repCtlPlan); vecākie – kā līdz šim
+  for (let m = 23; m >= 12; m--){
     // pēdējos mēnešos biežāk izmanto e-pastu (lai redzētu tendences)
     const emailFirst = m <= 6 ? ['email1', 'email2', 'eadrese'] : DEFAULT_PRIO;
     plan.push({m, day:10, name:'Mēneša pārskati – pirmstermiņa atgādinājums', kind:'atg-pirms', tpl:'t9', list:jur, share:60 + (m % 4) * 8, prio:DEFAULT_PRIO, base:archBase(() => jurRepCodes('men'), 'men', 'AT')});
@@ -11552,10 +11559,12 @@ function seedArchive(){
     if (m % 12 === 9) plan.push({m, day:27, name:'Pateicība par datu iesniegšanu', kind:'cits', tpl:'t11', list:jur, share:70, prio:DEFAULT_PRIO});
   }
   const now = new Date();
+  plan.push(...repCtlPlan(allR));
   plan.map(c => { const d = new Date(now.getFullYear(), now.getMonth() - c.m, c.day, 9 + (c.day % 5), 5); return {...c, at:d}; })
     .sort((a, b) => a.at - b.at).forEach(c => {
       const t = tplOf(c.tpl);
       if (!t) return;
+      if (c.ctl){ seedCtlCamp(c, t); return; }
       state.seq = (state.seq || 0) + 1;
       // nosaukums – pēc visu testa kampaņu izveides (assignCampNames); līdzšinējais nosaukums ar mēnesi – apraksts
       const sname = `${c.name} (${MONTHS[c.at.getMonth()]})`, cb = c.base ? c.base(c.at) : null;
@@ -11572,24 +11581,168 @@ function seedArchive(){
       });
     });
 }
+// ===== Versija 196: testa dati atskaitēm "Rādītāji pa mēnešiem" (fiktīvi, deterministiski) =====
+// Katrā no pēdējiem 11 pilnajiem mēnešiem – 3–5 kampaņas (kopā ar SEED_HIST): uzaicinājumi, atgādinājumi (pirms / pēc termiņa), informatīvās;
+// dažādi apsekojumi un statistikas jomas. Vēstules – arhīvā (bez satura), ar piegādes datiem, e-pasta atvēršanu un veidlapu iesniegšanu.
+// Mēneša mērķi (pēc kalendārā mēneša; janv. = 0): piegāde 93–98 % (aprīlī ~85 % – vienā kampaņā daudz nederīgu e-pastu),
+// atvēršana 55–75 % (jūl.–aug. ~50 %), iesniegšana 55–80 % (atgādinājumu mēnešos augstāka); tekošais mēnesis – reakcija tikai sākas.
+const REP_TGT = {deliv:[96, 94, 97, 85, 96, 97, 95, 96, 97, 96, 95, 95], open:[66, 70, 68, 63, 72, 61, 51, 49, 64, 69, 60, 62], sub:[62, 59, 76, 70, 61, 74, 57, 60, 66, 78, 64, 58]};
+const REP_TGT_PART = {deliv:95, open:45, sub:18};
+function repCtlPlan(allR){
+  const ids = (aud, fr) => (state.reports || []).filter(p => p.aud === aud && [].concat(fr).includes(p.freq)).map(p => p.id);
+  const MEN = ids('jur', 'men'), CET = ids('jur', 'cet'), GADS = ids('jur', 'gads'), PUSG = ids('jur', 'pusg'), NED = ids('jur', 'ned');
+  const jur = allR.filter(r => respType(r) === 'jur'), fiz = allR.filter(r => respType(r) === 'fiz'), EM = ['email1', 'email2', 'eadrese'];
+  const C = {
+    menUz:{name:'Mēneša pārskati – uzaicinājums', kind:'uzaicinajums', tpl:'t8', list:jur, reps:MEN, day:3, share:100, per:'men', kc:'UZ'},
+    menAtg:{name:'Mēneša pārskati – pirmstermiņa atgādinājums', kind:'atg-pirms', tpl:'t17', list:jur, reps:MEN, day:11, share:70, per:'men', kc:'AT', prio:EM},
+    late:{name:'Nokavētie pārskati – atgādinājums', kind:'atg-pec', tpl:'t9', list:jur, reps:[...MEN, ...CET], day:21, share:60, per:'visi', kc:'AT', prio:EM},
+    celUz:{name:'Ceļotāju apsekojums – uzaicinājums', kind:'uzaicinajums', tpl:'t2', list:fiz, reps:['a-cel'], day:6, share:65, per:'men', kc:'UZ', prio:EM},
+    celAtg:{name:'Ceļotāju apsekojums – atgādinājums', kind:'atg-pec', tpl:'t3', list:fiz, reps:['a-cel'], day:16, share:50, per:'men2', kc:'AT', prio:EM},
+    celSum:{name:'Ceļotāju apsekojums – vasaras vilnis', kind:'uzaicinajums', tpl:'t15', list:fiz, reps:['a-cel'], day:7, share:70, per:'men', kc:'UZ', prio:EM},
+    dsaUz:{name:'Darbaspēka apsekojums – uzaicinājums', kind:'uzaicinajums', tpl:'t2', list:fiz, reps:['a-dsa'], day:5, share:100, per:'cet', kc:'UZ'},
+    dsaAtg:{name:'Darbaspēka apsekojums – atgādinājums', kind:'atg-pec', tpl:'t3', list:fiz, reps:['a-dsa'], day:24, share:75, per:'cet', kc:'AT', prio:EM},
+    cetUz:{name:'Ceturkšņa pārskati – uzaicinājums', kind:'uzaicinajums', tpl:'t8', list:jur, reps:CET, day:7, share:100, per:'cet', kc:'UZ'},
+    gadsUz:{name:'Gada pārskati – uzaicinājums', kind:'uzaicinajums', tpl:'t8', list:jur, reps:GADS, day:9, share:100, per:'gads', kc:'UZ'},
+    gadsPirms:{name:'Gada pārskati – pirmstermiņa atgādinājums', kind:'atg-pirms', tpl:'t9', list:jur, reps:GADS, day:17, share:75, per:'gads', kc:'AT', prio:EM},
+    // aprīļa kampaņa: e-pasts pirmajā vietā, daudz nederīgu e-pasta adrešu (piegādes kritums)
+    gadsPec:{name:'Gada pārskati – atgādinājums', kind:'atg-pec', tpl:'t9', list:jur, reps:GADS, day:15, share:100, per:'gads', kc:'AT', prio:['email1', 'email2'], bad:true},
+    mbaUz:{name:'Mājsaimniecību budžeta apsekojums – uzaicinājums', kind:'uzaicinajums', tpl:'t2', list:fiz, reps:['a-mba'], day:12, share:100, per:'gads', kc:'UZ'},
+    mbaAtg:{name:'Mājsaimniecību budžeta apsekojums – atgādinājums', kind:'atg-pirms', tpl:'t16', list:fiz, reps:['a-mba'], day:19, share:90, per:'gads', kc:'AT', prio:EM},
+    pusgUz:{name:'Pusgada pārskati – uzaicinājums', kind:'uzaicinajums', tpl:'t8', list:jur, reps:PUSG, day:8, share:100, per:'visi', kc:'UZ'},
+    nedAtg:{name:'Nedēļas pārskati – atgādinājums', kind:'atg-pirms', tpl:'t17', list:jur, reps:NED, day:13, share:100, per:'visi', kc:'AT', prio:EM},
+    infJur:{name:'Rezultātu publicēšana – uzņēmumi', kind:'info', tpl:'t10', list:jur, reps:[], day:25, share:70, per:'visi', kc:'IN', prio:EM, codes:MEN},
+    infFiz:{name:'Rezultātu publicēšana – iedzīvotāji', kind:'info', tpl:'t5', list:fiz, reps:[], day:26, share:55, per:'gads', kc:'IN', prio:EM, codes:['a-mba']},
+    sys:{name:'Paziņojums par e-vides darbības pārtraukumu', kind:'info', tpl:'t13', list:[...jur, ...fiz], reps:[], day:18, share:35, kc:'IN', prio:EM},
+    xmas:{name:'Svētku apsveikums respondentiem', kind:'cits', tpl:'t14', list:[...jur, ...fiz], reps:[], day:19, share:35, kc:'CI', prio:EM},
+  };
+  // kampaņas pēc kalendārā mēneša (janv. = 0); iepriekšējā mēnesī daļu nodrošina SEED_HIST (ar saturu)
+  const BY_M = [['menUz', 'cetUz', 'dsaUz', 'pusgUz', 'sys'], ['menUz', 'menAtg', 'gadsUz', 'dsaAtg'], ['menUz', 'late', 'gadsPirms', 'mbaUz', 'celAtg'], ['menUz', 'cetUz', 'dsaUz', 'gadsPec'],
+    ['menUz', 'menAtg', 'celUz', 'infFiz'], ['menUz', 'late', 'celAtg', 'nedAtg', 'infJur'], ['menUz', 'cetUz', 'dsaUz', 'pusgUz'], ['menUz', 'celSum', 'dsaAtg'],
+    ['menUz', 'menAtg', 'nedAtg'], ['menUz', 'cetUz', 'dsaUz'], ['menUz', 'late', 'mbaAtg', 'celUz'], ['menUz', 'late', 'celUz', 'infJur', 'xmas']];
+  const now = new Date(), out = [];
+  for (let m = 11; m >= 1; m--){
+    const cm = new Date(now.getFullYear(), now.getMonth() - m, 1).getMonth();
+    let ks = BY_M[cm]; if (m === 1) ks = ks.filter(k => !['menUz', 'late', 'dsaUz'].includes(k));
+    ks.forEach(k => { const c = C[k], cs = (c.codes || c.reps).map(id => (repById(id) || {}).code).filter(Boolean).sort((a, b) => a.localeCompare(b, 'lv'));
+      out.push({...c, m, ctl:true, prio:c.prio || DEFAULT_PRIO, base:cs.length ? archBase(cs, c.per, c.kc) : null}); });
+  }
+  return out;
+}
+// kontrolētās kampaņas vēstules: adresāti – respondenti ar kampaņas apsekojumu pienākumiem; veidlapas – arhīva pienākumi; piegāde, atvēršana un iesniegšana – shapeRepSeed
+function seedCtlCamp(c, t){
+  state.seq = (state.seq || 0) + 1;
+  const batch = state.seq, sentAt = c.at.toISOString(), sname = `${c.name} (${MONTHS[c.at.getMonth()]})`, cb = c.base ? c.base(c.at) : null;
+  const has = new Map(); (state.duties || []).forEach(d => { if (!has.has(d.respondentId)) has.set(d.respondentId, new Set()); has.get(d.respondentId).add(d.reportId); });
+  const f = {...compose.f, date:isoDate(c.at), start:isoDate(addDaysTo(c.at, -10)), deadline:isoDate(addDaysTo(c.at, c.kind === 'atg-pec' ? -5 : 10))};
+  const forms = FORM_KINDS.includes(c.kind);
+  c.list.filter(r => (!forms || c.reps.some(id => (has.get(r.id) || new Set()).has(id))) && hashRoll(`${batch}|${c.name}|${r.id}`) < c.share && addrPlan(r, c.prio, false).length).forEach(r => {
+    const duties = !forms ? [] : c.reps.filter(id => (has.get(r.id) || new Set()).has(id)).map(id => {
+      const p = repById(id), h = hashRoll(`ad|${batch}|${r.id}|${id}`), period = periodShift(periodOf(p.freq, c.at), c.per === 'men2' ? -2 : -1);
+      const dl = c.kind === 'atg-pec' ? -(4 + h % 6) : c.kind === 'atg-pirms' ? 3 + h % 4 : 12 + h % 7, d = {id:'da' + (state.archDuties.length + 1), respondentId:r.id, reportId:id, period, deadline:isoDate(addDaysTo(c.at, dl)), submitted:null, arch:true};
+      state.archDuties.push(d); return d.id; });
+    state.sent.push({id:'s' + uid(), batch, seed:true, archived:true, _ctl:'full', _bad:!!c.bad, sessionName:sname, sessionDesc:sname, campBase:cb, sessionKind:c.kind, plannedFor:'', contentSource:'tpl', sentAt,
+      templateId:t.id, templateName:t.name, kind:t.kind, respondentId:r.id, recipient:r.name, address:'', addrType:'', channel:'', prio:c.prio.filter(Boolean), attempts:[], docNr:docNrFor(batch),
+      subject:fillText(t.subject, ctxFor(r, f)), bodyHtml:'', bodyText:'', footer:'', lang:'lv', wantLang:'lv', fallback:false, org:state.layout.org, attachments:[], main:null, files:[], duties, status:'rinda', note:'', manual:[]});
+  });
+}
+// mēģinājumi ar vēlamo iznākumu (bez blakusefektiem respondenta adresēm – a.done)
+function ctlAttempts(r, prio, key, ok, bad){
+  if (ok){
+    for (let k = 0; k < 40; k++){ const a = deliveryAttempts(r, prio, `${key}|${k}`, undefined, false), f = finalAttempt(a);
+      if (f && attKind(f) === 'ok' && !a.some(z => z.invalid || z.rule === 'd-rejrcpt' || ['stop', 'manual'].includes(attKind(z)))) return a; }
+    return null;
+  }
+  const plan = addrPlan(r, prio, false), out = []; let t = 0;
+  plan.forEach((a, i) => {
+    const force = ADDR_TYPES[a.type].ch === 'eadrese' ? 'd-transit' : 'e-perm';
+    tryAddress(a.type, a.address, key, {force, hasNext:i < plan.length - 1}).forEach((x, j) => { t += x.dt || 0; const o = {...a, ...x, ok:x.kind === 'ok', try:j + 1, offset:t}; delete o.dt; out.push(o); });
+    t += 20;
+  });
+  return out.length && !out.some(a => attKind(a) === 'ok') ? out : null;
+}
+// testa reakcija: veidlapu statusu vēsture (ies – vismaz viena iesniegta); arhīva pienākumam – iesniegšanas datums
+function ctlForms(x, ies, now){
+  const base = Date.parse(x.sentAt), span = Math.max(3 * 3600e3, Math.min(12 * 864e5, (now - base) * .85)), iso = ms => new Date(Math.min(ms, now - 10 * 60e3)).toISOString();
+  return (x.duties || []).map((id, i) => {
+    const d = rxDuty(id); if (!d) return null;
+    const h = hashRoll(`fm|${x.batch}|${x.respondentId}|${i}`), h2 = hashRoll(`fm2|${x.batch}|${x.respondentId}|${i}`), t1 = base + span * (.04 + h / 100 * .3), t2 = t1 + span * (.12 + h2 / 100 * .5), hist = [];
+    if (d.submitted && !d.arch){ const at = Date.parse(d.submitted + 'T12:00:00'); return at < base ? {duty:id, pre:true, late:false, hist:[{st:'sak', at:iso(at - 3600e3)}, {st:'ies', at:iso(at)}]} : {duty:id, pre:false, late:d.submitted > d.deadline, hist:[{st:'sak', at:iso(Math.min(t1, at - 3600e3))}, {st:'ies', at:iso(at)}]}; }
+    const want = ies && (i === 0 || h < 70);
+    if (want){
+      hist.push({st:'sak', at:iso(t1)});
+      if (h2 < 15) hist.push({st:'ies', at:iso(t1 + (t2 - t1) * .4)}, {st:'kl', at:iso(t1 + (t2 - t1) * .6)});
+      hist.push({st:'ies', at:iso(t2)});
+      d.submitted = isoDate(new Date(Date.parse(hist[hist.length - 1].at)));
+      return {duty:id, pre:false, late:d.submitted > d.deadline, hist};
+    }
+    if (h >= 40) hist.push({st:'sak', at:iso(t1)});
+    if (h >= 86) hist.push({st:'ies', at:iso(t2)}, {st:'kl', at:iso(t2 + 4 * 3600e3)});
+    return {duty:id, pre:false, late:false, hist};
+  }).filter(Boolean);
+}
+// mēneša rādītāji pēc mērķiem: kontrolētajām vēstulēm – piegāde (arhīvs) un veidlapas; visām testa vēstulēm – e-pasta atvēršana
+function shapeRepSeed(allR = state.respondents){
+  const now = Date.now(), cur = isoDate(new Date()).slice(0, 7), from = new Date(); from.setMonth(from.getMonth() - 11, 1);
+  const fromKey = isoDate(from).slice(0, 7), byKey = new Map(), rOf = id => allR.find(r => r.id === id);
+  state.sent.filter(x => x.seed && String(x.sentAt).slice(0, 7) >= fromKey).forEach(x => { const k = String(x.sentAt).slice(0, 7); if (!byKey.has(k)) byKey.set(k, []); byKey.get(k).push(x); });
+  // deterministiski (katrā ielādē vienādi): pēc kampaņas un respondenta, nevis nejaušā vēstules ID
+  const hk = x => `${x.batch}|${x.respondentId}`, ord = (xs, salt) => [...xs].sort((a, b) => hashRoll(salt + hk(a)) - hashRoll(salt + hk(b)) || hk(a).localeCompare(hk(b)));
+  byKey.forEach((xs, k) => {
+    const cm = +k.slice(5, 7) - 1, part = k === cur, T = part ? REP_TGT_PART : {deliv:REP_TGT.deliv[cm], open:REP_TGT.open[cm], sub:REP_TGT.sub[cm]};
+    // 1) piegāde (arhīva kontrolētās vēstules; sliktās adreses – vispirms aprīļa kampaņā)
+    xs.filter(x => x._ctl && isNoAddrPrint(x)).forEach(x => finalizeStatus(x));
+    const A = xs.filter(x => x._ctl && !isNoAddrPrint(x)), U = xs.filter(x => !x._ctl);
+    const uBase = U.filter(isDelivBase).length, uOk = U.filter(isDeliv).length, key = x => `ctl|${x.batch}|${x.respondentId}`;
+    // tekošajā mēnesī e-pasti vēl 72 h logā – saucējā tikai eAdreses
+    const aBase = part ? A.filter(x => (addrPlan(rOf(x.respondentId), x.prio, false)[0] || {}).type === 'eadrese').length : A.length;
+    const nFail = Math.max(0, Math.min(aBase, Math.round((1 - T.deliv / 100) * (uBase + aBase)) - (uBase - uOk)));
+    const okA = new Map(A.map(x => [x.id, ctlAttempts(rOf(x.respondentId), x.prio, key(x), true)])), forced = A.filter(x => !okA.get(x.id));
+    const failSet = new Set([...forced, ...A.filter(x => okA.get(x.id)).sort((a, b) => (b._bad - a._bad) || hashRoll('df' + hk(a)) - hashRoll('df' + hk(b))).slice(0, Math.max(0, nFail - forced.length))].map(x => x.id));
+    A.forEach(x => {
+      const r = rOf(x.respondentId);
+      const atts = (failSet.has(x.id) ? ctlAttempts(r, x.prio, key(x), false, x._bad) : null) || okA.get(x.id) || deliveryAttempts(r, x.prio, key(x), undefined, false);
+      stampAttempts(atts, x.sentAt); atts.forEach(a => { a.done = true; });
+      const fin = finalAttempt(atts); x.attempts = atts; x.address = fin.address; x.addrType = fin.type; x.channel = ADDR_TYPES[fin.type].ch;
+      finalizeStatus(x);
+    });
+    // 2) e-pasta atvēršana (visām testa vēstulēm mēnesī)
+    const em = xs.filter(x => x.channel === 'epasts' && isRecv(x)), nOpen = Math.round(T.open / 100 * em.length), openSet = new Set(ord(em.filter(x => Date.parse(x.sentAt) < now - 3600e3), 'op').slice(0, nOpen).map(x => x.id));
+    em.forEach(x => { const r = reactData(x), b = Date.parse(x.sentAt), h = hashRoll('oa' + hk(x));
+      r.open = openSet.has(x.id) ? {at:new Date(Math.max(b + 6 * 60e3, Math.min(now - 15 * 60e3, b + (8 + Math.pow(h / 100, 2.2) * 40 * 60) * 60e3))).toISOString()} : null; });
+    // 3) iesniegšana (kontrolēto vēstuļu veidlapas)
+    const withF = xs.filter(x => isRecv(x) && (x.duties || []).some(id => rxDuty(id)) && FORM_KINDS.includes(x.sessionKind));
+    // Ceļotāju apsekojuma testa respondentu (r29–r52) pienākumu statusi netiek mainīti – iesniegšana tikai arhīva pienākumiem un citiem respondentiem
+    const C = withF.filter(x => x._ctl), uSub = withF.filter(x => !x._ctl && reactView(x).res.some(f => f.st === 'ies')).length;
+    const subOk = x => !(x.duties || []).some(id => { const d = rxDuty(id); return d && !d.arch && CEL_IDS.includes(d.respondentId); });
+    // jau iesniegts reālais pienākums (pēc vēstules) – iesniegšana ir tik un tā
+    const fixed = x => (x.duties || []).some(id => { const d = rxDuty(id); return d && !d.arch && d.submitted && d.submitted >= String(x.sentAt).slice(0, 10); });
+    const nFix = C.filter(fixed).length, nSub = Math.max(0, Math.round(T.sub / 100 * withF.length) - uSub - nFix), subSet = new Set(ord(C.filter(x => subOk(x) && !fixed(x)), 'sb').slice(0, nSub).map(x => x.id));
+    C.forEach(x => { const r = reactData(x); r.forms = ctlForms(x, subSet.has(x.id), now); });
+    xs.filter(x => x._ctl && !isRecv(x)).forEach(x => { const r = reactData(x); r.forms = ctlForms(x, false, now); });
+  });
+  state.sent.forEach(x => { delete x._ctl; delete x._bad; });
+}
 // Ceļotāju apsekojuma papildu respondenti (r29–r52) testa vēsturē nepiedalās – to adrešu situācijas paliek tādas, kā testa datos
 function seedHistory(){
   const allR = state.respondents;
   state.respondents = allR.filter(r => !CEL_IDS.includes(r.id));
-  try { seedHistoryAll(); } finally { state.respondents = allR; }
+  try { seedHistoryAll(allR); } finally { state.respondents = allR; }
 }
-function seedHistoryAll(){
-  state.histSeeded = true; state.histVer = 9;
+function seedHistoryAll(allR = state.respondents){
+  state.histSeeded = true; state.histVer = 10;
   if (state.sent.length) return;
-  seedArchive();
+  state.archDuties = [];
+  seedArchive(allR);
   const keep = sessionSnapshot(), keepId = compose.draftId, wasDefault = compose.nameAuto;
   SEED_HIST.forEach(x => {
     if (!state.templates.some(t => t.id === x.snap.content.templateId)) return;
+    const keepR = state.respondents; if (x.all) state.respondents = allR;
     applySnapshot({...x.snap, desc:x.snap.name, f:{...keep.f, date:isoDate(addDays(x.days || 0)), dateManual:true}});
     const at = x.minsAgo ? new Date(Date.now() - x.minsAgo * 60e3) : addDays(x.days);
     if (!x.minsAgo) at.setHours(x.h, 5, 0, 0);
-    doSend({sentAt:at.toISOString(), final:true, seed:true, force:x.force});
+    try { doSend({sentAt:at.toISOString(), final:true, seed:true, force:x.force, ctl:!!x.ctl}); } finally { state.respondents = keepR; }
   });
+  shapeRepSeed(allR);
   applySnapshot(keep); compose.draftId = keepId;
   if (wasDefault && nameRegen() && !compose.nameSfx) compose.name = defaultSessionName();
   compose.f.docNr = '';
@@ -11747,7 +11900,7 @@ function seedPrint(){
       const x = {...x0, id:'s' + uid(), respondentId:r.id, recipient:r.name, attempts:[], duties:[], manual:[], aiFix:false, awayUntil:'', customized:false, note:'',
         subject:sw(x0.subject), bodyHtml:sw(x0.bodyHtml), bodyText:sw(x0.bodyText), eaSubject:sw(x0.eaSubject), eaText:sw(x0.eaText), attachments:[],
         printOn:true, print:{reason:'noaddr', at:x0.sentAt, addr:postAddrOf(r)}, status:'rinda'};
-      ['react', 'reviewed', 'adminResolved'].forEach(k => delete x[k]);
+      ['react', 'reviewed', 'adminResolved', '_ctl'].forEach(k => delete x[k]);
       if (!recent(x)) posted(x);
       finalizeStatus(x); add.push(x);
     });
@@ -11756,9 +11909,13 @@ function seedPrint(){
   state.sent.sort((a, b) => String(b.sentAt).localeCompare(String(a.sentAt)));
 }
 // Agrāk izveidotā testa vēsture tiek aizstāta ar jauno (ja tajā ir tikai testa ieraksti)
-if (state.histSeeded && state.histVer !== 9 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
+if (state.histSeeded && state.histVer !== 10 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
   state.sent = []; state.seq = 0; state.histSeeded = false; state.tasks = [];
   state.respondents.forEach(r => { delete r.invalidAddr; });
+  // Versija 196: kampaņu numuri mainās – ar tiem saistītie testa dati tiek izveidoti no jauna
+  state.campSnaps = {}; state.ndrWork = {}; state.archDuties = []; state.printSeedV = 0; state.sfxSentRedo = true;
+  Object.keys(state.campWl || {}).forEach(b => { if (state.campWl[b].seed) delete state.campWl[b]; });
+  Object.keys(state.audit || {}).forEach(k => { if (k.startsWith('sent:')) delete state.audit[k]; });
 }
 // Statuss tiek atvasināts no mēģinājumu laikiem (simulācija): procesā esošie statusi ar laiku mainās
 function deriveStatus(x, past, all, now){
@@ -13076,7 +13233,9 @@ const FORM_ST = {nav:{label:'Nav uzsākta', ic:'○'}, sak:{label:'Iesākta', ic
 const FORM_KINDS = ['uzaicinajums', 'atg-pirms', 'atg-pec', 'atgadinajums'];
 const REACT_V = 2;
 let rxDutyCache = null;
-const rxDuty = id => { if (!rxDutyCache || rxDutyCache.n !== (state.duties || []).length){ rxDutyCache = {n:(state.duties || []).length, m:new Map((state.duties || []).map(d => [d.id, d]))}; } return rxDutyCache.m.get(id); };
+// Versija 196: arī testa arhīva vēstuļu veidlapas (state.archDuties – vēsturiskie pienākumi, respondenta kartītē netiek rādīti)
+const allDuties = () => [...(state.duties || []), ...(state.archDuties || [])];
+const rxDuty = id => { const n = (state.duties || []).length + (state.archDuties || []).length; if (!rxDutyCache || rxDutyCache.n !== n){ rxDutyCache = {n, m:new Map(allDuties().map(d => [d.id, d]))}; } return rxDutyCache.m.get(id); };
 function reactData(x){
   if (x.react && x.react.v === REACT_V) return x.react;
   const rnd = wlRnd('react-' + x.id), base = Date.parse(x.sentAt), now = Date.now(), H = 3600e3, iso = ms => new Date(ms).toISOString();
@@ -13287,7 +13446,7 @@ function closeHgMenu(focus){
 }
 function setHistSts(v){ ui.hist.sts = v; ui.histLimit = 50; renderSent(); }
 // vēstules apsekojumu kodi (pēc tās pienākumiem), piem., "1-DSA, 1-C"
-const dutyRepMap = () => new Map((state.duties || []).map(d => [d.id, d.reportId]));
+const dutyRepMap = () => new Map(allDuties().map(d => [d.id, d.reportId]));
 const sentCodes = (xs, dm = dutyRepMap()) => [...new Set(xs.flatMap(x => (x.duties || []).map(id => dm.get(id)).filter(Boolean)))].map(id => (repById(id) || {}).code).filter(Boolean).join(', ');
 // atskaitēm: darba rindas (gaida manuālu pārbaudi; neatrisinātas sūtītāja puses kļūdas)
 const isManualQ = x => (x.status === 'kluda' || x.status === 'manuali') && !x.reviewed, isAdminQ = x => x.status === 'admin' && !x.adminResolved;
@@ -14149,9 +14308,9 @@ function deliveryView(xs){
       <span class="seg" role="group" aria-label="Rādīt grafikā"><button type="button" data-rk-mode="n" aria-pressed="${mode === 'n'}">Skaits</button><button type="button" data-rk-mode="p" aria-pressed="${mode === 'p'}">%</button></span></div>
       ${bs.length ? lineChart(bs, mode) : '<p class="hint">Nav datu.</p>'}
       ${bs.length ? `<p class="rk-note">${part ? `Raustītā līnija – nepabeigts periods (dati līdz ${esc(bs[bs.length - 1].end)}). ` : ''}${bs.some(b => !b.sent) ? 'Mēneši bez sūtījumiem – pārtraukums līnijā. ' : ''}Uz mēneša var uzklikšķināt.</p>` : ''}
-      <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %'], bs.map(b => [b.label, b.sent, b.deliv, b.sent ? `${pct(b.deliv, b.sent)}%` : '—']))}</details></div>`;
+      <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %'], bs.map(b => [b.label, b.sent, b.deliv, b.base ? `${pct(b.deliv, b.base)}%` : '—']))}</details></div>`;
   return {html:sec('Piegādes rezultāti', s0 + s1) + sec('Neveiksmīgās ziņas', s2) + sec('Atkārtotā nosūtīšana', s3),
-    sheets:[{name:'Pa mēnešiem', rows:[['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %'], ...bs.map(b => [b.label, b.sent, b.deliv, b.sent ? pct(b.deliv, b.sent) : ''])]}, {name:'Piegādes rezultāti', rows:[pHead, ...pRows]}, {name:'NDR un DIV paziņojumi', rows:[nHead, ...csvRows(nRows)]}, {name:'Atkārtotā nosūtīšana', rows:[aHead, ...csvRows(aRows)]}]};
+    sheets:[{name:'Pa mēnešiem', rows:[['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %'], ...bs.map(b => [b.label, b.sent, b.deliv, b.base ? pct(b.deliv, b.base) : ''])]}, {name:'Piegādes rezultāti', rows:[pHead, ...pRows]}, {name:'NDR un DIV paziņojumi', rows:[nHead, ...csvRows(nRows)]}, {name:'Atkārtotā nosūtīšana', rows:[aHead, ...csvRows(aRows)]}]};
 }
 // NDR iemesli ar noteikuma atslēgu (klikšķim)
 const ndrByRuleK = nd => Object.entries(RULES).map(([k, r]) => ({k, label:`${CHANNELS[r.ch]}: ${r.reason}`, v:nd.filter(n => n.rule === k).length, sub:`${NDR_TYPES[r.type].label} · ${r.action}`})).filter(r => r.v).sort((a, b) => b.v - a.v);
@@ -14159,9 +14318,15 @@ const ndrByRuleK = nd => Object.entries(RULES).map(([k, r]) => ({k, label:`${CHA
 const isSent = x => !!x.sentAt;
 // Versija 172: piegādātas – elektroniski piegādātas; vēlāk pa pastu nosūtītās paliek neveiksmīgas (sākotnējais rezultāts)
 const isDeliv = x => x.status === 'piegadats';
+// Versija 196: piegādes īpatsvara saucējs – nosūtītās vēstules ar zināmu rezultātu: piegādāta vai neveiksmīga (bez vēstulēm, kuru piegāde vēl procesā
+// vai gaida manuālu pārbaudi / administratora risinājumu, un bez drukātajām vēstulēm respondentiem bez elektroniskās adreses);
+// "saņemtas" – piegādātas vai e-pasts nodots serverim (72 h NDR logs)
+const isNoAddrPrint = x => !!(x.print && x.print.reason === 'noaddr');
+const isDelivBase = x => isSent(x) && !isNoAddrPrint(x) && ['ok', 'fail', 'print', 'printed', 'post'].includes(histFinal(x));
+const isRecv = x => isDeliv(x) || (x.status === 'nosutits' && x.channel === 'epasts');
 function kpiSet(xs){
-  const sent = xs.filter(isSent).length, deliv = xs.filter(isDeliv).length;
-  return {sent, deliv, fail:xs.filter(x => ST_FAIL.includes(x.status) || x.status === 'jadruka').length, retr:xs.filter(isRetried).length, rate:pct(deliv, sent)};
+  const sent = xs.filter(isSent).length, deliv = xs.filter(isDeliv).length, base = xs.filter(isDelivBase).length;
+  return {sent, deliv, base, fail:xs.filter(x => ST_FAIL.includes(x.status) || x.status === 'jadruka').length, retr:xs.filter(isRetried).length, rate:pct(deliv, base)};
 }
 // Mēneši atlasītajā periodā
 let repW = 0;
@@ -14177,7 +14342,7 @@ function monthBuckets(xs){
     const mEnd = isoDate(new Date(d.getFullYear(), d.getMonth() + 1, 0)), partial = mEnd > bIso;
     const from = f.from && f.from > isoDate(d) ? f.from : isoDate(d), to = partial ? bIso : mEnd;
     out.push({key, from, to:to > today ? today : to, partial, end:fmtShort(b), label:`${d.getFullYear()}. g. ${MONTHS[d.getMonth()]}${partial ? ` (līdz ${fmtDate(bIso)})` : ''}`, short:`${MONTHS[d.getMonth()].slice(0, 3)}.${d.getMonth() === 0 || !out.length ? ' ' + d.getFullYear() : ''}`,
-      sent:g.filter(isSent).length, deliv:g.filter(isDeliv).length, r:repRates(g)});
+      sent:g.filter(isSent).length, deliv:g.filter(isDeliv).length, base:g.filter(isDelivBase).length, r:repRates(g)});
   }
   return out;
 }
@@ -14186,7 +14351,7 @@ function monthBuckets(xs){
 function lineChart(bs, mode){
   const W = Math.max(300, Math.round((($('#rep-body') || {}).clientWidth || 720) - 40)), H = 262, L = 38, R = W < 480 ? 70 : 96, T = 14, B = 44, iw = W - L - R, ih = H - T - B;
   const pm = mode === 'p', ser = pm ? [['rate', 'Piegādes %', 's2']] : [['sent', 'Nosūtītas', 's1'], ['deliv', 'Piegādātas', 's2']];
-  const val = (b, k) => !b.sent ? null : k === 'rate' ? pct(b.deliv, b.sent) : b[k];
+  const val = (b, k) => !b.sent ? null : k === 'rate' ? (b.base ? pct(b.deliv, b.base) : null) : b[k];
   const every = Math.ceil(bs.length / Math.max(2, Math.floor(iw / 58)));
   const mx = pm ? 100 : Math.max(1, ...bs.map(b => b.sent)), step = pm ? 25 : mx <= 5 ? 1 : mx <= 20 ? 5 : mx <= 50 ? 10 : 25, top = pm ? 100 : Math.ceil(mx / step) * step;
   const x = i => L + (bs.length === 1 ? iw / 2 : i * iw / (bs.length - 1)), y = v => T + ih - v / top * ih;
@@ -14203,7 +14368,7 @@ function lineChart(bs, mode){
   const ends = li < 0 ? '' : (() => { const ys = ser.map(([k]) => y(val(bs[li], k))); if (ys.length > 1 && Math.abs(ys[0] - ys[1]) < 14){ ys[0] -= 7; ys[1] += 7; }
     return ser.map(([k, , v]) => `<circle cx="${x(li)}" cy="${y(val(bs[li], k))}" r="4.5" fill="var(--${v})" stroke="#fff" stroke-width="2"/>`).join('')
       + ser.map(([k, l], j) => `<text class="lbl-end" x="${x(li) + 9}" y="${ys[j] + 4}">${esc(W < 480 ? '' : l.replace(' %', '') + ' ')}${val(bs[li], k)}${pm ? '%' : ''}</text>`).join(''); })();
-  const tipOf = b => `${b.label}|${!b.sent ? 'Nav sūtījumu' : pm ? `Piegādes % ${pct(b.deliv, b.sent)}% (${b.deliv} no ${b.sent})` : `Nosūtītas ${b.sent} · Piegādātas ${b.deliv}`}`;
+  const tipOf = b => `${b.label}|${!b.sent ? 'Nav sūtījumu' : pm ? `Piegādes % ${b.base ? pct(b.deliv, b.base) + '%' : '—'} (${b.deliv} no ${b.base})` : `Nosūtītas ${b.sent} · Piegādātas ${b.deliv}`}`;
   return (pm ? '' : legendHtml(ser)) + `<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${pm ? 'Piegādes īpatsvars pa mēnešiem' : 'Nosūtītās un piegādātās ziņas pa mēnešiem'}">
     ${ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${v ? 'var(--grid)' : 'var(--axis)'}" stroke-width="1"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}${pm ? '%' : ''}</text>`).join('')}
     ${bs.map((b, i) => ((last - i) % every === 0) ? `<text x="${x(i)}" y="${H - 24}" text-anchor="middle">${esc(b.short)}</text>` : '').join('')}
@@ -14218,9 +14383,9 @@ function lineChart(bs, mode){
 // iesniegšanas īpatsvars = piegādātās vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (informatīvās vēstules bez anketām neieskaita;
 // mēnesī bez šādām vēstulēm – pārtraukums līnijā, nevis 0 %)
 function repRates(xs){
-  const sent = xs.filter(isSent), dl = sent.filter(isDeliv), em = dl.filter(x => x.channel === 'epasts'), dlF = dl.filter(x => reactView(x).forms.length);
+  const sent = xs.filter(isSent), base = sent.filter(isDelivBase), dl = sent.filter(isDeliv), rc = sent.filter(isRecv), em = rc.filter(x => x.channel === 'epasts'), dlF = rc.filter(x => reactView(x).forms.length);
   const open = em.filter(x => mailReact(x).k === 'open').length, sub = dlF.filter(x => reactView(x).res.some(f => f.st === 'ies')).length;
-  return {sent:sent.length, deliv:dl.length, em:em.length, open, delivF:dlF.length, sub, delivP:sent.length ? pct(dl.length, sent.length) : null, openP:em.length ? pct(open, em.length) : null, subP:dlF.length ? pct(sub, dlF.length) : null};
+  return {sent:sent.length, base:base.length, deliv:dl.length, em:em.length, open, delivF:dlF.length, sub, delivP:base.length ? pct(dl.length, base.length) : null, openP:em.length ? pct(open, em.length) : null, subP:dlF.length ? pct(sub, dlF.length) : null};
 }
 // Pārskata rādītāji: nosūtītas → piegādes īpatsvars → atvēršanas īpatsvars (e-pasts, aptuveni) → iesniegšanas īpatsvars | jārisina
 function repKpis(xs){
@@ -14228,8 +14393,8 @@ function repKpis(xs){
   return {...r, delivP:r.delivP ?? 0, openP:r.openP ?? 0, subP:r.subP ?? 0, nF:fs.length, ies, iesP:pct(ies, fs.length), todo:xs.filter(isTodo).length};
 }
 const RATE_SER = [['delivP', 'Piegādes īpatsvars', 's1'], ['openP', 'Atvēršanas īpatsvars (e-pasts, aptuveni)', 's3'], ['subP', 'Iesniegšanas īpatsvars', 's4']];
-const RATE_TIP = 'Piegādes īpatsvars = elektroniski piegādātās / nosūtītās vēstules (vēstules, kas pēc neveiksmes nosūtītas pa pastu, paliek neveiksmīgas – sākotnējais rezultāts). Atvēršanas īpatsvars (e-pasts, aptuveni) = atvērtie e-pasti / piegādātie e-pasti (eAdreses un drukātās vēstules neieskaita; atvēršana – pēc izsekošanas attēla). Iesniegšanas īpatsvars = vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (informatīvās vēstules bez anketām neieskaita). Uz mēneša var uzklikšķināt – atver sūtījumus ar šo periodu.';
-const rateTxt = r => `Piegāde ${r.delivP ?? '—'}${r.delivP != null ? '%' : ''} (${fmtCount(r.deliv)} no ${fmtCount(r.sent)}) · Atvēršana ${r.openP ?? '—'}${r.openP != null ? '%' : ''} (${fmtCount(r.open)} no ${fmtCount(r.em)}) · Iesniegšana ${r.subP ?? '—'}${r.subP != null ? '%' : ''} (${fmtCount(r.sub)} no ${fmtCount(r.delivF)})`;
+const RATE_TIP = 'Piegādes īpatsvars = elektroniski piegādātās / nosūtītās vēstules ar zināmu rezultātu (vēstules, kuru piegāde vēl procesā vai gaida manuālu pārbaudi vai administratora risinājumu, un drukātās vēstules respondentiem bez elektroniskās adreses neieskaita; vēstules, kas pēc neveiksmes nosūtītas pa pastu, paliek neveiksmīgas – sākotnējais rezultāts). Atvēršanas īpatsvars (e-pasts, aptuveni) = atvērtie e-pasti / piegādātie e-pasti (arī tie, kas vēl gaida 72 h NDR logā; eAdreses un drukātās vēstules neieskaita; atvēršana – pēc izsekošanas attēla). Iesniegšanas īpatsvars = vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (informatīvās vēstules bez anketām neieskaita).';
+const rateTxt = r => `Piegāde ${r.delivP ?? '—'}${r.delivP != null ? '%' : ''} (${fmtCount(r.deliv)} no ${fmtCount(r.base)}) · Atvēršana ${r.openP ?? '—'}${r.openP != null ? '%' : ''} (${fmtCount(r.open)} no ${fmtCount(r.em)}) · Iesniegšana ${r.subP ?? '—'}${r.subP != null ? '%' : ''} (${fmtCount(r.sub)} no ${fmtCount(r.delivF)})`;
 // Līniju grafiks "Rādītāji pa mēnešiem" (Y ass 0–100 %): trīs īpatsvari; līniju galā – pēdējā pilnā mēneša vērtība; nepabeigtais mēnesis – raustīta līnija;
 // mēneši bez sūtījumiem (vai bez saucēja) – pārtraukums līnijā; mēnesis – klikšķināms (atver sūtījumus ar mēneša periodu)
 function rateChart(bs){
@@ -14274,8 +14439,8 @@ function summaryView(xs){
   const arr = '<span class="rk-arr" aria-hidden="true">→</span>';
   const flow = `<div class="rk-flow">
       ${card({n:k.sent, l:'Nosūtītas', sub:`${new Set(xs.filter(isSent).map(x => x.batch)).size} ${plural(new Set(xs.filter(isSent).map(x => x.batch)).size, 'kampaņa', 'kampaņas')}`, d:hasPrev ? repDelta(relCnt(k.sent, kp.sent), 0, '%', 0) : '', drill:{}, title:'Visas nosūtītās vēstules – atvērt sūtījumos'})}${arr}
-      ${card({n:k.sent ? `${k.delivP}%` : '—', l:'Piegādes īpatsvars', sub:`${fmtCount(k.deliv)} no ${fmtCount(k.sent)} piegādātas`, d:hasPrev ? repDelta(k.delivP, kp.delivP, ' p. p.', 1) : '', drill:{g:'ok'}, title:'Piegādātās / nosūtītās vēstules – atvērt piegādātās sūtījumos'})}${arr}
-      ${card({n:k.em ? `${k.openP}%` : '—', l:'Atvēršanas īpatsvars (e-pasts, aptuveni)', sub:k.em ? `${fmtCount(k.open)} no ${fmtCount(k.em)} piegādātiem e-pastiem` : 'nav piegādātu e-pastu', d:hasPrev && k.em && kp.em ? repDelta(k.openP, kp.openP, ' p. p.', 1) : '', drill:{f:{mr:'open'}}, title:'Atvērtie e-pasti / piegādātie e-pasti (eAdreses un drukātās vēstules neieskaita; aptuveni – izsekošanas attēls). Atvērt sūtījumos.'})}${arr}
+      ${card({n:k.base ? `${k.delivP}%` : '—', l:'Piegādes īpatsvars', sub:`${fmtCount(k.deliv)} no ${fmtCount(k.base)} piegādātas`, d:hasPrev ? repDelta(k.delivP, kp.delivP, ' p. p.', 1) : '', drill:{g:'ok'}, title:'Piegādātās / nosūtītās vēstules ar zināmu rezultātu (procesā esošās, manuālu pārbaudi vai administratora risinājumu gaidošās un drukātās vēstules respondentiem bez elektroniskās adreses neieskaita) – atvērt piegādātās sūtījumos'})}${arr}
+      ${card({n:k.em ? `${k.openP}%` : '—', l:'Atvēršanas īpatsvars (e-pasts, aptuveni)', sub:k.em ? `${fmtCount(k.open)} no ${fmtCount(k.em)} piegādātiem e-pastiem` : 'nav piegādātu e-pastu', d:hasPrev && k.em && kp.em ? repDelta(k.openP, kp.openP, ' p. p.', 1) : '', drill:{f:{mr:'open'}}, title:'Atvērtie e-pasti / piegādātie e-pasti (arī tie, kas vēl gaida 72 h NDR logā; eAdreses un drukātās vēstules neieskaita; aptuveni – izsekošanas attēls). Atvērt sūtījumos.'})}${arr}
       ${card({n:k.delivF ? `${k.subP}%` : '—', l:'Iesniegšanas īpatsvars', sub:k.delivF ? `${fmtCount(k.sub)} no ${fmtCount(k.delivF)} piegādātām vēstulēm ar anketām` : 'nav piegādātu vēstuļu ar anketām', d:hasPrev && k.delivF && kp.delivF ? repDelta(k.subP, kp.subP, ' p. p.', 1) : '', drill:{f:{fa:'ies'}}, title:'Vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām – atvērt sūtījumos'})}
       <span class="rk-sep" aria-hidden="true"></span>
       ${card({n:k.todo, l:'Jārisina', sub:'nepiegādātas, aizturētas, manuāli, jādrukā', d:hasPrev ? repDelta(k.todo, kp.todo, '', -1) : '', drill:{g:'todo'}, cls:k.todo ? 'is-todo' : '', title:'Vēstules, kas prasa rīcību – atvērt sūtījumos ar “Jārisina”'})}</div>`;
@@ -14292,18 +14457,17 @@ function summaryView(xs){
     <tbody>${rows.map(r => `<tr${drillAttr({f:{camp:String(r.b)}})} title="Atvērt sūtījumos"><td>${esc(r.name)}<span class="cell-sub">Nr. ${r.b}${r.codes ? ` · ${esc(r.codes)}` : ''}</span></td><td style="white-space:nowrap">${esc(fmtDate(isoDate(new Date(r.date))))}</td><td>${esc(r.kind)}</td>
       <td class="num">${r.sent}</td><td class="num">${r.deliv}</td><td class="num">${r.fail}</td><td class="num">${r.rate}%</td></tr>`).join('')}</tbody></table>${rows.length ? '' : `<div class="tc-empty">${tcEmptyBox('Atlasītajā periodā kampaņu nav')}</div>`}</div>`;
   return {html:`${flow}
-    <div class="card viz-card" style="margin-bottom:16px"><div class="rk-chart-h"><h3>Rādītāji pa mēnešiem${tip(RATE_TIP)}</h3></div>
+    <div class="card viz-card" style="margin-bottom:16px"><div class="rk-chart-h"><h3>Rādītāji pa mēnešiem${tip(`${bs.length ? `Līniju galā – pēdējā pilnā mēneša vērtība. ${part ? `Raustītā līnija – nepabeigts mēnesis (dati līdz ${bs[bs.length - 1].end}). ` : ''}Mēneši bez sūtījumiem vai bez attiecīgajām vēstulēm – pārtraukums līnijā. Uz mēneša var uzklikšķināt – atver sūtījumus ar šo periodu.\n\n` : ''}${RATE_TIP}`)}</h3></div>
       ${bs.length ? legendHtml(RATE_SER) + rateChart(bs) : '<p class="hint">Nav datu.</p>'}
-      ${bs.length ? `<p class="rk-note">Līniju galā – pēdējā pilnā mēneša vērtība. ${part ? `Raustītā līnija – nepabeigts mēnesis (dati līdz ${esc(bs[bs.length - 1].end)}). ` : ''}${bs.some(b => !b.sent) ? 'Mēneši bez sūtījumiem – pārtraukums līnijā. ' : ''}Uz mēneša var uzklikšķināt.</p>` : ''}
-      <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %', 'Piegādātie e-pasti', 'Atvērti', 'Atvēršanas %', 'Piegādātas ar anketām', 'Ar iesniegtu anketu', 'Iesniegšanas %'], bs.map(b => [b.label, b.r.sent, b.r.deliv, b.r.delivP != null ? `${b.r.delivP}%` : '—', b.r.em, b.r.open, b.r.openP != null ? `${b.r.openP}%` : '—', b.r.delivF, b.r.sub, b.r.subP != null ? `${b.r.subP}%` : '—']))}</details></div>
+      <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Nosūtītas', 'Ar zināmu rezultātu', 'Piegādātas', 'Piegādes %', 'Piegādātie e-pasti', 'Atvērti', 'Atvēršanas %', 'Piegādātas ar anketām', 'Ar iesniegtu anketu', 'Iesniegšanas %'], bs.map(b => [b.label, b.r.sent, b.r.base, b.r.deliv, b.r.delivP != null ? `${b.r.delivP}%` : '—', b.r.em, b.r.open, b.r.openP != null ? `${b.r.openP}%` : '—', b.r.delivF, b.r.sub, b.r.subP != null ? `${b.r.subP}%` : '—']))}</details></div>
     <div class="viz-grid g3">
       <div class="card viz-card"><h3>Ziņas pa kanāliem${tip('Nosūtītās ziņas pa kanāliem, kuros vēstule faktiski nosūtīta: eAdrese, e-pasts vai drukāta vēstule (pa pastu). Uzklikšķinot uz daļas – atver sūtījumus ar šo kanālu.')}</h3>${donutChart(chParts(xs), 'Ziņas pa kanāliem')}</div>
       <div class="card viz-card"><h3>Ziņas pēc kampaņas veida${tip('Nosūtītās ziņas. Uzklikšķinot – atver sūtījumus.')}</h3>${byKind.length ? singleBars(byKind) : '<p class="hint">Nav datu.</p>'}</div>
       <div class="card viz-card"><h3>NDR/DIV iemeslu sadalījums${tip('Biežākie iemesli pēc sadaļas “Piegādes statusi un kļūdas”; visi – apakšcilnē “Piegāde”. Uzklikšķinot – atver sūtījumus ar šo iemeslu.')}</h3><p class="viz-sub">${nd.length} ${plural(nd.length, 'paziņojums', 'paziņojumi')}</p>${byNdr.length ? singleBars(byNdr) : '<p class="hint">Nav datu.</p>'}</div>
     </div>
     <div class="card viz-card"><h3>Kampaņas${tip('Tabulu var kārtot, uzklikšķinot uz kolonnas nosaukuma; rinda atver sūtījumus.')}</h3><p class="viz-sub">${rows.length} ${plural(rows.length, 'kampaņa', 'kampaņas')}</p>${tbl}</div>`,
-    sheets:[{name:'Pārskats – rādītāji', rows:[['Rādītājs', 'Vērtība', 'Piezīme'], ['Nosūtītas', k.sent, ''], ['Piegādes īpatsvars, %', k.sent ? k.delivP : '', `${k.deliv} no ${k.sent}`], ['Atvēršanas īpatsvars (e-pasts, aptuveni), %', k.em ? k.openP : '', k.em ? `${k.open} no ${k.em} piegādātiem e-pastiem` : ''], ['Iesniegšanas īpatsvars, %', k.delivF ? k.subP : '', `${k.sub} no ${k.delivF} piegādātām vēstulēm ar anketām`], ['Jārisina', k.todo, '']]},
-      {name:'Rādītāji pa mēnešiem', rows:[['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %', 'Piegādātie e-pasti', 'Atvērti', 'Atvēršanas %', 'Piegādātas ar anketām', 'Ar iesniegtu anketu', 'Iesniegšanas %'], ...bs.map(b => [b.label, b.r.sent, b.r.deliv, b.r.delivP ?? '', b.r.em, b.r.open, b.r.openP ?? '', b.r.delivF, b.r.sub, b.r.subP ?? ''])]},
+    sheets:[{name:'Pārskats – rādītāji', rows:[['Rādītājs', 'Vērtība', 'Piezīme'], ['Nosūtītas', k.sent, ''], ['Piegādes īpatsvars, %', k.base ? k.delivP : '', `${k.deliv} no ${k.base}`], ['Atvēršanas īpatsvars (e-pasts, aptuveni), %', k.em ? k.openP : '', k.em ? `${k.open} no ${k.em} piegādātiem e-pastiem` : ''], ['Iesniegšanas īpatsvars, %', k.delivF ? k.subP : '', `${k.sub} no ${k.delivF} piegādātām vēstulēm ar anketām`], ['Jārisina', k.todo, '']]},
+      {name:'Rādītāji pa mēnešiem', rows:[['Mēnesis', 'Nosūtītas', 'Ar zināmu rezultātu', 'Piegādātas', 'Piegādes %', 'Piegādātie e-pasti', 'Atvērti', 'Atvēršanas %', 'Piegādātas ar anketām', 'Ar iesniegtu anketu', 'Iesniegšanas %'], ...bs.map(b => [b.label, b.r.sent, b.r.base, b.r.deliv, b.r.delivP ?? '', b.r.em, b.r.open, b.r.openP ?? '', b.r.delivF, b.r.sub, b.r.subP ?? ''])]},
       {name:'Kampaņas', rows:[SUM_COLS.map(c => c[1]), ...rows.map(r => [r.name, fmtDate(isoDate(new Date(r.date))), r.kind, r.sent, r.deliv, r.fail, `${r.rate}%`])]}]};
 }
 // jaunā apakšcilne: ja visas apakšcilnes neietilpst vienā rindā, rāda īso nosaukumu "Reakcija" (pilns – padomā), lai rinda nepārnestos
@@ -16036,6 +16200,7 @@ if (state.ndrSeedV !== 1){ seedNdrWork(); save(); }
 // drukātā vēstule (Versija 158): pasta adreses un testa sūtījumi pa pastu
 if ((state.respondents || []).some(r => !r.postAddr)){ seedPostAddr(); save(); }
 if (state.printSeedV !== 1){ seedPrint(); save(); }
+if (state.sfxSentRedo){ seedNameSfx(true); delete state.sfxSentRedo; save(); }
 setInterval(wlTick, WL_TICK);
 state.tasks = state.tasks || [];
 refreshStatuses();
