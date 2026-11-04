@@ -3982,7 +3982,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 194</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 195</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -10097,7 +10097,7 @@ function stepState(n){
     return bad.length ? warn(`Saturā neaizpildīti mainīgie: ${bad.map(k => '{' + k + '}').join(', ')}.`) : {st:'done'};
   }
   if (n === 4){
-    if (compose.review && !reviewValid()) return warn('Kampaņa mainīta pēc pārbaudes – pārbaude jāiziet vēlreiz.');
+    if (compose.review && !reviewValid()) return warn(reviewWhy());
     return reviewValid() ? {st:'done'} : {st:''};
   }
   if (n === 5){
@@ -10799,8 +10799,40 @@ function autoChecks(){
 // pārbaudes atslēga: kampaņas dati, kas ietekmē vēstules (bez saskaņošanas, nosūtīšanas laika un soļa); mainot tos, pārbaude jāiziet vēlreiz
 // pārbaudes rezultāts paliek spēkā, mainot 5. solī saskaņošanu un nosūtīšanas laiku; atgādinājumam – ja nemainās termiņš (no tā atkarīga atlase)
 // (vēstules datums – 5. soļa iestatījums kā nosūtīšanas laiks: tā maiņa pārbaudi neatceļ)
-const reviewSig = () => { const {step, apv, review, tests, savedAt, wl, when, sendTime, sel, f, print, stepsOk, ...rest} = sessionSnapshot(); const {sendDate, ...selRest} = sel || {}; const {date, dateManual, surveyFor, ...fRest} = f || {}; return JSON.stringify({...rest, ...(print ? {} : {noPrint:true}), f:fRest, sel:selRest, due:isReminder() ? sendDateEff() : ''}); };
-const reviewValid = () => !!(compose.review && compose.review.sig === reviewSig());
+const reviewSigOld = () => { const {step, apv, review, tests, savedAt, wl, when, sendTime, sel, f, print, stepsOk, ...rest} = sessionSnapshot(); const {sendDate, ...selRest} = sel || {}; const {date, dateManual, surveyFor, ...fRest} = f || {}; return JSON.stringify({...rest, ...(print ? {} : {noPrint:true}), f:fRest, sel:selRest, due:isReminder() ? sendDateEff() : ''}); };
+// Versija 195: pārbaudes derīgums – tikai no tā, ko pārbaude pārbauda: respondenti, adreses, saturs (veidne, pielikumi, mainīgie), adrešu prioritāte, apsekojums / periods.
+// Sūtīšanas veids (Tūlīt / Ieplānot), datums, laiks, vēstules datums, saskaņošana un nosaukums (arī tā automātiskā daļa) pārbaudi neatceļ.
+function reviewParts(){
+  const sn = sessionSnapshot(), {sendDate, ...sel} = sn.sel || {}, {date, dateManual, surveyFor, ...f} = sn.f || {}, recs = recipients(), t = currentTemplate();
+  const tp = t ? {kind:t.kind, subject:t.subject, body:t.body, ea:t.ea || null, doc:t.doc || null, main:t.main || null, files:t.files || [], vis:t.vis || null} : null;
+  return {v:2, n:recs.length, resp:recs.map(r => r.id).join(','),
+    addr:JSON.stringify(recs.map(r => prePlan(r).slice(0, 2).map(a => `${a.type}:${a.address}`))),
+    prio:JSON.stringify([sn.prio, sn.print !== false]),
+    content:JSON.stringify([sn.content, sn.custom, tp, f]),
+    scope:JSON.stringify([sn.aud, sn.kind, sn.remind, sel])};
+}
+const reviewSig = () => JSON.stringify(reviewParts());
+function reviewValid(){
+  const rv = compose.review; if (!rv || !rv.sig) return false;
+  if (rv.sig === reviewSig()) return true;
+  // agrāk saglabātā pārbaude (vecā atslēga) – ja tā joprojām atbilst, pāriet uz jauno
+  if (!rv.sig.includes('"v":2') && rv.sig === reviewSigOld()){ rv.sig = reviewSig(); return true; }
+  return false;
+}
+// konkrēts iemesls, kāpēc pārbaude vairs nav derīga
+function reviewReason(){
+  const rv = compose.review; if (!rv) return 'Kampaņa vēl nav pārbaudīta.';
+  let old = null; try { old = JSON.parse(rv.sig); } catch (e) {}
+  if (!old || old.v !== 2) return 'Kampaņa mainīta pēc pārbaudes.';
+  const cur = reviewParts();
+  if (old.resp !== cur.resp) return old.n !== cur.n ? `Pēc pārbaudes mainīti respondenti (atlasīti ${old.n} → ${cur.n}).` : 'Pēc pārbaudes mainīti respondenti.';
+  if (old.scope !== cur.scope) return 'Pēc pārbaudes mainīts apsekojums vai periods.';
+  if (old.addr !== cur.addr) return 'Pēc pārbaudes mainītas adreses.';
+  if (old.prio !== cur.prio) return 'Pēc pārbaudes mainīta adrešu prioritāte.';
+  if (old.content !== cur.content) return 'Pēc pārbaudes mainīts saturs.';
+  return 'Kampaņa mainīta pēc pārbaudes.';
+}
+const reviewWhy = () => `${reviewReason()} Atveriet Pārbaudi un apstipriniet vēlreiz.`;
 const apvLocked = () => !!(compose.apv && compose.apv.status === 'pending');
 // saskaņota (gatava nosūtīšanai): soļi vairs nav labojami, atveras 5. solis "Nosūtīšana"
 const apvApproved = () => !!(compose.apv && compose.apv.required && compose.apv.status === 'approved');
@@ -10942,7 +10974,7 @@ function renderSendCheck(){
   const rv = compose.review, box = $('#c-send-check'), link = '<button type="button" class="link-btn" data-action="wiz-go" data-id="4">Atvērt pārbaudi</button>';
   const ok = rv && reviewValid() && !rvWarns(rv).length;
   box.className = `s3-check ${ok ? 'is-ok' : 'is-warn'}`;
-  box.innerHTML = !rv || !reviewValid() ? `<span class="s3-ic" aria-hidden="true">⚠</span><span class="s3-t">${rv ? 'Kampaņa mainīta pēc pārbaudes – pārbaudiet vēlreiz.' : 'Kampaņa vēl nav pārbaudīta.'}</span>${link}`
+  box.innerHTML = !rv || !reviewValid() ? `<span class="s3-ic" aria-hidden="true">⚠</span><span class="s3-t">${rv ? esc(reviewWhy()) : 'Kampaņa vēl nav pārbaudīta.'}</span>${link}`
     : rvWarns(rv).length ? `<span class="s3-ic" aria-hidden="true">⚠</span><span class="s3-t"><b>Pārbaudīts ${esc(fmtDateTime(rv.at))} ar ${rvWarns(rv).length} ${plural(rvWarns(rv).length, 'brīdinājumu', 'brīdinājumiem')}</b> · ${esc(rvWarns(rv).map(rvWarnText).join(' · '))}</span>${link}`
     : `<span class="s3-ic" aria-hidden="true">✓</span><span class="s3-t"><b>Pārbaudīts ${esc(fmtDateTime(rv.at))} bez kļūdām</b></span>`;
 }
@@ -11082,7 +11114,10 @@ async function finalSubmit(){
   const t = currentTemplate(), recs = recipients();
   if (composeIssues(t, recs).length){ [1, 2, 3, 4, 5].forEach(markTried); renderComposePreview(); toast('Kampaņu nevar nodot – novērsiet kļūdas.', true); return; }
   // saskaņotai kampaņai pārbaude jau veikta pirms nodošanas saskaņošanai
-  if (!reviewValid() && !apvApproved()){ toast('Pirms nodošanas jāiziet solis “Pārbaude”.', true); setStep(4); return; }
+  if (!reviewValid() && !apvApproved()){
+    // Versija 195: īss dialogs ar konkrētu iemeslu
+    openModal({title:'Pārbaude jāatkārto', content:`<p>${esc(reviewReason())}</p>`, actions:[{label:'Atcelt'}, {label:'Atvērt pārbaudi', cls:'btn-primary', onClick:c => { c(); setStep(4); }}]});
+    return; }
   if (!(await pubGate())) return;
   if (finalKind() !== 'apv'){ await send(); return; }
   const a0 = apvEnsure(compose.apv), steps = a0.steps.filter(st => st.items.length), route = routeById(a0.routeId);
