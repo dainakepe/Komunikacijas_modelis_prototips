@@ -1631,7 +1631,9 @@ table.cl-table > tbody > tr > td{height:36px;padding-top:0;padding-bottom:0;padd
 .sf-menu hr{border:0;border-top:1px solid var(--border-light);margin:5px 0}
 .sf-chk{width:14px;flex:none;color:var(--primary-dark);font-weight:700}
 .sf-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sf-def{flex:none;font-size:var(--fs-xs);color:var(--text-muted);border:1px solid var(--border);border-radius:var(--radius-pill);padding:0 7px}
+.sf-def{flex:none;font-size:var(--fs-xs);font-weight:400;color:var(--text-muted)}
+.sf-table td.sf-none{color:var(--text-muted);font-weight:400}
+.sf-m-note{margin:12px 0 0;font-size:var(--fs-xs);color:var(--text-muted)}
 .sf-dlg .field{margin-bottom:10px}
 dialog.modal.sf-edm{width:min(660px,calc(100vw - 32px))}
 .sf-ed{display:grid;gap:10px}
@@ -3959,7 +3961,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 188</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 189</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11751,7 +11753,7 @@ function campChips(){
   if (c.q.trim()) out.push(['q', `Meklēt: ${c.q.trim()}`]);
   if (c.kind) out.push(['kind', `Veids: ${SESS_KINDS[c.kind] ? SESS_KINDS[c.kind].label : c.kind}`]);
   out.push(...perChip(c));
-  if (c.creator) out.push(['creator', `Izveidotājs: ${c.creator}`]);
+  if (c.creator) out.push(['creator', `Veidotājs: ${c.creator}`]);
   return out;
 }
 // perioda filtrs kampaņās: nosūtītām – nosūtīšanas datums, ieplānotām – plānotais nosūtīšanas datums, melnrakstiem – izveides datums
@@ -11762,7 +11764,7 @@ function renderCampFilters(rows){
   campFNormUi();
   if (document.activeElement !== $('#camp-search')) $('#camp-search').value = c.q;
   const creators = [...new Set(rows.map(x => x.creator).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'lv'));
-  $('#cf-creator-sum').textContent = c.creator ? `Izveidotājs: ${c.creator}` : 'Kampaņas izveidotājs: visi';
+  $('#cf-creator-sum').textContent = c.creator ? `Veidotājs: ${c.creator}` : 'Kampaņas veidotājs: visi';
   $('#cf-creator-sum').classList.toggle('is-on', !!c.creator);
   const qq = norm($('#cf-creator-q').value);
   const opts = [['', 'Visi izveidotāji'], ...creators.map(n => [n, n])].filter(([k, l]) => !qq || !k || norm(l).includes(qq));
@@ -12020,7 +12022,7 @@ function sfEditDlg(view, o = {}){
   const {el} = openModal({title:ed ? 'Labot filtru' : 'Jauns filtrs', content:`<div class="sf-dlg sf-ed">
       <div class="sf-ed-row"><label for="sf-name">Nosaukums <span class="req">*</span></label><div><input type="text" id="sf-name" maxlength="${SF_MAX}" value="${ed ? esc(ed.name) : ''}" placeholder="piem., Mani melnraksti" aria-describedby="sf-name-err"><span class="err" id="sf-name-err" hidden></span></div></div>
       ${E.html(w)}
-      <div class="sf-ed-row"><span></span><label class="sf-defl"><input type="checkbox" id="sf-def"${ed && ed.def ? ' checked' : ''}> ${esc(cfg.defLabel || 'Izmantot kā noklusējumu, atverot šo skatu')}</label></div>
+      <div class="sf-ed-row"><span></span><label class="sf-defl"><input type="checkbox" id="sf-def"${ed && ed.def ? ' checked' : ''}> ${esc(`Piemērot automātiski, atverot sadaļu “${cfg.sec || ''}”`)}</label></div>
       <p class="sf-ed-hint" id="sf-ed-hint" aria-live="polite"></p></div>`,
     actions:[{label:'Atcelt'}, {label:'Saglabāt', cls:'btn-primary', onClick:c => {
       const inp = $('#sf-name', el), nm = inp.value.trim(), err = $('#sf-name-err', el), f = E.read(el, w);
@@ -12045,16 +12047,25 @@ function sfUpdate(view){
   ui.sf[view].open = false; cfg.render(); toast(`Filtrs “${cur.name}” atjaunināts.`);
 }
 // "Pārvaldīt filtrus…": pārsaukšana, noklusējums (viens), secība (↑↓), dzēšana (ar apstiprinājumu); izmaiņas – ar "Saglabāt"
+// Versija 189: pēc izmaiņām "Pārvaldīt filtrus" – bez lapas atsvaidzināšanas: mainīts noklusējums → tas uzreiz piemērots (vai "bez filtra" – viss saraksts);
+// dzēsts aktīvais filtrs → saraksts bez filtra; citādi aktīvais filtrs paliek; izvēlne (secība, atzīme "noklusējums") – atjaunota
+const sfDefId = view => (sfList(view).find(x => x.def) || {}).id || '';
+function sfAfterManage(view, def0){
+  const cfg = SF_CFG[view], def1 = sfDefId(view);
+  if (def1 !== def0){ sfPick(view, def1); return; }
+  if (ui.sf[view].active && !sfList(view).some(x => x.id === ui.sf[view].active)){ sfPick(view, ''); return; }
+  cfg.render(); sfRender(view);
+}
 function sfManage(view){
-  const cfg = SF_CFG[view]; let w = clone(sfList(view));
-  const body = () => w.length ? `<p class="hint" style="margin-top:0">Noklusējuma filtrs ielādējas automātiski, atverot šo skatu.</p>
-    <table class="rep-table sf-table"><thead><tr><th>Nosaukums</th><th>Noklusējums</th><th><span class="sr-only">Secība</span></th><th><span class="sr-only">Darbības</span></th></tr></thead><tbody>${w.map((x, i) => `<tr data-sf-row="${esc(x.id)}">
+  const cfg = SF_CFG[view]; let w = clone(sfList(view)); let def0 = sfDefId(view);
+  const body = () => w.length ? `<table class="rep-table sf-table"><thead><tr><th>Nosaukums</th><th>Noklusējums *</th><th><span class="sr-only">Secība</span></th><th><span class="sr-only">Darbības</span></th></tr></thead><tbody>${w.map((x, i) => `<tr data-sf-row="${esc(x.id)}">
       <td><input type="text" class="sf-ren" value="${esc(x.name)}" maxlength="${SF_MAX}" aria-label="Nosaukums: ${esc(x.name)}"><small class="sf-row-sum">${esc(cfg.summary(x.f))}</small></td>
       <td class="sf-c"><input type="radio" name="sf-def" value="${esc(x.id)}"${x.def ? ' checked' : ''} aria-label="Noklusējums: ${esc(x.name)}"></td>
       <td class="sf-ord"><button type="button" class="icon-btn" data-sf-up="${i}" aria-label="Pārvietot augšup: ${esc(x.name)}"${i ? '' : ' disabled'}>↑</button><button type="button" class="icon-btn" data-sf-down="${i}" aria-label="Pārvietot lejup: ${esc(x.name)}"${i < w.length - 1 ? '' : ' disabled'}>↓</button></td>
       <td class="sf-acts"><button type="button" class="btn btn-ghost btn-sm" data-sf-edit="${esc(x.id)}">${ICON.edit}Labot</button><button type="button" class="btn btn-danger-ghost btn-sm" data-sf-del="${i}">${ICON.trash}Dzēst</button></td></tr>`).join('')}
-      <tr><td class="muted">Bez noklusējuma</td><td class="sf-c"><input type="radio" name="sf-def" value=""${w.some(x => x.def) ? '' : ' checked'} aria-label="Bez noklusējuma"></td><td></td><td></td></tr></tbody></table>
-    <span class="err" id="sf-m-err" hidden></span>` : '<p class="hint">Saglabātu filtru nav.</p>';
+      <tr><td class="sf-none">${esc(cfg.noneLabel || 'Bez filtra')}</td><td class="sf-c"><input type="radio" name="sf-def" value=""${w.some(x => x.def) ? '' : ' checked'} aria-label="${esc(cfg.noneLabel || 'Bez filtra')}"></td><td></td><td></td></tr></tbody></table>
+    <span class="err" id="sf-m-err" hidden></span>
+    <p class="sf-m-note">* Noklusējuma filtrs tiek piemērots automātiski, atverot sadaļu “${esc(cfg.sec || '')}”.</p>` : '<p class="hint">Saglabātu filtru nav.</p>';
   const sync = () => { $$('.sf-table tr[data-sf-row]', el).forEach(tr => { const x = w.find(y => y.id === tr.dataset.sfRow); if (x) x.name = $('.sf-ren', tr).value; });
     const d = $('input[name="sf-def"]:checked', el); w.forEach(x => { x.def = !!d && d.value === x.id; }); };
   const redraw = focusSel => { sync(); $('.modal-body', el).innerHTML = body(); const f = focusSel && $(focusSel, el); if (f) f.focus(); };
@@ -12062,18 +12073,19 @@ function sfManage(view){
     sync(); const names = w.map(x => x.name.trim()), bad = names.findIndex(n => !n) >= 0 ? 'Nosaukums nedrīkst būt tukšs.' : new Set(names.map(n => n.toLowerCase())).size !== names.length ? 'Nosaukumiem jābūt unikāliem.' : '';
     if (bad){ const e = $('#sf-m-err', el); e.hidden = false; e.textContent = bad; return; }
     w.forEach(x => { x.name = x.name.trim(); }); sfSave(view, w);
-    if (!w.some(x => x.id === ui.sf[view].active)) ui.sf[view].active = '';
-    c(); cfg.render(); toast('Filtri saglabāti.'); }}]});
+    c(); sfAfterManage(view, def0); toast('Filtri saglabāti.'); }}]});
   el.classList.add('mid');
   el.querySelector('.modal-body').addEventListener('click', async e => {
     const up = e.target.closest('[data-sf-up]'), dn = e.target.closest('[data-sf-down]'), del = e.target.closest('[data-sf-del]'), edb = e.target.closest('[data-sf-edit]');
     // "Labot": pārvaldības izmaiņas (nosaukumi, noklusējums, secība) tiek saglabātas, tad atveras filtra logs
     if (edb){ sync(); const names = w.map(x => x.name.trim());
       if (names.some(n => !n) || new Set(names.map(n => n.toLowerCase())).size !== names.length){ const er = $('#sf-m-err', el); er.hidden = false; er.textContent = 'Vispirms izlabojiet nosaukumus (nedrīkst būt tukši, jābūt unikāliem).'; return; }
-      w.forEach(x => { x.name = x.name.trim(); }); sfSave(view, w); sfEditDlg(view, {id:edb.dataset.sfEdit}); return; }
+      w.forEach(x => { x.name = x.name.trim(); }); sfSave(view, w); sfAfterManage(view, def0); sfEditDlg(view, {id:edb.dataset.sfEdit}); return; }
     if (up || dn){ sync(); const i = +(up || dn).dataset[up ? 'sfUp' : 'sfDown'], j = up ? i - 1 : i + 1; [w[i], w[j]] = [w[j], w[i]]; redraw(`[data-sf-${up ? 'up' : 'down'}="${j}"]`); }
     if (del){ sync(); const i = +del.dataset.sfDel, x = w[i];
-      if (await subConfirm({title:'Dzēst filtru?', message:`Saglabātais filtrs <b>${esc(x.name)}</b> tiks dzēsts.`, okLabel:'Dzēst'})){ w.splice(i, 1); redraw('.sf-ren'); } }
+      if (await subConfirm({title:'Dzēst filtru?', message:`Saglabātais filtrs <b>${esc(x.name)}</b> tiks dzēsts.`, okLabel:'Dzēst'})){ w.splice(i, 1); redraw('.sf-ren');
+        // dzēšana – uzreiz (saraksts un izvēlne atjaunoti; dzēsts aktīvais filtrs → bez filtra)
+        sfSave(view, sfList(view).filter(y => y.id !== x.id)); sfAfterManage(view, sfDefId(view)); def0 = sfDefId(view); } }
   });
 }
 document.addEventListener('click', e => {
@@ -12097,7 +12109,7 @@ document.addEventListener('keydown', e => {
 const CAMP_SORT_L = {name:'Kampaņa', kind:'Veids', n:'Respondenti', when:'Nosūtīšanas laiks', st:'Statuss', prep:'Kampaņas statuss', send:'Sūtīšanas statuss', res:'Rezultāts'};
 sfRegister('camp', {
   overlay:true,
-  defLabel:'Izmantot kā noklusējumu, atverot kampaņu sarakstu',
+  sec:'Kampaņas', noneLabel:'Rādīt visas kampaņas (bez filtra)',
   canon:campFCanon,
   empty:() => ({q:'', sub:'all', st:'', prep:'', send:'', kind:'', kinds:[], preps:[], sends:[], aud:'', jomas:[], reps:[], act:false, creator:'', quick:'', from:'', to:'', sort:{k:'', dir:0}}),
   get:() => { const c = ui.camp; return {q:c.q.trim(), sub:ui.campSub, st:c.st || '', prep:c.prep || '', send:c.send || '', kinds:[...c.kinds], preps:[...c.preps], sends:[...c.sends], aud:c.aud || '', reps:[...c.reps], act:!!c.act, kind:c.kind, creator:c.creator, quick:c.quick || '', from:c.quick && c.quick !== 'custom' ? '' : c.from, to:c.quick && c.quick !== 'custom' ? '' : c.to, sort:{k:ui.campSort.k || '', dir:ui.campSort.k ? ui.campSort.dir : 0}}; },
@@ -12108,7 +12120,7 @@ sfRegister('camp', {
     f.preps.length ? `Kampaņas statuss: ${f.preps.map(k => (PREP_ST[k] || {}).label || k).join(', ')}` : '', f.sends.length ? `Sūtīšanas statuss: ${f.sends.map(k => (SEND_ST[k] || {}).label || k).join(', ')}` : '',
     (f.kinds || []).length ? `Kampaņas veids: ${f.kinds.map(k => (SESS_KINDS[k] || {}).label || k).join(', ')}` : '', f.jomas.length ? `Joma: ${jomasLabel(f.jomas)}` : '',
     (f.reps || []).length ? `Apsekojums: ${f.reps.map(id => (repById(mapReportId(id)) || {}).code || id).join(', ')}` : '',
-    f.quick || f.from || f.to ? `Periods: ${perLabel(HF_QUICK, f)}` : '', f.creator ? `Izveidotājs: ${f.creator}` : '',
+    f.quick || f.from || f.to ? `Periods: ${perLabel(HF_QUICK, f)}` : '', f.creator ? `Veidotājs: ${f.creator}` : '',
     f.q ? `Meklēšana: “${f.q}”` : '', f.sort && f.sort.k ? `Kārtošana: ${CAMP_SORT_L[f.sort.k] || f.sort.k} ${f.sort.dir > 0 ? '↑' : '↓'}` : ''].filter(Boolean).join(' · ') || 'Bez filtriem'; },
   // logs "Jauns filtrs" / "Labot filtru": kritēriji viens zem otra (etiķetes kreisajā pusē); viena izvēle no filtru rindas pārnesta uz vairākizvēli
   editor:{
@@ -12123,7 +12135,7 @@ sfRegister('camp', {
         + row('Kampaņas veids', chips('kinds', Object.entries(SESS_KINDS).map(([k, v]) => [k, v.label]), w.kinds))
         + sfJomaRepRows(row, w, (state.reports || []).map(r => [r.id, r.code, r.name]))
         + row('Periods', `<div data-per="sfd"></div>`)
-        + row('Kampaņas izveidotājs', `<select id="sfd-creator"><option value="">Visi izveidotāji</option>${creators.map(n => `<option${w.creator === n ? ' selected' : ''}>${esc(n)}</option>`).join('')}</select>`, 'sfd-creator')
+        + row('Kampaņas veidotājs', `<select id="sfd-creator"><option value="">Visi veidotāji</option>${creators.map(n => `<option${w.creator === n ? ' selected' : ''}>${esc(n)}</option>`).join('')}</select>`, 'sfd-creator')
         + (carry.length ? `<div class="sf-ed-row"><span class="sf-ed-l">Saglabāts arī</span><div class="sf-ed-carry">${esc(carry.join(' · '))}</div></div>` : ''); },
     init:(el, w, upd) => { $$('[data-per]', el).forEach(h => { h.outerHTML = perHtml(h.dataset.per); });
       sfJomaRepInit(el, upd);
@@ -13528,7 +13540,7 @@ function jrnSfMatch(x, f){
 }
 sfRegister('jrn', {
   overlay:true,
-  defLabel:'Izmantot kā noklusējumu, atverot Sūtījumus',
+  sec:'Sūtījumi', noneLabel:'Rādīt visus sūtījumus (bez filtra)',
   canon:jrnFCanon,
   empty:() => jrnFCanon({}),
   get:() => jrnFCanon({}),
@@ -13563,7 +13575,7 @@ sfRegister('jrn', {
 });
 sfRegister('rep', {
   overlay:true,
-  defLabel:'Izmantot kā noklusējumu, atverot Atskaites',
+  sec:'Atskaites', noneLabel:'Rādīt atskaites bez filtra',
   canon:repFCanon,
   empty:() => repFCanon({}),
   get:() => repFCanon({}),
