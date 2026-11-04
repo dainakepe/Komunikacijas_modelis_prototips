@@ -3982,7 +3982,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 193</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 194</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -6825,9 +6825,16 @@ function inputHist(inp){
   return (inp._h = h);
 }
 // Versija 191: pavadteksta sagataves – no sadaļas "Veidnes › Sagataves" (e-pasta satura sagataves ar veidu "Pavadteksts"; tikai nearhivētās)
+// testa dati: pavadteksta sagataves (Veidnes › Sagataves, veids "Pavadteksts"); redaktoros saraksts nāk tikai no state.mailSamples
 function addCoverSamples(s){
   s.mailSamples = s.mailSamples || [];
-  COVER_SAMPLES.forEach((c, i) => { const id = 'msc-' + c.key; if (s.mailSamples.some(x => x.id === id)) return; const body = coverBody(c.key, 'visi');
+  const F = k => `<span class="fld">{${k}}</span>`;
+  const SEED = [
+    {key:'uzaicinajums', label:'Uzaicinājums', html:`<p>Centrālā statistikas pārvalde aicina piedalīties apsekojumā “${F('apsekojums')}”. Uzaicinājuma vēstule ar visu informāciju par dalību ir pievienota pielikumā.</p>`},
+    {key:'atgadinajums', label:'Atgādinājums', html:`<p>Atgādinām, ka apsekojuma “${F('apsekojums')}” termiņš ir <strong>${F('termiņš')}</strong>. Sīkāka informācija – pielikumā.</p>`},
+    {key:'info', label:'Informācija', html:`<p>Nosūtām informāciju par apsekojumu “${F('apsekojums')}”. Lūdzam iepazīties ar pielikumā pievienoto dokumentu.</p>`}];
+  SEED.forEach((c, i) => { const id = 'msc-' + c.key; if (s.mailSamples.some(x => x.id === id)) return;
+    const body = `<p>Labdien, ${F('adresāts')}!</p>${c.html}<p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`;
     s.mailSamples.push({id, name:`Pavadteksts – ${c.label.toLowerCase()}`, aud:'visi', cat:c.key, kind:'pavadteksts', body, ea:{body:emailToPlain(body)}, builtin:true,
       updated:`2026-0${7 + i}-1${2 + i}T09:30:00.000Z`, updatedBy:'Testa Darbinieks'}); });
 }
@@ -7040,14 +7047,35 @@ function createEditor(host, html, {onChange, compact = false, cta = true, media 
   bar.addEventListener('mousedown', e => { if (e.target.closest('button')) e.preventDefault(); });
   // pavadteksta sagataves: izvēlne (padomā – nosaukums un pēdējo izmaiņu datums)
   const covBox = $('.rte-covers', host);
-  async function pickCover(id){
+  // Versija 194: sagatave tiek ievietota kursora vietā (aiz rindkopas, kurā ir kursors; tukšu rindkopu aizstāj); ja teksts tukšs / neizmainīts – visa sagatave;
+  // ja tekstā jau ir saturs – bez sagataves uzrunas un noslēguma (tie tekstā jau ir); "Atsaukt" ievietošanu atsauc
+  const coverCore = h => { const t = document.createElement('div'); t.innerHTML = sanitize(h);
+    const f = t.firstElementChild; if (f && /^\s*Labdien/i.test(f.textContent)) f.remove();
+    const l = t.lastElementChild; if (l && /^\s*Ar cieņu/i.test(l.textContent)) l.remove(); return t.innerHTML; };
+  function insertBlocks(h){
+    restore();
+    const tmp = document.createElement('div'); tmp.innerHTML = sanitize(h);
+    const nodes = [...tmp.childNodes].filter(n => n.nodeType === 1 || n.textContent.trim()); if (!nodes.length) return;
+    const s = getSelection(), node = s.rangeCount ? s.getRangeAt(0).startContainer : null;
+    let b = node && (node.nodeType === 1 ? node : node.parentElement);
+    while (b && b !== area && b.parentElement !== area) b = b.parentElement;
+    if (!b || b === area || !area.contains(b)) area.append(...nodes);
+    else if (b.tagName === 'P' && !b.textContent.trim() && !b.querySelector('img')) b.replaceWith(...nodes);
+    else b.after(...nodes);
+    const r = document.createRange(); r.selectNodeContents(nodes[nodes.length - 1]); r.collapse(false); s.removeAllRanges(); s.addRange(r);
+    lock(); decorate(); changed();
+  }
+  function pickCover(id){
     const x = (covers ? covers() : []).find(c => c.id === id); covBox.hidden = true; const cb = $('[data-cmd="covers"]', bar); if (cb) cb.setAttribute('aria-expanded', 'false');
     if (!x) return;
     const cur = sanitize(area.innerHTML), blank = isBlank ? isBlank(cur) : !htmlToText(cur).trim();
-    if (!blank && !(await subConfirm({title:'Aizstāt tekstu?', message:`Pašreizējais teksts tiks aizstāts ar sagatavi “${esc(x.name)}”. Turpināt?`, okLabel:'Aizstāt'}))) return;
-    setHTML(x.body);
+    if (blank) setHTML(x.body); else insertBlocks(coverCore(x.body));
   }
-  covBox.addEventListener('click', e => { const b = e.target.closest('[data-cov]'); if (b) pickCover(b.dataset.cov); });
+  covBox.addEventListener('mousedown', e => { if (e.target.closest('button')) e.preventDefault(); });
+  covBox.addEventListener('click', async e => { const b = e.target.closest('[data-cov]'); if (b){ pickCover(b.dataset.cov); return; }
+    // sagatavju nav – saite uz sadaļu "Sagataves" (redaktors tiek aizvērts)
+    if (e.target.closest('[data-cov-open]') && await subConfirm({title:'Atvērt Sagataves?', message:'Redaktors tiks aizvērts – nesaglabātās izmaiņas tiks zaudētas.', okLabel:'Atvērt Sagataves'})){
+      if (modal.open) modal.close(); ui.tplView = 'sagataves'; ui.sagGroup = 'mail'; showTab('veidnes'); renderSagataves(); } });
   covBox.addEventListener('keydown', e => { if (e.key === 'Escape'){ covBox.hidden = true; const cb = $('[data-cmd="covers"]', bar); if (cb){ cb.setAttribute('aria-expanded', 'false'); cb.focus(); } } });
   bar.addEventListener('click', e => {
     const b = e.target.closest('button[data-cmd]');
@@ -7056,7 +7084,7 @@ function createEditor(host, html, {onChange, compact = false, cta = true, media 
     if (cmd === 'undo' || cmd === 'redo'){ const tg = histTarget(); tg[cmd](); if (tg === linked) linked.inp.focus(); return; }
     if (cmd === 'covers'){ const open = covBox.hidden, list = covers ? covers() : [];
       covBox.innerHTML = list.length ? list.map(x => { const u = updOf('ms', x); return `<button type="button" role="menuitem" data-cov="${esc(x.id)}" title="${esc(`${x.name}${u.at ? `\nPēdējās izmaiņas: ${fmtDate(String(u.at).slice(0, 10))}` : ''}`)}">${esc(x.name)}</button>`; }).join('')
-        : '<span class="muted">Nav pavadteksta sagatavju (Veidnes › Sagataves).</span>';
+        : '<span class="muted">Šim adresātam pavadteksta sagatavju nav</span><button type="button" class="link-btn" data-cov-open>Atvērt Sagataves</button>';
       covBox.hidden = !open; b.setAttribute('aria-expanded', String(open)); linkBox.hidden = true; colorBox.hidden = true;
       if (open){ const f = $('[data-cov]', covBox); if (f) f.focus(); }
       return; }
@@ -7807,17 +7835,6 @@ const tip = (text, id = '') => `<span class="tip" tabindex="0" role="note" aria-
 const sameText = (a, b) => htmlToText(a || '').replace(/\s+/g, ' ').trim() === htmlToText(b || '').replace(/\s+/g, ' ').trim();
 // Sagataves izvēlētajam adresātam – no sadaļas "Sagataves" (e-pasta satura šabloni)
 const mailSamples = aud => (state.mailSamples || []).filter(x => x.aud === aud);
-// Pavadteksta sagataves vēstulei pielikumā
-const COVER_SAMPLES = [
-  {key:'uzaicinajums', label:'Uzaicinājums', html:`<p>Centrālā statistikas pārvalde aicina piedalīties apsekojumā “${F('apsekojums')}”. Uzaicinājuma vēstule ar visu informāciju par dalību ir pievienota pielikumā.</p>`},
-  {key:'atgadinajums', label:'Atgādinājums', html:`<p>Atgādinām, ka apsekojuma “${F('apsekojums')}” termiņš ir <strong>${F('termiņš')}</strong>. Sīkāka informācija – pielikumā.</p>`},
-  {key:'info', label:'Informācija', html:`<p>Nosūtām informāciju par apsekojumu “${F('apsekojums')}”. Lūdzam iepazīties ar pielikumā pievienoto dokumentu.</p>`},
-];
-function coverBody(key, aud){
-  const c = COVER_SAMPLES.find(x => x.key === key) || COVER_SAMPLES[0];
-  const greet = aud === 'jur' ? '<p>Labdien!</p>' : `<p>Labdien, ${F(aud === 'visi' ? 'adresāts' : 'vārds')}!</p>`;
-  return greet + c.html + '<p>Ar cieņu<br>Centrālā statistikas pārvalde</p>';
-}
 // Apstiprinājums otrā līmeņa logā (nepārtrauc veidnes redaktoru)
 function subConfirm({title, message, okLabel = 'Turpināt'}){
   return new Promise(resolve => {
@@ -9073,10 +9090,12 @@ function openMailSampleForm(id){
     if (!e.target.value) return; const f = $(el); f.setRangeText(`{${e.target.value}}`, f.selectionStart ?? f.value.length, f.selectionEnd ?? f.value.length, 'end'); e.target.value = ''; f.focus(); update(); }));
   ['ms-ea-body', 'ms-name'].forEach(fid => $('#' + fid).addEventListener('input', update));
   $('#ms-aud').addEventListener('change', update);
-  ed = createEditor($('#ms-body'), x.body, {media:true, onChange:update});
+  // pavadteksta sagataves – arī sagatavju redaktorā (bez pašas rediģējamās sagataves)
+  const msCovers = () => coverSamples($('#ms-aud').value).filter(c => !ex || c.id !== ex.id);
+  ed = createEditor($('#ms-body'), x.body, {media:true, onChange:update, covers:msCovers});
   $$('[data-msver]', modal).forEach(b => b.addEventListener('click', () => {
     const v = ex.versions[+b.dataset.msver];
-    ed = createEditor($('#ms-body'), v.body, {media:true, onChange:update});
+    ed = createEditor($('#ms-body'), v.body, {media:true, onChange:update, covers:msCovers});
     if (v.ea !== undefined) $('#ms-ea-body').value = (v.ea || {}).body || '';
     update(); toast('Versija ielādēta redaktorā – saglabājiet, lai to atjaunotu.');
   }));
@@ -10735,7 +10754,7 @@ function openLetterCustomizer(rid){
         close(); renderComposeList(); renderComposePreview();
         toast(`Vēstule respondentam ${r.name} pielāgota.`);
       }}]});
-  ed = createEditor($('#lc-body'), cur ? cur.body : v.body, {media:true}); ed.linkInput($('#lc-subject'));
+  ed = createEditor($('#lc-body'), cur ? cur.body : v.body, {media:true, covers:() => coverSamples(t.aud)}); ed.linkInput($('#lc-subject'));
   renderFiles();
   $('#lc-add').onclick = () => openLibPicker({title:'Pievienot pielikumu', aud:t.aud, onPick: a => {
     if (files.some(f => f.lib === a.id)){ toast('Šis pielikums jau ir pievienots.', true); return; }
