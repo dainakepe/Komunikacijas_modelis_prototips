@@ -1655,12 +1655,17 @@ dialog.modal.sf-edm{width:min(660px,calc(100vw - 32px))}
 .sf-defl{display:flex;align-items:center;gap:7px;font-size:var(--fs-sm);margin-bottom:12px;cursor:pointer}
 .sf-sum{font-size:var(--fs-sm);padding:9px 11px;background:var(--bg);border-radius:var(--radius-sm);line-height:1.45}
 .sf-table td{vertical-align:middle}
-.sf-table .sf-ren{width:100%;box-sizing:border-box;font-size:var(--fs-sm);padding:5px 8px}
+/* Versija 190: nosaukums – teksts (tumšāks, nedaudz lielāks, bez treknraksta); kompaktas viena augstuma rindas; darbības – ikonas */
+.sf-table .sf-name{font-size:var(--fs-base);font-weight:400;color:var(--text-strong,#1F2A2E);overflow-wrap:anywhere}
+.sf-table tbody td{height:40px;padding-top:4px;padding-bottom:4px;box-sizing:border-box}
+.sf-table .sf-ic{color:var(--text-muted)}
+.sf-table .sf-ic:hover{color:var(--primary)}
+.sf-table .sf-ic-del:hover,.sf-table .sf-ic-del:focus-visible{color:var(--danger);background:var(--danger-bg,#FDECEC)}
+.sf-table .sf-ord .icon-btn,.sf-table .sf-ic{width:30px;height:30px}
 .sf-table{width:100%;table-layout:auto}
 .sf-table th:nth-child(2),.sf-table td:nth-child(2){width:110px}
 .sf-table td:nth-child(3){width:70px}
-.sf-table td:nth-child(4){width:90px}
-.sf-row-sum{display:block;margin-top:3px;color:var(--text-muted);font-size:var(--fs-xs);max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sf-table td:nth-child(4){width:76px}
 .sf-table .sf-c{text-align:center}
 .sf-ord{white-space:nowrap}
 .ac-tipbox{white-space:nowrap;max-width:min(460px,calc(100vw - 16px));overflow:hidden;text-overflow:ellipsis}
@@ -3961,7 +3966,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 189</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 190</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -12059,31 +12064,33 @@ function sfAfterManage(view, def0){
 function sfManage(view){
   const cfg = SF_CFG[view]; let w = clone(sfList(view)); let def0 = sfDefId(view);
   const body = () => w.length ? `<table class="rep-table sf-table"><thead><tr><th>Nosaukums</th><th>Noklusējums *</th><th><span class="sr-only">Secība</span></th><th><span class="sr-only">Darbības</span></th></tr></thead><tbody>${w.map((x, i) => `<tr data-sf-row="${esc(x.id)}">
-      <td><input type="text" class="sf-ren" value="${esc(x.name)}" maxlength="${SF_MAX}" aria-label="Nosaukums: ${esc(x.name)}"><small class="sf-row-sum">${esc(cfg.summary(x.f))}</small></td>
+      <td><span class="sf-name">${esc(x.name)}</span></td>
       <td class="sf-c"><input type="radio" name="sf-def" value="${esc(x.id)}"${x.def ? ' checked' : ''} aria-label="Noklusējums: ${esc(x.name)}"></td>
       <td class="sf-ord"><button type="button" class="icon-btn" data-sf-up="${i}" aria-label="Pārvietot augšup: ${esc(x.name)}"${i ? '' : ' disabled'}>↑</button><button type="button" class="icon-btn" data-sf-down="${i}" aria-label="Pārvietot lejup: ${esc(x.name)}"${i < w.length - 1 ? '' : ' disabled'}>↓</button></td>
-      <td class="sf-acts"><button type="button" class="btn btn-ghost btn-sm" data-sf-edit="${esc(x.id)}">${ICON.edit}Labot</button><button type="button" class="btn btn-danger-ghost btn-sm" data-sf-del="${i}">${ICON.trash}Dzēst</button></td></tr>`).join('')}
+      <td class="sf-acts"><button type="button" class="icon-btn sf-ic" data-sf-edit="${esc(x.id)}" data-ctip="Labot" aria-label="Labot: ${esc(x.name)}">${ICON.edit}</button><button type="button" class="icon-btn sf-ic sf-ic-del" data-sf-del="${i}" data-ctip="Dzēst" aria-label="Dzēst: ${esc(x.name)}">${ICON.trash}</button></td></tr>`).join('')}
       <tr><td class="sf-none">${esc(cfg.noneLabel || 'Bez filtra')}</td><td class="sf-c"><input type="radio" name="sf-def" value=""${w.some(x => x.def) ? '' : ' checked'} aria-label="${esc(cfg.noneLabel || 'Bez filtra')}"></td><td></td><td></td></tr></tbody></table>
-    <span class="err" id="sf-m-err" hidden></span>
     <p class="sf-m-note">* Noklusējuma filtrs tiek piemērots automātiski, atverot sadaļu “${esc(cfg.sec || '')}”.</p>` : '<p class="hint">Saglabātu filtru nav.</p>';
-  const sync = () => { $$('.sf-table tr[data-sf-row]', el).forEach(tr => { const x = w.find(y => y.id === tr.dataset.sfRow); if (x) x.name = $('.sf-ren', tr).value; });
-    const d = $('input[name="sf-def"]:checked', el); w.forEach(x => { x.def = !!d && d.value === x.id; }); };
+  // Versija 190: nosaukums nav rediģējams (to maina tikai "Labot"); nolasa tikai noklusējumu
+  const sync = () => { const d = $('input[name="sf-def"]:checked', el); w.forEach(x => { x.def = !!d && d.value === x.id; }); };
   const redraw = focusSel => { sync(); $('.modal-body', el).innerHTML = body(); const f = focusSel && $(focusSel, el); if (f) f.focus(); };
   const {el} = openModal({title:'Pārvaldīt filtrus', content:body(), actions:[{label:'Atcelt'}, {label:'Saglabāt', cls:'btn-primary', onClick:c => {
-    sync(); const names = w.map(x => x.name.trim()), bad = names.findIndex(n => !n) >= 0 ? 'Nosaukums nedrīkst būt tukšs.' : new Set(names.map(n => n.toLowerCase())).size !== names.length ? 'Nosaukumiem jābūt unikāliem.' : '';
-    if (bad){ const e = $('#sf-m-err', el); e.hidden = false; e.textContent = bad; return; }
-    w.forEach(x => { x.name = x.name.trim(); }); sfSave(view, w);
+    sync(); sfSave(view, w);
     c(); sfAfterManage(view, def0); toast('Filtri saglabāti.'); }}]});
   el.classList.add('mid');
+  // ikonu padomi "Labot" / "Dzēst" (gaišie padomi)
+  { const mb = el.querySelector('.modal-body');
+    mb.addEventListener('mouseover', e => { const t = e.target.closest('[data-ctip]'); if (t) showCTip(t); });
+    mb.addEventListener('mouseout', e => { const t = e.target.closest('[data-ctip]'); if (t && !t.contains(e.relatedTarget)) hideCTip(); });
+    mb.addEventListener('focusin', e => { const t = e.target.closest('[data-ctip]'); if (t) showCTip(t); else hideCTip(); });
+    mb.addEventListener('focusout', () => hideCTip()); }
   el.querySelector('.modal-body').addEventListener('click', async e => {
     const up = e.target.closest('[data-sf-up]'), dn = e.target.closest('[data-sf-down]'), del = e.target.closest('[data-sf-del]'), edb = e.target.closest('[data-sf-edit]');
     // "Labot": pārvaldības izmaiņas (nosaukumi, noklusējums, secība) tiek saglabātas, tad atveras filtra logs
-    if (edb){ sync(); const names = w.map(x => x.name.trim());
-      if (names.some(n => !n) || new Set(names.map(n => n.toLowerCase())).size !== names.length){ const er = $('#sf-m-err', el); er.hidden = false; er.textContent = 'Vispirms izlabojiet nosaukumus (nedrīkst būt tukši, jābūt unikāliem).'; return; }
-      w.forEach(x => { x.name = x.name.trim(); }); sfSave(view, w); sfAfterManage(view, def0); sfEditDlg(view, {id:edb.dataset.sfEdit}); return; }
-    if (up || dn){ sync(); const i = +(up || dn).dataset[up ? 'sfUp' : 'sfDown'], j = up ? i - 1 : i + 1; [w[i], w[j]] = [w[j], w[i]]; redraw(`[data-sf-${up ? 'up' : 'down'}="${j}"]`); }
+    if (edb){ hideCTip(); sync(); sfSave(view, w); sfAfterManage(view, def0); sfEditDlg(view, {id:edb.dataset.sfEdit}); return; }
+    if (up || dn){ hideCTip(); sync(); const i = +(up || dn).dataset[up ? 'sfUp' : 'sfDown'], j = up ? i - 1 : i + 1; [w[i], w[j]] = [w[j], w[i]]; redraw(`[data-sf-${up ? 'up' : 'down'}="${j}"]`); }
     if (del){ sync(); const i = +del.dataset.sfDel, x = w[i];
-      if (await subConfirm({title:'Dzēst filtru?', message:`Saglabātais filtrs <b>${esc(x.name)}</b> tiks dzēsts.`, okLabel:'Dzēst'})){ w.splice(i, 1); redraw('.sf-ren');
+      hideCTip();
+      if (await subConfirm({title:'Dzēst filtru?', message:`Saglabātais filtrs <b>${esc(x.name)}</b> tiks dzēsts.`, okLabel:'Dzēst'})){ w.splice(i, 1); redraw('[data-sf-edit]');
         // dzēšana – uzreiz (saraksts un izvēlne atjaunoti; dzēsts aktīvais filtrs → bez filtra)
         sfSave(view, sfList(view).filter(y => y.id !== x.id)); sfAfterManage(view, sfDefId(view)); def0 = sfDefId(view); } }
   });
