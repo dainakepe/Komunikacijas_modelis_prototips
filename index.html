@@ -3982,7 +3982,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 192</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 193</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11849,9 +11849,14 @@ function campFNormUi(){ const c = ui.camp;
   if (c.aud) c.reps = c.reps.filter(id => repJoma(id) === c.aud);
   if (CAMP_SUB_OLD[ui.campSub]){ c.sends = campU(c.sends.concat(CAMP_SUB_OLD[ui.campSub])); ui.campSub = 'all'; } }
 // saglabātā filtra kanoniskā forma (visi lauki, vienas vērtības lauki – vairākizvēlē, sakārtoti masīvi) – salīdzināšanai ("mainīts") un piemērošanai
+// Versija 193: agrākie lauki → logā redzamie ķeksīši: ātrais filtrs (sub) un kampaņas statuss (st) → "Kampaņas statuss" / "Sūtīšanas statuss"; pēc tam sub = 'all', st = ''
+const CAMP_ST_TO = {draft:['preps', 'draft'], ret:['preps', 'fix'], appr:['preps', 'appr'], apvok:['preps', 'ready'], planned:['sends', 'planned'], active:['sends', 'proc'], done:['sends', 'done'], part:['sends', 'issues']};
 function campFCanon(f){
   f = f || {}; const so = a => [...new Set(a || [])].sort(), q = f.quick || '', old = CAMP_SUB_OLD[f.sub] || [];
-  return {q:(f.q || '').trim(), sub:old.length || !CAMP_SUBS.some(([k]) => k === f.sub) ? 'all' : f.sub, st:f.st || '', prep:'', send:'', kind:'', kinds:so(campU(f.kinds, f.kind)), preps:so(campU(f.preps, f.prep).map(k => PREP_OLD[k] || k)), sends:so(campU(f.sends, f.send).concat(old)),
+  const subP = f.sub && f.sub !== 'all' && CAMP_SUBS.some(([k]) => k === f.sub) ? [f.sub] : [], stM = CAMP_ST_TO[f.st] || null;
+  return {q:(f.q || '').trim(), sub:'all', st:'', prep:'', send:'', kind:'', kinds:so(campU(f.kinds, f.kind)),
+    preps:so(campU(f.preps, f.prep).concat(subP, stM && stM[0] === 'preps' ? [stM[1]] : []).map(k => PREP_OLD[k] || k)),
+    sends:so(campU(f.sends, f.send).concat(old, stM && stM[0] === 'sends' ? [stM[1]] : [])),
     aud:'', jomas:jomasOfF(f), reps:so((f.reps || []).map(mapReportId)), act:!!f.act, creator:f.creator || '', quick:q, from:q && q !== 'custom' ? '' : f.from || '', to:q && q !== 'custom' ? '' : f.to || '',
     sort:{k:(f.sort || {}).k || '', dir:(f.sort || {}).k ? (f.sort || {}).dir || 0 : 0}};
 }
@@ -12078,9 +12083,13 @@ const campByKey = key => campRows().find(x => x.key === key);
 const SF_CFG = {}, SF_KEY = 'csp-my-filters', SF_MAX = 40;
 ui.sf = {};
 function sfAll(){ try { return JSON.parse(localStorage.getItem(SF_KEY) || '{}') || {}; } catch (e) { return {}; } }
+const sfMigrated = {};
 function sfList(view){
   const all = sfAll(), u = all[CURRENT_USER] || {};
   if (!u[view] && SF_CFG[view] && SF_CFG[view].seed){ u[view] = SF_CFG[view].seed(); all[CURRENT_USER] = u; try { localStorage.setItem(SF_KEY, JSON.stringify(all)); } catch (e) {} }
+  // Versija 193: agrāk pārlūkā saglabātie filtri – vienreiz pārveidoti jaunajā struktūrā un saglabāti no jauna
+  if (u[view] && !sfMigrated[view] && SF_CFG[view] && SF_CFG[view].migrate){ sfMigrated[view] = true; const nw = SF_CFG[view].migrate(u[view]);
+    if (JSON.stringify(nw) !== JSON.stringify(u[view])){ u[view] = nw; all[CURRENT_USER] = u; try { localStorage.setItem(SF_KEY, JSON.stringify(all)); } catch (e) {} } }
   return u[view] || [];
 }
 function sfSave(view, list){ const all = sfAll(); (all[CURRENT_USER] = all[CURRENT_USER] || {})[view] = list; try { localStorage.setItem(SF_KEY, JSON.stringify(all)); } catch (e) { toast('Pārlūka krātuve nav pieejama – filtru nevar saglabāt.', true); } }
@@ -12229,6 +12238,9 @@ document.addEventListener('keydown', e => {
 });
 // Kampaņas: saglabā meklēšanu, statusu (sadaļa un precizētais statuss), veidu, periodu, papildu filtrus un kārtošanu
 const CAMP_SORT_L = {name:'Kampaņa', kind:'Veids', n:'Respondenti', when:'Nosūtīšanas laiks', st:'Statuss', prep:'Kampaņas statuss', send:'Sūtīšanas statuss', res:'Rezultāts'};
+const SF_CAMP_SEED = [{id:'sf-seed-1', name:'Mani melnraksti', f:{preps:['draft'], creator:CURRENT_USER}}, {id:'sf-seed-2', name:'Gaida saskaņojumu', f:{preps:['appr']}}];
+const SF_CAMP_SEED_OLD = {'sf-seed-1':{q:'', sub:'draft', st:'', kind:'', creator:CURRENT_USER, quick:'', from:'', to:'', sort:{k:'', dir:0}},
+  'sf-seed-2':{q:'', sub:'all', st:'', prep:'appr', send:'', kind:'', creator:'', quick:'', from:'', to:'', sort:{k:'name', dir:1}}};
 sfRegister('camp', {
   overlay:true,
   sec:'Kampaņas', noneLabel:'Rādīt visas kampaņas (bez filtra)',
@@ -12268,8 +12280,12 @@ sfRegister('camp', {
     any:f => !!((f.reps || []).length || (f.jomas || []).length || f.act || f.q || f.kinds.length || f.preps.length || f.sends.length || f.aud || f.creator || f.quick || f.from || f.to || (f.sub && f.sub !== 'all') || f.st || (f.sort && f.sort.k)),
   },
   // testa dati: divi piemēri
-  seed:() => [{id:'sf-seed-1', name:'Mani melnraksti', def:false, f:{q:'', sub:'draft', st:'', kind:'', creator:CURRENT_USER, quick:'', from:'', to:'', sort:{k:'', dir:0}}},
-    {id:'sf-seed-2', name:'Gaida saskaņojumu', def:false, f:{q:'', sub:'all', st:'', prep:'appr', send:'', kind:'', creator:'', quick:'', from:'', to:'', sort:{k:'name', dir:1}}}],
+  // Versija 193: jaunajā struktūrā (logā redzami kā atzīmēti ķeksīši)
+  seed:() => SF_CAMP_SEED.map(x => ({...x, def:false, f:campFCanon(x.f)})),
+  // agrāk saglabātie: lauki konvertēti; agrākās piemēra definīcijas (ja nav labotas) – aizstātas ar jaunajām
+  migrate:list => list.map(x => { const seed = SF_CAMP_SEED.find(z => z.id === x.id), old = SF_CAMP_SEED_OLD[x.id];
+    if (seed && old && x.name === seed.name && sfSig(campFCanon(x.f)) === sfSig(campFCanon(old))) return {...x, f:campFCanon(seed.f)};
+    return {...x, f:campFCanon(x.f)}; }),
 });
 $('#camp-scroll .camp-table thead').addEventListener('click', e => {
   const b = e.target.closest('[data-csort]'); if (!b) return;
