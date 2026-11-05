@@ -3519,7 +3519,23 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 /* Versija 209: tabulu galvenes – vienots stils visām prototipa tabulām: pelēcīgs, necaurspīdīgs fons un plāna līnija zem galvenes
    (līnija – arī ēnā, lai tā redzama fiksētajai (sticky) galvenei ritinot); vēstuļu / dokumentu satura tabulas (.rich, .rtab) – nemainītas */
 table:not(.rtab-out):not(.rtab) > thead > tr > th:not(#_){background-color:var(--th-bg);border-bottom:1px solid var(--th-line);box-shadow:inset 0 -1px 0 var(--th-line)}
+/* Versija 212: Clarity piekrišanas josla – šaura, lapas apakšā (nevis modāls logs) */
+.consent-bar{position:fixed;left:0;right:0;bottom:0;z-index:90;display:flex;align-items:center;justify-content:center;gap:10px 16px;flex-wrap:wrap;padding:8px 16px;background:#22343A;color:#F3F6F7;font-size:var(--fs-sm);line-height:1.4;box-shadow:0 -2px 8px rgba(0,0,0,.18)}
+.consent-bar p{margin:0;max-width:760px}
+.consent-bar .consent-acts{display:flex;gap:8px;flex:none}
+.consent-bar button{appearance:none;font:inherit;font-size:var(--fs-sm);font-weight:600;padding:5px 14px;border-radius:var(--radius-sm);cursor:pointer;border:1px solid #9FC3C8;background:transparent;color:#F3F6F7}
+.consent-bar button.is-primary{background:#F3F6F7;color:#16353B;border-color:#F3F6F7}
+.consent-bar button:focus-visible{outline:3px solid #7FD3D3;outline-offset:2px}
+body.has-consent-bar{padding-bottom:52px}
 </style>
+<!-- Versija 212: Microsoft Clarity – lietojamības testi (kopējā statistika, testētāji netiek identificēti); piekrišana – josla lapas apakšā -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "z8spe1tlla");
+</script>
 </head>
 <body>
 
@@ -4072,7 +4088,7 @@ table:not(.rtab-out):not(.rtab) > thead > tr > th:not(#_){background-color:var(-
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 211</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 212</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7576,6 +7592,39 @@ function confirmDialog({title, message, okLabel = 'Apstiprināt', danger = false
 }
 
 /* =====================================================================
+   Versija 212: LIETOJAMĪBAS TESTI – Microsoft Clarity (aizsargāti izsaukumi; ja Clarity nav ielādēts vai bloķēts – nekas nenotiek)
+   ===================================================================== */
+const clar = (...a) => { try { if (typeof window.clarity === 'function') window.clarity(...a); } catch (e) {} };
+const clarEvent = name => clar('event', name);
+const CLAR_KEY = 'csp-clarity-consent';
+const clarConsent = v => clar('consentv2', {ad_Storage:'denied', analytics_Storage:v === 'granted' ? 'granted' : 'denied'});
+function initClarityConsent(){
+  let v = null; try { v = localStorage.getItem(CLAR_KEY); } catch (e) {}
+  if (v === 'granted' || v === 'denied'){ clarConsent(v); return; }
+  const bar = document.createElement('div');
+  bar.className = 'consent-bar'; bar.id = 'consent-bar'; bar.setAttribute('role', 'region'); bar.setAttribute('aria-label', 'Lietojamības testa piekrišana');
+  bar.innerHTML = '<p>Šis prototips lietojamības testam anonīmi ieraksta klikšķus un ekrāna kustības (Microsoft Clarity). Testa dati ir izdomāti.</p><div class="consent-acts"><button type="button" class="is-primary" data-consent="granted">Piekrītu</button><button type="button" data-consent="denied">Nepiekrītu</button></div>';
+  bar.addEventListener('click', e => { const b = e.target.closest('[data-consent]'); if (!b) return;
+    const val = b.dataset.consent; clarConsent(val); try { localStorage.setItem(CLAR_KEY, val); } catch (err) {}
+    bar.remove(); document.body.classList.remove('has-consent-bar'); });
+  document.body.appendChild(bar); document.body.classList.add('has-consent-bar');
+}
+// sadaļa / solis / līmenis → Clarity tagi un adreses hash (bez pārlādes; history.replaceState – pārlūka "atpakaļ" darbojas kā līdz šim)
+const CLAR_SEC = {kampanas:'Kampanas', vesture:'Sutijumi', veidnes:'Veidnes', atskaites:'Atskaites'};
+const CLAR_STEP = ['1-Pamatdati', '2-Respondenti', '3-Saturs', '4-Parbaude', '5-Nosutisana'];
+const clarLast = {};
+const clarSet = (k, v) => { if (clarLast[k] !== v){ clarLast[k] = v; clar('set', k, v); } };
+function trackNav(){
+  if ($('#module-view').hidden || !TABS.includes(ui.tab)) return;
+  const t = ui.tab, edit = t === 'kampanas' && ui.campView === 'edit', lvl = t === 'vesture' && ui.jrn && ui.jrn.camp != null ? '2' : '1';
+  clarSet('sadala', CLAR_SEC[t]);
+  if (edit) clarSet('solis', CLAR_STEP[(compose.step || 1) - 1]);
+  if (t === 'vesture') clarSet('limenis', lvl);
+  const hash = edit ? `kampanas/solis-${compose.step || 1}` : t === 'vesture' ? (lvl === '2' ? 'sutijumi/limenis-2' : 'sutijumi') : t;
+  if (location.hash !== '#' + hash) try { history.replaceState(null, '', '#' + hash); } catch (e) {}
+}
+
+/* =====================================================================
    NAVIGĀCIJA
    ===================================================================== */
 const TABS = ['kampanas', 'veidnes', 'vesture', 'atskaites'];
@@ -7594,8 +7643,8 @@ function route(){
   // agrākā cilne "Pielikumi" -> Veidnes › Sagataves › Pielikumu sagataves
   else if (h === 'pielikumi' || h === 'sagataves'){ ui.tplView = 'sagataves'; if (h === 'pielikumi') ui.sagGroup = 'att'; ui.tab = ''; showTab('veidnes'); }
   // kampaņas redaktors (arī agrākā cilne "Sagatavot komunikāciju")
-  else if (h === 'kampana' || h === 'sagatavot') openEditor();
-  else if (h === 'nosutitas') showTab('vesture');
+  else if (h === 'kampana' || h === 'sagatavot' || /^kampanas\/solis-\d$/.test(h)) openEditor();
+  else if (h === 'nosutitas' || h === 'sutijumi' || h === 'sutijumi/limenis-2') showTab('vesture');
   else { if (h === 'veidnes') ui.tplView = 'veidnes'; showTab(h); }
 }
 // Navigācijas ceļš: DELTA › Respondentu pārvaldība › Komunikācija › [cilne] (› kampaņa)
@@ -7627,8 +7676,7 @@ function showTab(name, opts = {}){
   if (name === 'vesture') renderSent();
   if (name === 'atskaites') renderReports();
   setCrumb();
-  const hash = name === 'kampanas' && ui.campView === 'edit' ? 'kampana' : name;
-  if (location.hash !== '#' + hash) history.replaceState(null, '', '#' + hash);
+  trackNav();
   if (!opts.keepScroll) window.scrollTo({top:0});
 }
 // Kampaņas redaktors: turpina pašreizējo kampaņu vai atver melnrakstu
@@ -9698,7 +9746,7 @@ function openSessionEditor(tpl, baseId){
     else if (base && sameContent(rec, base)) compose.content = {source:'tpl', templateId:baseId};
     else if (base) compose.content = {source:'tplmod', templateId:baseId, tpl:rec};
     else compose.content = {source:'custom', tpl:rec};
-    compose.index = 0;
+    compose.index = 0; clarEvent('izveleties_saturu');
     renderComposePreview();
     const st = $('#c-step-content'); if (st) st.scrollIntoView({block:'nearest'});
   }}});
@@ -9730,7 +9778,7 @@ function openTemplatePicker(){
       {label:`${ICON.edit}Pielāgot šai kampaņai`, cls:'btn-secondary', onClick:close => { const t = cur(); if (!t || !tplUsable(t)) return; close(); openSessionEditor(clone(t), t.id); }},
       {label:`${ICON.check}Izmantot kampaņā`, cls:'btn-primary', onClick:close => {
         const t = cur(); if (!t || !tplUsable(t)) return;
-        compose.content = {source:'tpl', templateId:t.id}; compose.index = 0;
+        compose.content = {source:'tpl', templateId:t.id}; compose.index = 0; clarEvent('izveleties_saturu');
         close(); renderComposePreview(); toast(`Kampaņā tiks izmantota veidne “${t.name}”.`);
       }}]});
   const foot = [1, 2].map(i => $(`.modal-foot [data-act="${i}"]`, modal));
@@ -10180,6 +10228,7 @@ function renderScopeResult(){
   if (compose.step === 1 && $('#wiz-next')) renderStepNav(1);
 }
 function runSelection(){
+  clarEvent('veikt_atlasi');
   if (ui.selBusy || !selReady()) return;
   ui.selBusy = true; renderScopeResult();
   setTimeout(() => {
@@ -10354,6 +10403,7 @@ function renderWizard(){
   if (cur === 4){ renderFinalSummary(); renderChecks(); }
   if (cur === 5) renderApproval();
   viewLock();
+  if (ui.tab === 'kampanas' && ui.campView === 'edit') trackNav();
 }
 // iedzīvotāju statistika: bez apsekojuma un perioda nevar pāriet tālāk par 1. soli (kļūda pie lauka)
 function fzBlocks(){
@@ -10399,7 +10449,7 @@ function acBlocks(target){
   const {el, close} = openModal({title:'Pārbaudiet atlasi', content:`<div class="sc-body" id="sc-body">${body(d0)}</div>`, actions:[
     {label:'← Atgriezties pie respondentiem', cls:'btn-secondary'},
     {label:'Apstiprināt un turpināt', cls:'btn-primary', onClick:c => { const ack = $('#sc-ack', el); if (ack && !ack.checked) return;
-      c(); compose.selCheck = selCheckSig(selCheckData()); compose.stepsOk.add(2); setStep(target); saveDraft(); }}]});
+      c(); compose.selCheck = selCheckSig(selCheckData()); compose.stepsOk.add(2); clarEvent('apstiprinat_atlasi'); setStep(target); saveDraft(); }}]});
   const ok = $('[data-act="1"]', el), sync = () => { const ack = $('#sc-ack', el); ok.disabled = !!ack && !ack.checked; };
   el.addEventListener('change', e => { if (e.target.id === 'sc-ack') sync(); });
   el.addEventListener('click', e => { const b = e.target.closest('[data-sc-incl]'); if (!b) return; const id = b.dataset.scIncl;
@@ -11148,6 +11198,7 @@ async function reviewContinue(){
   if (warn.length && !(await confirmDialog({title:'Turpināt ar brīdinājumiem?', okLabel:'Turpināt',
     message:`Automātiskajās pārbaudēs ir ${warn.length} ${plural(warn.length, 'brīdinājums', 'brīdinājumi')}:<br>${warn.map(c => `⚠ <b>${esc(c.label)}</b>${c.detail ? ` – ${esc(c.detail)}` : ''}`).join('<br>')}<br><br>Vai turpināt bez labošanas?`}))) return;
   compose.review = {at:new Date().toISOString(), sig:reviewSig(), warn:warn.map(c => c.label + (c.detail ? ` (${c.detail})` : ''))};
+  clarEvent('parbaude_apstiprinata');
   setStep(5);
 }
 // ---------- 5. solis "Nosūtīšana" (apakšsadaļas: Saskaņošana, Nosūtīšana) ----------
@@ -11345,6 +11396,7 @@ async function finalSubmit(){
   compose.nameAuto = false;
   planDetach();
   const now = new Date().toISOString(), name = compose.name;
+  clarEvent('nodot_saskanosanai');
   compose.apv = {...compose.apv, steps, approver:one ? one.id : compose.apv.approver, status:'pending', at:now, by:CURRENT_USER, returnComment:'', prog:steps.map(() => ({appr:[]})), history:[...(compose.apv.history || []), {act:'submit', at:now, by:CURRENT_USER, comment:compose.apv.comment || ''}]};
   alAddC('apvSub', one ? `Saskaņotājs: ${one.name}` : `Saskaņotāji: ${itemsText(its)}`, compose.apv.comment ? {cmt:compose.apv.comment} : {});
   apvAutoTransfer(compose.apv); alBaseline();
@@ -11572,6 +11624,7 @@ async function send({skipConfirm = false, approved = false} = {}){
   if (!ok) return;
   compose.nameAuto = false;
   const name = compose.name, res = doSend();
+  if (res) clarEvent('nosutit');
   if (res && compose.plannedId) state.planned = (state.planned || []).filter(x => x.id !== compose.plannedId);
   if (res){ const k = 'sent:' + res.batch; alMove(alKeyC(), k);
     alAdd(k, alE('send', approved ? AL_SYS : CURRENT_USER, `${alCnt(res.n, 'vēstule', 'vēstules')}${approved ? ' · automātiski pēc saskaņojuma' : ''}`)); }
@@ -12553,7 +12606,7 @@ function sfEditDlg(view, o = {}){
         ce.hidden = nmErr; ce.textContent = nmErr ? '' : msg;
         if (nmErr) inp.focus(); return; }
       const def = $('#sf-def', el).checked, x = {id:ed ? ed.id : 'sf' + uid(), name:nm, def, f};
-      sfSave(view, ed ? list.map(y => y.id === ed.id ? x : def ? {...y, def:false} : y) : [...list.map(y => def ? {...y, def:false} : y), x]);
+      sfSave(view, ed ? list.map(y => y.id === ed.id ? x : def ? {...y, def:false} : y) : [...list.map(y => def ? {...y, def:false} : y), x]); if (!ed) clarEvent('mani_filtri_izveidot');
       ui.sf[view].active = x.id; ui.sf[view].open = false; c(); if (cfg.overlay){ sfSort(view, f); if (cfg.onPick) cfg.onPick(x); } else cfg.apply(clone(f)); cfg.render();
       toast(`Filtrs “${nm}” ${ed ? 'saglabāts' : 'izveidots un piemērots'}${def ? ' (noklusējums)' : ''}.`);
     }}]});
@@ -13707,7 +13760,7 @@ function renderSent(){
   $('#jrn-back-top').hidden = !camp2; $('#jrn-top').hidden = camp2;
   jrnPurgeBtn(); jrnPrintBtn();
   $('#jrn-l1').hidden = l2; $('#hist-l2').hidden = !l2;
-  if (!l2){ renderJrnTitle(''); renderJrnL1(); return; }
+  if (!l2){ renderJrnTitle(''); renderJrnL1(); trackNav(); return; }
   if (!va) ui.hist.camp = ui.jrn.camp;
   $('#hist-camp-dd').hidden = !va;
   if (va) renderJrnTitle(''); else renderJrnCtx();
@@ -13760,6 +13813,7 @@ function renderSent(){
   renderHistSort();
   // admin sarakstam – skaits zem tabulas (galvenajai tabulai skaits un "Rādīt vairāk" ir tabulas apakšā)
   $('#hist-foot').textContent = '';
+  trackNav();
 }
 // Ierakstu dzēšana: tikai vecāki par 2 gadiem (pēc nosūtīšanas datuma)
 function twoYearsAgo(){ const d = new Date(); d.setFullYear(d.getFullYear() - 2); return d; }
@@ -15009,7 +15063,7 @@ const actions = {
   'wiz-prev': () => setStep(compose.step - 1),
   // uz sarakstu: ja kampaņā kas mainīts – vispirms saglabā melnrakstu (kā automātiskā saglabāšana); neaizpildīta jauna kampaņa melnrakstu neveido
   'wiz-list': () => { const dirty = sessionDirty(); showTab('kampanas'); if (dirty && state.drafts.some(x => x.id === compose.draftId)) toast(`Melnraksts “${compose.name}” saglabāts.`); },
-  'wiz-next': () => { if (ui.view){ setStep(compose.step + 1); return; } if (compose.step === 1 && !selCanGo()) return; if (compose.step === 4) return reviewContinue(); if (compose.step === 5) return finalSubmit(); markTried(compose.step); if (fzBlocks() || acBlocks(compose.step + 1)) return; compose.stepsOk.add(compose.step); setStep(compose.step + 1); },
+  'wiz-next': () => { if (ui.view){ setStep(compose.step + 1); return; } if (compose.step === 1 && !selCanGo()) return; if (compose.step === 4) return reviewContinue(); if (compose.step === 5) return finalSubmit(); markTried(compose.step); if (fzBlocks() || acBlocks(compose.step + 1)) return; if (compose.step === 2) clarEvent('apstiprinat_atlasi'); compose.stepsOk.add(compose.step); setStep(compose.step + 1); },
   'wiz-save': () => { markTried(compose.step); const pl = !!compose.plannedId; flushDraft(true); renderWizard(); toast(pl ? `Ieplānotās kampaņas “${compose.name}” izmaiņas saglabātas.` : `Melnraksts “${compose.name}” saglabāts.`); },
   'c-customize': id => openLetterCustomizer(id),
   'c-uncustom': id => { delete compose.custom[id]; renderComposeList(); renderComposePreview(); toast('Vēstule atjaunota atbilstoši kampaņas saturam.'); },
@@ -15058,7 +15112,7 @@ const actions = {
   'jrn-open-camp': () => { const c = ui.jrn.camp; if (c == null) return; hideCTip();
     ui.jrnRet = {camp:String(c), hist:JSON.parse(JSON.stringify(ui.hist)), from:ui.jrn.from, limit:ui.histLimit};
     const x = campRows().find(y => String(y.id) === String(c) && y.type === 'sent') || campRows().find(y => String(y.id) === String(c));
-    if (x) openCampaign(x.key, {step:5, from:'jrn'}); },
+    if (x){ clarEvent('sutijumi_atvert_kampanu'); openCampaign(x.key, {step:5, from:'jrn'}); } },
   'camp-filt-clear': () => clearCampFilters(),
   'camp-sf-clear': () => { sfPick('camp', ''); const b = $('#camp-search'); if (b) b.focus(); },
   'camp-more-rows': () => {
@@ -15771,6 +15825,7 @@ function impApply(){
   const f = ui.imp && ui.imp.file; if (!f) return false;
   const pv = impPreview({...f, cols:ui.imp.cols}), at = new Date().toISOString(), toResp = ui.imp.toResp;
   if (!pv.ok.length) return false;
+  clarEvent('importet_labojumus');
   compose.addrFix = compose.addrFix || {}; compose.addrMeta = compose.addrMeta || {};
   pv.ok.forEach(x => {
     const r = x.r, k = x.k, key = `${r.id}|${k}`, orig = String(ADDR_TYPES[k].get(r) || '').trim();
@@ -15810,6 +15865,7 @@ function acSave(key){
   const vr = validateAddr(k, v), em = $(`[data-ac-err="${key}"]`) || $('#ac-err');
   if (vr.status === 'error'){ if (em){ em.textContent = vr.msg; em.hidden = false; } inp.setAttribute('aria-invalid', 'true'); inp.focus(); return; }
   compose.addrFix = compose.addrFix || {}; compose.addrUndo = compose.addrUndo || {}; compose.addrMeta = compose.addrMeta || {};
+  clarEvent('labot_adresi');
   delete compose.addrUndo[key]; if (compose.addrReq) delete compose.addrReq[key];
   const orig = String(ADDR_TYPES[k].get(r) || '').trim(), at = new Date().toISOString();
   if (toResp){
@@ -15857,7 +15913,7 @@ function openAddrReq(keys){
     actions:[{label:'Atcelt'}, {label:one ? 'Ziņot' : `Ziņot (${xs.length})`, cls:'btn-primary', onClick:c => {
       const cmt = $('#ar-cmt').value.trim(), at = new Date().toISOString();
       compose.addrReq = compose.addrReq || {};
-      xs.forEach(o => { compose.addrReq[o.key] = {at, by:CURRENT_USER, comment:cmt, value:o.c.value || '', st:o.c.status}; });
+      xs.forEach(o => { compose.addrReq[o.key] = {at, by:CURRENT_USER, comment:cmt, value:o.c.value || '', st:o.c.status}; }); clarEvent('zinot_administratoram');
       alAddC('addrReq', one ? `${xs[0].r.name}, ${addrShort(xs[0].k)}: ${xs[0].c.value || '—'}${cmt ? ` – “${cmt}”` : ''}` : `${alCnt(xs.length, 'adrese', 'adreses')}${cmt ? ` – “${cmt}”` : ''}`);
       c(); acChanged(); saveDraft();
       toast(`Administratoram ziņots par ${one ? 'adresi' : `${xs.length} adresēm`}.`);
@@ -16807,6 +16863,7 @@ alBaseline();
 renderAll();
 renderDraftInfo();
 route();
+initClarityConsent();
 </script>
 </body>
 </html>
