@@ -129,6 +129,22 @@ p{margin:0}
 a{color:var(--primary-dark)}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px}
+/* Versija 205: vienots, viegls rūtiņu (checkbox) stils visās tabulās un sarakstos – bez aizpildīta tumšā fona; pārslēgi (switch) un radio pogas nav mainīti.
+   :where() – nulles specifiskums, lai vietējie noteikumi (izmērs, atstarpes, slēptās ievades) paliek spēkā */
+:where(input[type="checkbox"]:not([role="switch"]):not(.switch input)){appearance:none;-webkit-appearance:none;box-sizing:border-box;flex:none;width:15px;height:15px;margin:0;
+  border:1px solid #B8C7CC;border-radius:3px;background:#fff center/11px 11px no-repeat;vertical-align:-2px;cursor:pointer;transition:border-color .12s,background-color .12s}
+:where(input[type="checkbox"]:not([role="switch"]):not(.switch input)):hover:not(:disabled){border-color:#7FA9AF}
+:where(input[type="checkbox"]:not([role="switch"]):not(.switch input)):checked{border-color:#7FA9AF;background-color:#F0F7F8;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.3l2.4 2.4 4.8-5.2' fill='none' stroke='%231F6F78' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+:where(input[type="checkbox"]:not([role="switch"]):not(.switch input)):indeterminate{border-color:#7FA9AF;background-color:#F0F7F8;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 6h6' fill='none' stroke='%231F6F78' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E")}
+:where(input[type="checkbox"]:not([role="switch"]):not(.switch input)):disabled{cursor:not-allowed;border-color:#DCE3E5;background-color:#F7F9F9}
+:where(input[type="checkbox"]:not([role="switch"]):not(.switch input)):disabled:checked{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.3l2.4 2.4 4.8-5.2' fill='none' stroke='%23B3C0C4' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+:where(input[type="checkbox"]:not([role="switch"]):not(.switch input)):disabled:indeterminate{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3 6h6' fill='none' stroke='%23B3C0C4' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E")}
+/* fokuss: tas pats gredzens kā citiem laukiem (box-shadow 3px), tikai tastatūras fokusā; rāmja krāsa fokusā nemainās */
+input[type="checkbox"]:not([role="switch"]):focus{outline:none;box-shadow:none;border-color:#B8C7CC}
+input[type="checkbox"]:not([role="switch"]):checked:focus,input[type="checkbox"]:not([role="switch"]):indeterminate:focus{border-color:#7FA9AF}
+input[type="checkbox"]:not([role="switch"]):focus-visible{box-shadow:0 0 0 3px var(--focus-ring)}
 [hidden]{display:none !important}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .container{max-width:1280px;margin:0 auto;padding:0 24px}
@@ -4049,7 +4065,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 204</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 205</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
