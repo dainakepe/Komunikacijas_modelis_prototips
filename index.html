@@ -4065,7 +4065,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 205</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 206</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -12284,13 +12284,16 @@ function waitTip(w){
   const ds = [...new Set(w.map(q => isoDate(new Date(q.at))))].sort(), dt = ds.length ? (ds.length > 1 ? `${fmtDate(ds[0])}–${fmtDate(ds[ds.length - 1])}` : fmtDate(ds[0])) : '';
   return `Gaida administratora labojumus: ${w.length} ${plural(w.length, 'adrese', 'adreses')}.${dt ? ` Pieteikts ${dt.replace(/\.$/, '')}.` : ''}`;
 }
-// melnraksta jānovēršamais pa soļiem (simbols "!"): Versija 204 – tikai soļi ar stāvokli "jānovērš" (⚠ soļu joslā), ar šīs kampaņas datiem
+// melnraksta jānovēršamais pa soļiem (simbols "!"): neatrisinātas nederīgās / potenciāli kļūdainās adreses, pārbaude jāatkārto (Versija 206: atjaunota Versijas 203 loģika)
 function draftTodo(x){
   if (x._todo) return x._todo;
   let items = [];
   try { items = withSnap(x.d, () => {
-    const out = [];
-    for (let n = 1; n <= 5; n++){ const st = stepState(n); if (st.st === 'warn') out.push({n, txt:String(st.why || 'jānovērš').split(/\.\s/)[0].replace(/\.$/, '').replace(/^./, c => c.toLowerCase())}); }
+    const out = [], un = unresolved(), nb = un.filter(o => o.c.status === 'error').length, np = un.filter(o => o.c.status === 'pot').length;
+    for (let n = 1; n <= 5; n++){ const st = stepState(n); if (st.st === 'warn') out.push({n, txt:String(st.why || 'jālabo').replace(/^./, c => c.toLowerCase())}); }
+    if (nb) out.push({n:2, txt:`${nb} ${plural(nb, 'nederīga adrese', 'nederīgas adreses')}`});
+    if (np) out.push({n:2, txt:`${np} ${plural(np, 'potenciāli kļūdaina adrese', 'potenciāli kļūdainas adreses')}`});
+    if (x.d.review && !reviewValid()) out.push({n:4, txt:'pārbaude jāatkārto'});
     return out; }); } catch (e) { items = []; }
   return (x._todo = {items, first:items.length ? Math.min(...items.map(t => t.n)) : 0});
 }
@@ -12881,8 +12884,7 @@ function campPrep(x){
   else if (x.st === 'ret'){ const a = x.d.apv || {}; r = {k:'fix', ret:true, tip:`Atgriezta labošanai: ${a.returnedBy ? shortName(a.returnedBy) : '—'}${a.returnComment ? ` – ${a.returnComment}` : ''}${a.returnedAt ? `\n${fmtStamp(a.returnedAt)}` : ''}`, step:5}; }
   else if (x.st === 'apvok') r = {k:'ready', tip:x.meta, step:5};
   else { const w = withSnap(x.d, () => firstWarnStep());
-    // Versija 204: melnraksts ar "jānovērš" solī – statuss "Melnraksts" (jānovēršamais – simbolā "!"); "Jālabo" – tikai saskaņotāja atgrieztās
-    r = {k:'draft', tip:`Melnraksts · ${x.meta}`, step:w ? w.n : x.d.step || 1}; }
+    r = w ? {k:'fix', tip:`${WIZ_STEPS[w.n - 1]}: ${w.why.replace(/^./, c => c.toLowerCase())}`, step:w.n} : {k:'draft', tip:`Melnraksts · ${x.meta}`, step:x.d.step || 1}; }
   return (x._prep = r);
 }
 // piegādes rezultāts pēc sākotnējās (elektroniskās) piegādes: piegādātas · procesā · neveiksmīgas;
@@ -16750,62 +16752,15 @@ function seedFixDemo(){
   state.activeDraft = compose.draftId;
 }
 if (state.fixDemoV !== 2) seedFixDemo();
-// Versija 204 (testa dati): atzīmes pie statusa "Melnraksts" – lielākajai daļai melnrakstu atzīmju nav.
-// "!" – 1-vide (nav izvēlēts saturs), 1-būvniecība (atlase novecojusi), 1-transports (pēc pārbaudes mainītas adreses + ⏱); ⏱ – "…_adresu-labojumi" un 1-transports;
-// tīri (saturs izvēlēts, mainīgie aizpildīti, atlase apstiprināta) – 1-IKT, 1-cenas, 1-tirdzniecība, 1-imports
-function seedDraftMarks(){
-  state.draftMarkV = 1;
-  const keep = state.activeDraft, ago = (d, h, m = 10) => { const x = new Date(Date.now() - d * 864e5); x.setHours(h, m, 0, 0); return x.toISOString(); };
+// Versija 206: Versijas 204 testa melnraksti noņemti, 1-IKT melnraksts – atpakaļ Versijas 203 stāvoklī (2. solis, bez lēmumiem par adresēm)
+if (state.draftMarkV === 1){
   state.drafts = (state.drafts || []).filter(d => !d.seedMk);
-  // tīriem melnrakstiem – par visām nederīgajām / potenciāli kļūdainajām adresēm pieņemts lēmums (izlabotas kampaņai: MI ieteikums vai labojums)
-  const decide = () => { unresolved().forEach(o => { const key = `${o.r.id}|${o.k}`, raw = String(ADDR_TYPES[o.k].get(o.r) || '').trim();
-    if (o.c.risk){ compose.riskOk = {...(compose.riskOk || {}), [key]:true}; return; } // riskanta (lomas) adrese – apstiprināta kā derīga
-    let v = o.c.mi || adminGuess(o.r, o.k, o.c);
-    if ((!v || v === raw || validateAddr(o.k, v).status !== 'ok') && EMAIL_KEYS.includes(o.k) && raw.includes('@')) v = `dati@${raw.split('@')[1]}`; // nepiegādāta – cita tā paša uzņēmuma adrese
-    if (!v || v === raw || validateAddr(o.k, v).status !== 'ok') return; compose.addrFix[o.r.id] = {...(compose.addrFix[o.r.id] || {}), [o.k]:v};
-    compose.addrMeta[key] = {orig:String(ADDR_TYPES[o.k].get(o.r) || '').trim(), src:o.c.mi ? 'mi' : 'edit', by:CURRENT_USER, at:ago(1, 15, 20)}; if (o.c.mi) compose.addrMi[key] = true; }); };
-  // esošais 1-IKT melnraksts – atlase apstiprināta, saturs izvēlēts, adreses izlemtas
-  state.drafts.filter(d => d.seedSt && ((d.sel || {}).reports || [])[0] === 'p-x03').forEach(d => { applySnapshot(d); compose.draftId = d.id; compose.step = 3; compose.stepsOk = new Set([1, 2]); decide(); Object.assign(d, sessionSnapshot(), {id:d.id}); });
-  const mk = o => {
-    newSession(true);
-    Object.assign(compose, {aud:'jur', kind:o.kind, prio:prioDefault('jur'), createdAt:o.created});
-    compose.sel.reports = o.reports; compose.sel.mergeNmk = true;
-    { const one = o.reports.length === 1 ? repById(o.reports[0]) : null; if (one) Object.assign(compose.f, letterDataOf(one), {surveyFor:one.id}); }
-    compose.selRun = makeSelRun();
-    compose.content = {source:'tpl', templateId:o.tpl};
-    compose.nameAuto = true; syncAutoName();
-    compose.step = o.step; compose.stepsOk = new Set(o.ok || []);
-    if (o.fn) o.fn();
-    const d = {...sessionSnapshot(), id:compose.draftId, savedAt:o.saved || o.created, createdBy:CURRENT_USER, seedMk:true};
-    state.drafts.unshift(d); return d;
-  };
-  try {
-    // tīri melnraksti
-    mk({reports:['p-x14'], kind:'atgadinajums', tpl:'t9', created:ago(2, 10), step:3, ok:[1, 2], fn:decide});
-    mk({reports:['p-x13'], kind:'info', tpl:'t10', created:ago(1, 14), step:4, ok:[1, 2, 3], fn:decide});
-    mk({reports:['p-x16'], kind:'uzaicinajums', tpl:'t8', created:ago(0, 8, 40), step:2, ok:[1], fn:decide});
-    // "!" – atlase novecojusi (pēc atlases tvērumam pievienots vēl viens apsekojums)
-    mk({reports:['p-x10'], kind:'uzaicinajums', tpl:'t8', created:ago(4, 11), step:3, ok:[1, 2], fn:() => { compose.sel.reports = ['p-x10', 'p-x12']; }});
-    // "!" + ⏱ – pārbaude veikta, pēc tam divas adreses pieteiktas administratoram un viena izlabota kampaņai → pārbaude jāatkārto
-    const both = mk({reports:['p-x11'], kind:'uzaicinajums', tpl:'t8', created:ago(3, 9), saved:ago(0, 10, 5), step:4, ok:[1, 2, 3], fn:() => {
-      compose.review = {at:ago(1, 16), sig:reviewSig(), warn:[]};
-      const K = (r, k) => `${r.id}|${k}`, os = acActive().flatMap(r => acKeys(r).map(k => ({r, k, c:addrCheck(r, k)})));
-      const bad = os.filter(o => o.c.status === 'error' && o.c.value);
-      compose.addrReq = {};
-      bad.slice(0, 2).forEach((o, i) => { compose.addrReq[K(o.r, o.k)] = {at:ago(0, 9, 30 + i), by:CURRENT_USER, comment:i ? '' : 'Domēns vairs nedarbojas – lūdzu pārbaudīt reģistrā', value:o.c.value, st:o.c.status}; });
-      // izlabota kampaņai e-pasta adrese, kas ir starp pirmajām plānotajām adresēm – pārbaude vairs nav derīga
-      const pe = r => prePlan(r).slice(0, 2).find(a => EMAIL_KEYS.includes(a.type)), fr = recipients().find(pe);
-      if (fr){ const k = pe(fr).type, orig = String(ADDR_TYPES[k].get(fr) || '').trim(), v = `dati@${orig.split('@')[1] || 'uznemums.example'}`;
-        compose.addrFix[fr.id] = {...(compose.addrFix[fr.id] || {}), [k]:v === orig ? `statistika@${orig.split('@')[1]}` : v};
-        compose.addrMeta[K(fr, k)] = {orig, src:'edit', by:CURRENT_USER, at:ago(0, 9, 50)}; }
-    }});
-    void both;
-  } catch (e) { console.warn('seedDraftMarks', e); }
-  const d0 = state.drafts.find(x => x.id === keep);
-  if (d0){ applySnapshot(d0); compose.draftId = d0.id; } else newSession(true);
-  state.activeDraft = compose.draftId;
+  state.drafts.filter(d => d.seedSt && ((d.sel || {}).reports || [])[0] === 'p-x03').forEach(d => Object.assign(d, {step:2, stepsOk:[], addrFix:{}, addrMeta:{}, addrMi:{}, riskOk:{}}));
+  delete state.draftMarkV;
+  if (!state.drafts.some(d => d.id === compose.draftId)){ const d0 = state.drafts[0]; if (d0){ applySnapshot(d0); compose.draftId = d0.id; } else newSession(true); state.activeDraft = compose.draftId; }
+  else { const d0 = state.drafts.find(d => d.id === compose.draftId); if (d0 && d0.seedSt) { applySnapshot(d0); compose.draftId = d0.id; } }
+  save();
 }
-if (state.draftMarkV !== 1) seedDraftMarks();
 if (state.msCoverV !== 1){ addCoverSamples(state); state.msCoverV = 1; save(); }
 if (state.docNrV !== 2){ migrateDocNr(); state.docNrV = 2; const d0 = state.drafts.find(x => x.id === compose.draftId); compose.f.docNr = d0 ? (d0.f || {}).docNr || '' : ''; save(); }
 if (state.nameSfxV !== 1){ seedNameSfx(); state.nameSfxV = 1; const d0 = state.drafts.find(x => x.id === compose.draftId); if (d0) compose.nameSfx = nameSfxOf(d0), compose.name = d0.name; save(); }
