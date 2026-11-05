@@ -2808,34 +2808,18 @@ img.doc-crest{background:none}
 .doc-close{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-top:26px}
 /* Versija 203: paraksts, QR kods, "Jūsu pārskati", lappušu numerācija, ūdenszīme */
 .doc-sign{text-align:right;font-size:11.5px;line-height:1.35;min-width:200px}
-.doc-sig-img{display:block;width:130px;height:42px;margin:0 0 2px auto}
 .doc-sign-n{font-weight:700}
 .doc-sign-r{color:#444;font-size:10.5px;max-width:260px;margin-left:auto}
 .doc-qr{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
 .doc-qr small{font-size:8.5px;color:#444;max-width:96px;line-height:1.2}
 .doc-qr .qr-svg{display:block}
-.doc-qr-top{float:right;margin:10px 0 4px 12px}
 .doc-info.has-qr{overflow:hidden}
+.doc-qr-bl{align-items:flex-start;margin-top:14px}
+.doc-qr-bl small{text-align:left}
 .doc-qr-info{float:right;margin:4px 0 6px 12px}
-.doc-duties tr.late td:last-child{color:#a4262c;font-weight:600}.doc-duties-more{font-size:9pt;color:#555;margin:4px 0 0}
-.doc-duties{margin:10px 0 12px;font-size:11px}
-.doc-duties h3{color:var(--primary);font-size:13.5px;margin:0 0 6px}
-.doc-duties table{width:100%;border-collapse:collapse}
-.doc-duties th,.doc-duties td{border:1px solid #cfd8dc;padding:4px 6px;text-align:left;vertical-align:top}
-.doc-duties td small{color:#666;font-size:.88em}
-.doc-duties th{background:#f1f5f6;font-weight:600}
-.doc-pgfoot{position:absolute;left:56px;right:56px;bottom:24px;font-size:9.5px;color:#555;text-align:center;border-top:1px solid #dde3e5;padding-top:4px}
 .doc-wm{overflow:hidden}
 .doc-wm-t{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%) rotate(-32deg);font-size:96px;font-weight:800;letter-spacing:.12em;color:rgba(0,95,104,.07);pointer-events:none;white-space:nowrap;z-index:0;user-select:none}
-.te-doc-sub{display:flex;flex-direction:column;gap:6px;margin:8px 0 0;padding:8px 10px;border:1px solid var(--border-light);border-radius:var(--radius-sm);background:var(--bg);font-size:var(--fs-sm)}
-.te-doc-sub > label{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
-.te-doc-sub select{max-width:100%}
-.te-doc-sub input[type="url"]{flex:1 1 220px;min-width:0}
-.te-doc-radios{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px}
-.te-doc-radios label{display:inline-flex;align-items:center;gap:5px;cursor:pointer}
-.fi-signers{display:flex;flex-direction:column;gap:10px}
 .fi-signer{display:flex;align-items:center;gap:12px}
-.fi-signer .doc-sig-img{margin:0;width:110px;height:36px}
 .rx-kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
 .doc-bar{position:absolute;left:0;right:0;bottom:0;height:16px;background:repeating-linear-gradient(90deg,var(--doc-bar-1) 0 4%,var(--doc-bar-2) 4% 8%,var(--doc-bar-3) 8% 12%,var(--doc-bar-4) 12% 16%)}
 .doc-stage{background:#E9EEEF;border-radius:8px;padding:20px}
@@ -4076,7 +4060,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 207</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 208</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -6798,7 +6782,7 @@ function templateText(t, channel){
   if (gen){
     const L = state.layout;
     s += t.doc.title + t.doc.body + t.doc.fileName + '{datums}{dok_nr}{adresāts}' + (t.doc.banner ? '{apsekojums}' : '') +
-      (t.doc.conf ? L.confHtml : '') + (t.doc.info ? L.infoHtml : '') + (t.doc.duties ? '{pārskatu_tabula}' : '');
+      (t.doc.conf ? L.confHtml : '') + (t.doc.info ? L.infoHtml : '');
   }
   if (channel === 'epasts') s += state.layout.emailFooter;
   return s;
@@ -6857,30 +6841,8 @@ function qrSvg(text, px = 84){
 // personalizēta anketas saite {anketas_saite} (prototipā – izdomāta): katram respondentam un apsekojumam savs kods
 const qrToken = s => { let h = 2166136261; for (const ch of String(s)){ h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36).toUpperCase().padStart(7, '0'); };
 const formLinkFor = (rid, survey) => `https://e.csp.gov.lv/anketa/${qrToken(`${rid || 'paraugs'}|${survey || ''}`)}`;
-// parakstītāji (Nemainīgā informācija; izdomāti): vārds, amats un paraksta attēls (faksimils – vienkārša SVG līkne)
-const DOC_SIGNERS = [
-  {id:'s-boss', name:'Vārds Uzvārds', role:'Centrālās statistikas pārvaldes priekšnieks', sig:'M4 34c10-22 16-26 18-14s-4 18 2 10 10-24 16-18-6 20 2 14 14-16 20-8 6 10 14 2 12-8 20-6'},
-  {id:'s-dep1', name:'Anna Paraudziņa', role:'Centrālās statistikas pārvaldes priekšnieka vietniece', sig:'M6 30c6-16 14-20 14-8s-8 14 0 8 12-18 18-12-2 16 6 10 10-10 18-4 10 6 22-4'},
-  {id:'s-dep2', name:'Jānis Testiņš', role:'Centrālās statistikas pārvaldes priekšnieka vietnieks', sig:'M4 28c8-4 12-20 18-14s-10 22 0 14 6-20 14-16-4 18 8 10 16-6 24-2'},
-];
-const signerOf = id => DOC_SIGNERS.find(x => x.id === id) || DOC_SIGNERS[0];
-const sigSvg = sg => `<svg class="doc-sig-img" viewBox="0 0 140 44" aria-label="Paraksta attēls (faksimils)" role="img"><path d="${sg.sig}" fill="none" stroke="#1d3a6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-// "Jūsu pārskati": respondenta aktuālie pienākumi (Pārskats · Periods · Iesniegšanas termiņš · Statuss)
-// "Jūsu pārskati": aktuālie pienākumi – kavētie, ar termiņu nākamo 45 dienu laikā un nesen (30 dienās) iesniegtie; ne vairāk kā 10 rindas
-const DUTY_MAX = 10;
-function dutyCur(ds){
-  const t = new Date(), iso = n => isoDate(new Date(t.getFullYear(), t.getMonth(), t.getDate() + n)), soon = iso(45), past = iso(-30);
-  return ds.filter(d => { const st = dutyStatus(d); return st === 'kavets' || (st === 'nav' && d.deadline <= soon) || (st === 'iesniegts' && d.deadline >= past); }).sort(dutySort);
-}
-function dutyRowsHtml(ctx){
-  const all = ctx && ctx.__duties, ST = {iesniegts:'Iesniegts', kavets:'Nokavēts', nav:'Jāiesniedz'};
-  const cur = all ? dutyCur(all) : null, ds = cur ? cur.slice(0, DUTY_MAX) : null;
-  const rows = ds ? ds.map(d => { const p = repById(d.reportId), st = dutyStatus(d);
-      return `<tr${st === 'kavets' ? ' class="late"' : ''}><td>${esc(p ? `${p.code} – ${p.name}` : d.reportId)}${(u => u ? `<br><small>${esc(u)}</small>` : '')(ctx.__rid && d.respondentId && d.respondentId !== ctx.__rid ? (state.respondents.find(x => x.id === d.respondentId) || {}).name : '')}</td><td>${esc(periodLabel(d.period))}</td><td>${esc(fmtDate(d.deadline))}</td><td>${ST[st]}</td></tr>`; })
-    : ['<tr><td>1-apgrozījums – Mēneša pārskats (paraugs)</td><td>2026. gada oktobris</td><td>15.11.2026.</td><td>Jāiesniedz</td></tr>'];
-  const more = cur && cur.length > DUTY_MAX ? `<p class="doc-duties-more">… un vēl ${cur.length - DUTY_MAX} ${plural(cur.length - DUTY_MAX, 'pienākums', 'pienākumi')} – skatiet e-pakalpojumā.</p>` : '';
-  return `<div class="doc-duties"><h3>Jūsu pārskati</h3>${rows.length ? `<table><thead><tr><th>Pārskats</th><th>Periods</th><th>Iesniegšanas termiņš</th><th>Statuss</th></tr></thead><tbody>${rows.join('')}</tbody></table>${more}` : '<p>Aktuālu pienākumu nav.</p>'}</div>`;
-}
+// Versija 208: paraksta bloks – iepriekš definētā informācija (Nemainīgā informācija), lietotājs to veidnē nemaina; prototipā – fiksēta vērtība, bez faksimila
+const DOC_SIGN = {name:'Vārds Uzvārds', role:'Centrālās statistikas pārvaldes priekšnieks'};
 // PDF pielikuma dokuments (A4)
 // Veidlapas galva – viena kopīga komponente visām ģenerētajām PDF vēstulēm (personalizētā vēstule visos skatos un drukā):
 // josla, valsts ģerbonis (tas pats attēls kā pielikumu sagatavēs), iestāde, līnija, rekvizīti un pilsēta – no "Nemainīgā informācija" (state.layout)
@@ -6891,24 +6853,20 @@ const formHeadHtml = (L = state.layout) => `<div class="doc-head"><div class="do
 function docHtml(t, ctx, mark, attrs, f = compose.f, L = state.layout, wm = false){
   const d = t.doc;
   const R = h => fillRich(h, ctx, mark);
-  // Versija 203: QR kods, paraksts, "Jūsu pārskati", lappušu numerācija, ūdenszīme "PARAUGS" (tikai priekšskatījumā / paraugos)
-  const qrUrl = d.qr ? (d.qrMode === 'info' ? (d.qrUrl || (ctx && ctx['apsekojuma_vietne']) || 'https://stat.gov.lv/lv/apsekojumi') : formLinkFor(ctx && ctx.__rid, t.survey || (ctx && ctx['apsekojums']))) : '';
-  const qrBox = cls => d.qr ? `<div class="doc-qr ${cls}" data-qr-url="${esc(qrUrl)}">${qrSvg(qrUrl, cls === 'doc-qr-top' ? 78 : 72)}<small>${d.qrMode === 'info' ? 'Noskenējiet, lai uzzinātu vairāk' : 'Noskenējiet, lai atvērtu anketu'}</small></div>` : '';
-  const sg = d.sign ? signerOf(d.signer) : null;
-  const pagesN = Math.max(1, Math.ceil((htmlToText(d.body || '').length + (d.conf ? 700 : 0) + (d.info ? 500 : 0) + (d.duties ? 400 : 0) + (d.sign ? 250 : 0)) / 2400));
+  // Versija 208: QR kods – vienmēr personalizēts uz respondenta anketu ({anketas_saite}), blokā "Plašāka informācija" (ja tas izslēgts – apakšā pa kreisi);
+  // paraksts – iepriekš definēts; ūdenszīme "PARAUGS" – tikai priekšskatījumā / paraugos. "Jūsu pārskati" un lappušu numerācija (Versija 203) noņemti – agrāk saglabātie karogi tiek ignorēti
+  const qrUrl = d.qr ? formLinkFor(ctx && ctx.__rid, t.survey || (ctx && ctx['apsekojums'])) : '';
+  const qrBox = cls => d.qr ? `<div class="doc-qr ${cls}" data-qr-url="${esc(qrUrl)}">${qrSvg(qrUrl, 72)}<small>Noskenējiet, lai atvērtu anketu</small></div>` : '';
   return `<div class="doc${wm ? ' doc-wm' : ''}">${wm ? '<div class="doc-wm-t" aria-hidden="true">PARAUGS</div>' : ''}
     ${formHeadHtml(L)}
-    ${d.qr && d.qrPos !== 'info' ? qrBox('doc-qr-top') : ''}
     <div class="doc-meta">${R('{datums} Nr. {dok_nr}')}</div>
     <div class="doc-to">${R('{adresāts}')}${ctx && ctx['vārds'] && ctx['vārds'] !== ctx['adresāts'] ? `<br><span>${R('{vārds}')}</span>` : ''}</div>
     ${d.banner ? `<div class="doc-banner"${(b => b ? ` style="background:${b.img ? `${UBN_C1} url('${b.img}') center/cover no-repeat` : b.c1}"` : '')(bannerById(visOf(t).banner))}><b>${R('{apsekojums}')}</b>${d.tags ? `<small>${esc(d.tags)}</small>` : ''}</div>${d.slogan && (L.lang || 'lv') === 'lv' ? `<div class="doc-slogan">${esc(d.slogan)}</div>` : ''}` : ''}
     ${d.title ? `<div class="doc-title">${R(esc(d.title))}</div>` : ''}
     <div class="rich">${R(d.body)}</div>
-    ${d.duties ? dutyRowsHtml(ctx) : ''}
     ${d.conf ? `<div class="rich"><h3>${esc(L.confTitle)}</h3>${R(L.confHtml)}</div>` : ''}
-    ${d.info ? `<div class="rich doc-info${d.qr && d.qrPos === 'info' ? ' has-qr' : ''}">${d.qr && d.qrPos === 'info' ? qrBox('doc-qr-info') : ''}<h3>${esc(L.infoTitle)}</h3>${R(L.infoHtml)}</div>` : d.qr && d.qrPos === 'info' ? `<div class="doc-info has-qr">${qrBox('doc-qr-info')}</div>` : ''}
-    <div class="doc-close"><div>${esc(L.closing)}<br>${esc(L.org)}</div>${sg ? `<div class="doc-sign">${d.fax ? sigSvg(sg) : ''}<div class="doc-sign-n">${esc(sg.name)}</div><div class="doc-sign-r">${esc(sg.role)}</div></div>` : ''}</div>
-    ${d.pages ? `<div class="doc-pgfoot">${R('Dok. Nr. {dok_nr} · {datums}')} · lapa 1 no ${pagesN}</div>` : ''}
+    ${d.info ? `<div class="rich doc-info${d.qr ? ' has-qr' : ''}">${qrBox('doc-qr-info')}<h3>${esc(L.infoTitle)}</h3>${R(L.infoHtml)}</div>` : ''}
+    <div class="doc-close"><div>${esc(L.closing)}<br>${esc(L.org)}${d.qr && !d.info ? qrBox('doc-qr-bl') : ''}</div>${d.sign ? `<div class="doc-sign"><div class="doc-sign-n">${esc(DOC_SIGN.name)}</div><div class="doc-sign-r">${esc(DOC_SIGN.role)}</div></div>` : ''}</div>
     <div class="doc-bar"></div>
   </div>`;
 }
@@ -7934,9 +7892,7 @@ function tplDiff(o, n){
     // Versija 203: jaunie nemainīgie elementi – atsevišķi ieraksti
     const od = o.doc || {}, nd = n.doc || {}, X = ['sign', 'signer', 'fax', 'qr', 'qrMode', 'qrUrl', 'qrPos', 'duties', 'pages'], strip = x => Object.fromEntries(Object.entries(x).filter(([k]) => !X.includes(k)).sort(([a], [b]) => a < b ? -1 : 1));
     const onoff = (k, l) => { if (!!od[k] !== !!nd[k]) d.push(`${l}: ${nd[k] ? 'ieslēgts' : 'izslēgts'}`); };
-    onoff('sign', 'Paraksts'); if (nd.sign && od.sign && (od.signer || '') !== (nd.signer || '')) d.push(`Parakstītājs: ${signerOf(nd.signer).name}`); if (nd.sign && !!od.fax !== !!nd.fax) d.push(`Paraksta attēls (faksimils): ${nd.fax ? 'pievienots' : 'noņemts'}`);
-    onoff('qr', 'QR kods'); if (nd.qr && od.qr && ((od.qrMode || 'form') !== (nd.qrMode || 'form') || (od.qrUrl || '') !== (nd.qrUrl || '') || (od.qrPos || 'top') !== (nd.qrPos || 'top'))) d.push(`QR kods: ${nd.qrMode === 'info' ? 'uz informācijas lapu' : 'uz respondenta anketu'}, ${nd.qrPos === 'info' ? 'pie plašākas informācijas' : 'augšā'}`);
-    onoff('duties', 'Jūsu pārskati'); onoff('pages', 'Lappušu numerācija');
+    onoff('sign', 'Paraksts'); onoff('qr', 'QR kods');
     if (JSON.stringify(strip(od)) !== JSON.stringify(strip(nd))) d.push('Mainīta personalizētā vēstule'); }
   const vo = visOf(o), vn = visOf(n);
   if (vo.banner !== vn.banner) d.push('Mainīts baneris');
@@ -8328,18 +8284,9 @@ function openTemplateEditor(id, preset = {}){
                 <label><input type="checkbox" id="te-doc-banner" ${t.doc.banner ? 'checked' : ''}> Apsekojuma baneris</label>
                 <label><input type="checkbox" id="te-doc-conf" ${t.doc.conf ? 'checked' : ''}> Konfidencialitāte</label>
                 <label><input type="checkbox" id="te-doc-info" ${t.doc.info ? 'checked' : ''}> Plašāka informācija</label>
-                <label><input type="checkbox" id="te-doc-sign" ${t.doc.sign ? 'checked' : ''}> Paraksts</label>
-                <label><input type="checkbox" id="te-doc-qr" ${t.doc.qr ? 'checked' : ''}> QR kods</label>
-                <label><input type="checkbox" id="te-doc-duties" ${t.doc.duties ? 'checked' : ''}> Jūsu pārskati ${tip('Personalizēta tabula ar respondenta aktuālajiem pienākumiem: Pārskats · Periods · Iesniegšanas termiņš · Statuss (lauks {pārskatu_tabula}).')}</label>
-                <label><input type="checkbox" id="te-doc-pages" ${t.doc.pages ? 'checked' : ''}> Lappušu numerācija ${tip('Kājenē: “Dok. Nr. {dok_nr} · {datums} · lapa X no Y”.')}</label>
-              </div>
-              <div class="te-doc-sub" id="te-doc-sign-opts"${t.doc.sign ? '' : ' hidden'}><b>Paraksts</b>
-                <label>Parakstītājs <select id="te-doc-signer">${DOC_SIGNERS.map(sg => `<option value="${sg.id}"${(t.doc.signer || DOC_SIGNERS[0].id) === sg.id ? ' selected' : ''}>${esc(sg.name)}, ${esc(sg.role)}</option>`).join('')}</select></label>
-                <label class="te-doc-chk"><input type="checkbox" id="te-doc-fax" ${t.doc.fax ? 'checked' : ''}> Pievienot paraksta attēlu (faksimilu) ${tip('Paraksta attēls nav elektronisks paraksts – tas ir tikai noformējums.')}</label></div>
-              <div class="te-doc-sub" id="te-doc-qr-opts"${t.doc.qr ? '' : ' hidden'}><b>QR kods</b>
-                <div class="te-doc-radios" role="radiogroup" aria-label="QR kods ved uz"><label><input type="radio" name="te-doc-qrm" value="form"${t.doc.qrMode !== 'info' ? ' checked' : ''}> Uz respondenta anketu (personalizēts)</label><label><input type="radio" name="te-doc-qrm" value="info"${t.doc.qrMode === 'info' ? ' checked' : ''}> Uz informācijas lapu</label></div>
-                <label id="te-doc-qrurl-w"${t.doc.qrMode === 'info' ? '' : ' hidden'}>Adrese <input type="url" id="te-doc-qrurl" value="${esc(t.doc.qrUrl || '')}" placeholder="Saistītā apsekojuma NAMEJS saite"></label>
-                <div class="te-doc-radios" role="radiogroup" aria-label="Novietojums"><span>Novietojums:</span><label><input type="radio" name="te-doc-qrp" value="top"${t.doc.qrPos !== 'info' ? ' checked' : ''}> Augšā</label><label><input type="radio" name="te-doc-qrp" value="info"${t.doc.qrPos === 'info' ? ' checked' : ''}> Pie plašākas informācijas</label></div></div></div>
+                <label><input type="checkbox" id="te-doc-sign" ${t.doc.sign ? 'checked' : ''}> Paraksts ${tip('Paraksta bloks (vārds, uzvārds, amats) tiek ņemts no iepriekš definētās informācijas.')}</label>
+                <label><input type="checkbox" id="te-doc-qr" ${t.doc.qr ? 'checked' : ''}> QR kods ${tip('Personalizēts QR kods uz respondenta anketu.')}</label>
+              </div></div>
             <p class="hint te-doc-bn-note" id="te-doc-bn-note">Banera tēmturi un sauklis – cilnes “E-pasta saturs” sadaļā “Baneris”.</p>
           </fieldset>
         </div>
@@ -8485,9 +8432,7 @@ function openTemplateEditor(id, preset = {}){
       main: k === 'pielikums' && main && main !== 'gen' ? {lib:main.lib, name:main.name, size:main.size} : null,
       doc: {title: lv.docTitle, fileName: lv.fileName || 'vestule.pdf', body: lv.docBody,
         banner: $('#te-doc-banner').checked, conf: $('#te-doc-conf').checked, info: $('#te-doc-info').checked,
-        sign: $('#te-doc-sign').checked, signer: $('#te-doc-signer').value, fax: $('#te-doc-fax').checked,
-        qr: $('#te-doc-qr').checked, qrMode: radioVal('te-doc-qrm') || 'form', qrUrl: $('#te-doc-qrurl').value.trim(), qrPos: radioVal('te-doc-qrp') || 'top',
-        duties: $('#te-doc-duties').checked, pages: $('#te-doc-pages').checked,
+        sign: $('#te-doc-sign').checked, qr: $('#te-doc-qr').checked,
         tags: $('#te-doc-tags').value.trim(), slogan: $('#te-doc-slogan').value.trim()},
       tr: {},
       ea: {subject: $('#te-ea-subject').value.trim(), body: $('#te-ea-body').value.replace(/[ \t]+$/gm, '').replace(/\s+$/, '')},
@@ -8727,9 +8672,7 @@ function openTemplateEditor(id, preset = {}){
     pv = 'epasts';
     versions.lv = {subject:src.subject || '', body:src.body || blankBody(aud()), docTitle:'', docBody:d.body || '<p><br></p>', fileName:d.fileName || ''};
     $('#te-doc-banner').checked = !!d.banner; $('#te-doc-conf').checked = !!d.conf; $('#te-doc-info').checked = !!d.info;
-    $('#te-doc-sign').checked = !!d.sign; $('#te-doc-signer').value = d.signer || DOC_SIGNERS[0].id; $('#te-doc-fax').checked = !!d.fax;
-    $('#te-doc-qr').checked = !!d.qr; $$('input[name="te-doc-qrm"]', modal).forEach(r => r.checked = r.value === (d.qrMode || 'form')); $('#te-doc-qrurl').value = d.qrUrl || '';
-    $$('input[name="te-doc-qrp"]', modal).forEach(r => r.checked = r.value === (d.qrPos || 'top')); $('#te-doc-duties').checked = !!d.duties; $('#te-doc-pages').checked = !!d.pages; syncDocX();
+    $('#te-doc-sign').checked = !!d.sign; $('#te-doc-qr').checked = !!d.qr;
     setVisUI(visOf(src));
     $('#te-ea-subject').value = (src.ea || {}).subject || ''; $('#te-ea-body').value = (src.ea || {}).body || '';
     if (!sess){
@@ -8804,11 +8747,7 @@ function openTemplateEditor(id, preset = {}){
   });
   ['te-subject', 'te-doc-file'].forEach(fid => $('#' + fid).addEventListener('input', update));
   ['te-doc-banner', 'te-doc-conf', 'te-doc-info'].forEach(fid => $('#' + fid).addEventListener('change', update));
-  // Versija 203: paraksts, QR kods, "Jūsu pārskati", lappušu numerācija – papildu iestatījumi parādās, kad rūtiņa atzīmēta
-  function syncDocX(){ $('#te-doc-sign-opts').hidden = !$('#te-doc-sign').checked; $('#te-doc-qr-opts').hidden = !$('#te-doc-qr').checked; $('#te-doc-qrurl-w').hidden = radioVal('te-doc-qrm') !== 'info'; }
-  ['te-doc-sign', 'te-doc-signer', 'te-doc-fax', 'te-doc-qr', 'te-doc-duties', 'te-doc-pages'].forEach(fid => $('#' + fid).addEventListener('change', () => { syncDocX(); update(); }));
-  $('#te-doc-qrurl').addEventListener('input', update);
-  $('#te-doc-qr-opts').addEventListener('change', e => { if (['te-doc-qrm', 'te-doc-qrp'].includes(e.target.name)){ syncDocX(); update(); } });
+  ['te-doc-sign', 'te-doc-qr'].forEach(fid => $('#' + fid).addEventListener('change', update));
   $('#te-doc-banner').addEventListener('change', syncVis);
   // Vizuālie elementi: jebkura izmaiņa – uzreiz priekšskatījumā
   $('#te-vis-toggle').addEventListener('click', () => { visOpen = !visOpen; keepScroll(syncVis); });
@@ -9482,7 +9421,7 @@ function openFixedInfo(){
       ${sec('Noslēguma frāze', `<div class="doc fi-doc fi-doc-close"><div class="doc-close"><div>${esc(L.closing)}<br>${esc(L.org)}</div></div></div>`, 'Personalizētās vēstules beigās.')}
       ${sec('Kājene', `<div class="mail-foot fi-foot">${chips(L.emailFooter)}</div>`, 'Formatētā e-pasta apakšā.')}
       ${sec('Konfidencialitāte', `<div class="doc fi-doc fi-doc-text"><div class="rich"><h3>${esc(L.confTitle)}</h3>${L.confHtml}</div></div>`, 'Personalizētajā vēstulē, ja atzīmēta rūtiņa “Konfidencialitāte”.')}
-      ${sec('Parakstītāji', `<div class="fi-signers">${DOC_SIGNERS.map(sg => `<div class="fi-signer">${sigSvg(sg)}<div><b>${esc(sg.name)}</b><br><span class="muted">${esc(sg.role)}</span></div></div>`).join('')}</div>`, 'Personalizētajā vēstulē, ja atzīmēta rūtiņa “Paraksts”: dokumenta beigās labajā pusē – faksimils (ja ieslēgts), vārds, uzvārds un amats. Paraksta attēls nav elektronisks paraksts – tas ir tikai noformējums.')}
+      ${sec('Paraksts', `<div class="fi-signer"><div><b>${esc(DOC_SIGN.name)}</b><br><span class="muted">${esc(DOC_SIGN.role)}</span></div></div>`, 'Personalizētajā vēstulē, ja atzīmēta rūtiņa “Paraksts”: dokumenta beigās labajā pusē – vārds, uzvārds un amats (iepriekš definēta informācija, veidnē netiek mainīta).')}
       ${sec('Plašāka informācija', `<div class="doc fi-doc fi-doc-text"><div class="rich"><h3>${esc(L.infoTitle)}</h3>${L.infoHtml}</div></div>`, 'Personalizētajā vēstulē, ja atzīmēta rūtiņa “Plašāka informācija”.')}
     </div>`,
     actions:[{label:'Aizvērt', cls:'btn-primary'}]});
@@ -11638,7 +11577,7 @@ function doSend(meta = {}){
     const rec = {id:'s' + uid(), batch, seed:!!meta.seed, createdBy:meta.seed ? '' : CURRENT_USER, createdAt:meta.seed ? '' : (compose.createdAt || now), sessionName:compose.name, sessionDesc:compose.desc || '', campBase:cb, aiFix:!!(compose.addrMi || {})[`${r.id}|${fin.type}`], sessionKind:sessKindKey(), plannedFor:meta.plannedFor || '', contentSource:compose.content.source, sentAt:now,
       templateId:compose.content.templateId || '', templateName:contentName(t), kind:t.kind, respondentId:r.id,
       recipient:r.name, address:fin.address, addrType:fin.type, channel:fin.type === 'pasts' ? 'pasts' : ADDR_TYPES[fin.type].ch, prio:compose.prio.filter(Boolean), attempts, docNr:compose.f.docNr,
-      printOn:printOn(), ...(first ? {} : {print:{reason:'noaddr', at:now}}), ...(t.kind === 'pielikums' && !t.main && t.doc && t.doc.qr ? {qr:t.doc.qrMode === 'info' ? 'info' : 'form'} : {}),
+      printOn:printOn(), ...(first ? {} : {print:{reason:'noaddr', at:now}}), ...(t.kind === 'pielikums' && !t.main && t.doc && t.doc.qr ? {qr:'form'} : {}),
       duties:msgDuties(r).map(d => d.id),
       subject:msg.subject, bodyHtml:internImages(msg.bodyHtml), bodyText:msg.bodyText, footer:msg.footer, variant:msg.variant, visEls:msg.visEls,
       // eAdreses versija; skatot – tiek rādīta tā versija, uz kuras kanālu vēstule faktiski nosūtīta (arī pēc pārejas uz nākamo adresi)
