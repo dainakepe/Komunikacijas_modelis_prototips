@@ -2209,7 +2209,14 @@ dialog.drawer.al-drawer{width:min(420px,100vw)}
 .ac-ed2 .ac-ed-acts{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
 .ac-req-lnk{font-size:var(--fs-sm)}
 .imp-scope{margin-top:10px}
-.cst-wait{display:block;margin-top:2px;font-size:var(--fs-xs);color:var(--text-muted);white-space:nowrap}
+.cst-wrap{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;max-width:100%;vertical-align:middle}
+.cst-mk{flex:none;display:inline-grid;place-items:center;width:14px;height:14px;padding:0;border:0;background:none;line-height:1;cursor:default}
+.cst-mk .icon{width:14px;height:14px}
+.cst-clock{color:var(--text-muted)}
+.cst-todo{appearance:none;border-radius:50%;background:#E07B1F;color:#fff;font:700 10px/14px var(--font, inherit);cursor:pointer}
+.cst-todo:hover{background:#C4640F}
+.cst-mk:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px;border-radius:50%}
+.c-title-clock{vertical-align:middle;margin-left:4px;width:16px;height:16px} .c-title-clock .icon{width:16px;height:16px}
 .q-acts .btn{width:100%;justify-content:center;height:34px;font-size:var(--fs-sm)}
 .q-acts .btn .icon{width:15px;height:15px}
 .q-acts .ac-checked{text-align:center}
@@ -4010,7 +4017,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 201</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 202</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5824,7 +5831,10 @@ function syncAutoName(){
   renderCampTitle();
 }
 // galvene: nosaukums un pelēks apraksts (līdzšinējais nosaukums)
-function renderCampTitle(){ const t = $('#c-title'); if (t) t.innerHTML = esc(compose.name) + (compose.desc ? ` <span class="c-desc">${esc(compose.desc)}</span>` : ''); }
+function renderCampTitle(){ const t = $('#c-title'); if (!t) return;
+  // Versija 202: virsrakstā – tikai simbols ⏱ (gaida administratora labojumus), informācija – padomā
+  const w = Object.values(compose.addrReq || {}).filter(q => !q.done);
+  t.innerHTML = esc(compose.name) + (w.length && typeof waitTip === 'function' ? ` <span class="cst-mk cst-clock c-title-clock" tabindex="0" data-ctip="${esc(waitTip(w))}" aria-label="${esc(waitTip(w))}">${ICON.clock}</span>` : '') + (compose.desc ? ` <span class="c-desc">${esc(compose.desc)}</span>` : ''); }
 // atlase (1. solis "Ko attiecina kampaņa"): periodiskumi un periodi un/vai apsekojumi (pārskati)
 const defaultResp = () => ({name:'', nmk:'', nmkps:'', uuk:'', email:'', eaddr:'', ns:'', list:null, listName:'', listMissing:[]});
 const defaultFz = () => ({year:'', period:'', rounds:null});
@@ -12107,6 +12117,24 @@ function renderCampFilters(rows){
 const CAMP_SUBS = [['all', 'Visas'], ['draft', 'Melnraksti'], ['fix', 'Jālabo'], ['appr', 'Saskaņošanā'], ['ready', 'Gatavas'], ['wait', 'Gaida labojumus']];
 // Versija 201: melnraksts, kurā ir adreses ar "Pieteikts administratoram"
 const campWait = x => x.type === 'draft' ? reqPending(x.d && x.d.addrReq) : [];
+// Versija 202: padoms simbolam ⏱ – "Gaida administratora labojumus: N adreses. Pieteikts {datums}."
+function waitTip(w){
+  const ds = [...new Set(w.map(q => isoDate(new Date(q.at))))].sort(), dt = ds.length ? (ds.length > 1 ? `${fmtDate(ds[0])}–${fmtDate(ds[ds.length - 1])}` : fmtDate(ds[0])) : '';
+  return `Gaida administratora labojumus: ${w.length} ${plural(w.length, 'adrese', 'adreses')}.${dt ? ` Pieteikts ${dt.replace(/\.$/, '')}.` : ''}`;
+}
+// melnraksta jānovēršamais pa soļiem (simbols "!"): neatrisinātas nederīgās / potenciāli kļūdainās adreses, pārbaude jāatkārto
+function draftTodo(x){
+  if (x._todo) return x._todo;
+  let items = [];
+  try { items = withSnap(x.d, () => {
+    const out = [], un = unresolved(), nb = un.filter(o => o.c.status === 'error').length, np = un.filter(o => o.c.status === 'pot').length;
+    for (let n = 1; n <= 5; n++){ const st = stepState(n); if (st.st === 'warn') out.push({n, txt:String(st.why || 'jālabo').replace(/^./, c => c.toLowerCase())}); }
+    if (nb) out.push({n:2, txt:`${nb} ${plural(nb, 'nederīga adrese', 'nederīgas adreses')}`});
+    if (np) out.push({n:2, txt:`${np} ${plural(np, 'potenciāli kļūdaina adrese', 'potenciāli kļūdainas adreses')}`});
+    if (x.d.review && !reviewValid()) out.push({n:4, txt:'pārbaude jāatkārto'});
+    return out; }); } catch (e) { items = []; }
+  return (x._todo = {items, first:items.length ? Math.min(...items.map(t => t.n)) : 0});
+}
 const CAMP_SUB_OLD = {planned:['planned'], active:['proc'], done:['done', 'issues']};
 // kampaņas statuss: birka un filtra sadaļa
 const CAMP_ST = {
@@ -12789,9 +12817,12 @@ function stBadge(o){
     : `<span class="cst2 ${o.cls}" data-ctip="${esc(tip)}" aria-label="${esc(tip.replace(/\n/g, '. '))}">${inner}</span>`;
 }
 function campStHtml(col, x){
-  if (col === 'prep'){ const p = campPrep(x), d = PREP_ST[p.k], w = ['draft', 'fix'].includes(p.k) ? campWait(x) : [];
-    const last = w.reduce((m, q) => String(q.at) > m ? String(q.at) : m, '');
-    return stBadge({ic:CST_IC[p.k], cls:d.cls, label:d.label, tip:p.tip, action:'camp-prep', id:x.key}) + (w.length ? `<span class="cst-wait" tabindex="0" data-ctip="${esc(`Pieteiktas administratoram: ${w.length} ${plural(w.length, 'adrese', 'adreses')}${last ? `\nPēdējais pieteikums: ${fmtShortIso(last)}` : ''}\nKampaņu var turpināt – līdz labojumam vēstule tiks sūtīta pēc nākamās derīgās adreses`)}">· ⏱ gaida labojumus (${w.length})</span>` : ''); }
+  if (col === 'prep'){ const p = campPrep(x), d = PREP_ST[p.k], w = ['draft', 'fix'].includes(p.k) ? campWait(x) : [], td = p.k === 'draft' ? draftTodo(x) : null;
+    // Versija 202: pie statusa – tikai simboli ("!" – jānovērš, ⏱ – gaida administratora labojumus); informācija – gaišajā padomā
+    const marks = (td && td.items.length ? `<button type="button" class="cst-mk cst-todo" data-action="camp-fixgo" data-id="${esc(x.key)}|${td.first}" data-ctip="${esc(`Jānovērš:\n${td.items.map(t => `${t.n}. ${WIZ_STEPS[t.n - 1]} – ${t.txt}`).join('\n')}`)}" aria-label="${esc(`Jānovērš: ${td.items.map(t => `${t.n}. ${WIZ_STEPS[t.n - 1]} – ${t.txt}`).join('; ')}. Atvērt kampaņu`)}">!</button>` : '')
+      + (w.length ? `<span class="cst-mk cst-clock" tabindex="0" data-ctip="${esc(waitTip(w))}" aria-label="${esc(waitTip(w))}">${ICON.clock}</span>` : '');
+    const b = stBadge({ic:CST_IC[p.k], cls:d.cls, label:d.label, tip:p.tip, action:'camp-prep', id:x.key});
+    return marks ? `<span class="cst-wrap">${b}${marks}</span>` : b; }
   const d = campSend(x);
   if (d.k === 'none') return stBadge({ic:CST_IC.none, cls:SEND_ST.none.cls, label:SEND_ST.none.label, tip:d.tip});
   return stBadge({ic:CST_IC[d.k], cls:SEND_ST[d.k].cls, label:d.k === 'issues' ? `${SEND_ST.issues.label} (${d.n})` : SEND_ST[d.k].label, tip:d.tip, action:'camp-send', id:x.key}); // Versija 174: "Pabeigta" bez redzamā "· atrisinātas N" (tikai padomā)
@@ -14858,6 +14889,7 @@ const actions = {
   'jrn-cmore': () => { ui.jrn.cLimit += 50; renderJrnL1(); },
   'camp-row': id => openCampRow(id),
   'camp-prep': id => openCampPrep(id),
+  'camp-fixgo': id => { const i = id.lastIndexOf('|'), key = id.slice(0, i), n = +id.slice(i + 1), x = campByKey(key); if (!x) return; openEditor(x.id); if (n && !apvLocked() && !apvApproved()) setStep(n); },
   'camp-send': id => openCampSend(id),
   'view-sends': () => { const b = ui.view && ui.view.batch; if (b == null) return;
     // atgriešanās no kampaņas, kas atvērta no Sūtījumu 2. līmeņa – ar to pašu statusu grupu un 1. līmeņa filtriem (arī "Mani filtri")
