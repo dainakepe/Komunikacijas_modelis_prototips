@@ -1437,6 +1437,16 @@ table.cl-table td.c-name .camp-name{max-width:100%}
 .cf-aud .cf-ms{width:230px}
 /* Versija 166: "Filtri" panelī visiem laukiem vienāds augstums (37 px), fonts un stils */
 #cf-adv .dd > summary{box-sizing:border-box;height:37px;padding:0 30px 0 10px;line-height:35px;font-size:14px;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Versija 199: kompakta filtru rinda (kopīgā klase .flt-compact – Kampaņu papildu filtri, Sūtījumi, Atskaites): izvēlnes pēc satura platuma,
+   8 px atstarpe, kompakts polsterējums; ja vietas nepietiek (šaurs ekrāns) – pārnesas nākamajā rindā */
+.flt-compact{gap:8px}
+.flt-compact .dd > summary{height:34px;box-sizing:border-box;padding:0 24px 0 10px;line-height:32px;font-size:var(--fs-sm);font-weight:400}
+.flt-compact .dd > summary::after{right:9px}
+.flt-compact select{height:34px;box-sizing:border-box;padding-top:0;padding-bottom:0;font-size:var(--fs-sm)}
+#cf-adv.flt-compact{flex-wrap:wrap}
+#cf-adv.flt-compact .cf-ms,#cf-adv.flt-compact .cf-creator .dd{width:auto;max-width:240px}
+#cf-adv.flt-compact .cf-reps{order:99}
+.jrn-filters .flt-compact .cf-kind select,.jrn-filters .flt-compact .cf-jst select{width:auto;max-width:240px}
 .sf-reps{display:flex;flex-direction:column;gap:6px}
 .sf-reps input[type="search"]{width:100%;box-sizing:border-box}
 .sf-rep-list{max-height:150px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px}
@@ -3598,7 +3608,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
         <div data-per="cf"></div>
         <button type="button" class="flt-adv-btn" id="cf-adv-btn" aria-expanded="false" aria-controls="cf-adv"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtri<span class="flt-n" id="cf-adv-n"></span><span class="flt-caret" aria-hidden="true">▾</span></button>
       </div>
-      <div class="flt-adv" id="cf-adv" hidden>
+      <div class="flt-adv flt-compact" id="cf-adv" hidden>
         <div class="cf-f cf-ms-w cf-pst"><details class="dd cf-ms" id="cf-ms-preps" data-cms="preps"><summary id="cf-ms-preps-sum" aria-label="Kampaņas statuss">Kampaņas statuss: visi</summary><div class="dd-list cf-dd"><div class="cms-list" id="cf-ms-preps-list" role="group" aria-label="Kampaņas statuss"></div></div></details></div>
         <div class="cf-f cf-ms-w cf-sst"><details class="dd cf-ms" id="cf-ms-sends" data-cms="sends"><summary id="cf-ms-sends-sum" aria-label="Sūtīšanas statuss">Sūtīšanas statuss: visi</summary><div class="dd-list cf-dd"><div class="cms-list" id="cf-ms-sends-list" role="group" aria-label="Sūtīšanas statuss"></div></div></details></div>
         <div class="cf-f cf-ms-w cf-kinds"><details class="dd cf-ms" id="cf-ms-kinds" data-cms="kinds"><summary id="cf-ms-kinds-sum" aria-label="Kampaņas veids">Kampaņas veids: visi</summary><div class="dd-list cf-dd"><div class="cms-list" id="cf-ms-kinds-list" role="group" aria-label="Kampaņas veids"></div></div></details></div>
@@ -3881,7 +3891,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     <div class="sag-tabs jrn-views" id="jrn-views" role="tablist" aria-label="Sūtījumu skats"></div>
     <!-- 1. līmenis: kampaņu saraksts -->
     <div id="jrn-l1">
-      <div class="flt jrn-filters" role="search" aria-label="Kampaņu filtri"><div class="flt-row">
+      <div class="flt jrn-filters" role="search" aria-label="Kampaņu filtri"><div class="flt-row flt-compact">
         <div class="sf" id="sf-jrn"></div>
         <label class="search flt-search"><span class="sr-only">Meklēt kampaņu</span>
           <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -3901,7 +3911,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
       <div class="hg-menu" id="hg-menu" role="group" hidden></div>
     </div>
     <div class="flt hist-filters hf" role="search" aria-label="Vēstuļu filtri">
-      <div class="flt-row hf-row">
+      <div class="flt-row hf-row flt-compact">
         <label class="search flt-search hf-q"><span class="sr-only">Meklēt respondentu, NMK vai adresi</span>
           <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           <input type="search" id="hist-search" placeholder="Meklēt respondentu, NMK, adresi vai dok. Nr.…">
@@ -3939,7 +3949,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
     </div>
     <div class="subnav camp-sub" id="rep-sub" role="group" aria-label="Atskaites"></div>
     <div class="flt rep-flt hf" role="search" aria-label="Atskaišu filtri">
-      <div class="flt-row hf-row">
+      <div class="flt-row hf-row flt-compact">
         <div class="sf" id="sf-rep"></div>
         <details class="dd hf-dd hf-camp" id="rep-camp-dd"><summary id="rep-camp-sum" aria-label="Kampaņa">Visas kampaņas</summary>
           <div class="dd-list cf-dd hf-list"><input type="search" id="rep-camp-q" placeholder="Meklēt kampaņu…" aria-label="Meklēt kampaņu"><div id="rep-camp-list" role="listbox" aria-label="Kampaņa"></div></div></details>
@@ -3951,7 +3961,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
           <div class="hf-panel" id="rep-fpanel" role="dialog" aria-label="Filtri" hidden>
             <div class="hf-pgrid">
               <label class="hf-pf"><span>Kanāls</span><select id="rep-ch"><option value="">Visi kanāli</option><option value="eadrese">eAdrese</option><option value="epasts">E-pasts</option><option value="pasts">Pasts (drukāta vēstule)</option></select></label>
-              <label class="hf-pf"><span>Statistikas joma</span><select id="rep-aud"><option value="">Visas jomas</option><option value="uzn">Uzņēmējdarbība</option><option value="tirdz">Tirdzniecība</option><option value="buvn">Būvniecība un rūpniecība</option><option value="lauks">Lauksaimniecība</option><option value="iedz">Iedzīvotāji</option></select></label>
+              <label class="hf-pf"><span>Statistikas joma</span><select id="rep-aud"></select></label>
             </div>
             <div class="hf-pfoot"><button type="button" class="link-btn" id="rep-fclear">Notīrīt</button><button type="button" class="btn btn-primary btn-sm" id="rep-fapply">Lietot</button></div>
           </div></div>
@@ -3969,7 +3979,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 198</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 199</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4247,20 +4257,20 @@ const SEED_REPORTS = [
   {id:'p-x19', code:'1-pārtika',          name:'Pārskats par pārtikas preču cenām',                           freq:'ned',  aud:'jur', rule:{type:'days', days:3}},
   {id:'p-x20', code:'1-piens',            name:'Pārskats par piena iepirkumu',                                freq:'ned',  aud:'jur', rule:{type:'days', days:4}},
 ];
-// Versija 185: apsekojumu statistikas jomas (izdomāti testa dati) – "Mani filtri" un filtru rindās joma ierobežo apsekojumu sarakstu
-const STAT_JOMAS = {uzn:'Uzņēmējdarbība', tirdz:'Tirdzniecība', buvn:'Būvniecība un rūpniecība', lauks:'Lauksaimniecība', iedz:'Iedzīvotāji'};
-const REP_JOMA = {'a-dsa':'iedz', 'a-cel':'iedz', 'a-mba':'iedz',
-  'p-apgr':'uzn', 'p-ds':'uzn', 'p-x01':'uzn', 'p-x02':'uzn', 'p-x03':'uzn', 'p-x07':'uzn', 'p-x08':'uzn', 'p-x09':'uzn', 'p-x11':'uzn', 'p-x12':'uzn', 'p-x17':'uzn',
-  'p-x13':'tirdz', 'p-x14':'tirdz', 'p-x15':'tirdz', 'p-x16':'tirdz', 'p-x18':'tirdz', 'p-x19':'tirdz',
-  'p-rup':'buvn', 'p-x10':'buvn', 'p-x04':'buvn', 'p-x05':'buvn',
-  'p-x06':'lauks', 'p-x20':'lauks'};
+// Versija 185: apsekojumu statistikas jomas – "Mani filtri" un filtru rindās joma ierobežo apsekojumu sarakstu
+// Versija 199: tikai divas jomas – "Uzņēmumu statistika" un "Iedzīvotāju statistika" (agrākās tematiskās jomas tirdz / buvn / lauks → uzn)
+const STAT_JOMAS = {uzn:'Uzņēmumu statistika', iedz:'Iedzīvotāju statistika'};
+const JOMA_MAP = {tirdz:'uzn', buvn:'uzn', lauks:'uzn', jur:'uzn', fiz:'iedz'};
+const jomaKey = k => STAT_JOMAS[k] ? k : JOMA_MAP[k] || k;
+// iedzīvotāju apsekojumi; pārējie (uzņēmumu pārskati) – "uzn"
+const REP_JOMA = {'a-dsa':'iedz', 'a-cel':'iedz', 'a-mba':'iedz'};
 // apsekojuma joma (id vai objekts); jaunam / nezināmam – pēc adresāta
-const repJoma = r => { const id = typeof r === 'string' ? r : (r || {}).id, o = typeof r === 'string' ? repById(r) : r; return (o && o.joma) || REP_JOMA[id] || (o && o.aud === 'fiz' ? 'iedz' : 'uzn'); };
+const repJoma = r => { const id = typeof r === 'string' ? r : (r || {}).id, o = typeof r === 'string' ? repById(r) : r; return jomaKey((o && o.joma) || REP_JOMA[id] || (o && o.aud === 'fiz' ? 'iedz' : 'uzn')); };
 const repInJomas = (id, js) => !js || !js.length || js.includes(repJoma(id));
 // agrāk saglabātie filtri ar jomu "Iedzīvotāju / Uzņēmumu statistika" – atbilstošās tematiskās jomas
-const JOMA_OLD = {fiz:['iedz'], jur:['uzn', 'tirdz', 'buvn', 'lauks']};
-const jomasOfF = f => [...new Set([...((f || {}).jomas || []), ...(JOMA_OLD[(f || {}).aud] || (STAT_JOMAS[(f || {}).aud] ? [(f || {}).aud] : []))])].filter(k => STAT_JOMAS[k]).sort();
-const jomasLabel = js => js.map(k => STAT_JOMAS[k] || k).join(', ');
+const JOMA_OLD = {fiz:['iedz'], jur:['uzn']};
+const jomasOfF = f => { const a = (f || {}).aud; return [...new Set([...((f || {}).jomas || []), ...(JOMA_OLD[a] || (a ? [a] : []))].map(jomaKey))].filter(k => STAT_JOMAS[k]).sort(); };
+const jomasLabel = js => [...new Set(js.map(jomaKey))].map(k => STAT_JOMAS[k] || k).join(', ');
 // "Mani filtri" logos – kopīgā komponente: "Statistikas joma" (vairākizvēle) tieši pirms "Apsekojumi / pārskati"
 function sfJomaRepRows(row, w, reps){
   const js = w.jomas || [], rs = w.reps || [];
@@ -11972,7 +11982,7 @@ const campU = (a, v) => [...new Set([...(a || []), ...(v ? [v] : [])])];
 function campFNormUi(){ const c = ui.camp;
   if (c.kind || c.prep || c.send){ Object.assign(c, {kinds:campU(c.kinds, SESS_KINDS[c.kind] ? c.kind : ''), preps:campU(c.preps, c.prep), sends:campU(c.sends, c.send), kind:'', prep:'', send:''}); }
   if (c.preps.some(k => PREP_OLD[k])) c.preps = [...new Set(c.preps.map(k => PREP_OLD[k] || k))];
-  if (c.aud && !STAT_JOMAS[c.aud]) c.aud = (JOMA_OLD[c.aud] || []).length === 1 ? JOMA_OLD[c.aud][0] : '';
+  if (c.aud) c.aud = STAT_JOMAS[jomaKey(c.aud)] ? jomaKey(c.aud) : '';
   if (c.aud) c.reps = c.reps.filter(id => repJoma(id) === c.aud);
   if (CAMP_SUB_OLD[ui.campSub]){ c.sends = campU(c.sends.concat(CAMP_SUB_OLD[ui.campSub])); ui.campSub = 'all'; } }
 // saglabātā filtra kanoniskā forma (visi lauki, vienas vērtības lauki – vairākizvēlē, sakārtoti masīvi) – salīdzināšanai ("mainīts") un piemērošanai
@@ -12220,10 +12230,19 @@ const campByKey = key => campRows().find(x => x.key === key);
 const SF_CFG = {}, SF_KEY = 'csp-my-filters', SF_MAX = 40;
 ui.sf = {};
 function sfAll(){ try { return JSON.parse(localStorage.getItem(SF_KEY) || '{}') || {}; } catch (e) { return {}; } }
-const sfMigrated = {};
+const sfMigrated = {}, sfJomaDone = {};
+// Versija 199: agrāk saglabātās jomas (tirdz, buvn, lauks; aud jur / fiz) → "uzn" / "iedz", bez dublikātiem
+function sfJomaFix(list){
+  let ch = false;
+  (list || []).forEach(x => { const f = x && x.f; if (!f) return;
+    if (Array.isArray(f.jomas)){ const nj = [...new Set(f.jomas.map(jomaKey))].filter(k => STAT_JOMAS[k]).sort(); if (JSON.stringify(nj) !== JSON.stringify(f.jomas)){ f.jomas = nj; ch = true; } }
+    if (f.aud && !STAT_JOMAS[f.aud] && JOMA_MAP[f.aud] && !['jur', 'fiz'].includes(f.aud)){ f.aud = jomaKey(f.aud); ch = true; } });
+  return ch;
+}
 function sfList(view){
   const all = sfAll(), u = all[CURRENT_USER] || {};
   if (!u[view] && SF_CFG[view] && SF_CFG[view].seed){ u[view] = SF_CFG[view].seed(); all[CURRENT_USER] = u; try { localStorage.setItem(SF_KEY, JSON.stringify(all)); } catch (e) {} }
+  if (u[view] && !sfJomaDone[view]){ sfJomaDone[view] = true; if (sfJomaFix(u[view])){ all[CURRENT_USER] = u; try { localStorage.setItem(SF_KEY, JSON.stringify(all)); } catch (e) {} } }
   // Versija 193: agrāk pārlūkā saglabātie filtri – vienreiz pārveidoti jaunajā struktūrā un saglabāti no jauna
   if (u[view] && !sfMigrated[view] && SF_CFG[view] && SF_CFG[view].migrate){ sfMigrated[view] = true; const nw = SF_CFG[view].migrate(u[view]);
     if (JSON.stringify(nw) !== JSON.stringify(u[view])){ u[view] = nw; all[CURRENT_USER] = u; try { localStorage.setItem(SF_KEY, JSON.stringify(all)); } catch (e) {} } }
@@ -12678,7 +12697,7 @@ function renderCampMs(){
       + (!rows.length ? '<div class="cf-none">Nav atrasts</div>' : '') + (sel.length ? `<button type="button" class="link-btn cms-clr" data-cms-clr>Notīrīt izvēli</button>` : '');
   });
   const as = $('#cf-aud-sum'), al = $('#cf-aud-list');
-  if (as && al){ as.textContent = c.aud && STAT_JOMAS[c.aud] ? `Statistikas joma: ${STAT_JOMAS[c.aud]}` : 'Statistikas joma: visas'; as.classList.toggle('is-on', !!c.aud);
+  if (as && al){ as.textContent = c.aud && STAT_JOMAS[c.aud] ? `Statistikas joma: ${STAT_JOMAS[c.aud]}` : 'Statistikas joma: visas'; as.title = as.textContent; as.classList.toggle('is-on', !!c.aud);
     al.innerHTML = [['', 'Visas jomas'], ...Object.entries(STAT_JOMAS)].map(([k, l]) => `<button type="button" role="option" data-cf-aud="${k}" aria-selected="${(c.aud || '') === k}">${esc(l)}</button>`).join(''); }
 }
 // rīcība vajadzīga: Kampaņas statuss – Jālabo; Sūtīšanas statuss – Jārisina (neatrisinātas vēstules)
@@ -13003,7 +13022,7 @@ function histChips(h){
   if (h.mr) out.push(['mr', `E-pasta reakcija: ${HF_MR[h.mr]}`]);
   if (h.fa) out.push(['fa', `Anketas aktivitāte: ${HF_FA[h.fa]}`]);
   // no atskaitēm (drill-down): statistikas joma un kļūdas iemesls
-  if (h.aud) out.push(['aud', `Statistikas joma: ${STAT_JOMAS[h.aud] || REP_AUD_L[h.aud] || h.aud}`]);
+  if (h.aud) out.push(['aud', `Statistikas joma: ${STAT_JOMAS[jomaKey(h.aud)] || h.aud}`]);
   if (h.rule && RULES[h.rule]) out.push(['rule', `Kļūdas iemesls: ${CHANNELS[RULES[h.rule].ch]}: ${RULES[h.rule].reason}`]);
   if (h.sfx) out.push(['sfx', `Atskaišu filtrs: ${h.sfx.name}`]);
   return out;
@@ -13735,7 +13754,7 @@ const REP_QUICK = [['month', 'Šis mēnesis'], ['3m', 'Pēdējie 3 mēneši'], [
 const REP_AUD_L = {fiz:'Iedzīvotāju statistika', jur:'Uzņēmumu statistika'};
 // Versija 185: vēstules apsekojumu statistikas jomas
 const letterJomas = x => [...new Set(histReps(x).map(repJoma))];
-const letterInJoma = (x, j) => !j || (STAT_JOMAS[j] ? letterJomas(x).includes(j) : letterAud(x) === j);
+const letterInJoma = (x, j) => !j || (STAT_JOMAS[jomaKey(j)] ? letterJomas(x).includes(jomaKey(j)) : letterAud(x) === j);
 // vēstules statistikas joma (pēc respondenta)
 let laCache = null;
 const letterAud = x => { if (!laCache || laCache.n !== state.respondents.length) laCache = {n:state.respondents.length, m:new Map(state.respondents.map(r => [r.id, respType(r)]))}; return laCache.m.get(x.respondentId) || ''; };
@@ -13891,7 +13910,7 @@ sfRegister('rep', {
     any:f => !!(f.camps.length || f.reps.length || f.kinds.length || f.chs.length || f.jomas.length || f.quick || f.from || f.to || f.sub),
   },
   // testa dati: divi piemēri
-  seed:() => [{id:'sfr-seed-1', name:'Uzņēmumu uzaicinājumi – 12 mēn.', def:false, f:{kinds:['uzaicinajums'], jomas:['uzn', 'tirdz', 'buvn', 'lauks'], quick:'12m'}},
+  seed:() => [{id:'sfr-seed-1', name:'Uzņēmumu uzaicinājumi – 12 mēn.', def:false, f:{kinds:['uzaicinajums'], jomas:['uzn'], quick:'12m'}},
     {id:'sfr-seed-2', name:'1-C Ceļotāji – reakcija', def:false, f:{reps:['a-cel'], sub:'reakcija'}}],
 });
 const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
@@ -14530,7 +14549,7 @@ function aiSummaryMain(xs){
 let repLast = null;
 const repFilterDefaults = () => ({camp:'', rep:'', kind:'', ch:'', aud:'', quick:'12m', ...quickRange('12m')});
 // aktīvo papildu filtru birkas (panelis "Filtri")
-const repChips = f => [f.ch ? ['ch', `Kanāls: ${CHANNELS[f.ch] || f.ch}`] : null, f.aud ? ['aud', `Statistikas joma: ${STAT_JOMAS[f.aud] || REP_AUD_L[f.aud] || f.aud}`] : null].filter(Boolean);
+const repChips = f => [f.ch ? ['ch', `Kanāls: ${CHANNELS[f.ch] || f.ch}`] : null, f.aud ? ['aud', `Statistikas joma: ${STAT_JOMAS[jomaKey(f.aud)] || f.aud}`] : null].filter(Boolean);
 function renderRepFilters(){
   const f = ui.rep, inP = x => { const d = isoDate(new Date(x.sentAt)); return (!f.from || d >= f.from) && (!f.to || d <= f.to); };
   const camps = histCampList(state.sent.filter(x => inP(x) || String(x.batch) === String(f.camp))), cur = camps.find(c => String(c.b) === String(f.camp)), reps = histRepList(state.sent), rp = f.rep && repById(f.rep);
@@ -14540,7 +14559,7 @@ function renderRepFilters(){
   perRender('rep');
   const cq = norm($('#rep-camp-q').value), cl = camps.filter(c => !cq || norm(`${c.name} ${c.desc || ''} ${c.b}`).includes(cq));
   $('#rep-camp-list').innerHTML = (cq ? '' : hfOpt('', !f.camp, '<span class="hf-o">Visas kampaņas</span>')) + cl.map(c => hfOpt(c.b, String(c.b) === String(f.camp), `<span class="hf-o">${esc(c.name)}${c.desc ? `<span class="hf-desc">${esc(c.desc)}</span>` : ''}</span><small>${esc(fmtDate(isoDate(new Date(c.at))))}</small>`, c.name + (c.desc ? `\n${c.desc}` : ''))).join('') + (!cl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
-  const rq = norm($('#rep-rep-q').value), rl = reps.filter(r => (!STAT_JOMAS[f.aud] || repJoma(r.id) === f.aud) && (!rq || norm(`${r.code} ${r.name}`).includes(rq)));
+  const rq = norm($('#rep-rep-q').value), rl = reps.filter(r => (!STAT_JOMAS[jomaKey(f.aud)] || repJoma(r.id) === jomaKey(f.aud)) && (!rq || norm(`${r.code} ${r.name}`).includes(rq)));
   $('#rep-rep-list').innerHTML = (rq ? '' : hfOpt('', !f.rep, '<span class="hf-o">Visi apsekojumi</span>')) + rl.map(r => hfOpt(r.id, r.id === f.rep, `<b>${esc(r.code)}</b> <small>${esc(r.name)}</small>`, `${r.code} – ${r.name}`)).join('') + (!rl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   $('#rep-kind').innerHTML = kindOpts(f.kind);
   // Patērētais laiks → Veidnes: kampaņas un apsekojuma filtri neattiecas (pelēki, nav atverami); periods, veids un joma darbojas
@@ -15171,6 +15190,8 @@ repDd('rep', (v, dd, sum) => { ui.rep.rep = v; dd.open = false; renderReports();
 perInit('rep', () => ui.rep, v => { Object.assign(ui.rep, v); renderReports(); }, {opts:REP_QUICK, range:quickRange, always:true});
 $('#rep-kind').addEventListener('change', e => { ui.rep.kind = e.target.value; renderReports(); });
 // "Filtri" panelis: Kanāls · Statistikas joma
+// Versija 199: jomas izvēle – no STAT_JOMAS (vienots saraksts visā prototipā)
+$('#rep-aud').innerHTML = [['', 'Visas jomas'], ...Object.entries(STAT_JOMAS)].map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join('');
 const REP_PANEL = [['#rep-ch', 'ch'], ['#rep-aud', 'aud']];
 function repPanel(open, focusBtn){
   const pn = $('#rep-fpanel'), btn = $('#rep-more-f');
@@ -15180,6 +15201,7 @@ function repPanel(open, focusBtn){
 $('#rep-more-f').addEventListener('click', () => repPanel($('#rep-fpanel').hidden));
 $('#rep-fapply').addEventListener('click', () => { REP_PANEL.forEach(([s, k]) => { ui.rep[k] = $(s).value; });
   // Versija 185: izvēlētais apsekojums, kas neatbilst jomai, tiek noņemts
+  if (ui.rep.aud) ui.rep.aud = jomaKey(ui.rep.aud);
   if (STAT_JOMAS[ui.rep.aud] && ui.rep.rep && repJoma(ui.rep.rep) !== ui.rep.aud) ui.rep.rep = '';
   repPanel(false, true); renderReports(); });
 $('#rep-fclear').addEventListener('click', () => { REP_PANEL.forEach(([s, k]) => { $(s).value = ''; ui.rep[k] = ''; }); repPanel(false, true); renderReports(); });
