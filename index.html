@@ -4072,7 +4072,7 @@ table:not(.rtab-out):not(.rtab) > thead > tr > th:not(#_){background-color:var(-
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 210</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 211</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4967,6 +4967,14 @@ function fieldOptions(){
   return [...new Set(FIELDS.map(f => f.group))].map(g =>
     `<optgroup label="${g}">${FIELDS.filter(f => f.group === g).map(f => `<option value="${esc(f.key)}">{${esc(f.key)}} – ${esc(f.label)}</option>`).join('')}</optgroup>`).join('');
 }
+// Versija 211: personalizētās vēstules faila nosaukumā dokumenta numuru neizmanto – {dok_nr} tiek izņemts, pāri palikušie "_" / "-" pirms ".pdf" notīrīti
+const DOC_FILE_DEF = 'CSP_vestule.pdf';
+const DOK_NR_RE = /\{dok_nr\}/gi;
+function docFileName(fn){
+  let v = String(fn || '').replace(DOK_NR_RE, '').trim();
+  v = v.replace(/[_\-\s.]+(\.pdf)$/i, '$1').replace(/__+/g, '_').replace(/--+/g, '-').replace(/^[_\-\s]+/, '');
+  return !v || /^\.pdf$/i.test(v) ? DOC_FILE_DEF : v;
+}
 function safeFileName(name){
   name = String(name).replace(/[\\/:*?"<>|]+/g, '-').replace(/\s+/g, '_');
   return /\.pdf$/i.test(name) ? name : name + '.pdf';
@@ -5143,7 +5151,7 @@ function seedData(){
       {id:'t1', aud:'fiz', cat:'uzaicinajums', kind:'pielikums', name:'Uzaicinājums piedalīties aptaujā (vēstule pielikumā)', updated:ago(14), files:[],
        subject:'Uzaicinājums piedalīties aptaujā “{apsekojums}”',
        body:`<p>Labdien, ${F('vārds')}!</p><p>Centrālā statistikas pārvalde aicina Jūs piedalīties aptaujā “${F('apsekojums')}”. Uzaicinājuma vēstule ar visu informāciju par dalību ir pievienota pielikumā.</p>${C('dalibas_veids', 'eanketa', `<p>E-anketu var aizpildīt līdz <strong>${F('termiņš')}</strong> vietnē <a href="{e-anketa}">${F('e-anketa')}</a>.</p>`)}${C('dalibas_veids', 'telefons,klatiene', '<p>Tuvākajā laikā ar Jums sazināsies mūsu intervētājs, lai vienotos par intervijas laiku.</p>')}<p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`,
-       doc:{title:'Uzaicinājums piedalīties aptaujā', fileName:'CSP_uzaicinajums_{dok_nr}.pdf', banner:true, conf:true, info:true, tags:'#aptauja #tūrisms', slogan:'Pastāsti, kā Tu ceļo!',
+       doc:{title:'Uzaicinājums piedalīties aptaujā', fileName:'CSP_uzaicinajums.pdf', banner:true, conf:true, info:true, tags:'#aptauja #tūrisms', slogan:'Pastāsti, kā Tu ceļo!',
          body:`<p><strong>Labdien!</strong></p>${C('ieprieks', 'piedalijas', '<p>Pateicamies par Jūsu dalību iepriekšējā aptaujā un sniegtajām atbildēm!</p>')}<p>Centrālā statistikas pārvalde (turpmāk – CSP) ir valsts iestāde, kas Latvijā apkopo oficiālo statistiku un katru gadu veic vairākas iedzīvotāju aptaujas. Šogad aicinām piedalīties aptaujā “${F('apsekojums')}”. Šāda aptauja notiek visās Eiropas Savienības valstīs pēc vienotas metodes, kas ļauj sekot līdzi izmaiņām Latvijā un salīdzināt datus ar citām valstīm.</p>${C('veids', 'privatpersona', '<p>Jūsu mājsaimniecība ir atlasīta no kopējā adrešu saraksta, izmantojot nejaušas gadījuma izlases metodi.</p>')}${C('veids', 'uznemums', `<p>Respondents ${F('uzņēmums')} ir iekļauts apsekojuma izlasē, izmantojot nejaušas gadījuma izlases metodi. Lūdzam nodot šo vēstuli personai, kura ir atbildīga par datu sniegšanu.</p>`)}<h3>Kāpēc tieši Jūsu dalība ir svarīga?</h3><p>Jūsu atsaucība ir ļoti svarīga, lai dati objektīvi atspoguļotu to, kā dzīvo mūsu valsts iedzīvotāji. Lūdzam piedalīties aptaujā arī tad, ja šķiet, ka jautājumi uz Jums neattiecas – arī šīs atbildes palīdz izveidot patiesu kopainu.</p>${C('dalibas_veids', 'eanketa', `<h3>Kā piedalīties aptaujā?</h3><ul><li>E-anketu jebkurā Jums ērtā laikā no <strong>${F('sākums')}</strong> līdz <strong>${F('termiņš')}</strong> varat atvērt vietnē <a href="{e-anketa}">${F('e-anketa')}</a>.</li><li>Autorizēties iespējams ar internetbanku, Smart-ID, e-parakstu vai e-identifikācijas karti.</li><li>E-anketu var aizpildīt <u>tikai tā persona</u>, kurai adresēta šī vēstule.</li></ul><p>Ja norādītajā laikā Jums nav iespējas aizpildīt e-anketu, ar Jums sazināsies mūsu intervētājs un vienosies par telefoninterviju.</p>`)}${C('dalibas_veids', 'telefons', `<h3>Kā piedalīties telefonaptaujā?</h3><p>Ar Jums sazināsies mūsu intervētājs un vienosies par telefoninterviju. Informējam, ka intervētājs ar Jums var sazināties darbdienu vakaros (pēc plkst. 17.00) vai arī brīvdienās (sestdienās, svētdienās). Intervētāja identitāti var pārbaudīt, zvanot uz bezmaksas tālruni ${F('tālrunis')}.</p>`)}${C('dalibas_veids', 'klatiene', `<h3>Aicinām piedalīties klātienes intervijā</h3><p>Lai veiktu interviju, ar Jums sazināsies mūsu intervētājs un vienosies par tikšanās laiku. Ierodoties klātienē, intervētājs uzrādīs CSP darbinieka apliecību ar fotogrāfiju. Intervētāja identitāti var pārbaudīt, zvanot uz bezmaksas tālruni ${F('tālrunis')}.</p>`)}${C('ieprieks', 'nepiedalijas', '<p>Ja iepriekš neesat atbildējis uz aptaujas jautājumiem, aicinām piedalīties šoreiz, lai nodrošinātu datus, kas ir svarīgi valsts līmeņa lēmumu pieņemšanā.</p>')}`}},
       {id:'t2', aud:'fiz', cat:'uzaicinajums', kind:'epasts', name:'Uzaicinājums piedalīties aptaujā (īsā vēstule)', updated:ago(10), files:[], doc:null,
        subject:'Uzaicinājums piedalīties aptaujā “{apsekojums}”',
@@ -5166,7 +5174,7 @@ function seedData(){
       {id:'t8', aud:'jur', cat:'uzaicinajums', kind:'pielikums', name:'Uzaicinājums sniegt datus apsekojumā (vēstule pielikumā)', updated:ago(13), files:[],
        subject:'Uzaicinājums sniegt datus apsekojumā “{apsekojums}”',
        body:`<p>Labdien!</p><p>Centrālā statistikas pārvalde informē, ka respondents ${F('uzņēmums')} ir iekļauts apsekojuma “${F('apsekojums')}” izlasē. Uzaicinājuma vēstule ar informāciju par datu iesniegšanu ir pievienota pielikumā.</p><p>Dati jāiesniedz līdz <strong>${F('termiņš')}</strong> vietnē <a href="{e-anketa}">${F('e-anketa')}</a>.</p><p>Ar cieņu<br>Centrālā statistikas pārvalde</p>`,
-       doc:{title:'Uzaicinājums sniegt datus apsekojumā', fileName:'CSP_uzaicinajums_{dok_nr}.pdf', banner:true, conf:true, info:true, tags:'', slogan:'',
+       doc:{title:'Uzaicinājums sniegt datus apsekojumā', fileName:'CSP_uzaicinajums.pdf', banner:true, conf:true, info:true, tags:'', slogan:'',
          body:`<p><strong>Labdien!</strong></p><p>Centrālā statistikas pārvalde (turpmāk – CSP) informē, ka respondents ${F('uzņēmums')} izlases kārtā ir iekļauts apsekojumā “${F('apsekojums')}”. Sniegtā informācija tiks izmantota tikai statistikas vajadzībām.</p>${C('ieprieks', 'piedalijas', '<p>Pateicamies, ka iepriekšējā apsekojumā dati tika iesniegti savlaicīgi!</p>')}<h3>Kā iesniegt datus?</h3><ul><li>Veidlapu aizpildiet CSP e-vidē <a href="{e-anketa}">${F('e-anketa')}</a> no <strong>${F('sākums')}</strong> līdz <strong>${F('termiņš')}</strong>.</li><li>Autorizēties var ar internetbanku, Smart-ID, e-parakstu vai e-identifikācijas karti.</li><li>Ja datus sniedz cita persona (piemēram, grāmatvedis), lūdzam nodot šo vēstuli tai.</li></ul><p>Ja Jums rodas jautājumi par veidlapas aizpildīšanu, sazinieties ar mums, izmantojot zemāk norādīto kontaktinformāciju.</p>`}},
       {id:'t9', aud:'jur', cat:'atgadinajums', kind:'epasts', name:'Atgādinājums par datu iesniegšanas termiņu', updated:ago(4), files:[], doc:null,
        subject:'Atgādinājums: {uzņēmums} – apsekojums “{apsekojums}”, termiņš {termiņš}',
@@ -6934,7 +6942,7 @@ function buildMessage(t0, r, mark, attrs = respAttrs(r)){
     msg.main = {lib:t.main.lib, name: a ? a.fileName : t.main.name, size: a ? a.size : t.main.size};
   } else if (t.kind === 'pielikums' && t.doc){
     msg.attachments.push({
-      name: safeFileName(fillText(t.doc.fileName || 'vestule.pdf', ctx)),
+      name: safeFileName(fillText(docFileName(t.doc.fileName), ctx)),
       html: docHtml(t, ctx, mark, attrs, compose.f, L, !!mark),
       print: mark ? docHtml(t, ctx, false, attrs, compose.f, L, true) : null,
     });
@@ -7994,7 +8002,7 @@ function copyTemplate(id){
   save(); renderTemplates(); toast(`Izveidota veidnes kopija “${nt.name}”.`);
 }
 
-const defaultDoc = () => ({title:'', fileName:'CSP_vestule_{dok_nr}.pdf', banner:true, conf:true, info:true,
+const defaultDoc = () => ({title:'', fileName:DOC_FILE_DEF, banner:true, conf:true, info:true,
   body:'<h1>Uzaicinājums piedalīties aptaujā</h1><p><strong>Labdien!</strong></p><p><br></p>'});
 
 // Jaunas veidnes sākuma teksts (uzruna un noslēgums) atbilstoši adresātam
@@ -8289,7 +8297,7 @@ function openTemplateEditor(id, preset = {}){
         <div id="te-shared">
           <fieldset class="box" id="te-doc">
             <legend>Personalizēta vēstule – dokuments ar laukiem (ģenerēts PDF)</legend>
-            <div class="field te-lf"><label for="te-doc-file">Faila nosaukums ${tip('Var lietot laukus, piem., {dok_nr}. Dokumenta virsrakstu rakstiet tekstā ar stilu “Virsraksts 1”.')}</label><input type="text" id="te-doc-file"></div>
+            <div class="field te-lf"><label for="te-doc-file">Faila nosaukums ${tip('Var lietot laukus, piem., {apsekojums}. Dokumenta numuru faila nosaukumā izmantot nevar. Dokumenta virsrakstu rakstiet tekstā ar stilu “Virsraksts 1”.')}</label><input type="text" id="te-doc-file" aria-describedby="te-doc-file-err"><span class="err" id="te-doc-file-err" hidden>Dokumenta numuru faila nosaukumā izmantot nevar.</span></div>
             <div class="field te-lf"><span class="label">Mainīgā daļa (vēstules teksts)</span><div id="te-doc-body"></div></div>
             <div class="field te-doc-fixed"><span class="label">Nemainīgā informācija ${tip('Veidlapas galva, datums un numurs, noslēguma frāze un kājene tiek pievienoti vienmēr. To saturu var apskatīt veidņu sadaļā “Nemainīgā informācija”.')}</span>
               <div class="checks te-doc-checks">
@@ -8342,6 +8350,7 @@ function openTemplateEditor(id, preset = {}){
           err('te-name-err', 'Veidne ar šādu nosaukumu jau eksistē.'); $('#te-name').focus(); return;
         }
         if (!validContent()) return;
+        if (/"fileName":"[^"]*\{dok_nr\}/i.test(JSON.stringify(cur))){ syncDocFileErr(); $('#te-doc-file-err').hidden = false; const f = $('#te-doc-file'); if (f && f.offsetParent) f.focus(); else toast('Dokumenta numuru faila nosaukumā izmantot nevar.', true); return; }
         const rec = {...current(), updated:new Date().toISOString(), updatedBy:CURRENT_USER};
         if (existing){ edPrep('tpl', existing); const diff = tplDiff(existing, rec); Object.assign(existing, rec); edAdd('tpl', existing, 'edit', diff); }
         else { const nt = {id:'t' + uid(), ...rec, status:'aktiva', author:CURRENT_USER}; state.templates.push(nt); edAdd('tpl', nt, 'create', fromSample ? 'Izveidota veidne (no sagataves)' : 'Izveidota veidne', true); }
@@ -8442,7 +8451,7 @@ function openTemplateEditor(id, preset = {}){
     return {
       name: $('#te-name').value.trim(), aud: aud(), cat: $('#te-cat').value, kind: k, subject: lv.subject, body: lv.body, files: t.files,
       main: k === 'pielikums' && main && main !== 'gen' ? {lib:main.lib, name:main.name, size:main.size} : null,
-      doc: {title: lv.docTitle, fileName: lv.fileName || 'vestule.pdf', body: lv.docBody,
+      doc: {title: lv.docTitle, fileName: lv.fileName || DOC_FILE_DEF, body: lv.docBody,
         banner: $('#te-doc-banner').checked, conf: $('#te-doc-conf').checked, info: $('#te-doc-info').checked,
         sign: $('#te-doc-sign').checked, qr: $('#te-doc-qr').checked,
         tags: $('#te-doc-tags').value.trim(), slogan: $('#te-doc-slogan').value.trim()},
@@ -8453,7 +8462,7 @@ function openTemplateEditor(id, preset = {}){
   }
   function loadLang(){
     const v = versions[lang];
-    subj.value = v.subject; $('#te-doc-file').value = v.fileName || '';
+    subj.value = v.subject; $('#te-doc-file').value = v.fileName || ''; if ($('#te-doc-file-err')) syncDocFileErr();
     bodyEd = createEditor($('#te-body'), v.body, {onChange:update, media:true, covers:() => coverSamples(aud()),
       isBlank:h => !htmlToText(h).trim() || sameText(h, blankBody(aud())) || coverSamples().some(c => sameText(h, c.body))});
     docEd = createEditor($('#te-doc-body'), v.docBody || '<p><br></p>', {onChange:update, cta:false});
@@ -8758,6 +8767,9 @@ function openTemplateEditor(id, preset = {}){
     e.target.value = ''; subj.focus(); subj.dispatchEvent(new Event('input'));
   });
   ['te-subject', 'te-doc-file'].forEach(fid => $('#' + fid).addEventListener('input', update));
+  // Versija 211: dokumenta numurs faila nosaukumā – kļūda pie lauka
+  const syncDocFileErr = () => { DOK_NR_RE.lastIndex = 0; const bad = /\{dok_nr\}/i.test($('#te-doc-file').value); $('#te-doc-file-err').hidden = !bad; $('#te-doc-file').setAttribute('aria-invalid', String(bad)); return bad; };
+  $('#te-doc-file').addEventListener('input', syncDocFileErr);
   ['te-doc-banner', 'te-doc-conf', 'te-doc-info'].forEach(fid => $('#' + fid).addEventListener('change', update));
   ['te-doc-sign', 'te-doc-qr'].forEach(fid => $('#' + fid).addEventListener('change', update));
   $('#te-doc-banner').addEventListener('change', syncVis);
@@ -16772,6 +16784,20 @@ function seedLabDemo(){
   save();
 }
 if (state.labDemoV !== 1) seedLabDemo();
+// Versija 211: {dok_nr} izņemts no personalizētās vēstules faila nosaukuma (veidnes, sagataves, melnraksti, plānotās kampaņas, kampaņu momentuzņēmumi);
+// nosūtītajām vēstulēm pielikuma nosaukums – bez dokumenta numura
+if (state.docFileV !== 1){
+  const walk = o => { if (!o || typeof o !== 'object') return; if (Array.isArray(o)){ o.forEach(walk); return; }
+    Object.keys(o).forEach(k => { const v = o[k]; if (k === 'fileName' && typeof v === 'string' && /\{dok_nr\}/i.test(v)) o[k] = docFileName(v); else if (v && typeof v === 'object') walk(v); }); };
+  [state.templates, state.attachments, state.drafts, state.planned, state.campSnaps].forEach(walk);
+  (state.sent || []).forEach(x => { if (!x.docNr) return; const nr = safeFileName(x.docNr).replace(/\.pdf$/i, '');
+    const fix = n => { const v = String(n || ''); if (!v.includes(nr)) return v; let r = v.split(nr).join(''); r = r.replace(/[_\-\s.]+(\.pdf)$/i, '$1').replace(/__+/g, '_').replace(/^[_\-\s]+/, ''); return !r || /^\.pdf$/i.test(r) ? DOC_FILE_DEF : r; };
+    (x.attachments || []).forEach(a => { if (a.name) a.name = fix(a.name); });
+    if (x.main && x.main.gen && x.main.name) x.main.name = fix(x.main.name); });
+  if (compose.content && typeof compose.content === 'object') walk(compose.content);
+  walk(compose.custom);
+  state.docFileV = 1; save();
+}
 if (state.msCoverV !== 1){ addCoverSamples(state); state.msCoverV = 1; save(); }
 if (state.docNrV !== 2){ migrateDocNr(); state.docNrV = 2; const d0 = state.drafts.find(x => x.id === compose.draftId); compose.f.docNr = d0 ? (d0.f || {}).docNr || '' : ''; save(); }
 if (state.nameSfxV !== 1){ seedNameSfx(); state.nameSfxV = 1; const d0 = state.drafts.find(x => x.id === compose.draftId); if (d0) compose.nameSfx = nameSfxOf(d0), compose.name = d0.name; save(); }
