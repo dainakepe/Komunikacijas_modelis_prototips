@@ -265,6 +265,14 @@ select.mini{width:auto;max-width:170px;padding:4px 8px;font-size:var(--fs-sm);co
 .checks{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:var(--fs-md)}
 .checks label{display:flex;align-items:center;gap:7px;font-weight:500;cursor:pointer}
 .checks input{width:16px;height:16px;accent-color:var(--primary)}
+/* Versija 210: pielikuma redaktora "Nemainīgā informācija" – visas 5 rūtiņas vienā rindā (bez pārnešanas); šaurākā redaktorā – mazākas atstarpes un burti,
+   tikai ļoti šaurā logā (mazāk par ~560 px) rinda pārnesas, lai rūtiņas neizietu ārpus bloka */
+.te-doc-fixed{container-type:inline-size}
+.checks.te-doc-checks{flex-wrap:nowrap;gap:6px 12px;white-space:nowrap}
+.checks.te-doc-checks label{flex:none;white-space:nowrap;font-size:13px;gap:6px}
+@container (max-width:616px){ .checks.te-doc-checks{column-gap:10px} .checks.te-doc-checks label{font-size:12.5px;gap:5px} }
+@container (max-width:585px){ .checks.te-doc-checks{column-gap:8px} .checks.te-doc-checks label{font-size:12px;gap:4px} }
+@container (max-width:560px){ .checks.te-doc-checks{flex-wrap:wrap} }
 fieldset.box{border:1px solid var(--primary-200);border-radius:var(--radius);padding:12px 16px 4px;margin:0 0 14px;background:var(--primary-50);min-width:0}
 fieldset.box legend{font-weight:700;color:var(--primary-darker);padding:0 6px;font-size:var(--fs-md)}
 details.more{border-top:1px dashed var(--border);padding-top:10px;margin-top:4px}
@@ -4064,7 +4072,7 @@ table:not(.rtab-out):not(.rtab) > thead > tr > th:not(#_){background-color:var(-
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 209</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 210</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -8283,13 +8291,13 @@ function openTemplateEditor(id, preset = {}){
             <legend>Personalizēta vēstule – dokuments ar laukiem (ģenerēts PDF)</legend>
             <div class="field te-lf"><label for="te-doc-file">Faila nosaukums ${tip('Var lietot laukus, piem., {dok_nr}. Dokumenta virsrakstu rakstiet tekstā ar stilu “Virsraksts 1”.')}</label><input type="text" id="te-doc-file"></div>
             <div class="field te-lf"><span class="label">Mainīgā daļa (vēstules teksts)</span><div id="te-doc-body"></div></div>
-            <div class="field"><span class="label">Nemainīgā informācija ${tip('Veidlapas galva, datums un numurs, noslēguma frāze un kājene tiek pievienoti vienmēr. To saturu var apskatīt veidņu sadaļā “Nemainīgā informācija”.')}</span>
-              <div class="checks">
+            <div class="field te-doc-fixed"><span class="label">Nemainīgā informācija ${tip('Veidlapas galva, datums un numurs, noslēguma frāze un kājene tiek pievienoti vienmēr. To saturu var apskatīt veidņu sadaļā “Nemainīgā informācija”.')}</span>
+              <div class="checks te-doc-checks">
                 <label><input type="checkbox" id="te-doc-banner" ${t.doc.banner ? 'checked' : ''}> Apsekojuma baneris</label>
                 <label><input type="checkbox" id="te-doc-conf" ${t.doc.conf ? 'checked' : ''}> Konfidencialitāte</label>
                 <label><input type="checkbox" id="te-doc-info" ${t.doc.info ? 'checked' : ''}> Plašāka informācija</label>
-                <label><input type="checkbox" id="te-doc-sign" ${t.doc.sign ? 'checked' : ''}> Paraksts ${tip('Paraksta bloks (vārds, uzvārds, amats) tiek ņemts no iepriekš definētās informācijas.')}</label>
-                <label><input type="checkbox" id="te-doc-qr" ${t.doc.qr ? 'checked' : ''}> QR kods ${tip('Personalizēts QR kods uz respondenta anketu.')}</label>
+                <label><input type="checkbox" id="te-doc-sign" ${t.doc.sign ? 'checked' : ''}> Paraksts</label>
+                <label><input type="checkbox" id="te-doc-qr" ${t.doc.qr ? 'checked' : ''} aria-describedby="te-doc-qr-d"> <span data-ctip="Personalizēts QR kods uz respondenta anketu.">QR kods</span><span class="sr-only" id="te-doc-qr-d">Personalizēts QR kods uz respondenta anketu.</span></label>
               </div></div>
             <p class="hint te-doc-bn-note" id="te-doc-bn-note">Banera tēmturi un sauklis – cilnes “E-pasta saturs” sadaļā “Baneris”.</p>
           </fieldset>
@@ -15232,13 +15240,15 @@ $('#cf-toggle').addEventListener('click', () => { const o = !$('#camp-filters').
 $('#camp-sub').addEventListener('click', e => {
   const b = e.target.closest('[data-csub]'); if (!b) return; ui.campSub = b.dataset.csub; ui.campLimit = CAMP_PAGE; renderCampaigns(); $(`#camp-sub [data-csub="${ui.campSub}"]`).focus(); });
 // padoms sarakstā (nosaukums – saglabāšanas / izveides informācija; rezultāts – pilnais teksts)
-document.addEventListener('mouseover', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip]'); if (el) showCTip(el); });
-document.addEventListener('mouseout', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
-document.addEventListener('focusin', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip]'); if (el) showCTip(el); });
-document.addEventListener('focusout', e => { if (e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip]')) hideCTip(); });
+document.addEventListener('mouseover', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip]'); if (el) showCTip(el); });
+document.addEventListener('mouseout', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
+document.addEventListener('focusin', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip]'); if (el) showCTip(el); });
+document.addEventListener('focusout', e => { if (e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip]')) hideCTip(); });
 function hideCTip(){ const t = $('#c-tipbox'); if (t) t.hidden = true; }
 function showCTip(el){
   let t = $('#c-tipbox'); if (!t){ t = document.createElement('div'); t.id = 'c-tipbox'; t.className = 'c-tipbox'; t.setAttribute('role', 'tooltip'); document.body.appendChild(t); }
+  // modālā logā (dialog – augšējais slānis) padoms jāievieto tajā pašā logā, citādi tas paliek zem loga
+  { const host = el.closest('dialog[open]') || document.body; if (t.parentNode !== host) host.appendChild(t); }
   t.textContent = el.dataset.ctip; t.hidden = false;
   const r = el.getBoundingClientRect(), w = t.offsetWidth, h = t.offsetHeight;
   t.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + 'px';
