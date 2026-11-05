@@ -84,7 +84,8 @@
   --text-secondary:#3D4A4F;   /* sekundāras pogas, cilnes */
   --icon-muted:#9AA5AA;       /* neaktīvas ikonas, bultiņas */
   --surface-subtle:#F7F9F9;   /* pelēki laukumi */
-  --th-bg:#F4F7F8;            /* tabulu galvenes – viegli tonēts fons */
+  --th-bg:#F3F6F7;            /* tabulu galvenes – viegli pelēcīgs fons (Versija 209) */
+  --th-line:#DCE4E7;          /* līnija zem tabulu galvenes */
   --row-hover:#F4F8F8;        /* tabulas rinda zem kursora */
   --hover-bg:#F1F3F4;         /* teksta pogas zem kursora */
   --primary-tint:#EEF5F6;     /* ļoti gaišs pamatkrāsas tonis (atlasīti elementi) */
@@ -3507,6 +3508,9 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   .aud-card{min-height:0}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+/* Versija 209: tabulu galvenes – vienots stils visām prototipa tabulām: pelēcīgs, necaurspīdīgs fons un plāna līnija zem galvenes
+   (līnija – arī ēnā, lai tā redzama fiksētajai (sticky) galvenei ritinot); vēstuļu / dokumentu satura tabulas (.rich, .rtab) – nemainītas */
+table:not(.rtab-out):not(.rtab) > thead > tr > th:not(#_){background-color:var(--th-bg);border-bottom:1px solid var(--th-line);box-shadow:inset 0 -1px 0 var(--th-line)}
 </style>
 </head>
 <body>
@@ -4060,7 +4064,7 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 208</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 209</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -10627,7 +10631,7 @@ function renderAcBar(){
     ${printOn() ? ''
       : `<ul class="q-list q-list-ns" role="group" aria-label="Netiks nosūtīti (filtrē tabulu)"><li><button type="button" class="q-item q-nosend" data-acf="nosend" aria-pressed="${compose.acF === 'nosend'}" ${nNo ? '' : 'disabled'} title="Netiks nosūtīti: ${nNo}${nNs ? ` (neiesniegšanas kods: ${nNs}; bez derīgas adreses: ${nNo - nNs})` : ' – nav nevienas derīgas adreses'}${nNo ? ' – filtrēt tabulu' : ''}"><span class="q-l">Netiks nosūtīti:</span><b>${nNo}</b></button></li></ul>`}
     <div class="q-auto" role="group" aria-label="Automātiski konstatētais (filtrē tabulu)">${sub('shared', nShared, 'Koplietojamas', `Viena e-pasta adrese vairākiem respondentiem${nPend ? ` – neizvērtētas: ${nPend}` : ''}`)}<span class="q-sep" aria-hidden="true">·</span>${sub('dup', nDup, 'Dublikāti', 'Vienam respondentam vienāda adrese vairākos e-pasta laukos – dublikāts noņemts')}<span class="q-sep" aria-hidden="true">·</span>${sub('mi', nMi, 'MI<span class="q-long"> ieteikumi</span>', 'MI ieteikumi pārrakstīšanās kļūdām')}</div>
-    ${nLabAll ? `<div class="q-lab"><h5 class="q-lab-h">Labojumi</h5><ul class="q-list" role="group" aria-label="Labojumi (filtrē tabulu)">${Object.entries(LAB_ST).map(([k, d]) => `<li><button type="button" class="q-item q-lb q-lb-${k}" data-acf="lb-${k}" aria-pressed="${compose.acF === 'lb-' + k}" ${nLab[k] ? '' : 'disabled'} title="${esc(d.f)}: ${nLab[k]}${nLab[k] ? ' – filtrēt tabulu' : ''}"><span class="q-ic q-lb-ic" aria-hidden="true">${d.ic}</span><span class="q-l">${esc(d.f)}</span><b>${nLab[k]}</b></button></li>`).join('')}</ul>
+    ${nLabAll ? `<div class="q-lab"><h5 class="q-lab-h">Labojumi</h5><ul class="q-list" role="group" aria-label="Labojumi (filtrē tabulu)">${Object.entries(LAB_ST).filter(([k]) => nLab[k]).map(([k, d]) => `<li><button type="button" class="q-item q-lb q-lb-${k}" data-acf="lb-${k}" aria-pressed="${compose.acF === 'lb-' + k}" title="${esc(d.f)}: ${nLab[k]}${k === 'camp' ? campSrcTxt() : ''} – filtrēt tabulu"><span class="q-ic q-lb-ic" aria-hidden="true">${d.ic}</span><span class="q-l">${esc(d.f)}</span><b>${nLab[k]}</b></button></li>`).join('')}</ul>
       </div>` : ''}
     <div class="q-acts q-links"><button type="button" class="q-link ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button>
       <button type="button" class="q-link" data-ci-import aria-haspopup="dialog">${ICON.upload}<span>Importēt labojumus</span></button>
@@ -10688,12 +10692,15 @@ function labState(r, k){
   if (q && q.done && raw === q.done.value) return 'done';
   if (q && !q.done) return 'adm';
   if (m && m.resp && raw === m.value) return 'src';
-  const ov = ((compose.addrFix || {})[r.id] || {})[k];
-  if (ov != null && addrCheck(r, k).status === 'edit') return 'camp';
+  // Versija 209: katra adrese ar statusu "Derīga (labota)" (automātiski, MI, manuāli, imports), kurai nav cita stāvokļa, – "Labots kampaņai"
+  if (isFixSt(addrCheck(r, k))) return 'camp';
   return '';
 }
 const labRows = () => acActive().flatMap(r => acKeys(r).map(k => ({r, k, st:labState(r, k)}))).filter(o => o.st);
 const labCount = () => { const n = {camp:0, src:0, adm:0, done:0}; labRows().forEach(o => n[o.st]++); return n; };
+// "Laboti tikai kampaņai" – sadalījums pēc avota (Automātiski / MI / Manuāli / Imports) padomam
+const campSrcTxt = () => { const n = {}; labRows().filter(o => o.st === 'camp').forEach(o => { const l = fixInfo(addrCheck(o.r, o.k)).srcL; n[l] = (n[l] || 0) + 1; });
+  const xs = ['Automātiski', 'MI', 'Manuāli', 'Imports'].filter(l => n[l]).map(l => `${l} ${n[l]}`); return xs.length ? ` (${xs.join(', ')})` : ''; };
 // neatrisinātās: nederīgas vai potenciāli kļūdainas, kas nav labotas vai pieteiktas
 const unresolved = () => acActive().flatMap(r => acKeys(r).map(k => ({r, k, c:addrCheck(r, k)}))).filter(o => ['error', 'pot'].includes(o.c.status) && !labState(o.r, o.k));
 const reqPending = a => Object.values(a || {}).filter(q => !q.done);
@@ -16715,6 +16722,46 @@ if (state.draftMarkV === 1){
   else { const d0 = state.drafts.find(d => d.id === compose.draftId); if (d0 && d0.seedSt) { applySnapshot(d0); compose.draftId = d0.id; } }
   save();
 }
+// Versija 209 (testa dati): melnrakstos (arī agrāk saglabātajos) – 2–3 dažādu veidu labojumi, lai sadaļa "Labojumi" būtu redzama:
+// labots kampaņai manuāli un ar importu (līdzās automātiskajiem) un viena adrese atjaunota pirmavotā. Saskaņošanā esošās / saskaņotās kampaņas netiek mainītas;
+// ja pārbaude bija derīga, tā paliek derīga (statusi sarakstā nemainās)
+function seedLabDemo(){
+  state.labDemoV = 1;
+  const keep = state.activeDraft, ago = (d, h, m = 10) => { const x = new Date(Date.now() - d * 864e5); x.setHours(h, m, 0, 0); return x.toISOString(); };
+  const drafts = [...(state.drafts || []), ...(state.planned || []).map(pl => pl.snap).filter(Boolean)].filter(d => !d.seedFix && !(d.apv && ['pending', 'approved'].includes(d.apv.status)) && d.selRun);
+  const wasValid = new Map((state.drafts || []).map(d => [d, (() => { try { return withSnap(d, () => !!(compose.review && reviewValid())); } catch (e) { return false; } })()]));
+  try {
+    drafts.forEach((d, i) => {
+      applySnapshot(d); compose.draftId = d.id;
+      compose.addrFix = compose.addrFix || {}; compose.addrMeta = compose.addrMeta || {};
+      const K = (r, k) => `${r.id}|${k}`, raw = (r, k) => String(ADDR_TYPES[k].get(r) || '').trim(), dom = v => (v.split('@')[1] || 'uznemums.example');
+      const free = () => acActive().flatMap(r => acKeys(r).filter(k => EMAIL_KEYS.includes(k)).map(k => ({r, k, c:addrCheck(r, k)}))).filter(o => !labState(o.r, o.k) && !(compose.addrMeta[K(o.r, o.k)]));
+      const camp = (o, v, m) => { compose.addrFix[o.r.id] = {...(compose.addrFix[o.r.id] || {}), [o.k]:v}; compose.addrMeta[K(o.r, o.k)] = {orig:raw(o.r, o.k), ...m}; };
+      // jaunā vērtība – cita nekā jebkura šī respondenta adrese (lai nerodas dublikāts)
+      const alt = (o, pre) => { const used = new Set(ADDR_KEYS.flatMap(k => [raw(o.r, k), ((compose.addrFix || {})[o.r.id] || {})[k]]).filter(Boolean)), d = dom(raw(o.r, o.k));
+        return [pre, 'statistika', 'info', 'birojs', 'gramatvediba'].map(x => `${x}@${d}`).find(v => !used.has(v)) || `kontakti@${d}`; };
+      // labots kampaņai – manuāli (nederīga vai potenciāli kļūdaina adrese → labotā)
+      const anyBad = acActive().flatMap(r => acKeys(r).map(k => ({r, k, c:addrCheck(r, k)}))).filter(o => !labState(o.r, o.k) && !compose.addrMeta[K(o.r, o.k)] && ['error', 'pot'].includes(o.c.status) && o.c.value)
+        .map(o => ({...o, g:EMAIL_KEYS.includes(o.k) && o.c.value.includes('@') ? (g => g && g !== o.c.value && validateAddr(o.k, g).status === 'ok' ? g : alt(o, 'dati'))(adminGuess(o.r, o.k, o.c)) : adminGuess(o.r, o.k, o.c)}))
+        .find(o => o.g && o.g !== o.c.value && validateAddr(o.k, o.g).status === 'ok');
+      if (anyBad) camp(anyBad, anyBad.g, {src:'edit', by:'Rūta Testa', at:ago(1, 14, 5 + i)});
+      // labots kampaņai – imports
+      const imp = free().find(o => o.c.status === 'ok' && o.c.value) || free().find(o => o.c.value);
+      if (imp) camp(imp, alt(imp, 'dati'), {src:'import', by:CURRENT_USER, at:ago(1, 9, 40), file:'kontakti_atjaunoti.xlsx'});
+      // atjaunots pirmavotā (Respondentu pārvaldībā)
+      const sr = free().find(o => o.c.status === 'ok' && o.c.value);
+      if (sr){ const orig = raw(sr.r, sr.k), v = alt(sr, 'statistika'); sr.r[ADDR_FIELD[sr.k]] = v; compose.addrMeta[K(sr.r, sr.k)] = {orig, value:v, resp:true, src:'edit', by:CURRENT_USER, at:ago(0, 10, 20 + i)}; }
+      Object.assign(d, sessionSnapshot(), {id:d.id});
+    });
+  } catch (e) { console.warn('seedLabDemo', e); }
+  // derīgās pārbaudes paliek derīgas (arī citos melnrakstos, ja mainīta pirmavota adrese)
+  (state.drafts || []).forEach(d => { if (!wasValid.get(d)) return; try { if (!withSnap(d, () => reviewValid())){ applySnapshot(d); compose.draftId = d.id; compose.review.sig = reviewSig(); d.review = {...d.review, sig:compose.review.sig}; } } catch (e) {} });
+  const d0 = state.drafts.find(x => x.id === keep);
+  if (d0){ applySnapshot(d0); compose.draftId = d0.id; } else newSession(true);
+  state.activeDraft = compose.draftId;
+  save();
+}
+if (state.labDemoV !== 1) seedLabDemo();
 if (state.msCoverV !== 1){ addCoverSamples(state); state.msCoverV = 1; save(); }
 if (state.docNrV !== 2){ migrateDocNr(); state.docNrV = 2; const d0 = state.drafts.find(x => x.id === compose.draftId); compose.f.docNr = d0 ? (d0.f || {}).docNr || '' : ''; save(); }
 if (state.nameSfxV !== 1){ seedNameSfx(); state.nameSfxV = 1; const d0 = state.drafts.find(x => x.id === compose.draftId); if (d0) compose.nameSfx = nameSfxOf(d0), compose.name = d0.name; save(); }
