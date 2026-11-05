@@ -1216,6 +1216,37 @@ Vēstules tiek veidotas un sūtītas **tikai latviešu valodā**.
 - Kodā ir tikai viens veidņu redaktors – modālais logs. Tas atveras no "+ Jauna veidne", "+ Pievienot veidni" kategorijā, veidnes rediģēšanas, sagatavju "+ Jauna veidne" un kampaņas soļa "Saturs" ("Noformēt saturu", "Izmantot veidni" → "Pielāgot šai kampaņai"; "Saglabāt arī kā veidni" saglabā no tā paša loga). Lauka **"Adresāts"** vērtības veidnēs un sagatavēs (veidnes izveide un rediģēšana, "+ Pievienot veidni" kategorijā, sagatavju izveide un rediģēšana, sagatavju filtri un birkas) ir "Fiziskā persona", "Juridiskā persona" un "Visi (jaukta komunikācija)"; veidņu sākuma ekrāna un sagatavju grupas – "Fiziskām personām", "Juridiskām personām", "Cita komunikācija". Kampaņās lauks "Statistikas joma" nav mainīts. Datos adresāts glabājas kā kods (fiz / jur / visi), tāpēc esošās veidnes un sagataves automātiski rāda jaunos nosaukumus.
 - Kājenē redzams prototipa versijas numurs ("Versija 51"); ja pēc atjaunināšanas redzams vecāks numurs, lapa jāpārlādē (Ctrl+Shift+R).
 
+## Lietojamības testi: Clarity
+
+Versija 212: prototipā ir **Microsoft Clarity** (projekts `z8spe1tlla`) lietojamības testiem – tikai kopējā statistika, testētāji netiek identificēti (prototipā nav lietotāju datu, testa dati ir izdomāti). Kods ievietots `<head>` sadaļā bez izmaiņām.
+
+- **Piekrišana:** pirmajā atvēršanā lapas apakšā šaura josla (nevis modāls logs): "Šis prototips lietojamības testam anonīmi ieraksta klikšķus un ekrāna kustības (Microsoft Clarity). Testa dati ir izdomāti." Pogas:
+  - **Piekrītu** → `clarity('consentv2', {ad_Storage:"denied", analytics_Storage:"granted"})`;
+  - **Nepiekrītu** → `clarity('consentv2', {ad_Storage:"denied", analytics_Storage:"denied"})`.
+  Izvēle tiek saglabāta pārlūkā (`localStorage`, atslēga `csp-clarity-consent`); nākamreiz tā automātiski tiek nodota Clarity, josla vairs netiek rādīta. Lai jautājumu redzētu vēlreiz – izdzēsiet šo atslēgu (vai pārlūka vietnes datus).
+- **Tagi** (`clarity('set', …)`) – katrā sadaļas / soļa / līmeņa maiņā:
+  - `sadala`: `Kampanas` · `Sutijumi` · `Veidnes` · `Atskaites`;
+  - `solis` (kampaņā): `1-Pamatdati` · `2-Respondenti` · `3-Saturs` · `4-Parbaude` · `5-Nosutisana`;
+  - `limenis` (Sūtījumos): `1` (kampaņu saraksts) · `2` (kampaņas vēstules).
+- **Adrese (hash)** tiek atjaunināta bez lapas pārlādes (`history.replaceState` – pārlūka "atpakaļ" darbojas kā līdz šim): `#kampanas`, `#kampanas/solis-1` … `#kampanas/solis-5`, `#sutijumi`, `#sutijumi/limenis-2`, `#veidnes`, `#atskaites`. Atverot adresi `#kampanas/solis-N`, atveras kampaņas redaktors; agrākās adreses (`#kampana`, `#vesture`, `#nosutitas`) darbojas joprojām.
+- **Notikumi** (`clarity('event', …)`):
+
+  | Notikums | Kad |
+  |---|---|
+  | `veikt_atlasi` | 1. solī – "Veikt atlasi" |
+  | `apstiprinat_atlasi` | 2. solī – "Apstiprināt atlasi un turpināt" (arī logā "Pārbaudiet atlasi") |
+  | `labot_adresi` | adreses labojums saglabāts (rindā) |
+  | `zinot_administratoram` | adreses ziņotas administratoram |
+  | `importet_labojumus` | importēti adrešu labojumi |
+  | `izveleties_saturu` | 3. solī izvēlēta veidne ("Izmantot kampaņā") vai noformēts kampaņas saturs |
+  | `parbaude_apstiprinata` | 4. solī pārbaude apstiprināta |
+  | `nodot_saskanosanai` | kampaņa nodota saskaņošanai |
+  | `nosutit` | vēstules nosūtītas (5. solis) |
+  | `mani_filtri_izveidot` | izveidots jauns "Mans filtrs" |
+  | `sutijumi_atvert_kampanu` | no Sūtījumu 2. līmeņa atvērta kampaņa |
+
+- Visi izsaukumi ir aizsargāti (`try/catch`, pārbaude, vai `window.clarity` ir funkcija): ja Clarity nav ielādēts vai ir bloķēts, prototips strādā kā līdz šim, bez kļūdām. (Ja Clarity skripts ir bloķēts tīklā, pārlūks konsolē var parādīt tikai ziņojumu par neielādētu resursu – tā nav prototipa kļūda.)
+
 ## GitHub Pages
 
 1. Repozitorijā atveriet **Settings → Pages**.
