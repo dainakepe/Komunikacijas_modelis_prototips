@@ -1083,6 +1083,11 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 220 – "Reakcija un iesniegšana" vienkāršota:**
+  - **Piltuve** – posmos tikai procenti no piegādāto ziņu skaita (pirmais posms "Piegādātas" – 100 %): Piegādātas · Atvērtas · Anketa uzsākta · Iesniegtas; joslu skala 0–100 %; absolūtie skaitļi – tikai padomā ("N no N") un "Visa atskaite" eksportā (lapa "Piltuve"); (i) padoms pie virsraksta skaidro, ka procenti ir no piegādātajām. "Atvērtas" – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa (lai piltuve nekāptu augšup, jo e-pasta atvēršana ir aptuvena); "Anketa uzsākta" / "Iesniegtas" – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta. Tas pats – kampaņas skatā (ja filtrā izvēlēta viena kampaņa).
+  - **Iesniegšanas % pa apsekojumiem** – tikai %, rindas pēc % (lielākais augšā), joslu skala 0–100 %; skaitļi (iesniegtas / veidlapas, kampaņas skatā – arī iesāktas, kļūdainas) – padomā un eksportā (lapa "Iesniegšana pa apsekojumiem"); "Rādīt datu tabulu" – Apsekojums / Iesniegšanas %.
+  - **"Atvēršanas % pa kanāliem"** – bloks noņemts (arī datu tabula); pārējie trīs bloki – vienā rindā (3 kolonnas) bez tukšas vietas.
+
 - **Versija 219:**
   - **QR skenēšana no Atskaitēm noņemta** (rādītājs "QR skenēšanas" apakšcilnē "Reakcija un iesniegšana" un tā padoms; eksportā tā nebija). QR kods vēstulēs, notikums "QR kods noskenēts" respondenta logā (Statusu ceļš) un Sūtījumu kolonna "E-pasta reakcija" – paliek.
   - **"Ziņas pēc kampaņas veida"** (Pārskats) – horizontāli pārklāti stabiņi (aizstāj Versijas 217 vertikālos sakrautos): katram veidam viena rinda – ikona un nosaukums, pa labi "Piegādātas / Kopā (%)", zem tiem josla: **Kopā** – gaiši pelēka (#DCE4E7) visā kopskaita garumā, **Piegādātas** – zaļa (#3E9A6B) no sākuma. Nepiegādātās / procesā šeit netiek rādītas; padoms "Piegādātas N no N (N%)"; leģenda Kopā · Piegādātas; rindas pēc kopskaita (lielākais augšā); "Rādīt datu tabulu" – Veids / Kopā / Piegādātas / %. Kopā = nosūtītās, piegādātas = elektroniski piegādātās (kā kopsavilkuma rādītājos "Nosūtītas" un "Piegādes īpatsvars"), tāpēc summas sakrīt ar kopsavilkumu; filtri ietekmē diagrammu.
