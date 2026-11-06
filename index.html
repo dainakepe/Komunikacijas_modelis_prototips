@@ -1120,8 +1120,11 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .rk-kpi{appearance:none;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:border-color .12s,box-shadow .12s}
 .rk-kpi > span{display:block}
 .rk-kpi:hover,.rk-kpi:focus-visible{border-color:var(--primary-300);box-shadow:0 2px 8px rgba(0,60,60,.12)}
-.rk-kpi .go{position:absolute;top:10px;right:12px;float:none;font-size:var(--fs-xs);color:var(--primary-dark);opacity:0;transition:opacity .12s}
-.rk-kpi:hover .go,.rk-kpi:focus-visible .go{opacity:1}
+/* Versija 214: "Atvērt →" – kartītes apakšējā labajā stūrī (vienmēr redzama, mazs teal teksts); virsraksts – visā platumā, garš pārnesas; kartītes vienā augstumā */
+.rk-kpi{height:100%;box-sizing:border-box}
+.rk-kpi .go{position:static;order:99;margin-top:auto;padding-top:8px;align-self:flex-end;float:none;font-size:var(--fs-xs);font-weight:600;line-height:1.2;color:var(--primary-dark);opacity:1;white-space:nowrap}
+.rk-kpi:hover .go,.rk-kpi:focus-visible .go{text-decoration:underline;text-underline-offset:2px}
+.rk-kpi .l{padding-right:0;overflow-wrap:anywhere}
 .rk-kpi.is-todo{background:var(--orange-bg);border-color:var(--warning-border)}
 .rk-kpi.is-todo .n{color:var(--orange-ink)}
 .rk-kpi .delta.d-good{color:var(--success)}
@@ -1220,7 +1223,7 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .kpis.k4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .kpis.k3{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:700px){.kpis.k4{grid-template-columns:repeat(2,minmax(0,1fr))} .kpis.k3{grid-template-columns:minmax(0,1fr)}}
-.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-rows:1fr;gap:12px;margin-bottom:16px}
 /* KPI kartītes (Atskaites): nosaukums augšā (14 px, treknraksts, #1F5E69) → liels skaitlis → mazs pelēks papildteksts */
 .kpi{padding:14px 16px;display:flex;flex-direction:column;position:relative}
 .kpi .n{order:0;font-size:var(--fs-display);font-weight:700;color:var(--text);line-height:1.1}
@@ -3527,6 +3530,11 @@ table:not(.rtab-out):not(.rtab) > thead > tr > th:not(#_){background-color:var(-
 .consent-bar button.is-primary{background:#F3F6F7;color:#16353B;border-color:#F3F6F7}
 .consent-bar button:focus-visible{outline:3px solid #7FD3D3;outline-offset:2px}
 body.has-consent-bar{padding-bottom:52px}
+/* Versija 214: "Mani filtri" – kopsavilkuma rinda zem filtru rīkjoslas (pelēks mazs teksts, bez fona un rāmja) */
+.sf-sumrow{display:flex;align-items:baseline;gap:10px;margin:2px 0 8px;font-size:var(--fs-sm);color:var(--text-muted);min-width:0}
+.sf-sum-t{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sf-sum-more{color:var(--text-secondary);font-weight:600;cursor:help}
+.sf-sumrow .sf-sum-edit{flex:none;font-size:var(--fs-sm)}
 </style>
 <!-- Versija 212: Microsoft Clarity – lietojamības testi (kopējā statistika, testētāji netiek identificēti); piekrišana – josla lapas apakšā -->
 <script type="text/javascript">
@@ -4088,7 +4096,7 @@ body.has-consent-bar{padding-bottom:52px}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 213</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 214</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -12603,6 +12611,52 @@ function sfPick(view, id){
   cfg.apply(x ? clone(x.f) : cfg.empty()); cfg.render();
   const b = $(`#sf-${view} .sf-btn`); if (b) b.focus();
 }
+// Versija 214: saglabātā filtra kritēriji [nosaukums, [vērtības]] – tikai norādītie (kopsavilkuma rindai "Filtrā: …")
+const sfJomaVals = js => [...new Set(js.map(jomaKey))].map(k => STAT_JOMAS[k] || k);
+const sfRepVals = ids => ids.map(id => { const r = repById(mapReportId ? mapReportId(id) : id) || repById(id); return r ? r.code : id; });
+const SF_ITEMS = {
+  camp:f => { f = campFCanon(f); return [
+    f.act ? ['Ātrais filtrs', ['Jārīkojas']] : null,
+    f.st && CAMP_ST[f.st] ? ['Statuss', [CAMP_ST[f.st].label]] : f.sub && f.sub !== 'all' ? ['Ātrais filtrs', [(CAMP_SUBS.find(([k]) => k === f.sub) || [, f.sub])[1]]] : null,
+    f.preps.length ? ['Kampaņas statuss', f.preps.map(k => (PREP_ST[k] || {}).label || k)] : null,
+    f.sends.length ? ['Sūtīšanas statuss', f.sends.map(k => (SEND_ST[k] || {}).label || k)] : null,
+    (f.kinds || []).length ? ['Kampaņas veids', f.kinds.map(k => (SESS_KINDS[k] || {}).label || k)] : null,
+    f.jomas.length ? ['Statistikas joma', sfJomaVals(f.jomas)] : null,
+    (f.reps || []).length ? ['Apsekojums', sfRepVals(f.reps)] : null,
+    f.quick || f.from || f.to ? ['Periods', [perLabel(HF_QUICK, f)]] : null,
+    f.creator ? ['Veidotājs', [f.creator]] : null,
+    f.q ? ['Meklēšana', [`“${f.q}”`]] : null,
+    f.sort && f.sort.k ? ['Kārtošana', [`${CAMP_SORT_L[f.sort.k] || f.sort.k} ${f.sort.dir > 0 ? '↑' : '↓'}`]] : null].filter(Boolean); },
+  jrn:f => { f = jrnFCanon(f); return [
+    f.q ? ['Meklēšana', [`“${f.q}”`]] : null,
+    f.jomas.length ? ['Statistikas joma', sfJomaVals(f.jomas)] : null,
+    f.reps.length ? ['Apsekojums', sfRepVals(f.reps)] : null,
+    f.kinds.length ? ['Kampaņas veids', f.kinds.map(k => (SESS_KINDS[k] || {}).label || k)] : null,
+    f.sends.length ? ['Sūtīšanas statuss', f.sends.map(k => (SEND_ST[k] || {}).label || k)] : null,
+    f.quick || f.from || f.to ? ['Periods', [perLabel(JRN_SF_QUICK, f)]] : null,
+    f.sender ? ['Nosūtītājs', [f.sender]] : null].filter(Boolean); },
+  rep:f => { f = repFCanon(f); const cn = b => (histCampList(state.sent).find(c => String(c.b) === String(b)) || {}).name || `Nr. ${b}`; return [
+    f.camps.length ? [f.camps.length === 1 ? 'Kampaņa' : 'Kampaņas', f.camps.map(cn)] : null,
+    f.jomas.length ? ['Statistikas joma', sfJomaVals(f.jomas)] : null,
+    f.reps.length ? ['Apsekojums', sfRepVals(f.reps)] : null,
+    f.kinds.length ? ['Kampaņas veids', f.kinds.map(k => (SESS_KINDS[k] || {}).label || k)] : null,
+    f.quick || f.from || f.to ? ['Periods', [perLabel(REP_QUICK, f)]] : null,
+    f.chs.length ? ['Kanāls', f.chs.map(k => REP_CH_L[k] || k)] : null,
+    f.sub ? ['Apakšcilne', [(REP_SUBS.find(([k]) => k === f.sub) || [, f.sub])[1]]] : null].filter(Boolean); },
+};
+// kopsavilkuma rinda tieši zem filtru rīkjoslas: "Filtrā: {kritērijs} – {vērtība} · …  Labot"; filtru lauki netiek aizpildīti (filtrs – kā slānis)
+function sfSumRender(view){
+  const host = $(`#sf-${view}`), bar = host && host.closest('.flt-row'); if (!bar) return;
+  let el = $(`#sf-sum-${view}`); const cur = sfCur(view), itf = SF_ITEMS[view];
+  if (!cur || !itf){ if (el) el.remove(); return; }
+  if (!el){ el = document.createElement('div'); el.id = `sf-sum-${view}`; el.className = 'sf-sumrow'; }
+  if (el.previousElementSibling !== bar) bar.after(el);
+  let items = []; try { items = itf(cur.f); } catch (e) { items = []; }
+  const part = ([l, vs]) => `<span class="sf-sum-i">${esc(l)} – ${esc(vs.slice(0, 2).join(', '))}${vs.length > 2 ? ` <span class="sf-sum-more" title="${esc(vs.join(', '))}">+${vs.length - 2}</span>` : ''}</span>`;
+  const full = `Filtrā: ${items.length ? items.map(([l, vs]) => `${l} – ${vs.join(', ')}`).join(' · ') : 'kritēriji nav norādīti'}`;
+  el.innerHTML = `<span class="sf-sum-t" title="${esc(full)}">Filtrā: ${items.length ? items.map(part).join(' · ') : 'kritēriji nav norādīti'}</span><button type="button" class="link-btn sf-sum-edit" data-sf-sumedit="${view}" aria-label="Labot filtru “${esc(cur.name)}”">Labot</button>`;
+}
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-sf-sumedit]'); if (!b) return; const v = b.dataset.sfSumedit, cur = sfCur(v); if (cur) sfEditDlg(v, {id:cur.id}); });
 function sfRender(view){
   const host = $(`#sf-${view}`), cfg = SF_CFG[view]; if (!host || !cfg) return;
   const st = ui.sf[view], list = sfList(view), cur = sfCur(view), ch = !cfg.overlay && sfChanged(view);
@@ -12620,6 +12674,7 @@ function sfRender(view){
       ${it('data-sf-act="new"', `${ICON.plus}Jauns filtrs`)}
       ${it(`data-sf-act="manage"${list.length ? '' : ' disabled aria-disabled="true"'}`, 'Pārvaldīt filtrus…', list.length ? '' : 'is-dis')}
     </div>`;
+  sfSumRender(view);
 }
 function sfToggle(view, open){
   const st = ui.sf[view]; st.open = open ?? !st.open; sfRender(view);
