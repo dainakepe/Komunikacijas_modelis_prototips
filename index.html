@@ -1237,7 +1237,7 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .viz-card{padding:16px 18px}
 .viz-card h3{font-size:var(--fs-base);margin:0 0 2px}
 .viz-card .viz-sub{font-size:var(--fs-xs);color:var(--text-muted);margin:0 0 12px}
-.viz{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--grid:#e1e0d9;--axis:#c3c2b7;--ink2:#52514e;--ink3:#898781}
+.viz{--r-ok:#3E9A6B;--r-bad:#C8473D;--r-proc:#D5DDE0;--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--grid:#e1e0d9;--axis:#c3c2b7;--ink2:#52514e;--ink3:#898781}
 .viz-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:var(--fs-xs);color:var(--ink2);margin-bottom:10px}
 .viz-legend span{display:inline-flex;align-items:center;gap:6px}
 .viz-legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
@@ -1257,6 +1257,15 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .cols-x span{flex:1 1 0;text-align:center;min-width:0;overflow:hidden;white-space:nowrap}
 .cols-grid{position:absolute;left:0;right:0;border-top:1px solid var(--grid);font-size:var(--fs-2xs);color:var(--ink3)}
 .cols-grid span{position:absolute;left:2px;top:-14px}
+/* Versija 217: vertikāli sakrauti stabiņi (Ziņas pēc kampaņas veida) */
+.cols.scols{height:170px;gap:10px;padding:0 6px}
+.cols.scols .slot{cursor:pointer}
+.cols.scols .scol{display:flex;flex-direction:column-reverse;width:min(46px,70%);border-radius:4px 4px 0 0;overflow:hidden;min-height:2px}
+.cols.scols .sseg{display:block;min-height:1px}
+.cols.scols .slot:hover .scol,.cols.scols .slot:focus-visible .scol{filter:brightness(.94)}
+.cols.scols .slot:focus-visible{outline:2px solid var(--text);outline-offset:1px}
+.cols.scols + .cols-x{gap:10px;padding:0 6px}
+.cols.scols + .cols-x span{white-space:normal;line-height:1.2;font-size:10.5px;overflow:visible;hyphens:manual;overflow-wrap:normal}
 .viz-table{margin-top:10px;font-size:var(--fs-xs)}
 .viz-table summary{cursor:pointer;color:var(--primary-darker);font-weight:600}
 .viz-table table{margin-top:6px;font-size:var(--fs-xs)}
@@ -1348,7 +1357,7 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .pq-label{display:flex;flex-direction:column;justify-content:center;padding:4mm 6mm;font:12pt/1.35 Arial,sans-serif;color:#000;box-sizing:border-box}
 .pq-label b{font-weight:700}
 /* apļveida diagramma (Atskaites – "Ziņas pa kanāliem") */
-.donut{--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.donut{--r-ok:#3E9A6B;--r-bad:#C8473D;--r-proc:#D5DDE0;--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .donut svg{width:170px;height:170px;flex:none}
 .donut-seg{cursor:pointer;stroke:#fff;stroke-width:1.5;transition:opacity .12s}
 .donut-seg:hover,.donut-seg:focus{opacity:.85;outline:none}
@@ -3534,10 +3543,11 @@ table:not(.rtab-out):not(.rtab) > thead > tr > th:not(#_){background-color:var(-
 .consent-bar button:focus-visible{outline:3px solid #7FD3D3;outline-offset:2px}
 body.has-consent-bar{padding-bottom:52px}
 /* Versija 214: "Mani filtri" – kopsavilkuma rinda zem filtru rīkjoslas (pelēks mazs teksts, bez fona un rāmja) */
-.sf-sumrow{display:flex;align-items:baseline;gap:10px;margin:2px 0 8px;font-size:var(--fs-sm);color:var(--text-muted);min-width:0}
+.sf-sumrow{display:flex;align-items:baseline;gap:8px;margin:4px 0 0;font-size:12px;line-height:1.3;color:#6B7C84;min-width:0;white-space:nowrap}
 .sf-sum-t{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sf-sum-more{color:var(--text-secondary);font-weight:600;cursor:help}
-.sf-sumrow .sf-sum-edit{flex:none;font-size:var(--fs-sm)}
+.sf-sum-more{color:#6B7C84;font-weight:600;cursor:help}
+.sf-sumrow .sf-sum-edit{flex:none;font-size:12px;font-weight:400;line-height:1.3;color:#6B7C84;text-decoration:none;padding:0;border:0;background:none}
+.sf-sumrow .sf-sum-edit:hover,.sf-sumrow .sf-sum-edit:focus-visible{color:#6B7C84;text-decoration:underline;text-underline-offset:2px}
 </style>
 <!-- Versija 212: Microsoft Clarity – lietojamības testi (kopējā statistika, testētāji netiek identificēti); piekrišana – josla lapas apakšā -->
 <script type="text/javascript">
@@ -4099,7 +4109,7 @@ body.has-consent-bar{padding-bottom:52px}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 216</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 217</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -14358,12 +14368,36 @@ function donutChart(parts, label){
     return {p, d, mid};
   });
   return `<div class="donut"><svg viewBox="0 0 180 180" role="img" aria-label="${esc(label)}: ${esc(parts.filter(p => p.v).map(txt).join('; '))}">
-      ${segs.map(({p, d}) => `<path d="${d}" fill="var(--${p.color})" class="donut-seg" data-tip="${esc(`${p.label}|${pct(p.v, tot)}% (${fmtCount(p.v)})`)}"${p.drill ? drillAttr(p.drill) + ` aria-label="${esc(txt(p))} – atvērt sūtījumos"` : ''}></path>`).join('')}
+      ${segs.map(({p, d}) => `<path d="${d}" fill="var(--${p.color})" class="donut-seg" data-tip="${esc(`${p.label}${p.tip ? ` – ${p.tip}` : ''}|${pct(p.v, tot)}% (${fmtCount(p.v)})`)}"${p.drill ? drillAttr(p.drill) + ` aria-label="${esc(txt(p))} – atvērt sūtījumos"` : ''}></path>`).join('')}
       ${segs.filter(sg => sg.p.v / tot >= 0.06).map(({p, mid}) => `<text x="${(C + (R + r) / 2 * Math.cos(mid)).toFixed(1)}" y="${(C + (R + r) / 2 * Math.sin(mid)).toFixed(1)}" class="donut-pc" aria-hidden="true">${pct(p.v, tot)}%</text>`).join('')}
       <text x="${C}" y="${C - 4}" class="donut-tot" aria-hidden="true">${fmtCount(tot)}</text><text x="${C}" y="${C + 14}" class="donut-sub" aria-hidden="true">ziņas</text></svg>
     <ul class="donut-leg">${parts.map(p => `<li${p.drill && p.v ? drillAttr(p.drill) + ` title="Atvērt sūtījumos"` : ''}><i style="background:var(--${p.color})" aria-hidden="true"></i><span>${esc(p.label)}</span><b>${pct(p.v, tot)}%</b><span class="muted">(${fmtCount(p.v)})</span></li>`).join('')}</ul></div>`;
 }
 const CH_PARTS = [['eadrese', 'eAdrese', 's1'], ['epasts', 'E-pasts', 's3'], ['pasts', 'Drukāta vēstule', 's2']];
+// Versija 217: rezultāta grupa vēstulei (tās pašas vēstules, kas kanālu diagrammā: nosūtītas; drukātās – nosūtītas pa pastu)
+// piegādāta – elektroniski piegādāta vai nosūtīta pa pastu; nepiegādāta – neveiksmīga / gaida manuālu pārbaudi vai administratoru; procesā – pārējās
+const repInCh = x => isSent(x) && (x.channel !== 'pasts' || x.status === 'pasts');
+const repRes = x => isDeliv(x) || x.status === 'pasts' ? 'ok' : ['fail', 'held', 'man', 'print'].includes(histFinal(x)) ? 'bad' : 'proc';
+const RES_SER = [['ok', 'Piegādātas', 'r-ok'], ['bad', 'Nepiegādātas', 'r-bad'], ['proc', 'Procesā', 'r-proc']];
+// Pārskats – "Ziņas pa kanāliem": kanālu daļās tikai piegādātās; atsevišķi "Nepiegādātas" (sarkans) un – ja ir – "Procesā" (pelēks); kopskaits nemainās
+function chPartsRes(xs){
+  const base = xs.filter(repInCh), bad = base.filter(x => repRes(x) === 'bad'), proc = base.filter(x => repRes(x) === 'proc');
+  const byCh = arr => CH_PARTS.map(([ch, l]) => `${l === 'Drukāta vēstule' ? 'drukāta' : l === 'E-pasts' ? 'e-pasts' : l} ${arr.filter(x => x.channel === ch).length}`).join(' · ');
+  return [...CH_PARTS.map(([ch, l, c]) => ({label:l, color:c, v:base.filter(x => x.channel === ch && repRes(x) === 'ok').length, drill:{f:{ch}, g:'ok'}})),
+    ...(proc.length ? [{label:'Procesā', color:'r-proc', v:proc.length, tip:byCh(proc), drill:{g:'proc'}}] : []),
+    {label:'Nepiegādātas', color:'r-bad', v:bad.length, tip:byCh(bad), drill:{g:'todo'}}];
+}
+// Vertikāli sakrauti stabiņi (kategorija × rezultāts): kopskaits virs stabiņa, padomā – sadalījums ar %
+function stackCols(groups, series){
+  const max = Math.max(1, ...groups.map(g => g.total));
+  return legendHtml(series) + `<div class="cols scols"><div class="cols-grid" style="bottom:92%"></div>
+    ${groups.map(g => `<div class="slot"${g.drill ? drillAttr(g.drill) + ` aria-label="${esc(`${g.label}: ${g.total} – atvērt sūtījumos`)}"` : ''} data-tip="${esc(`${series.map(([k, l]) => g.v[k] || k !== 'proc' ? `${l} ${fmtCount(g.v[k] || 0)}${k !== 'proc' ? ` (${pct(g.v[k] || 0, g.total)}%)` : ''}` : '').filter(Boolean).join(' · ')}|${g.label}: ${fmtCount(g.total)}`)}">
+      <span class="cv">${fmtCount(g.total)}</span><span class="scol" style="height:${g.total / max * 92}%">${series.map(([k, , v]) => g.v[k] ? `<span class="sseg" style="flex:${g.v[k]} 0 0;background:var(--${v})"></span>` : '').join('')}</span></div>`).join('')}</div>
+    <div class="cols-x">${groups.map(g => `<span title="${esc(g.label)}">${colLbl(g.label)}</span>`).join('')}</div>`;
+}
+// stabiņu nosaukumi: gari vārdi pārnesas pa zilbēm (mīkstā defise), nevis tiek nogriezti
+const COL_HY = {'Uzaicinājums':'Uzaici­nājums', 'Pirmstermiņa':'Pirms­termiņa', 'atgādinājums':'atgādi­nājums', 'Informatīvs':'Informa­tīvs', 'ziņojums':'ziņo­jums', 'Nokavēta':'Noka­vēta'};
+const colLbl = l => esc(String(l).split(' ').map(w => COL_HY[w] || w).join(' '));
 // Versija 179: "Drukāta vēstule" – tikai vēstules ar statusu "Nosūtīts pa pastu"
 const chParts = xs => CH_PARTS.map(([ch, l, c]) => ({label:l, color:c, v:xs.filter(x => x.channel === ch && isSent(x) && (ch !== 'pasts' || x.status === 'pasts')).length, drill:{f:{ch}}}));
 // Vienas sērijas horizontāli stabiņi
@@ -14813,7 +14847,8 @@ function summaryView(xs){
       <span class="rk-sep" aria-hidden="true"></span>
       ${card({n:k.todo, l:'Jārisina', sub:'nepiegādātas, aizturētas, manuāli, jādrukā', d:hasPrev ? repDelta(k.todo, kp.todo, '', -1) : '', drill:{g:'todo'}, cls:k.todo ? 'is-todo' : '', title:'Vēstules, kas prasa rīcību – atvērt sūtījumos ar “Jārisina”'})}</div>`;
   const bs = monthBuckets(xs), part = bs.length && bs[bs.length - 1].partial;
-  const byKind = Object.keys(SESS_LABELS).map(kk => { const g = xs.filter(x => x.sessionKind === kk && isSent(x)); return {label:SESS_LABELS[kk], v:g.length, sub:`piegādātas ${g.filter(isDeliv).length}`, drill:{f:{kind:baseKind(kk)}}}; }).filter(r => r.v);
+  const byKind = Object.keys(SESS_LABELS).map(kk => { const g = xs.filter(x => x.sessionKind === kk && repInCh(x)), v = {ok:0, bad:0, proc:0}; g.forEach(x => v[repRes(x)]++);
+    return {label:SESS_LABELS[kk], total:g.length, v, drill:{f:{kind:baseKind(kk)}}}; }).filter(r => r.total);
   const nd = xs.flatMap(ndrsOf), byNdr = ndrByRuleK(nd).slice(0, 6).map(r => ({...r, drill:{f:{rule:r.k}}}));
   // kampaņu tabula (kārtojama; rinda atver sūtījumus)
   const dm = dutyRepMap(), rows = [...groupBy(xs, x => x.batch)].map(([b, g]) => { const kk = kpiSet(g);
@@ -14829,8 +14864,9 @@ function summaryView(xs){
       ${bs.length ? legendHtml(RATE_SER) + rateChart(bs) : '<p class="hint">Nav datu.</p>'}
       <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Nosūtītas', 'Ar zināmu rezultātu', 'Piegādātas', 'Piegādes %', 'Piegādātie e-pasti', 'Atvērti', 'Atvēršanas %', 'Piegādātas ar anketām', 'Ar iesniegtu anketu', 'Iesniegšanas %'], bs.map(b => [b.label, b.r.sent, b.r.base, b.r.deliv, b.r.delivP != null ? `${b.r.delivP}%` : '—', b.r.em, b.r.open, b.r.openP != null ? `${b.r.openP}%` : '—', b.r.delivF, b.r.sub, b.r.subP != null ? `${b.r.subP}%` : '—']))}</details></div>
     <div class="viz-grid g3">
-      <div class="card viz-card"><h3>Ziņas pa kanāliem${tip('Nosūtītās ziņas pa kanāliem, kuros vēstule faktiski nosūtīta: eAdrese, e-pasts vai drukāta vēstule (pa pastu). Uzklikšķinot uz daļas – atver sūtījumus ar šo kanālu.')}</h3>${donutChart(chParts(xs), 'Ziņas pa kanāliem')}</div>
-      <div class="card viz-card"><h3>Ziņas pēc kampaņas veida${tip('Nosūtītās ziņas. Uzklikšķinot – atver sūtījumus.')}</h3>${byKind.length ? singleBars(byKind) : '<p class="hint">Nav datu.</p>'}</div>
+      <div class="card viz-card"><h3>Ziņas pa kanāliem${tip('Nosūtītās ziņas pa kanāliem, kuros vēstule faktiski nosūtīta: eAdrese, e-pasts vai drukāta vēstule (pa pastu). Uzklikšķinot uz daļas – atver sūtījumus ar šo kanālu.')}</h3>${donutChart(chPartsRes(xs), 'Ziņas pa kanāliem')}</div>
+      <div class="card viz-card"><h3>Ziņas pēc kampaņas veida${tip('Nosūtītās ziņas pēc kampaņas veida: piegādātas, nepiegādātas un procesā (tās pašas ziņas, kas diagrammā “Ziņas pa kanāliem”). Uzklikšķinot uz stabiņa – atver sūtījumus.')}</h3>${byKind.length ? stackCols(byKind, RES_SER.filter(([k]) => k !== 'proc' || byKind.some(g => g.v.proc)))
+        + `<details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Kampaņas veids', 'Kopā', 'Piegādātas', 'Nepiegādātas', 'Procesā'], byKind.map(g => [g.label, g.total, g.v.ok, g.v.bad, g.v.proc]))}</details>` : '<p class="hint">Nav datu.</p>'}</div>
       <div class="card viz-card"><h3>NDR/DIV iemeslu sadalījums${tip('Biežākie iemesli pēc sadaļas “Piegādes statusi un kļūdas”; visi – apakšcilnē “Piegāde”. Uzklikšķinot – atver sūtījumus ar šo iemeslu.')}</h3><p class="viz-sub">${nd.length} ${plural(nd.length, 'paziņojums', 'paziņojumi')}</p>${byNdr.length ? singleBars(byNdr) : '<p class="hint">Nav datu.</p>'}</div>
     </div>
     <div class="card viz-card"><h3>Kampaņas${tip('Tabulu var kārtot, uzklikšķinot uz kolonnas nosaukuma; rinda atver sūtījumus.')}</h3><p class="viz-sub">${rows.length} ${plural(rows.length, 'kampaņa', 'kampaņas')}</p>${tbl}</div>`,
