@@ -3999,7 +3999,7 @@ body.has-consent-bar{padding-bottom:52px}
   <section id="tab-vesture" class="tab-panel" hidden>
     <div class="page-head">
       <div>
-        <button type="button" class="btn btn-ghost btn-sm back-link" id="jrn-back-top" data-action="jrn-back" hidden>← Sūtījumi</button>
+        <button type="button" class="btn btn-ghost btn-sm back-link" id="jrn-back-top" data-action="jrn-back" hidden>← Sūtījumi</button><button type="button" class="btn btn-ghost btn-sm back-link" id="jrn-rep-back" data-action="rep-return" hidden>← Atpakaļ uz atskaitēm</button>
         <h1 id="jrn-title"><span id="jrn-title-t">Sūtījumi</span> <span class="tip" id="jrn-title-tip" tabindex="0" role="note" aria-label="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts." data-tip="Katras nosūtītās un nosūtīšanas procesā esošās vēstules statuss, kanāls, adrese, mēģinājumi un piegādes rezultāts.">i</span></h1>
         <div class="jrn-docnr" id="jrn-docnr" hidden></div>
       </div>
@@ -4099,7 +4099,7 @@ body.has-consent-bar{padding-bottom:52px}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 215</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 216</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7641,7 +7641,7 @@ function trackNav(){
   const home = $('#module-view').hidden;
   let v = '';
   if (!home && TABS.includes(ui.tab)){
-    const t = ui.tab, edit = t === 'kampanas' && ui.campView === 'edit', lvl = t === 'vesture' && ui.jrn && ui.jrn.camp != null ? '2' : '1';
+    const t = ui.tab, edit = t === 'kampanas' && ui.campView === 'edit', lvl = t === 'vesture' && ui.jrn && ui.jrn.view !== 'all' && ui.jrn.camp != null ? '2' : '1';
     clarSet('sadala', CLAR_SEC[t]);
     if (edit) clarSet('solis', CLAR_STEP[(compose.step || 1) - 1]);
     if (t === 'vesture') clarSet('limenis', lvl);
@@ -7675,6 +7675,7 @@ function routeView(v){
     else { openEditor(); if (n !== compose.step && !ui.view && !apvLocked() && (n === 1 || selCanGo())) setStep(n); } }
   else if (v === 'sutijumi'){ if (ui.jrn) ui.jrn.camp = null; showTab('vesture'); }
   else if (v === 'sutijumi-2') showTab('vesture'); // kampaņa – no pēdējā skata (pārlādējot – 1. līmenis)
+  else if (v === 'atskaites' && ui.repRet && ui.tab === 'vesture') repReturn(); // Versija 216: "atpakaļ" no pārejas – atskaite tādā pašā stāvoklī
   else if (v === 'veidnes'){ ui.tplView = 'veidnes'; showTab('veidnes'); }
   else if (TABS.includes(v)) showTab(v);
   else showTab('kampanas');
@@ -7724,7 +7725,7 @@ function showTab(name, opts = {}){
   ui.tab = name;
   if (name === 'kampanas') ui.campView === 'edit' ? renderCompose() : renderCampaigns();
   if (name === 'vesture') renderSent();
-  if (name === 'atskaites'){ if (prevTab !== 'atskaites') ui.repSub = REP_SUBS[0][0]; renderReports(); } // Versija 215: atverot sadaļu – "Pārskats"
+  if (name === 'atskaites'){ if (prevTab !== 'atskaites' && !ui.repRestoring) ui.repSub = REP_SUBS[0][0]; renderReports(); } // Versija 215: atverot sadaļu – "Pārskats"
   setCrumb();
   trackNav();
   if (!opts.keepScroll) window.scrollTo({top:0});
@@ -13853,7 +13854,7 @@ function renderSent(){
   const camp2 = l2 && !va;
   $('#jrn-views').hidden = camp2;
   if (!camp2) renderJrnViews();
-  $('#jrn-back-top').hidden = !camp2; $('#jrn-top').hidden = camp2;
+  { const rb = repRetAt(); $('#jrn-rep-back').hidden = !rb; $('#jrn-back-top').hidden = !camp2 || rb; } $('#jrn-top').hidden = camp2;
   jrnPurgeBtn(); jrnPrintBtn();
   $('#jrn-l1').hidden = l2; $('#hist-l2').hidden = !l2;
   if (!l2){ renderJrnTitle(''); renderJrnL1(); trackNav(); return; }
@@ -14211,7 +14212,20 @@ function repLetters(prev){
 }
 // klikšķināms elements: atver sūtījumus ar atskaites filtriem un precizējumu (statusu grupa, kanāls, periods u. c.)
 const drillAttr = o => ` data-drill="${esc(JSON.stringify(o))}" tabindex="0" role="button"`;
+// Versija 216: pāreja no atskaitēm – atceras izcelsmi (apakšcilne, filtri, "Mani filtri", periods, ritināšana) un mērķa skatu;
+// mērķa skatā – "← Atpakaļ uz atskaitēm"; atver citu sadaļu galvenajā navigācijā – izcelsme aizmirsta
+function repSnap(){ return {sub:ui.repSub, rep:JSON.parse(JSON.stringify(ui.rep)), sf:(ui.sf.rep || {}).active || '', scroll:window.scrollY}; }
+const repRetAt = () => { const r = ui.repRet; if (!r || ui.tab !== 'vesture') return false; const t = r.target;
+  return t.view === 'all' ? jrnVA() : !jrnVA() && ui.jrn.camp != null && String(ui.jrn.camp) === String(t.camp); };
+function repReturn(){
+  const r = ui.repRet; if (!r) return false; const sn = r.snap;
+  ui.repRet = null; ui.repSub = sn.sub; Object.assign(ui.rep, sn.rep); if (ui.sf.rep) ui.sf.rep.active = sn.sf;
+  ui.repRestoring = true; try { showTab('atskaites', {keepScroll:true}); } finally { ui.repRestoring = false; }
+  const y = sn.scroll || 0; window.scrollTo({top:y}); requestAnimationFrame(() => window.scrollTo({top:y})); setTimeout(() => window.scrollTo({top:y}), 60);
+  return true;
+}
 function repDrill(o){
+  const snap = repSnap();
   const f = ui.rep, h = {...histDefaults(), camp:f.camp ? String(f.camp) : '', rep:f.rep || '', kind:f.kind || '', ch:f.ch || '', aud:f.aud || ''}, pr = repPer(), sf = repSf();
   if (pr.from || pr.to) Object.assign(h, {quick:'custom', from:pr.from || '', to:pr.to || ''});
   // aktīvais saglabātais filtrs – sūtījumos papildu nosacījums (birka "Atskaišu filtrs: …"); viena kampaņa – tās 2. līmenis
@@ -14224,6 +14238,7 @@ function repDrill(o){
   Object.assign(ui.hist, h, {sts:g ? [...g.sts] : []}); ui.histLimit = 50;
   if (h.camp){ ui.jrn.camp = String(h.camp); ui.jrn.from = 'camp'; }
   $('#hist-search').value = h.q || '';
+  ui.repRet = {snap, target:h.camp ? {view:'camp', camp:String(h.camp)} : {view:'all'}};
   showTab('vesture');
 }
 // vēstules tikai pēc saglabātā filtra (bez filtru rindas) – tukšā stāvokļa tekstam
@@ -15188,6 +15203,7 @@ const actions = {
   'camp-history': id => showHistoryOf(id),
   // Sūtījumi
   'jrn-open': id => openJrnCamp(id),
+  'rep-return': () => { repReturn(); },
   'jrn-back': () => { ui.jrn.camp = null; if (ui.jrn.from === 'all') jrnSetView('all'); ui.jrn.from = ''; renderSent(); window.scrollTo({top:0}); const q = $(jrnVA() ? '#hist-search' : '#jrn-q'); if (q) q.focus({preventScroll:true}); },
   // respondentu meklēšana (1. līmenis) un Atskaišu tabulas: kampaņas sūtījumi ar šo respondentu + vēstules detaļu logs
   'jrn-letter': id => openLetterIn(id),
@@ -15347,7 +15363,7 @@ document.addEventListener('click', e => {
   }
   // galvenā navigācija (apakšcilnēm, piem., Sagatavēs, ir tā pati klase .tab, bet bez data-tab)
   const tab = e.target.closest('.tab[data-tab]');
-  if (tab){ if (tab.dataset.tab === 'vesture'){ ui.jrn.camp = null; if (ui.jrn.from === 'all') jrnSetView('all'); ui.jrn.from = ''; } showTab(tab.dataset.tab); return; }
+  if (tab){ ui.repRet = null; if (tab.dataset.tab === 'vesture'){ ui.jrn.camp = null; if (ui.jrn.from === 'all') jrnSetView('all'); ui.jrn.from = ''; } showTab(tab.dataset.tab); return; }
   // ārēja saite rindā (piem., "Atvērt NAMEJS") – atveras jaunā cilnē, rindas darbība netiek izpildīta
   if (e.target.closest('a.namejs-link')) return;
   // respondenta nosaukums atlases tabulā u.c. – atver kartīti (nevis atzīmē rindu)
