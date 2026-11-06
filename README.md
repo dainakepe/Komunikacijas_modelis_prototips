@@ -1258,10 +1258,9 @@ Versija 218: **viena kopīga eksporta komponente visām tabulām** – Kampaņas
 
 Versija 212: prototipā ir **Microsoft Clarity** (projekts `z8spe1tlla`) lietojamības testiem – tikai kopējā statistika, testētāji netiek identificēti (prototipā nav lietotāju datu, testa dati ir izdomāti). Kods ievietots `<head>` sadaļā bez izmaiņām.
 
-- **Piekrišana:** pirmajā atvēršanā lapas apakšā šaura josla (nevis modāls logs): "Šis prototips lietojamības testam anonīmi ieraksta klikšķus un ekrāna kustības (Microsoft Clarity). Testa dati ir izdomāti." Pogas:
-  - **Piekrītu** → `clarity('consentv2', {ad_Storage:"denied", analytics_Storage:"granted"})`;
-  - **Nepiekrītu** → `clarity('consentv2', {ad_Storage:"denied", analytics_Storage:"denied"})`.
-  Izvēle tiek saglabāta pārlūkā (`localStorage`, atslēga `csp-clarity-consent`); nākamreiz tā automātiski tiek nodota Clarity, josla vairs netiek rādīta. Lai jautājumu redzētu vēlreiz – izdzēsiet šo atslēgu (vai pārlūka vietnes datus).
+- **Piekrišana** (Versija 221; agrāk – josla lapas apakšā): **logs ekrāna vidū** (~460 px, aptumšots fons, apaļa teal ikona) – katru reizi, atverot prototipu jaunā cilnē / logā. Virsraksts "Paldies, ka piedalāties!", teksts "Lai uzlabotu prototipu, mēs anonīmi ierakstīsim jūsu klikšķus un pārvietošanos pa ekrāniem.", pogas **"Turpināt bez ieraksta"** (sekundāra) un **"Piekrītu un sākt"** (primāra, fokusā), apakšā "Ieraksts – Microsoft Clarity. Personas dati netiek vākti, visi prototipa dati ir izdomāti." Klikšķis uz fona logu neaizver; Esc = "Turpināt bez ieraksta".
+  - "Piekrītu un sākt" → `clarity('consentv2', {ad_Storage:"denied", analytics_Storage:"granted"})`; "Turpināt bez ieraksta" → `analytics_Storage:"denied"`.
+  - Izvēle – `sessionStorage` (atslēga `csp-clarity-consent`): tās pašas cilnes ietvaros (pārlāde, `?v=` pārejas) logs vairs netiek rādīts, piekrišana tiek nodota automātiski; jaunā cilnē – logs atkal. Agrākā `localStorage` atslēga tiek dzēsta.
 - **Tagi** (`clarity('set', …)`) – katrā sadaļas / soļa / līmeņa maiņā:
   - `sadala`: `Kampanas` · `Sutijumi` · `Veidnes` · `Atskaites`;
   - `solis` (kampaņā): `1-Pamatdati` · `2-Respondenti` · `3-Saturs` · `4-Parbaude` · `5-Nosutisana`;
