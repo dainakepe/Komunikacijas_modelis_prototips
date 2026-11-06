@@ -1083,6 +1083,11 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 223 – "Reakcija un iesniegšana" bez joslām (tikai procenti):**
+  - **Piltuve** – vienkāršs saraksts: posma nosaukums kreisajā pusē, % labajā pusē (lielāks fonts), starp rindām plāna pelēka atdalītājlīnija: Piegādātas · Atvērtas · Anketa uzsākta · Iesniegtas. Joslu, stabiņu un krāsainu formu vairs nav; skaits ("N no N piegādātajām ziņām") – tikai padomā (pele vai tastatūras fokuss) un eksportā.
+  - **Iesniegšanas % pa apsekojumiem** – saraksts "apsekojuma kods un nosaukums · iesniegšanas %", sakārtots pēc % dilstoši; skaits ("Iesniegtas N no N veidlapām") – padomā un eksportā.
+  - Abiem blokiem – tas pats vienkāršais saraksta stils kā "Nepiegādes iemesli" (bez fona, bez joslām; kopīgā komponente `pctListHtml`). Tāpat arī kampaņas skatā (filtrā viena kampaņa): "Piltuve" un "Iesniegšanas % pa apsekojumiem" blakus kā saraksti (padomā – arī iesāktas un kļūdainas), zem piltuves – "Kļūdainas veidlapas: N". "Rādīt datu tabulu" un eksports – nemainīti.
+
 - **Versija 222 – Pārskata grafikam laika griezums pēc perioda ("Rādītāji pa dienām / nedēļām / mēnešiem"):**
   - **Automātiski pēc perioda filtra:** līdz 31 dienai – **pa dienām**; 32–92 dienas – **pa nedēļām** (pirmdiena–svētdiena, uz ass – nedēļas sākuma datums, piem., "2.11."); ilgāks periods (vai bez perioda) – **pa mēnešiem**. Piemēri: "Šis mēnesis" – dienas, "Pēdējie 3 mēneši" – nedēļas, "Pēdējie 6 / 12 mēneši" – mēneši. Filtrētai kampaņai grafika robežas – pēc tās sūtījumu datumiem (ja visi sūtījumi ir vienā dienā / nedēļā / mēnesī, zem grafika – paskaidrojums un ieteikums izvēlēties sīkāku griezumu). Nākotnes dienas grafikā neiekļauj.
   - **Pārslēgs "Dienas · Nedēļas · Mēneši"** virsraksta rindas labajā pusē (automātiskais – aktīvs, padomā "Automātiski pēc perioda"). Lietotājs var izvēlēties citu griezumu; izvēle saglabājas, kamēr periods nemainās (arī pēc atgriešanās no sūtījumiem ar "← Atpakaļ uz atskaitēm"), pēc perioda maiņas – atkal automātiskais. Griezums, kas dotu vairāk par 92 punktiem, nav pieejams (pelēks; padomā, piem., "Šim periodam būtu 341 diena – vairāk par 92 punktiem. Izvēlieties īsāku periodu.").
