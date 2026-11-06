@@ -1083,6 +1083,12 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 215 – apakšcilnes atdalītas no "Mani filtri":**
+  - apakšcilņu josla (Pārskats · Piegāde · Reakcija un iesniegšana · Patērētais laiks (KPI)) – **zem** filtru rīkjoslas (un zem "Mani filtri" kopsavilkuma rindas / aktīvo filtru joslas), tieši virs atskaites satura: 1) filtri → 2) atskaites veids → 3) saturs; atstarpe starp filtriem un cilnēm ~12 px, cilņu izskats nav mainīts;
+  - "Mani filtri" vairs neglabā apakšcilni: logā "Jauns filtrs" / "Labot filtru" lauks "Atvērt šo apakšcilni" noņemts; filtra izvēle atvērto apakšcilni nemaina – filtrs tiek piemērots atvērtajai apakšcilnei un paliek spēkā, pārslēdzot citas; kopsavilkumā un "Pārvaldīt filtrus" "Apakšcilne: …" netiek rādīta;
+  - atverot sadaļu Atskaites (arī ar noklusējuma filtru), atvērta apakšcilne "Pārskats";
+  - agrāk saglabātajiem filtriem apakšcilne noņemta; piemēra filtrs "1-C Ceļotāji – reakcija" pārdēvēts par "1-C Ceļotāji".
+
 - **Versija 214 – KPI kartītes:** saite **"Atvērt →"** – kartītes apakšējā labajā stūrī (mazs teal teksts, vienmēr redzama; uzbraucot – pasvītrojums), vairs nepārklāj virsrakstu; virsraksts aizņem visu kartītes platumu, garš virsraksts pārnesas jaunā rindā; visas kartītes vienā augstumā, saite visās vienā vietā.
 - **Versija 214 – "Mani filtri" kopsavilkuma rinda** (kopīgā komponente – Kampaņas, Sūtījumi, Atskaites): kad izvēlēts saglabātais filtrs, tieši zem filtru rīkjoslas – viena pelēka rinda "Filtrā: {kritērijs} – {vērtība} · …" un saite **"Labot"** (atver filtra labošanas logu), piem., "Filtrā: Kampaņas statuss – Melnraksts · Veidotājs – Testa Darbinieks  Labot". Tikai norādītie kritēriji ar saprotamiem nosaukumiem; ja vērtību vairāk par 2 – pirmās 2 un "+N" (pilns saraksts padomā); pārāk gara rinda saīsināta ar "…" (pilns teksts padomā). Filtru lauki netiek aizpildīti (filtrs tiek piemērots kā slānis, atzīmes "mainīts" nav); parastie filtri darbojas papildus, kopsavilkums tos nerāda. Noņemot filtru (× vai "Rādīt visas … (bez filtra)") – rinda pazūd; pēc "Labot" un saglabāšanas – uzreiz atjaunojas.
 
