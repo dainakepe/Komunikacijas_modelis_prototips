@@ -1381,18 +1381,26 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .rk-plist li{grid-template-columns:minmax(0,1fr) auto;cursor:default}
 .rk-plist li:hover,.rk-plist li:focus-visible{background:var(--row-hover)}
 .rk-plist li:focus-visible{box-shadow:inset 0 0 0 2px var(--focus, var(--primary))}
-.rk-pfun{gap:0;max-width:520px}
-.rk-pfun li{padding:9px 6px;font-size:var(--fs-md)}
+/* Versija 225: piltuve – kompakta un neitrāla (blīvas rindas, pelēks nosaukums, tumši % parastā svarā, plānas līnijas) */
+.rk-pfun{gap:0;max-width:380px}
+.rk-pfun li{min-height:28px;padding:3px 4px;align-items:center;font-size:var(--fs-sm);color:var(--text-muted);border-radius:0}
+.rk-pfun li:hover{background:none}
 .rk-pfun li + li{border-top:1px solid var(--border-light)}
-.rk-pfun b{font-size:var(--fs-lg, 18px);font-weight:700;color:var(--text)}
+.rk-pfun b{font-size:var(--fs-md);font-weight:400;color:var(--text)}
+.rk-pfun-note{margin:6px 4px 0;font-size:var(--fs-xs);color:var(--text-muted)}
+.viz-grid.rx-g4{grid-template-columns:minmax(240px,380px) minmax(0,1.3fr) minmax(0,1fr);grid-template-rows:auto 1fr;align-items:start}
+.viz-grid.rx-g4 > .rx-repcard{grid-row:span 2}
+.viz-grid.rx-g4 > .viz-card:last-child{grid-column:3}
+@media (max-width:1200px){.viz-grid.rx-g4{grid-template-columns:minmax(240px,380px) minmax(0,1fr);grid-template-rows:none;grid-auto-flow:row dense}.viz-grid.rx-g4 > .viz-card:last-child{grid-column:auto}}
+@media (max-width:700px){.viz-grid.rx-g4{grid-template-columns:minmax(0,1fr)}}
 .rk-coll-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .rk-coll-h h3{margin:0;display:flex;align-items:center;gap:4px}
 .rk-coll.is-open .rk-coll-h{margin-bottom:10px}
 .rk-coll-btn{appearance:none;border:0;background:none;padding:2px 4px 2px 0;margin:0;font:inherit;color:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-align:left}
 .rk-coll-btn:hover{color:var(--primary)}
 .rk-coll-btn:focus-visible{outline:3px solid var(--focus-ring);outline-offset:2px;border-radius:var(--radius-xs)}
-.rk-chev{display:inline-block;width:1em;font-size:.85em;color:var(--text-muted);transition:transform .15s}
-.rk-coll.is-open .rk-chev{transform:rotate(90deg)}
+.rk-coll-h{cursor:pointer}
+.rk-chev{display:inline-block;width:1em;font-size:.85em;color:var(--text-muted)}
 .rk-coll-n{font-weight:400;color:var(--text-muted)}
 .tbl-exp-btn.rk-coll-exp{position:static;transform:none;flex:none}
 .rk-rlist-tot{margin:8px 6px 0;padding-top:8px;border-top:1px solid var(--border-light);font-size:var(--fs-sm);color:var(--text-secondary)}
@@ -4148,7 +4156,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 224</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 225</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -14757,11 +14765,9 @@ function deliveryView(xs){
     return [g[0].sessionName || `Kampaņa Nr. ${b}`, SESS_LABELS[g[0].sessionKind] || '', fmtDateTime(g[0].sentAt), g.length, v.piegadats, v.proc, v.fail, `${pct(v.piegadats, g.length)}%`]; });
   const pHead = ['Kampaņa', 'Veids', 'Datums', 'Vēstules', 'Piegādātas', 'Procesā', 'Neveiksmīgas', 'Piegādes %'];
   const byCh = ['eadrese', 'epasts', 'pasts'].map(ch => { const g = xs.filter(x => x.channel === ch), v = statusCounts(g); return [ch === 'pasts' ? 'Pasts (drukāta vēstule)' : CHANNELS[ch], g.length, v.piegadats, v.proc, v.fail, `${pct(v.piegadats, g.length)}%`]; });
-  // Versija 224: tabula pa kampaņām – pēc noklusējuma sakļauta (stāvoklis – ui.repDelivOpen, saglabājas, pārslēdzot apakšcilnes); eksporta ikona – virsraksta rindā
-  const dOpen = !!ui.repDelivOpen;
-  const s1 = `<div class="card viz-card tc-natural rk-coll${dOpen ? ' is-open' : ''}" style="margin-bottom:16px"><div class="rk-coll-h"><h3 data-title="Piegādes rezultāti pa kampaņām"><button type="button" class="rk-coll-btn" data-rk-coll aria-expanded="${dOpen}" aria-controls="rk-dcamp"><span class="rk-chev" aria-hidden="true">▸</span>Piegādes rezultāti pa kampaņām <span class="rk-coll-n">(${camps.length})</span></button>${tip('Piegādātas – e-adresē “Saņēmēja pieņemts”, e-pastā – 72 h laikā nav saņemts NDR. Procesā – Nosūtīta, Pieņemts DIV, Notiek piegāde, Atkārtots mēģinājums. Neveiksmīgas – Neveiksmīga, Sūtītāja puses kļūda, Neatpazīts. Uzklikšķinot uz virsraksta – izvērst / sakļaut tabulu; rindu var atvērt sūtījumos.')}</h3>
-      <button type="button" class="tbl-exp-btn rk-coll-exp" data-tbl-card title="Eksportēt" aria-label="Eksportēt tabulu “Piegādes rezultāti pa kampaņām”" aria-haspopup="menu" aria-expanded="false">${TBL_DL_ICON}</button></div>
-      <div id="rk-dcamp" class="rk-coll-body"${dOpen ? '' : ' hidden'}>${tableHtml(pHead, pRows, 'rep-table tbl-noexp', 'Nav datu atlasītajam periodam', camps.map(([b]) => ({f:{camp:String(b)}})))}</div></div>
+  // Versija 224/225: tabula pa kampaņām – kopīgais sakļaujamais bloks (pēc noklusējuma sakļauts)
+  const s1 = `${collCardHtml('dcamp', 'Piegādes rezultāti pa kampaņām', camps.length, 'Piegādātas – e-adresē “Saņēmēja pieņemts”, e-pastā – 72 h laikā nav saņemts NDR. Procesā – Nosūtīta, Pieņemts DIV, Notiek piegāde, Atkārtots mēģinājums. Neveiksmīgas – Neveiksmīga, Sūtītāja puses kļūda, Neatpazīts. Uzklikšķinot uz virsraksta rindas – izvērst / sakļaut tabulu; rindu var atvērt sūtījumos.',
+      tableHtml(pHead, pRows, 'rep-table tbl-noexp', 'Nav datu atlasītajam periodam', camps.map(([b]) => ({f:{camp:String(b)}}))), {style:'margin-bottom:16px'})}
     <div class="viz-grid g-ch"><div class="card viz-card tc-natural"><h3>Pa kanāliem</h3>${tableHtml(['Kanāls', 'Vēstules', 'Piegādātas', 'Procesā', 'Neveiksmīgas', 'Piegādes %'], byCh, undefined, undefined, ['eadrese', 'epasts', 'pasts'].map(ch => ({f:{ch}})))}</div>
       ${repChCardHtml(xs)}</div>`;
   // 2. neveiksmīgās ziņas (NDR / DIV)
@@ -14783,7 +14789,8 @@ function deliveryView(xs){
         <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Tips', 'Skaits'], byType.map(r => [r.label, r.v]))}</details></div>
       <div class="card viz-card"><h3>Novirzījums${tip('Kam paziņojums tiek novirzīts pēc klasifikācijas.')}</h3>${byRoute.length ? singleBars(byRoute) : '<p class="hint">Nav datu.</p>'}
         <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Novirzīts', 'Skaits'], byRoute.map(r => [r.label, r.v]))}</details></div></div>
-    <div class="card viz-card tc-natural"><h3>NDR un DIV paziņojumi</h3>${tableHtml(nHead, nRows, undefined, 'Atlasītajā periodā NDR/DIV paziņojumu nav')}</div>`;
+    ${collCardHtml('dndr', 'Nepiegādes paziņojumi', nRows.length, 'Tehniskie paziņojumi par nepiegādi: NDR (Non-Delivery Report – e-pasta servera atbilde) un DIV (eAdreses piegādes statusi). Katrs paziņojums – atsevišķa rinda; klasifikācija un automātiskā rīcība – pēc noteikumiem "Piegādes statusi un kļūdas".',
+      tableHtml(nHead, nRows, 'rep-table tbl-noexp', 'Atlasītajā periodā nepiegādes paziņojumu nav'))}`;
   // 3. atkārtotā nosūtīšana
   const rs = xs.filter(isRetried);
   const why = x => { const used = (x.attempts || []).filter(a => attKind(a) !== 'skip'), r = [];
@@ -14799,7 +14806,8 @@ function deliveryView(xs){
       <div class="card kpi"><div class="n">${rs.length}</div><div class="l">Atkārtoti nosūtītas</div><div class="sub">${pct(rs.length, xs.length)}% no visām vēstulēm</div></div>
       <div class="card kpi"><div class="n">${okAfter}</div><div class="l">Veiksmīgas pēc atkārtojuma</div></div>
       <div class="card kpi"><div class="n">${rs.length - okAfter}</div><div class="l">Neveiksmīgas vai vēl atkārto</div></div></div>
-    <div class="card viz-card tc-natural"><h3>Atkārtotā nosūtīšana</h3>${tableHtml(aHead, aRows, undefined, 'Atlasītajā periodā atkārtotas nosūtīšanas nav')}</div>`;
+    ${collCardHtml('dret', 'Atkārtotā nosūtīšana', aRows.length, 'Vēstules, kurām bijis vairāk par vienu piegādes mēģinājumu: pagaidu kļūda, pāreja uz nākamo adresi, ziņa bez pielikuma vai manuāla atkārtota nosūtīšana.',
+      tableHtml(aHead, aRows, 'rep-table tbl-noexp', 'Atlasītajā periodā atkārtotas nosūtīšanas nav'))}`;
   // grafiks "Nosūtītās un piegādātās ziņas pa mēnešiem" (pārvietots no "Pārskata"; skaits / %)
   const bs = monthBuckets(xs), mode = ui.rep.chart === 'p' ? 'p' : 'n', part = bs.length && bs[bs.length - 1].partial;
   const s0 = `<div class="card viz-card" style="margin-bottom:16px"><div class="rk-chart-h"><h3>${mode === 'p' ? 'Piegādes īpatsvars pa mēnešiem' : 'Nosūtītās un piegādātās ziņas pa mēnešiem'}${tip('Piegādātas – e-adresē “Saņēmēja pieņemts”, e-pastā – 72 h laikā nav saņemts NDR. Uz mēneša var uzklikšķināt – atver sūtījumus ar šo periodu.')}</h3>
@@ -14808,7 +14816,7 @@ function deliveryView(xs){
       ${bs.length ? `<p class="rk-note">${part ? `Raustītā līnija – nepabeigts periods (dati līdz ${esc(bs[bs.length - 1].end)}). ` : ''}${bs.some(b => !b.sent) ? 'Mēneši bez sūtījumiem – pārtraukums līnijā. ' : ''}Uz mēneša var uzklikšķināt.</p>` : ''}
       <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %'], bs.map(b => [b.label, b.sent, b.deliv, b.base ? `${pct(b.deliv, b.base)}%` : '—']))}</details></div>`;
   return {html:sec('Piegādes rezultāti', s0 + s1) + sec('Neveiksmīgās ziņas', s2) + sec('Atkārtotā nosūtīšana', s3),
-    sheets:[{name:'Pa mēnešiem', rows:[['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %'], ...bs.map(b => [b.label, b.sent, b.deliv, b.base ? pct(b.deliv, b.base) : ''])]}, {name:'Piegādes rezultāti', rows:[pHead, ...pRows]}, {name:'NDR un DIV paziņojumi', rows:[nHead, ...csvRows(nRows)]}, {name:'Atkārtotā nosūtīšana', rows:[aHead, ...csvRows(aRows)]}]};
+    sheets:[{name:'Pa mēnešiem', rows:[['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %'], ...bs.map(b => [b.label, b.sent, b.deliv, b.base ? pct(b.deliv, b.base) : ''])]}, {name:'Piegādes rezultāti', rows:[pHead, ...pRows]}, {name:'Nepiegādes paziņojumi', rows:[nHead, ...csvRows(nRows)]}, {name:'Atkārtotā nosūtīšana', rows:[aHead, ...csvRows(aRows)]}]};
 }
 // NDR iemesli ar noteikuma atslēgu (klikšķim)
 // Versija 218: "Nepiegādes iemesli" – saprotami nosaukumi; katra ziņa ieskaitīta vienreiz (pēdējais nepiegādes paziņojums);
@@ -14823,7 +14831,7 @@ function ndrReasonList(xs){
 // Versija 223: vienkāršs saraksts "nosaukums – %" (tāds pats stils kā "Nepiegādes iemesli"; bez joslām); skaitļi – padomā (data-tip "teksts|skaits")
 // o.big – lielāki procenti un plānas atdalītājlīnijas (piltuve); o.label – saraksta nosaukums ekrāna lasītājiem
 const pctListHtml = (rows, o = {}) => `<${o.big ? 'ol' : 'ul'} class="rk-rlist rk-plist${o.big ? ' rk-pfun' : ''}"${o.label ? ` aria-label="${esc(o.label)}"` : ''}>${rows.map(r =>
-  `<li tabindex="0" data-tip="${esc(`${r.tipH || r.label}|${r.tip}`)}" aria-label="${esc(`${r.label}: ${r.v}% (${r.tip})`)}"><span class="rl-l" title="${esc(r.label)}">${esc(r.label)}</span><b>${r.v}%</b></li>`).join('')}</${o.big ? 'ol' : 'ul'}>`;
+  `<li tabindex="0" data-tip="${esc(`${r.tipH || r.label}|${r.tip}`)}" aria-label="${esc(`${r.label}: ${r.v}% (${r.tip})`)}"><span class="rl-l" title="${esc(r.label)}">${esc(r.label)}</span><b>${r.v}%</b></li>`).join('')}</${o.big ? 'ol' : 'ul'}>${o.big ? '<p class="rk-pfun-note">% no piegādātajām ziņām</p>' : ''}`;
 const ndrReasonHtml = d => d.n ? `<ul class="rk-rlist">${d.rows.map(r => `<li${drillAttr(r.drill)} title="Atvērt sūtījumos" aria-label="${esc(`${r.label}: ${r.p}% (${r.v}) – atvērt sūtījumos`)}"><span class="rl-l">${esc(r.label)}</span><b>${r.p}%</b><span class="rl-n">(${fmtCount(r.v)})</span></li>`).join('')}</ul>
   <p class="rk-rlist-tot">Kopā: ${fmtCount(d.n)} ${plural(d.n, 'nepiegādāta', 'nepiegādātas')}</p>` : '<p class="hint">Nav nepiegādes paziņojumu.</p>';
 // Versija 224: kopīgās kartītes apakšcilnēm "Pārskats" un "Piegāde" (viena komponente – izmaiņas abās vienādas)
@@ -14915,9 +14923,20 @@ function grainSegHtml(G){
     const t = ok ? (G.auto === k ? 'Automātiski pēc perioda' : '') : `Šim periodam būtu ${n} ${plural(n, ...GRAIN[k].u)} – vairāk par ${GRAIN_MAX} punktiem. Izvēlieties īsāku periodu.`;
     return `<button type="button" data-rk-grain="${k}" aria-pressed="${G.g === k}"${ok ? (t ? ` title="${esc(t)}"` : '') : ` aria-disabled="true" data-ctip="${esc(t)}"`}>${GRAIN[k].btn}</button>`; }).join('')}</span>`;
 }
-document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-rk-coll]'); if (!b) return;
-  const c = b.closest('.rk-coll'), body = c && c.querySelector('.rk-coll-body'); if (!body) return;
-  ui.repDelivOpen = !ui.repDelivOpen; body.hidden = !ui.repDelivOpen; c.classList.toggle('is-open', ui.repDelivOpen); b.setAttribute('aria-expanded', String(ui.repDelivOpen)); });
+// ===== Versija 225: kopīgs sakļaujams bloks atskaitēs ("▸/▾" + virsraksts + (skaits); eksporta ikona virsraksta rindā – arī sakļautam) =====
+// Stāvoklis – ui.repColl[atslēga] (sesijas laikā; saglabājas, pārslēdzot apakšcilnes un mainot filtrus). Pēc noklusējuma – sakļauts.
+ui.repColl = {};
+function collCardHtml(key, title, n, tipTxt, body, o = {}){
+  const open = !!ui.repColl[key], id = `rk-coll-${key}`;
+  return `<div class="card viz-card tc-natural rk-coll${open ? ' is-open' : ''}" data-coll="${key}"${o.style ? ` style="${o.style}"` : ''}><div class="rk-coll-h"><h3 data-title="${esc(title)}"><button type="button" class="rk-coll-btn" data-rk-coll aria-expanded="${open}" aria-controls="${id}"><span class="rk-chev" aria-hidden="true">${open ? '▾' : '▸'}</span>${esc(title)} <span class="rk-coll-n">(${fmtCount(n)})</span></button>${tipTxt ? tip(tipTxt) : ''}</h3>
+    <button type="button" class="tbl-exp-btn rk-coll-exp" data-tbl-card title="Eksportēt" aria-label="${esc(`Eksportēt tabulu “${title}”`)}" aria-haspopup="menu" aria-expanded="false">${TBL_DL_ICON}</button></div>
+    <div id="${id}" class="rk-coll-body"${open ? '' : ' hidden'}>${body}</div></div>`;
+}
+// klikšķis uz visas virsraksta rindas (izņemot eksporta ikonu un (i)) – izvērst / sakļaut, bez pārzīmēšanas
+document.addEventListener('click', e => { const h = e.target.closest && e.target.closest('.rk-coll-h'); if (!h || e.target.closest('.tbl-exp-btn, .tip')) return;
+  const c = h.closest('.rk-coll'), k = c && c.dataset.coll, body = c && c.querySelector('.rk-coll-body'), b = h.querySelector('[data-rk-coll]'); if (!body || !k) return;
+  const open = !ui.repColl[k]; ui.repColl[k] = open; body.hidden = !open; c.classList.toggle('is-open', open);
+  b.setAttribute('aria-expanded', String(open)); b.querySelector('.rk-chev').textContent = open ? '▾' : '▸'; });
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-rk-grain]'); if (!b || b.getAttribute('aria-disabled') === 'true' || !repGrainLast) return;
   const g = b.dataset.rkGrain; ui.rep.grain = {sig:repGrainLast.sig, g}; renderReports(); clarEvent('atskaites_griezums');
   const n = $(`#rep-body [data-rk-grain="${g}"]`); if (n) n.focus(); });
@@ -15111,15 +15130,16 @@ function reactReportView(){
       ${kpi(nF ? `${pct(ies.length, nF)}%` : '—', 'Iesniegšanas rādītājs', `${ies.length} no ${nF} ${plural(nF, 'veidlapas', 'veidlapām')} vēstulēs`)}
       ${kpi(ies.length ? dStr(toSub(fs)) : '—', 'Vidējais laiks no vēstules līdz iesniegšanai', `${ies.length} ${plural(ies.length, 'iesniegta veidlapa', 'iesniegtas veidlapas')}`)}
       ${kpi(nF ? `${pct(kl.length, nF)}%` : '—', 'Kļūdaino veidlapu īpatsvars', `${kl.length} ${plural(kl.length, 'kļūdaina veidlapa', 'kļūdainas veidlapas')}`)}</div>
-    ${f.camp ? repCampReact(f.camp, f.rep) : `<div class="card viz-card" style="margin-bottom:16px"><h3>Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms – 100%). Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta. Skaits – padomā.')}</h3>${nD ? pctListHtml(funnel, {big:true, label:'Piltuve'}) : '<p class="hint">Nav piegādātu ziņu.</p>'}
+    ${f.camp ? repCampReact(f.camp, f.rep) : ''}
+    <div class="viz-grid${f.camp ? ' g3' : ' rx-g4'}">
+      ${f.camp ? '' : `<div class="card viz-card rx-funcard"><h3>Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms – 100%). Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta. Skaits – padomā.')}</h3>${nD ? pctListHtml(funnel, {big:true, label:'Piltuve'}) : '<p class="hint">Nav piegādātu ziņu.</p>'}
       <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Posms', '%'], funnel.map(r => [r.label, `${r.v}%`]))}</details></div>`}
-    <div class="viz-grid g3">
-      <div class="card viz-card"><h3>Iesniegšanas % pa apsekojumiem${tip('Iesniegtās veidlapas no visām vēstulēs iekļautajām šī apsekojuma veidlapām; sakārtots pēc procentiem dilstoši. Skaits – padomā un eksportā.')}</h3>${byRep.length ? pctListHtml(byRep, {label:'Iesniegšanas % pa apsekojumiem'}) : '<p class="hint">Nav datu.</p>'}
+      <div class="card viz-card rx-repcard"><h3>Iesniegšanas % pa apsekojumiem${tip('Iesniegtās veidlapas no visām vēstulēs iekļautajām šī apsekojuma veidlapām; sakārtots pēc procentiem dilstoši. Skaits – padomā un eksportā.')}</h3>${byRep.length ? pctListHtml(byRep, {label:'Iesniegšanas % pa apsekojumiem'}) : '<p class="hint">Nav datu.</p>'}
         <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Apsekojums', 'Iesniegšanas %'], byRep.map(r => [r.label, `${r.v}%`]))}</details></div>
       ${card('Atvēršanas % pa kampaņu veidiem', byKind, '%', ['Kampaņas veids', 'Atvēršanas %', 'Vēstules'])}
       ${card('Vidējais laiks', times, ' st.', ['Posms', 'Vidēji, st.', 'Veidlapas'], 'Atvēršana → iesākšana: no vēstules atvēršanas līdz veidlapas iesākšanai; iesākšana → iesniegšana: no iesākšanas līdz (pēdējai) iesniegšanai.')}
     </div>
-    <div class="card viz-card"><h3>Pa kampaņām</h3>${tableHtml(head, rows, undefined, 'Atlasītajā periodā nav kampaņu')}</div>
+    ${collCardHtml('rcamp', 'Reakcija un iesniegšana pa kampaņām', camps.length, 'Katrai kampaņai – atvērto vēstuļu un iesniegto veidlapu īpatsvars, kļūdainās veidlapas un vidējais laiks līdz iesniegšanai.', tableHtml(head, rows, 'rep-table tbl-noexp', 'Atlasītajā periodā nav kampaņu'))}
     <p class="hint">Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena (izsekošanas attēls).</p>`,
     sheets:[{name:'Pa kampaņām', rows:[['Kampaņa', 'Nr.', 'Veids', 'Nosūtīts', 'Vēstules', 'Veidlapas', 'Atvērtas %', 'Iesniegtas %', 'Kļūdainas', 'Vid. laiks līdz iesniegšanai, d.'],
       ...camps.map(c => [c.name, c.b, c.kind, fmtDate(isoDate(new Date(c.at))), c.n, c.nF, c.open, c.sub ?? '', c.kl, c.t == null ? '' : (Math.round(c.t / D * 10) / 10).toFixed(1).replace('.', ',')])]},
@@ -15313,6 +15333,7 @@ function tblDownload(fmt, base, rows, sheet){
   return name;
 }
 function tblExport(t, fmt){
+  const hb = t.closest('.rk-coll-body[hidden]'); if (hb){ hb.hidden = false; try { return tblExport(t, fmt); } finally { hb.hidden = true; } }
   const ctx = tblCtx(t), base = ctx.sec(t);
   let rows;
   if (ctx.lim){ const k = ctx.lim.get(), y = window.scrollY, a0 = t.closest('.tc-area, .camp-scroll'), st = a0 ? a0.scrollTop : 0; ctx.lim.set(1e9); ui.tblExpAll = true;
