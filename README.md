@@ -1083,6 +1083,11 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 216 – atgriešanās atskaitē pēc pārejas:** pārejot no Atskaitēm (KPI kartītes "Atvērt →", mēnešu grafika punkti, kanālu diagramma, joslu diagrammas, tabulu rindas, MI kopsavilkuma saites) uz Sūtījumiem, tiek atcerēta izcelsme – atvērtā apakšcilne, visi filtri (arī "Mani filtri"), periods un ritināšanas pozīcija.
+  - Mērķa skatā ("Visi sūtījumi" vai kampaņas 2. līmenis) virs virsraksta – saite **"← Atpakaļ uz atskaitēm"** (tajā pašā vietā un stilā kā "← Sūtījumi"); klikšķis atgriež Atskaitēs tieši tādā pašā stāvoklī.
+  - Ja Sūtījumos pāriet tālāk (piem., uz citu kampaņu vai skatu "Pa kampaņām"), tur saites nav (2. līmenī – parastā "← Sūtījumi"); atgriežoties mērķa skatā – saite atkal redzama. Atverot citu sadaļu galvenajā navigācijā, izcelsme tiek aizmirsta.
+  - Pārlūka "atpakaļ" (`?v=…` navigācija) arī atgriež atskaitē tādā pašā stāvoklī. Mērķa skatā pielietotie filtri (periods, kanāls, "Jārisina", "Atskaišu filtrs: …") – kā līdz šim.
+
 - **Versija 215 – apakšcilnes atdalītas no "Mani filtri":**
   - apakšcilņu josla (Pārskats · Piegāde · Reakcija un iesniegšana · Patērētais laiks (KPI)) – **zem** filtru rīkjoslas (un zem "Mani filtri" kopsavilkuma rindas / aktīvo filtru joslas), tieši virs atskaites satura: 1) filtri → 2) atskaites veids → 3) saturs; atstarpe starp filtriem un cilnēm ~12 px, cilņu izskats nav mainīts;
   - "Mani filtri" vairs neglabā apakšcilni: logā "Jauns filtrs" / "Labot filtru" lauks "Atvērt šo apakšcilni" noņemts; filtra izvēle atvērto apakšcilni nemaina – filtrs tiek piemērots atvērtajai apakšcilnei un paliek spēkā, pārslēdzot citas; kopsavilkumā un "Pārvaldīt filtrus" "Apakšcilne: …" netiek rādīta;
