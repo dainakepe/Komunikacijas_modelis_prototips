@@ -1083,6 +1083,12 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 224 – apakšcilne "Piegāde" saskaņota ar "Pārskatu":**
+  - **"Piegādes rezultāti pa kampaņām (N)"** – pēc noklusējuma sakļauts: redzama tikai virsraksta rinda ar "▸" un kampaņu skaitu; klikšķis (vai Enter) izvērš / sakļauj tabulu ("▸" pagriežas). Stāvoklis saglabājas, pārslēdzot apakšcilnes un mainot filtrus. Eksporta ikona – virsraksta rindas labajā pusē, redzama arī sakļautā stāvoklī (eksportē visas tabulas rindas; failā "atskaite_piegade_piegades_rezultati_pa_kampanam_{datums}").
+  - **"Ziņas pa kanāliem"** – tā pati komponente kā Pārskatā (`repChCardHtml`): kanālu segmenti ar piegādātajām ziņām, "Procesā" un sarkanais "Nepiegādātas", leģenda ar % un (skaitu), padomi; agrākais atšķirīgais attēlojums noņemts. Tabula "Pa kanāliem" blakus – nemainīta.
+  - **"Nepiegādes iemesli"** – tā pati komponente kā Pārskatā (`repNdrCardHtml`) aizstāj "NDR/DIV pa iemesliem": (i) padoms ar NDR/DIV skaidrojumu, saraksts "iemesls · % no nepiegādātajām · (skaits)" bez stabiņiem, apakšā "Kopā: N nepiegādātas"; klikšķis uz iemesla atver Sūtījumus ar šo iemeslu. Paziņojumu un neveiksmīgo vēstuļu skaits (manuāla pārbaude, administratoram) – rindā virs bloka; "Pa tipiem", "Novirzījums" un NDR/DIV paziņojumu tabula – nemainīti.
+  - Abās apakšcilnēs – vienas un tās pašas funkcijas, tāpēc ar tiem pašiem filtriem rāda tos pašus skaitļus un izmaiņas turpmāk būs vienādas.
+
 - **Versija 223 – "Reakcija un iesniegšana" bez joslām (tikai procenti):**
   - **Piltuve** – vienkāršs saraksts: posma nosaukums kreisajā pusē, % labajā pusē (lielāks fonts), starp rindām plāna pelēka atdalītājlīnija: Piegādātas · Atvērtas · Anketa uzsākta · Iesniegtas. Joslu, stabiņu un krāsainu formu vairs nav; skaits ("N no N piegādātajām ziņām") – tikai padomā (pele vai tastatūras fokuss) un eksportā.
   - **Iesniegšanas % pa apsekojumiem** – saraksts "apsekojuma kods un nosaukums · iesniegšanas %", sakārtots pēc % dilstoši; skaits ("Iesniegtas N no N veidlapām") – padomā un eksportā.
