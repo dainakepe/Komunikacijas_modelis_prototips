@@ -4088,7 +4088,7 @@ body.has-consent-bar{padding-bottom:52px}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 212</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 213</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7609,19 +7609,36 @@ function initClarityConsent(){
     bar.remove(); document.body.classList.remove('has-consent-bar'); });
   document.body.appendChild(bar); document.body.classList.add('has-consent-bar');
 }
-// sadaļa / solis / līmenis → Clarity tagi un adreses hash (bez pārlādes; history.replaceState – pārlūka "atpakaļ" darbojas kā līdz šim)
+// Versija 213: sadaļa / solis / līmenis → Clarity tagi un adreses vaicājuma parametrs ?v=… (history.pushState – bez pārlādes;
+// Clarity katru skatu uztver kā atsevišķu lapu, karstuma kartes – pa skatiem). Pārlūka "atpakaļ" / "uz priekšu" – popstate → route().
+// Iekšējas izmaiņas tajā pašā skatā (filtri, izvērstas rindas) adresi nemaina; citi vaicājuma parametri saglabājas.
 const CLAR_SEC = {kampanas:'Kampanas', vesture:'Sutijumi', veidnes:'Veidnes', atskaites:'Atskaites'};
 const CLAR_STEP = ['1-Pamatdati', '2-Respondenti', '3-Saturs', '4-Parbaude', '5-Nosutisana'];
 const clarLast = {};
 const clarSet = (k, v) => { if (clarLast[k] !== v){ clarLast[k] = v; clar('set', k, v); } };
+let navReady = false; // līdz pirmajai route() adrese netiek mainīta (sākotnējā zīmēšana)
+let navMode = 'replace'; // 'push' – jauns vēstures ieraksts; 'replace' – lapas ielāde / vecā #adrese; popstate laikā – tikai precizē adresi
+const VIEW_SEC = {kampanas:'Kampanas', sutijumi:'Sutijumi', veidnes:'Veidnes', atskaites:'Atskaites'};
+function viewUrl(v){
+  const u = new URL(location.href);
+  if (v) u.searchParams.set('v', v); else u.searchParams.delete('v');
+  u.hash = '';
+  return u.pathname + u.search;
+}
 function trackNav(){
-  if ($('#module-view').hidden || !TABS.includes(ui.tab)) return;
-  const t = ui.tab, edit = t === 'kampanas' && ui.campView === 'edit', lvl = t === 'vesture' && ui.jrn && ui.jrn.camp != null ? '2' : '1';
-  clarSet('sadala', CLAR_SEC[t]);
-  if (edit) clarSet('solis', CLAR_STEP[(compose.step || 1) - 1]);
-  if (t === 'vesture') clarSet('limenis', lvl);
-  const hash = edit ? `kampanas/solis-${compose.step || 1}` : t === 'vesture' ? (lvl === '2' ? 'sutijumi/limenis-2' : 'sutijumi') : t;
-  if (location.hash !== '#' + hash) try { history.replaceState(null, '', '#' + hash); } catch (e) {}
+  if (!navReady) return;
+  const home = $('#module-view').hidden;
+  let v = '';
+  if (!home && TABS.includes(ui.tab)){
+    const t = ui.tab, edit = t === 'kampanas' && ui.campView === 'edit', lvl = t === 'vesture' && ui.jrn && ui.jrn.camp != null ? '2' : '1';
+    clarSet('sadala', CLAR_SEC[t]);
+    if (edit) clarSet('solis', CLAR_STEP[(compose.step || 1) - 1]);
+    if (t === 'vesture') clarSet('limenis', lvl);
+    v = edit ? `kampanas-solis-${compose.step || 1}` : t === 'vesture' ? (lvl === '2' ? 'sutijumi-2' : 'sutijumi') : t;
+  } else if (!home) return;
+  const have = new URLSearchParams(location.search).get('v') || '';
+  if (have === v && !location.hash) return;
+  try { if (navMode === 'push' && have !== v) history.pushState({v}, '', viewUrl(v)); else history.replaceState({v}, '', viewUrl(v)); } catch (e) {}
 }
 
 /* =====================================================================
@@ -7633,10 +7650,30 @@ const TAB_LABELS = {kampanas:'Kampaņas', veidnes:'Veidnes', vesture:'Sūtījumi
 function showHome(){
   $('#home-view').hidden = false; $('#module-view').hidden = true;
   document.title = 'DELTA – prototips';
+  trackNav();
   window.scrollTo({top:0});
+}
+// ?v=… skats (Versija 213): atver attiecīgo skatu (pārlādējot, no saites, ar "atpakaļ" / "uz priekšu")
+function routeView(v){
+  if (drawer.open) drawer.close();
+  if (lmDlg.open) lmDlg.close();
+  const m = /^kampanas-solis-(\d)$/.exec(v);
+  if (!v || v === 'sakums') showHome();
+  else if (m){ const n = +m[1];
+    if (ui.tab === 'kampanas' && ui.campView === 'edit' && !$('#module-view').hidden){ if (n !== compose.step && (ui.view || (!apvLocked() && (n === 1 || selCanGo())))) setStep(n); else trackNav(); }
+    else { openEditor(); if (n !== compose.step && !ui.view && !apvLocked() && (n === 1 || selCanGo())) setStep(n); } }
+  else if (v === 'sutijumi'){ if (ui.jrn) ui.jrn.camp = null; showTab('vesture'); }
+  else if (v === 'sutijumi-2') showTab('vesture'); // kampaņa – no pēdējā skata (pārlādējot – 1. līmenis)
+  else if (v === 'veidnes'){ ui.tplView = 'veidnes'; showTab('veidnes'); }
+  else if (TABS.includes(v)) showTab(v);
+  else showTab('kampanas');
 }
 function route(){
   const h = location.hash.slice(1);
+  if (!h){ routeView(new URLSearchParams(location.search).get('v') || ''); return; }
+  // vecās adreses (#kampanas, #kampanas/solis-2, #sutijumi, #vesture, …) – tiek pārvērstas uz ?v=…
+  navMode = 'replace';
+  { const m = /^kampanas\/solis-(\d)$/.exec(h); if (m || h === 'sutijumi/limenis-2'){ routeView(m ? `kampanas-solis-${m[1]}` : 'sutijumi-2'); trackNav(); navMode = 'push'; return; } }
   if (drawer.open) drawer.close();
   if (lmDlg.open) lmDlg.close();
   if (!h || h === 'sakums') showHome();
@@ -7646,6 +7683,7 @@ function route(){
   else if (h === 'kampana' || h === 'sagatavot' || /^kampanas\/solis-\d$/.test(h)) openEditor();
   else if (h === 'nosutitas' || h === 'sutijumi' || h === 'sutijumi/limenis-2') showTab('vesture');
   else { if (h === 'veidnes') ui.tplView = 'veidnes'; showTab(h); }
+  trackNav(); navMode = 'push';
 }
 // Navigācijas ceļš: DELTA › Respondentu pārvaldība › Komunikācija › [cilne] (› kampaņa)
 // Navigācijas ceļš: DELTA › Respondentu pārvaldība › Komunikācija › [cilne]
@@ -16514,6 +16552,7 @@ $('#sag-search').addEventListener('input', e => { ui.sag.q = e.target.value; ui.
   $(sel).addEventListener('change', e => { ui.sag[k] = e.target.value; renderSagataves(); }));
 $('#sag-add').addEventListener('click', () => ui.sagGroup === 'att' ? openAttForm() : openMailSampleForm());
 window.addEventListener('hashchange', route);
+window.addEventListener('popstate', () => { if (location.hash) return; /* #saites apstrādā hashchange */ navMode = 'replace'; try { route(); } finally { navMode = 'push'; } });
 
 function renderAll(){
   renderCounts(); renderSagataves(); renderTemplates(); renderCompose(); renderCampaigns(); renderSent();
@@ -16862,7 +16901,7 @@ save();
 alBaseline();
 renderAll();
 renderDraftInfo();
-route();
+navReady = true; navMode = 'replace'; route(); navMode = 'push';
 initClarityConsent();
 </script>
 </body>

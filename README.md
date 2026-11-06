@@ -1228,7 +1228,10 @@ Versija 212: prototipā ir **Microsoft Clarity** (projekts `z8spe1tlla`) lietoja
   - `sadala`: `Kampanas` · `Sutijumi` · `Veidnes` · `Atskaites`;
   - `solis` (kampaņā): `1-Pamatdati` · `2-Respondenti` · `3-Saturs` · `4-Parbaude` · `5-Nosutisana`;
   - `limenis` (Sūtījumos): `1` (kampaņu saraksts) · `2` (kampaņas vēstules).
-- **Adrese (hash)** tiek atjaunināta bez lapas pārlādes (`history.replaceState` – pārlūka "atpakaļ" darbojas kā līdz šim): `#kampanas`, `#kampanas/solis-1` … `#kampanas/solis-5`, `#sutijumi`, `#sutijumi/limenis-2`, `#veidnes`, `#atskaites`. Atverot adresi `#kampanas/solis-N`, atveras kampaņas redaktors; agrākās adreses (`#kampana`, `#vesture`, `#nosutitas`) darbojas joprojām.
+- **Adrese – vaicājuma parametrs `?v=`** (Versija 213; agrāk – hash ar `history.replaceState`, tāpēc Clarity karstuma kartēs visi skati bija uz viena sākumlapas ekrānuzņēmuma): katrā sadaļas, kampaņas soļa un Sūtījumu līmeņa maiņā – `history.pushState` bez lapas pārlādes, tāpēc Clarity katru skatu uztver kā atsevišķu lapu: `?v=kampanas`, `?v=kampanas-solis-1` … `?v=kampanas-solis-5`, `?v=sutijumi`, `?v=sutijumi-2`, `?v=veidnes`, `?v=atskaites` (sākumlapa – bez `v`). Pēc katras maiņas – arī Clarity tagi (`sadala`, `solis`, `limenis`).
+  - Ielādējot lapu ar `?v=…` (pārlādējot vai no saites), atveras attiecīgais skats; kampaņas solis – ja uz to var pāriet (citādi – melnraksta saglabātais solis); `?v=sutijumi-2` pēc pārlādes – 1. līmenis (kampaņa nav zināma). GitHub Pages ar parametru atver to pašu `index.html`.
+  - Pārlūka "atpakaļ" / "uz priekšu" (`popstate`) pārslēdz skatus (arī kampaņas soļus un Sūtījumu līmeņus); iekšējas izmaiņas tajā pašā skatā (filtri, izvērstas rindas) adresi nemaina.
+  - Vecās adreses (`#kampanas`, `#kampanas/solis-3`, `#sutijumi`, `#sutijumi/limenis-2`, `#vesture`, `#kampana`, `#veidnes`, `#sakums` u.c.) un saites ar `#…` darbojas – tiek pārvērstas uz `?v=…`. Citi vaicājuma parametri saglabājas.
 - **Notikumi** (`clarity('event', …)`):
 
   | Notikums | Kad |
