@@ -1083,6 +1083,11 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 225 – sakļaujamās tabulas un kompaktāka piltuve:**
+  - **Kopīgs sakļaujamais bloks** (`collCardHtml`; tas pats, ko "Piegādes rezultāti pa kampaņām"): "▸/▾" + virsraksts + (skaits); klikšķis uz visas virsraksta rindas (vai Enter uz virsraksta) izvērš / sakļauj; (i) un eksporta ikona virsraksta rindā – eksporta ikona redzama arī sakļautā stāvoklī (eksportē visas rindas). Pēc noklusējuma – sakļauts; stāvoklis tiek atcerēts sesijas laikā (pārslēdzot apakšcilnes un mainot filtrus).
+  - **Piegāde:** "Piegādes rezultāti pa kampaņām (N)", **"Nepiegādes paziņojumi (N)"** (agrāk "NDR un DIV paziņojumi"; (i) – tehniskais nosaukums NDR/DIV; arī eksporta lapas nosaukums) un **"Atkārtotā nosūtīšana (N)"** – sakļauti.
+  - **Reakcija un iesniegšana:** tabula **"Reakcija un iesniegšana pa kampaņām (N)"** – sakļauta. **Piltuve** – kompakta un neitrāla: bloks ~380 px platumā blakus pārējiem blokiem ("Iesniegšanas % pa apsekojumiem" – blakus, "Atvēršanas % pa kampaņu veidiem" un "Vidējais laiks" – labajā kolonnā; šaurākā ekrānā – divas / viena kolonna); blīvas rindas (~28 px), posma nosaukums pelēkā tekstā, % – tumšā, parastā svarā, nedaudz lielākā fontā, bez krāsām un fona, starp rindām tikai plāna pelēka līnija; zem pēdējās rindas – "% no piegādātajām ziņām". Skaitļi – padomā. Tāds pats piltuves stils – arī kampaņas skatā.
+
 - **Versija 224 – apakšcilne "Piegāde" saskaņota ar "Pārskatu":**
   - **"Piegādes rezultāti pa kampaņām (N)"** – pēc noklusējuma sakļauts: redzama tikai virsraksta rinda ar "▸" un kampaņu skaitu; klikšķis (vai Enter) izvērš / sakļauj tabulu ("▸" pagriežas). Stāvoklis saglabājas, pārslēdzot apakšcilnes un mainot filtrus. Eksporta ikona – virsraksta rindas labajā pusē, redzama arī sakļautā stāvoklī (eksportē visas tabulas rindas; failā "atskaite_piegade_piegades_rezultati_pa_kampanam_{datums}").
   - **"Ziņas pa kanāliem"** – tā pati komponente kā Pārskatā (`repChCardHtml`): kanālu segmenti ar piegādātajām ziņām, "Procesā" un sarkanais "Nepiegādātas", leģenda ar % un (skaitu), padomi; agrākais atšķirīgais attēlojums noņemts. Tabula "Pa kanāliem" blakus – nemainīta.
