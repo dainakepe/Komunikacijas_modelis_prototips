@@ -1083,6 +1083,10 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 219:**
+  - **QR skenēšana no Atskaitēm noņemta** (rādītājs "QR skenēšanas" apakšcilnē "Reakcija un iesniegšana" un tā padoms; eksportā tā nebija). QR kods vēstulēs, notikums "QR kods noskenēts" respondenta logā (Statusu ceļš) un Sūtījumu kolonna "E-pasta reakcija" – paliek.
+  - **"Ziņas pēc kampaņas veida"** (Pārskats) – horizontāli pārklāti stabiņi (aizstāj Versijas 217 vertikālos sakrautos): katram veidam viena rinda – ikona un nosaukums, pa labi "Piegādātas / Kopā (%)", zem tiem josla: **Kopā** – gaiši pelēka (#DCE4E7) visā kopskaita garumā, **Piegādātas** – zaļa (#3E9A6B) no sākuma. Nepiegādātās / procesā šeit netiek rādītas; padoms "Piegādātas N no N (N%)"; leģenda Kopā · Piegādātas; rindas pēc kopskaita (lielākais augšā); "Rādīt datu tabulu" – Veids / Kopā / Piegādātas / %. Kopā = nosūtītās, piegādātas = elektroniski piegādātās (kā kopsavilkuma rādītājos "Nosūtītas" un "Piegādes īpatsvars"), tāpēc summas sakrīt ar kopsavilkumu; filtri ietekmē diagrammu.
+
 - **Versija 218 – "Nepiegādes iemesli"** (Pārskats; agrāk "NDR/DIV iemeslu sadalījums"): (i) padoms "Tehniskie paziņojumi par nepiegādi (NDR – Non-Delivery Report, DIV – eAdreses piegādes kļūda). Procenti – no kopējā nepiegādāto ziņu skaita."; stabiņu diagrammas vietā – vienkāršs saraksts (dilstoši): saprotams iemesla nosaukums (piem., "Nederīga adrese", "Pastkaste pilna", "Saņēmējs atteicās", "eAdrese nav aktivizēta") · % · (skaits) pelēkā; bez krāsainām joslām; apakšā "Kopā: N nepiegādātas". Katra ziņa ieskaitīta vienreiz (pēc pēdējā nepiegādes paziņojuma); prombūtnes atbildes un "Pieņemts DIV / Notiek piegāde" netiek skaitītas. Klikšķis uz iemesla – Sūtījumi ar šo iemeslu (kā līdz šim).
 
 - **Versija 217 – Pārskata diagrammas un kopsavilkuma rinda:**
