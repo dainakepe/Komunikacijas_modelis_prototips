@@ -1985,6 +1985,24 @@ dialog.drawer.al-drawer{width:min(420px,100vw)}
 .scope-resp .resp-more[hidden]{display:none}
 .scope-resp .more-btn{margin-top:0}
 .cr-row{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+/* Versija 239: "Neiekļaut šifrus" – kartītes "Pēc apsekojuma" apakšā aiz plānas līnijas; "Mainīt" – neliels saraksts (rūtiņa · kods · apraksts) */
+.nsx{position:relative;margin-top:8px;padding-top:10px;border-top:1px solid var(--border-light);display:flex;flex-direction:column;gap:4px}
+.nsx[hidden]{display:none}
+.sr-ns{display:block;margin-top:2px;font-size:var(--fs-xs);color:var(--text-muted)}
+.nsx-h{display:flex;align-items:center;gap:8px}
+.nsx-h .label{margin:0;font-size:var(--fs-sm);font-weight:600}
+.nsx-mod{font-size:var(--fs-xs);color:var(--text-muted);font-style:italic}
+.nsx-v{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font-size:var(--fs-sm)}
+.nsx-codes{font-weight:600;font-variant-numeric:tabular-nums;color:var(--text)}
+.nsx-codes.is-none{font-weight:400;color:var(--text-muted)}
+.nsx-v .link-btn{font-size:var(--fs-sm)}
+.nsx-pop{position:absolute;z-index:40;left:0;right:0;top:100%;margin-top:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:0 6px 18px rgba(0,0,0,.14);padding:4px;max-height:320px;overflow:auto}
+.nsx-pop[hidden]{display:none}
+.nsx-pop label{display:grid;grid-template-columns:auto 1.4em minmax(0,1fr);align-items:baseline;gap:6px;padding:5px 8px;border-radius:var(--radius-xs);font-size:var(--fs-sm);cursor:pointer}
+.nsx-pop label:hover{background:var(--primary-50)}
+.nsx-pop label b{font-variant-numeric:tabular-nums}
+.nsx-pop label small{color:var(--text-muted);font-size:var(--fs-xs)}
+.nsx-pop label.is-def b::after{content:'';}
 @container (min-width:320px){.cr-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .scope-card{display:flex;flex-direction:column;gap:6px;min-width:0;border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px 14px;background:var(--surface)}
 .scope-card.is-on{border-color:var(--primary-300);box-shadow:inset 3px 0 0 var(--primary)}
@@ -3923,6 +3941,12 @@ th.has-exp{padding-right:32px !important}
                 <div class="ms-tags" id="c-rep-tags"></div>
               </div>
                             </div>
+              <!-- Versija 239: neiesniegšanas šifru izslēgšana (uzņēmumu statistika) -->
+              <div class="nsx" id="c-nsx">
+                <div class="nsx-h"><span class="label" id="c-nsx-l">Neiekļaut šifrus <span class="tip" tabindex="0" role="note" aria-label="Respondenti ar šiem neiesniegšanas šifriem izvēlētajā apsekojumā un periodā netiek iekļauti sūtīšanā. Noklusējums – šifri, kuriem klasifikatorā atzīmēts “nav jāsūta vēstules”." data-tip="Respondenti ar šiem neiesniegšanas šifriem izvēlētajā apsekojumā un periodā netiek iekļauti sūtīšanā. Noklusējums – šifri, kuriem klasifikatorā atzīmēts “nav jāsūta vēstules”.">i</span></span><span class="nsx-mod" id="c-nsx-mod" hidden>mainīts</span></div>
+                <div class="nsx-v"><span class="nsx-codes" id="c-nsx-val"></span><button type="button" class="link-btn" id="c-nsx-edit" aria-expanded="false" aria-controls="c-nsx-pop" aria-haspopup="true">Mainīt</button><button type="button" class="link-btn nsx-reset" id="c-nsx-reset" hidden>Atjaunot noklusējumu</button></div>
+                <div class="nsx-pop" id="c-nsx-pop" role="group" aria-labelledby="c-nsx-l" hidden></div>
+              </div>
               <!-- Iedzīvotāju statistika: apsekojums → gads → periods → reize / cikls -->
               <div class="fz-form" id="c-fz" hidden>
                 <div class="field"><label for="c-fz-rep">Apsekojums <span class="req">*</span></label><select id="c-fz-rep" aria-describedby="c-fz-rep-err"></select><span class="err" id="c-fz-rep-err" hidden></span></div>
@@ -3940,10 +3964,7 @@ th.has-exp{padding-right:32px !important}
               <h4 id="c-sc-resp"><span class="scope-ic" aria-hidden="true"></span>Pēc respondenta <span class="pill pill-mod" id="c-resp-count" hidden></span></h4>
               <div class="field"><label for="cr-name">Nosaukums</label><input type="text" id="cr-name" data-rf="name" placeholder="Daļa no nosaukuma"></div>
               <div class="field"><label for="cr-nmkps">NMK/PS <span class="tip" tabindex="0" role="note" aria-label="Var ievadīt vienu vai vairākas vērtības, atdalot ar komatu." data-tip="Var ievadīt vienu vai vairākas vērtības, atdalot ar komatu.">i</span></label><input type="text" id="cr-nmkps" data-rf="nmkps" placeholder="40000000101/002, …"></div>
-              <div class="cr-row">
-                <div class="field"><label for="cr-ns">Statusa šifrs <span class="tip" tabindex="0" role="note" aria-label="Neiesniegšanas kods respondenta pienākumam šīs kampaņas apsekojumā un periodā." data-tip="Neiesniegšanas kods respondenta pienākumam šīs kampaņas apsekojumā un periodā.">i</span></label><select id="cr-ns" data-rf="ns"><option value="">Visi</option><option value="-">Bez koda</option><option value="1">1 – Uzņēmums nedarbojās pārskata periodā, bet turpinās to darīt</option><option value="2">2 – Uzņēmums vairs nedarbojas un neplāno darbību atsākt</option><option value="3">3 – Ar uzņēmumu nav kontakta</option><option value="4">4 – Uzņēmums ignorē vai atsakās iesniegt pārskatu</option><option value="5">5 – Uzņēmumam vairs nav attiecīgās nozares (darbības veida), vai nav derīgs apsekojumam</option><option value="8">8 – Uzņēmumi, kas atzīti par absolūti pārtraukušiem darbību (kodu liek pārskata vadītājs)</option><option value="a">a – Pārskats iesniegts alternatīviem iesniegšanas veidiem</option><option value="q">q – Dati no respondenta netiks vākti, tos imputēs vai importēs.</option><option value="v">v – Iestāžu dati no Vienotā pakalpojumu centra</option></select></div>
-                <div class="field"><label for="c-operator">Atbildīgais operators</label><select id="c-operator"></select></div>
-              </div>
+              <div class="field"><label for="c-operator">Atbildīgais operators</label><select id="c-operator"></select></div>
               <button type="button" class="link-btn more-btn" id="cr-more" aria-expanded="false" aria-controls="cr-more-box">+ Vairāk filtru</button>
               <div class="resp-more" id="cr-more-box" hidden>
                 <div class="field"><label for="cr-uuk">UUK</label><input type="text" id="cr-uuk" data-rf="uuk" placeholder="U30006, …"></div>
@@ -4222,7 +4243,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 238</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 239</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5581,6 +5602,12 @@ const NS_CODES = {
 const nsDesc = k => (NS_CODES[k] || {}).d || '';
 const nsLabel = k => `${k} – ${nsDesc(k)}`;
 const nsNoLet = k => !!(NS_CODES[k] || {}).noLet;
+// Versija 239: kampaņas tvērums "Neiekļaut šifrus" – noklusējums: šifri ar pazīmi "Nav jāsūta vēstules" (1, 2, 5, 8, a, q, v)
+const NS_KEYS = Object.keys(NS_CODES), NS_DEFAULT = NS_KEYS.filter(nsNoLet);
+const nsSort = ks => NS_KEYS.filter(k => ks.includes(k));
+const nsExcl = (sel = compose.sel) => nsSort(Array.isArray(sel && sel.nsEx) ? sel.nsEx : NS_DEFAULT);
+const nsExMod = (sel = compose.sel) => nsExcl(sel).join(',') !== NS_DEFAULT.join(',');
+const nsExTxt = (sel = compose.sel) => nsExcl(sel).join(', ') || 'nav';
 // testa dati: ~12 % uzņēmumu pārskatu pienākumu ar kodu (vairāk – 3 un 4, kas netiek izņemti); papildus – noteikti respondenti 1-apgrozījums pārskatam
 const NS_SEED = {r14:{code:'2', rep:'*'}, r9:{code:'1', rep:'p-apgr'}, r17:{code:'5', rep:'p-ds'}, r20:{code:'8', rep:'p-apgr'},
   r15:{code:'q', rep:'p-apgr'}, r18:{code:'a', rep:'p-ds'}, r19:{code:'v', rep:'p-x05'}, r13:{code:'3', rep:'p-apgr'}, r11:{code:'4', rep:'p-apgr'}};
@@ -6089,7 +6116,7 @@ function renderCampTitle(){ const t = $('#c-title'); if (!t) return;
   const w = Object.values(compose.addrReq || {}).filter(q => !q.done);
   t.innerHTML = esc(compose.name) + (w.length && typeof waitTip === 'function' ? ` <span class="cst-mk cst-clock c-title-clock" tabindex="0" data-ctip="${esc(waitTip(w))}" aria-label="${esc(waitTip(w))}">${ICON.clock}</span>` : '') + (compose.desc ? ` <span class="c-desc">${esc(compose.desc)}</span>` : ''); }
 // atlase (1. solis "Ko attiecina kampaņa"): periodiskumi un periodi un/vai apsekojumi (pārskati)
-const defaultResp = () => ({name:'', nmk:'', nmkps:'', uuk:'', email:'', eaddr:'', ns:'', list:null, listName:'', listMissing:[]});
+const defaultResp = () => ({name:'', nmk:'', nmkps:'', uuk:'', email:'', eaddr:'', list:null, listName:'', listMissing:[]});
 const defaultFz = () => ({year:'', period:'', rounds:null});
 // "Pēc perioda": gads (obligāts) un izvēle katram periodiskumam: 'all' – visi, 'none' – neiekļaut, 'N' – konkrēts periods
 const PF_KEYS = ['gads', 'pusg', 'cet', 'men', 'ned', 'int'];
@@ -6101,13 +6128,14 @@ const PF_ROWS_L = {gads:['Gada pārskati', ''], pusg:['Pusgada pārskati', 'Visi
 // atlases opcija "Apvienot respondentus ar vienādiem NMK" – tikai uzņēmumu statistikai
 // "Apvienot pēc NMK" (vēstules parametrs): tikai uzņēmumu statistikā (NMK var atkārtoties arī viena apsekojuma ietvaros – vairākas vienības, periodi)
 const selOpt = k => compose.aud === 'jur' && !!compose.sel[k];
-const defaultSel = () => ({year:perDefYear(), pf:defaultPf(), reports:[], fz:defaultFz(), allReports:false, operator:'', resp:defaultResp(), mergeNmk:false, sendDate:todayIso(), days:5, lateDays:''});
+const defaultSel = () => ({year:perDefYear(), pf:defaultPf(), reports:[], fz:defaultFz(), allReports:false, operator:'', resp:defaultResp(), nsEx:[...NS_DEFAULT], mergeNmk:false, sendDate:todayIso(), days:5, lateDays:''});
 // testa vēsturei: periodiskumi, kas iekļauti (pārējie – "Neiekļaut")
 const pfOnly = map => Object.fromEntries(PF_KEYS.map(k => [k, map[k] || 'none']));
 // agrākiem melnrakstiem un ieplānotajām kampaņām: viens periodiskums (freq) -> saraksts (freqs);
 // agrāk bez atlases tika ņemti visi pārskati – tad atzīmē visus periodiskumus
 const migrateSel = sel => {
   const raw = sel || {}, x = {...defaultSel(), ...raw};
+  if (!Array.isArray(raw.nsEx)) delete x.nsEx; // Versija 239: agrākiem melnrakstiem – noklusējuma šifri (bez izmaiņām tvēruma atslēgā)
   // agrākie melnraksti: periodiskumu birkas un konkrēto periodu rindas -> gads un izvēle katram periodiskumam
   if (!raw.pf){
     const freqs = Array.isArray(raw.freqs) ? raw.freqs : raw.freq ? [raw.freq] : [];
@@ -6124,7 +6152,7 @@ const migrateSel = sel => {
   x.reports = [...new Set((x.reports || []).map(mapReportId))];
   delete x.repPer;
   // agrākie filtri "Pasta adrese" un "Tsav" vairs netiek izmantoti
-  delete x.resp.post; delete x.resp.tsav;
+  delete x.resp.post; delete x.resp.tsav; delete x.resp.ns; // Versija 239: lauks "Statusa šifrs" noņemts
   ['freq', 'freqs', 'periods', 'perRows'].forEach(k => delete x[k]);
   return x;
 };
@@ -9873,7 +9901,7 @@ function renderRespCard(){
         <dl class="dr-dl"><dt>Nosaukums</dt><dd>${esc(r.name)}</dd><dt>Tips</dt><dd>${jur ? 'Juridiska persona (uzņēmums)' : 'Fiziska persona (mājsaimniecība)'}</dd>
           ${jur ? `<dt>Reģ. Nr.</dt><dd>${r.regNr ? esc(r.regNr) : '<span class="muted">nav norādīts</span>'}</dd>` : ''}
           ${r.contact ? `<dt>Kontaktpersona</dt><dd>${esc(r.contact)}</dd>` : ''}
-          ${ui.campView === 'edit' && !ui.view ? respNsCodes(r).map(k => `<dt>Statusa šifrs</dt><dd>${esc(nsLabel(k))}${nsNoLet(k) ? ` <span class="muted">– vēstule netiek sūtīta${(compose.nsIncl || []).includes(r.id) ? ' (iekļauts manuāli)' : ''}</span>` : ''}</dd>`).join('') : ''}
+          ${ui.campView === 'edit' && !ui.view ? respNsCodes(r).map(k => `<dt>Statusa šifrs</dt><dd>${esc(nsLabel(k))}${nsExcl().includes(k) ? ` <span class="muted">– vēstule netiek sūtīta${(compose.nsIncl || []).includes(r.id) ? ' (iekļauts manuāli)' : ''}</span>` : ''}</dd>`).join('') : ''}
           <dt>Pazīmes</dt><dd>${attrPills(r)}</dd></dl></section>
       <section class="dr-sec"><h3>Adreses</h3>${addrPanel(r)}</section>
       <section class="dr-sec"><h3>Pārskati un periodi</h3>${dutyTable(dutiesOf(r.id), false)}</section>
@@ -10176,18 +10204,17 @@ function matchesAttrs(r){
   if (f.email && ![r.email, r.email2, r.email3].some(x => norm(x).includes(norm(f.email)))) return false;
   if (f.eaddr && !norm(r.eaddress).includes(norm(f.eaddr))) return false;
   // statusa šifrs (neiesniegšanas kods) – šīs kampaņas pienākumiem; "-" – bez koda
-  if (f.ns){ const ks = respNsCodes(r); if (f.ns === '-' ? ks.length : !ks.includes(f.ns)) return false; }
   if (f.list && !f.list.includes(lc(r.nmk)) && !f.list.includes(lc(r.uuk))) return false;
   return true;
 }
-const respFilterCount = (f = compose.sel.resp || defaultResp()) => ['name', 'nmkps', 'uuk', 'email', 'eaddr', 'ns'].filter(k => String(f[k] || '').trim()).length + (f.list ? 1 : 0) + (compose.sel.operator ? 1 : 0);
+const respFilterCount = (f = compose.sel.resp || defaultResp()) => ['name', 'nmkps', 'uuk', 'email', 'eaddr'].filter(k => String(f[k] || '').trim()).length + (f.list ? 1 : 0) + (compose.sel.operator ? 1 : 0);
 const baseMatch = r => { if (!matchesAttrs(r)) return false; return ownDuties(r).length > 0; };
 // Versija 187: šīs kampaņas pienākumu neiesniegšanas kodi (statusa šifri); respondents automātiski netiek iekļauts sūtīšanā,
 // ja visiem viņa kampaņas pienākumiem kods ar pazīmi "Nav jāsūta vēstules" – sarakstā redzams kā izņemts, to var iekļaut manuāli
 const respNsCodes = r => [...new Set(ownDuties(r).map(d => d.ns).filter(k => NS_CODES[k]))];
-const nsAutoCode = r => { const ds = selDutiesOf(r); return ds.length && ds.every(d => nsNoLet(d.ns)) ? ds[0].ns : ''; };
+const nsAutoCode = r => { const ds = selDutiesOf(r), ex = nsExcl(); return ds.length && ds.every(d => ex.includes(d.ns)) ? ds[0].ns : ''; }; // Versija 239: izvēlētie šifri
 const nsOut = r => !!nsAutoCode(r) && !(compose.nsIncl || []).includes(r.id);
-const nsOutTip = r => { const k = nsAutoCode(r); return k ? `Netiks nosūtīts: neiesniegšanas kods ${k} – ${nsDesc(k)}` : ''; };
+const nsOutTip = r => { const k = nsAutoCode(r); return k ? `Netiks nosūtīts: šifrs ${k} – ${nsDesc(k)}` : ''; };
 // "Apvienot vēstules pēc NMK": vienības ar vienu NMK saņem vienu kopīgu vēstuli (adresāts – pirmā vienība)
 const nmkGroup = r => selOpt('mergeNmk') && r.nmk ? state.respondents.filter(x => x.nmk === r.nmk && baseMatch(x)) : [r];
 const selDutiesOf = r => { const g = nmkGroup(r); return g.length > 1 && g[0] === r ? g.flatMap(ownDuties).sort(dutySort) : ownDuties(r); };
@@ -10341,6 +10368,7 @@ function renderScope(){
   // statistikas joma: uzņēmumu – trīs kartītes; iedzīvotāju / visi – tikai "Pēc apsekojuma" visā platumā
   const sm = surveyMode();
   $('#c-per-card').hidden = sm; $('#c-resp-card').hidden = sm;
+  $('#c-nsx').hidden = sm; renderNsEx();
   // izvērsta respondenta kartīte var būt augstāka; pārējās divas paliek vienāda augstuma
   const grid = $('.scope-grid'), two = $$('.scope-grid > .scope-card:not(.scope-resp)');
   grid.classList.toggle('is-survey', sm);
@@ -10447,7 +10475,8 @@ function renderScopeResult(){
   if (!busy && r && r !== 'legacy' && sigOf(r) !== scopeSig()) compose.selRun = null;
   // no adresēm atkarīgais skaitlis ("ar derīgu adresi") – pēc pašreizējās adrešu prioritātes
   const cur = selRunNow(), live = cur && !busy ? {...cur, valid:scopeResult().valid} : cur;
-  box.innerHTML = busy ? '<span class="sr-muted">Atlasa…</span>' : !cur ? '<span class="sr-muted">Atlase vēl nav veikta.</span>' : esc(selText(live));
+  box.innerHTML = busy ? '<span class="sr-muted">Atlasa…</span>' : !cur ? '<span class="sr-muted">Atlase vēl nav veikta.</span>' : esc(selText(live))
+    + (compose.aud === 'jur' && live.n ? `<span class="sr-ns">Neiekļauti šifri: ${esc(nsSumTxt(nsOutResp().length))}</span>` : ''); // Versija 239
   if (compose.step === 1 && $('#wiz-next')) renderStepNav(1);
 }
 function runSelection(){
@@ -10664,7 +10693,7 @@ function acBlocks(target){
       <dt>Tiks nosūtīti</dt><dd><b>${d.recs.length}</b>${chs ? ` <span class="muted">– pa kanāliem: ${chs}</span>` : ''}${d.byCh.later ? `<div class="muted sc-later" title="${esc(EA_PEND_TIP)}">${EA_PEND_TXT}: <b>${d.byCh.later}</b> (e-adrese, ja aktīva, citādi – pēc prioritātes)</div>` : ''}</dd>
       ${out ? `<dt>Netiks nosūtīti</dt><dd><b>${out}</b><ul class="sc-sub">
         ${d.man.length ? `<li>izņemti manuāli: <b>${d.man.length}</b><ul class="sc-names">${names}${d.man.length > 5 ? `<li class="muted">un vēl ${d.man.length - 5}</li>` : ''}</ul></li>` : ''}
-        ${d.ns.length ? `<li>neiesniegšanas kods: <b>${d.ns.length}</b></li>` : ''}
+        ${d.ns.length ? `<li>neiekļauti šifri (${esc(nsExTxt())}${nsExMod() ? ', mainīts' : ''}): <b>${d.ns.length}</b></li>` : ''}
         ${d.noAddr.length ? `<li>nav derīgas adreses: <b>${d.noAddr.length}</b></li>` : ''}</ul></dd>` : ''}
       ${warnN ? `<dt>Brīdinājumi</dt><dd><ul class="sc-warn">${W.map(([k, l]) => `<li><span class="sc-dot" aria-hidden="true"></span>${l}: <b>${d.warn[k]}</b></li>`).join('')}${d.warn.adm ? `<li><span class="sc-dot" aria-hidden="true"></span><b>${d.warn.adm}</b> ${plural(d.warn.adm, 'adrese gaida', 'adreses gaida')} administratora labojumu – šiem respondentiem vēstule tiks sūtīta pēc nākamās derīgās adreses vai netiks sūtīta</li>` : ''}</ul></dd>` : ''}</dl>
       ${d.man.length || warnN ? `<label class="sc-ack"><input type="checkbox" id="sc-ack"> Esmu pārbaudījis izņemtos respondentus un brīdinājumus</label>` : ''}`;
@@ -10779,6 +10808,7 @@ function renderFinalSummary(){
     kvRow('Nosūtīšana', isPlanned() ? esc(whenLabel()) : 'Nav ieplānota') +
     kvRow('Respondenti', `${kvNw(String(st.sel))} · ${kvNw(`${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}`)}`) +
     kvRow('Kanāli', (ch.epasts || ch.eadrese || ch.pasts || !ch.later ? kvChannels(ch) : '') + (ch.later ? `${ch.epasts || ch.eadrese || ch.pasts ? ' · ' : ''}<span class="nw" data-ctip="${esc(EA_PEND_TIP)}" tabindex="0">${EA_PEND_TXT}: ${ch.later}</span>` : '')) +
+    (compose.aud === 'jur' ? kvRow('Neiekļauti šifri', `<span title="${esc(nsExcl().map(nsLabel).join('\n') || 'Šifri netiek izslēgti')}">${esc(nsSumTxt(nsOutResp().length))}</span>`) : '') + // Versija 239
     (compose.aud === 'jur' ? kvRow('Apvienot pēc NMK', selOpt('mergeNmk') ? 'Jā' : 'Nē') : '');
   $('#c-final-foot').innerHTML = kvFoot(st.noAddr);
 }
@@ -10852,6 +10882,21 @@ function scopeCtxTags(){
   if (f.list) add('Saraksts no faila', f.listName || 'fails');
   return tags;
 }
+// ===== Versija 239: "Neiekļaut šifrus" =====
+const nsOutResp = () => state.respondents.filter(r => matchesFilt(r) && !compose.excluded.has(r.id) && !(compose.exc || {})[r.id] && nsOut(r));
+// "Neiekļauti šifri: 1, 2, 5, 8, a, q, v – 4 respondenti" (n – izņemto respondentu skaits; null – netiek rādīts)
+const nsSumTxt = n => `${nsExTxt()}${n != null ? ` – ${n} ${plural(n, 'respondents', 'respondenti')}` : ''}${nsExMod() ? ' (mainīts)' : ''}`;
+function renderNsEx(){
+  const box = $('#c-nsx'); if (!box || box.hidden) return;
+  const ex = nsExcl(), mod = nsExMod(), v = $('#c-nsx-val');
+  v.textContent = ex.length ? ex.join(', ') : 'nav'; v.classList.toggle('is-none', !ex.length);
+  v.title = ex.length ? ex.map(nsLabel).join('\n') : 'Visi respondenti tiek iekļauti neatkarīgi no šifra';
+  $('#c-nsx-mod').hidden = !mod; $('#c-nsx-reset').hidden = !mod;
+  const pop = $('#c-nsx-pop');
+  if (!pop.hidden) pop.innerHTML = NS_KEYS.map(k => `<label class="${NS_DEFAULT.includes(k) ? 'is-def' : ''}"><input type="checkbox" data-nsx="${k}" ${ex.includes(k) ? 'checked' : ''}><b>${esc(k)}</b><span>${esc(nsDesc(k))}${NS_DEFAULT.includes(k) ? ' <small>(noklusējums)</small>' : ''}</span></label>`).join('');
+}
+const nsxSet = ks => { compose.sel.nsEx = nsSort(ks); selChanged(); };
+const nsxPop = open => { const pop = $('#c-nsx-pop'), b = $('#c-nsx-edit'); pop.hidden = !open; b.setAttribute('aria-expanded', String(open)); renderNsEx(); if (open){ const f = $('input', pop); if (f) f.focus(); } };
 // Tvēruma kopsavilkums (2. solis, karte "Mērķa grupa"): joma, apsekojumi, periodi, respondentu skaits (apvienojot pēc NMK – ieraksti → vēstules)
 // (kanāli un adrešu kvalitāte – kartē "Kontaktu kvalitāte" un tabulā; izņēmumi – tabulā; adrešu prioritāte – Pamatdatos)
 const CTX_SHOW = 6;
@@ -10869,6 +10914,7 @@ function renderScopeCtx(){
     rows.push(kvRow('Apsekojumi', reps.length ? repSumHtml(reps) : sel.reports.length ? repSumHtml(sel.reports.map(repById).filter(Boolean)) : 'Visi apsekojumi'));
     rows.push(kvRow('Periodi', kvList('pers', pers.map(periodCode), pers.map(k => `${periodCode(k)} – ${periodLabel(k)}`))));
   }
+  if (!fizMode()) rows.push(kvRow('Neiekļauti šifri', `<span title="${esc(nsExcl().map(nsLabel).join('\n') || 'Šifri netiek izslēgti')}">${esc(nsSumTxt(nsOutResp().length))}</span>`)); // Versija 239
   rows.push(kvRow('Respondenti', String(rs.length), 'kv-strong'));
   $('#c-ctx-kv').innerHTML = rows.join('');
 }
@@ -17158,6 +17204,12 @@ $('#c-vars-body').addEventListener('toggle', e => {
   const g = e.target.closest && e.target.closest('[data-var-grp]');
   if (g) g.open ? ui.varOpen.add(g.dataset.varGrp) : ui.varOpen.delete(g.dataset.varGrp);
 }, true);
+// Versija 239: "Neiekļaut šifrus" – Mainīt / Atjaunot noklusējumu (maiņa pēc atlases – rezultāts jāatjauno, jo mainās tvēruma atslēga)
+$('#c-nsx-edit').addEventListener('click', () => nsxPop($('#c-nsx-pop').hidden));
+$('#c-nsx-reset').addEventListener('click', () => { nsxSet([...NS_DEFAULT]); $('#c-nsx-edit').focus(); });
+$('#c-nsx-pop').addEventListener('change', e => { const k = e.target.dataset.nsx; if (k == null) return; const ex = new Set(nsExcl()); e.target.checked ? ex.add(k) : ex.delete(k); nsxSet([...ex]); const i = $(`#c-nsx-pop [data-nsx="${k}"]`); if (i) i.focus(); });
+$('#c-nsx-pop').addEventListener('keydown', e => { if (e.key === 'Escape'){ e.preventDefault(); nsxPop(false); $('#c-nsx-edit').focus(); } });
+document.addEventListener('click', e => { const pop = $('#c-nsx-pop'); if (pop && !pop.hidden && !e.target.closest('#c-nsx')) nsxPop(false); });
 // Atbildīgais operators, "Pēc respondenta", atlases opcijas
 $('#c-operator').addEventListener('change', e => { compose.sel.operator = e.target.value; selChanged(); });
 $('#c-resp-card').addEventListener('input', e => {
