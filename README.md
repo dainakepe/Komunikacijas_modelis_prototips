@@ -1106,6 +1106,12 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 240 – "Reakcija un iesniegšana": mazās kartītes vienā rindā:**
+  - 3 vienāda platuma kolonnas: "Piltuve" · "Iesniegšanas % pa apsekojumiem" · divas kartītes viena virs otras ("Atvēršanas % pa kampaņu veidiem", zem tās "Vidējais laiks", atstarpe 14 px).
+  - Rindas augstumu nosaka augstākā kolonna (parasti vidējā); 3. kolonnas kartītes dala šo augstumu uz pusēm (flex:1), bet nekļūst zemākas par savu saturu – ja vidējā kartīte ir ļoti īsa (piem., 1 apsekojums), rindu nosaka 3. kolonna, un visas kartītes ir tajā pašā augstumā. "Piltuve" – tajā pašā augstumā, "Kopā: …" apakšā. Šai rindai nav minimālā kartītes augstuma (~200 px).
+  - "Iesniegšanas % pa apsekojumiem": ja rindu ir vairāk par 12 – pirmās 12 un saite **"Rādīt visus (N)"** ("Rādīt mazāk" – atpakaļ); eksportā – visi apsekojumi.
+  - Šaurā ekrānā (≤ 1100 px) – "Piltuve" un "Iesniegšana" blakus, zem tām "Atvēršana" un "Vidējais laiks" blakus; ļoti šaurā (≤ 640 px) – viena zem otras secībā Piltuve, Iesniegšana, Atvēršana, Vidējais laiks.
+
 - **Versija 236 – salīdzinājums tikai tad, ja tas izvēlēts:**
   - Ja "Salīdzināt ar:" ir **"—"** (noklusējums, ja vien noklusējuma "Mani filtri" nenosaka citādi), salīdzinājums netiek rādīts nekur: KPI kartītēs nav rindas "+4 p. p. pret …" (vietā – neredzama rinda, kartītes augstums nemainās, "Atvērt →" apakšā), MI kopsavilkumā nav pieminēts cits periods, sarakstos, diagrammās, grafikos, tabulās un eksportā nav atšķirību (▲/▼, salīdzinājuma līnijas, kolonnas "Salīdzinājums" / "Starpība").
   - Salīdzinājumi parādās tikai ar "Iepriekšējais periods" vai "Cits periods…"; teksts atbilst izvēlei – "pret iepr. periodu" / "pret 2025" / "pret 01.03.–31.05.2025." (arī MI: "piegādes īpatsvars 93% (pret iepr. periodu: 90%)").

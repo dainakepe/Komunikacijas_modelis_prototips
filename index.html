@@ -1383,6 +1383,15 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .rk-cards > .card > .rk-rlist-tot,.rk-cards > .card > .donut-wrap:last-child{margin-top:auto}
 @media (max-width:1100px){.rk-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){.rk-cards{grid-template-columns:minmax(0,1fr)}}
+/* Versija 240: "Reakcija un iesniegšana" – viena rinda: Piltuve | Iesniegšana pa apsekojumiem | (Atvēršana pa kampaņu veidiem / Vidējais laiks);
+   rindas augstumu nosaka augstākā kolonna, 3. kolonnas kartītes dala to uz pusēm (flex:1); šai rindai nav minimālā kartītes augstuma */
+.rk-cards.rx-row > .card{min-height:0}
+.rx-stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+.rx-stack > .card{flex:1 1 0;min-height:auto;display:flex;flex-direction:column;margin:0;min-width:0} /* uz pusēm, bet ne zemāk par saturu */
+.rx-stack > .card > .rk-rlist-tot{margin-top:auto}
+.rx-more{align-self:flex-start;margin:6px 6px 0;font-size:var(--fs-sm)}
+@media (max-width:1100px){.rk-cards.rx-row > .rx-stack{grid-column:1 / -1;flex-direction:row}.rx-stack > .card{flex:1 1 0}}
+@media (max-width:640px){.rk-cards.rx-row > .rx-stack{flex-direction:column}}
 /* Versija 226: vienota sakļautas tabulas josla */
 .card.rk-tcard{padding:0;overflow:hidden;margin:0 0 16px;background:var(--surface);border:1px solid var(--border)}
 .card.rk-tcard:last-child{margin-bottom:0}
@@ -4243,7 +4252,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 239</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 240</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -15486,6 +15495,9 @@ function repCampReact(batch, rep){
   return `<div class="card rep-campreact" id="rep-campreact"><div class="rcr-h"><b>${esc(x0.sessionName || `Kampaņa Nr. ${batch}`)}</b>${kind || aud ? ` <span class="muted">${esc([SESS_LABELS[kind] || '', aud && AUDS[aud] ? AUDS[aud].field : ''].filter(Boolean).join(' · '))}</span>` : ''}</div>
     <dl class="proc-dl rcr-dl"><dt>Nosūtīta:</dt><dd>${esc(fmtDateTime(wl.sentAt || x0.sentAt))}</dd><dt>Vēstules:</dt><dd>${esc(parts.join(' · '))}</dd></dl>${reactSectionHtml(batch, xs, rep)}</div>`;
 }
+// Versija 240: "Iesniegšanas % pa apsekojumiem" – rāda pirmās 12 rindas, "Rādīt visus (N)" izvērš (sesijas laikā)
+const RX_REP_MAX = 12;
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-rx-more]'); if (!b) return; ui.rxRepAll = !ui.rxRepAll; renderReports(); const n = $('#rep-body [data-rx-more]'); if (n) n.focus({preventScroll:true}); });
 function reactReportView(cmpBase){ // Versija 231: cmpBase – vēstules salīdzināmajam periodam (atgriež tikai datus)
   const f = ui.rep, now = Date.now(), H = 3600e3, D = 864e5, sf = repSf();
   // apsekojumu ierobežojums veidlapām: filtru rindas apsekojums, citādi – saglabātā filtra apsekojumi
@@ -15539,16 +15551,18 @@ function reactReportView(cmpBase){ // Versija 231: cmpBase – vēstules salīdz
       ${kpi(ies.length ? dStr(toSub(fs)) : '—', 'Vidējais laiks no vēstules līdz iesniegšanai', `${ies.length} ${plural(ies.length, 'iesniegta veidlapa', 'iesniegtas veidlapas')}`)}
       ${subKpi}</div>
     ${f.camp ? repCampReact(f.camp, f.rep) : ''}
-    <div class="rk-cards">
+    <div class="rk-cards${f.camp ? '' : ' rx-row'}">
       ${f.camp ? '' : `<div class="card viz-card rk-mini rx-funcard" data-title="Piltuve"><div class="rk-card-h"><h3>Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms “Piegādātas” – 100 %), iekavās – ziņu skaits. Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta.')}</h3>
         <button type="button" class="tbl-exp-btn rk-coll-exp" data-tbl-card title="Eksportēt" aria-label="Eksportēt “Piltuve”" aria-haspopup="menu" aria-expanded="false">${TBL_DL_ICON}</button></div>
         ${funListHtml(funnel.map(r => ({label:r.label, v:r.n})), nD, RX ? {cmp:{rows:RX.funnel.map(r => ({label:r.label, v:r.n})), n:RX.nD}} : {})}
         <div class="rk-xtbl" hidden>${tableHtml(['Posms', '% no piegādātajām', 'Skaits', ...(RX ? ['Salīdzinājums – %', 'Salīdzinājums – skaits', 'Starpība, p. p.'] : [])], funnel.map((r, i) => [r.label, `${r.v}%`, r.n, ...(RX ? [`${RX.funnel[i].v}%`, RX.funnel[i].n, cmpDiffTxt(r.v, RX.funnel[i].v)] : [])]), 'rep-table tbl-noexp')}</div></div>`}
       ${miniCard('Iesniegšanas % pa apsekojumiem', 'Iesniegtās veidlapas no visām vēstulēs iekļautajām šī apsekojuma veidlapām; sakārtots pēc procentiem dilstoši. Iekavās – veidlapu skaits.',
-        byRep.length ? pctListHtml(byRep, {label:'Iesniegšanas % pa apsekojumiem', cnt:true, cmp:RX ? new Map(RX.byRep.map(r => [r.label, r.v])) : null, good:1}) : '<p class="hint">Nav datu.</p>',
+        // Versija 240: vairāk par 12 rindām – pirmās 12 un "Rādīt visus (N)" (rinda nekļūst pārāk augsta)
+        byRep.length ? pctListHtml(byRep.length > RX_REP_MAX && !ui.rxRepAll ? byRep.slice(0, RX_REP_MAX) : byRep, {label:'Iesniegšanas % pa apsekojumiem', cnt:true, cmp:RX ? new Map(RX.byRep.map(r => [r.label, r.v])) : null, good:1})
+          + (byRep.length > RX_REP_MAX ? `<button type="button" class="link-btn rx-more" data-rx-more aria-expanded="${!!ui.rxRepAll}">${ui.rxRepAll ? 'Rādīt mazāk' : `Rādīt visus (${byRep.length})`}</button>` : '') : '<p class="hint">Nav datu.</p>',
         ['Apsekojums', 'Iesniegšanas %', 'Iesniegtas', 'Veidlapas', ...(RX ? ['Salīdzinājums', 'Starpība'] : [])], byRep.map(r => { const c = RX && RX.byRep.find(z => z.label === r.label); return [r.label, `${r.v}%`, r.ies, r.n, ...(RX ? [c ? `${c.v}%` : '—', c ? cmpDiffTxt(r.v, c.v) : '—'] : [])]; }))}
-      ${card('Atvēršanas % pa kampaņu veidiem', byKind, '%', ['Kampaņas veids', 'Atvēršanas %', 'Vēstules'], '', RX ? {cmp:RX.byKind, good:1} : {})}
-      ${card('Vidējais laiks', times, ' st.', ['Posms', 'Vidēji, st.', 'Veidlapas'], 'Atvēršana → iesākšana: no vēstules atvēršanas līdz veidlapas iesākšanai; iesākšana → iesniegšana: no iesākšanas līdz (pēdējai) iesniegšanai.', RX ? {cmp:RX.times, good:-1} : {})}
+      ${f.camp ? '' : '<div class="rx-stack">'}${card('Atvēršanas % pa kampaņu veidiem', byKind, '%', ['Kampaņas veids', 'Atvēršanas %', 'Vēstules'], '', RX ? {cmp:RX.byKind, good:1} : {})}
+      ${card('Vidējais laiks', times, ' st.', ['Posms', 'Vidēji, st.', 'Veidlapas'], 'Atvēršana → iesākšana: no vēstules atvēršanas līdz veidlapas iesākšanai; iesākšana → iesniegšana: no iesākšanas līdz (pēdējai) iesniegšanai.', RX ? {cmp:RX.times, good:-1} : {})}${f.camp ? '' : '</div>'}
     </div>
     ${collCardHtml('rcamp', 'Reakcija un iesniegšana pa kampaņām', camps.length, 'Katrai kampaņai – atvērto vēstuļu un iesniegto veidlapu īpatsvars, kļūdainās veidlapas un vidējais laiks līdz iesniegšanai.', tableHtml(head, rows, 'rep-table tbl-noexp', 'Atlasītajā periodā nav kampaņu'))}
     <p class="hint">Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena (izsekošanas attēls).</p>`,
