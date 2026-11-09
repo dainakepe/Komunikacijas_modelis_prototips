@@ -4168,7 +4168,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 227</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 228</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11892,7 +11892,7 @@ function seedArchive(allR = state.respondents){
       const t = tplOf(c.tpl);
       if (!t) return;
       // Versija 222: ikdienas sūtījumi – pēc visām pārējām testa kampaņām (to numuri un dati nemainās)
-      if (c.daily){ daily.push({c, t}); return; }
+      if (c.daily || c.cover){ daily.push({c, t}); return; } // Versija 228: arī papildu (pārklājuma) kampaņas
       if (c.ctl){ seedCtlCamp(c, t); return; }
       state.seq = (state.seq || 0) + 1;
       // nosaukums – pēc visu testa kampaņu izveides (assignCampNames); līdzšinējais nosaukums ar mēnesi – apraksts
@@ -11948,6 +11948,8 @@ function repCtlPlan(allR){
     infJur:{name:'Rezultātu publicēšana – uzņēmumi', kind:'info', tpl:'t10', list:jur, reps:[], day:25, share:70, per:'visi', kc:'IN', prio:EM, codes:MEN},
     infFiz:{name:'Rezultātu publicēšana – iedzīvotāji', kind:'info', tpl:'t5', list:fiz, reps:[], day:26, share:55, per:'gads', kc:'IN', prio:EM, codes:['a-mba']},
     sys:{name:'Paziņojums par e-vides darbības pārtraukumu', kind:'info', tpl:'t13', list:[...jur, ...fiz], reps:[], day:18, share:35, kc:'IN', prio:EM},
+    // Versija 228: katru mēnesi – individuāli atgādinājumi par mēneša pārskatiem pa e-pastu (atvēršanas dati katram mēneša pārskatam)
+    menInd:{name:'Mēneša pārskati – individuālie atgādinājumi', kind:'atg-pec', tpl:'t9', list:jur, reps:MEN, day:14, share:100, per:'men', kc:'AT', prio:EM},
     xmas:{name:'Svētku apsveikums respondentiem', kind:'cits', tpl:'t14', list:[...jur, ...fiz], reps:[], day:19, share:35, kc:'CI', prio:EM},
   };
   // kampaņas pēc kalendārā mēneša (janv. = 0); iepriekšējā mēnesī daļu nodrošina SEED_HIST (ar saturu)
@@ -11958,7 +11960,13 @@ function repCtlPlan(allR){
   for (let m = 11; m >= 1; m--){
     const cm = new Date(now.getFullYear(), now.getMonth() - m, 1).getMonth();
     let ks = BY_M[cm]; if (m === 1) ks = ks.filter(k => !['menUz', 'late', 'dsaUz'].includes(k));
-    ks.forEach(k => { const c = C[k], cs = (c.codes || c.reps).map(id => (repById(id) || {}).code).filter(Boolean).sort((a, b) => a.localeCompare(b, 'lv'));
+    // Versija 228: katrā mēnesī – vismaz viena kampaņa (uzaicinājums vai atgādinājums) biežāk lietotajiem apsekojumiem: 1-C (Ceļotāji), 1-DSA, 1-MBA
+    // un mēneša pārskatiem ar e-pastu pirmajā vietā – lai, filtrējot apsekojumu vai statistikas jomu, līknēs nebūtu pārtraukumu
+    const has = a => ks.some(k => a.includes(k));
+    const cover = [...(has(['celUz', 'celAtg', 'celSum']) ? [] : [m % 2 ? 'celAtg' : 'celUz']), ...(has(['dsaUz', 'dsaAtg']) ? [] : ['dsaAtg']),
+      ...(has(['mbaUz', 'mbaAtg']) ? [] : ['mbaAtg']), 'menInd'];
+    ks = [...ks, ...cover];
+    ks.forEach(k => { const c = cover.includes(k) ? {...C[k], cover:true} : C[k], cs = (c.codes || c.reps).map(id => (repById(id) || {}).code).filter(Boolean).sort((a, b) => a.localeCompare(b, 'lv'));
       out.push({...c, m, at:wdShift(new Date(now.getFullYear(), now.getMonth() - m, c.day, 9 + (c.day % 5), 5)), ctl:true, prio:c.prio || DEFAULT_PRIO, base:cs.length ? archBase(cs, c.per, c.kc) : null}); });
   }
   // Versija 222: ikdienas sūtījumi pēdējos 3 mēnešos – darba dienās, kurās nav lielas kampaņas, nelielas kampaņas (individuālie atgādinājumi,
@@ -11989,14 +11997,14 @@ function seedCtlCamp(c, t){
   const has = new Map(); (state.duties || []).forEach(d => { if (!has.has(d.respondentId)) has.set(d.respondentId, new Set()); has.get(d.respondentId).add(d.reportId); });
   const f = {...compose.f, date:isoDate(c.at), start:isoDate(addDaysTo(c.at, -10)), deadline:isoDate(addDaysTo(c.at, c.kind === 'atg-pec' ? -5 : 10))};
   const forms = FORM_KINDS.includes(c.kind);
-  // Versija 222: ikdienas sūtījumos – tikai respondenti, kuriem piegāde var izdoties (piegādes īpatsvars – kā pārējām mēneša vēstulēm)
+  // Versija 222 / 228: ikdienas un papildu (pārklājuma) kampaņās – tikai respondenti, kuriem piegāde var izdoties (piegādes īpatsvars – kā pārējām mēneša vēstulēm)
   c.list.filter(r => (!forms || c.reps.some(id => (has.get(r.id) || new Set()).has(id))) && hashRoll(`${batch}|${c.name}|${r.id}`) < c.share && addrPlan(r, c.prio, false).length
-    && (!c.daily || ctlAttempts(r, c.prio, `ctl|${batch}|${r.id}`, true))).forEach(r => {
+    && (!(c.daily || c.cover) || ctlAttempts(r, c.prio, `ctl|${batch}|${r.id}`, true))).forEach(r => {
     const duties = !forms ? [] : c.reps.filter(id => (has.get(r.id) || new Set()).has(id)).map(id => {
       const p = repById(id), h = hashRoll(`ad|${batch}|${r.id}|${id}`), period = periodShift(periodOf(p.freq, c.at), c.per === 'men2' ? -2 : -1);
       const dl = c.kind === 'atg-pec' ? -(4 + h % 6) : c.kind === 'atg-pirms' ? 3 + h % 4 : 12 + h % 7, d = {id:'da' + (state.archDuties.length + 1), respondentId:r.id, reportId:id, period, deadline:isoDate(addDaysTo(c.at, dl)), submitted:null, arch:true};
       state.archDuties.push(d); return d.id; });
-    state.sent.push({id:'s' + uid(), batch, seed:true, archived:true, _ctl:'full', _bad:!!c.bad, _daily:!!c.daily, sessionName:sname, sessionDesc:sname, campBase:cb, sessionKind:c.kind, plannedFor:'', contentSource:'tpl', sentAt,
+    state.sent.push({id:'s' + uid(), batch, seed:true, archived:true, _ctl:'full', _bad:!!c.bad, _daily:!!(c.daily || c.cover), sessionName:sname, sessionDesc:sname, campBase:cb, sessionKind:c.kind, plannedFor:'', contentSource:'tpl', sentAt,
       templateId:t.id, templateName:t.name, kind:t.kind, respondentId:r.id, recipient:r.name, address:'', addrType:'', channel:'', prio:c.prio.filter(Boolean), attempts:[], docNr:docNrFor(batch),
       subject:fillText(t.subject, ctxFor(r, f)), bodyHtml:'', bodyText:'', footer:'', lang:'lv', wantLang:'lv', fallback:false, org:state.layout.org, attachments:[], main:null, files:[], duties, status:'rinda', note:'', manual:[]});
   });
@@ -12043,6 +12051,11 @@ function shapeRepSeed(allR = state.respondents){
   state.sent.filter(x => x.seed && String(x.sentAt).slice(0, 7) >= fromKey).forEach(x => { const k = String(x.sentAt).slice(0, 7); if (!byKey.has(k)) byKey.set(k, []); byKey.get(k).push(x); });
   // deterministiski (katrā ielādē vienādi): pēc kampaņas un respondenta, nevis nejaušā vēstules ID
   const hk = x => `${x.batch}|${x.respondentId}`, ord = (xs, salt) => [...xs].sort((a, b) => hashRoll(salt + hk(a)) - hashRoll(salt + hk(b)) || hk(a).localeCompare(hk(b)));
+  // Versija 228: atvēršana un iesniegšana – proporcionāli pa apsekojumiem (katram apsekojumam ~tā pati daļa kā mēnesī; mēneša skaits nemainās),
+  // lai, filtrējot vienu apsekojumu, līknes nelēktu 0–100 %
+  const grpOf = x => histReps(x).slice().sort().join(',') || x.sessionKind || '';
+  const strat = (xs, salt) => { const key = new Map(); groupBy(ord(xs, salt), grpOf).forEach(g => g.forEach((x, i) => key.set(x, (i + 0.5) / g.length)));
+    return [...xs].sort((a, b) => key.get(a) - key.get(b) || hashRoll(salt + 'g' + hk(a)) - hashRoll(salt + 'g' + hk(b)) || hk(a).localeCompare(hk(b))); };
   byKey.forEach((all, k) => {
     const cm = +k.slice(5, 7) - 1, part = k === cur, T0 = part ? REP_TGT_PART : {deliv:REP_TGT.deliv[cm], open:REP_TGT.open[cm], sub:REP_TGT.sub[cm]};
     const shape = (xs, T, o = {}) => {
@@ -12067,7 +12080,7 @@ function shapeRepSeed(allR = state.respondents){
     }
     if (o.react === false) return;
     // 2) e-pasta atvēršana (visām testa vēstulēm mēnesī)
-    const em = xs.filter(x => x.channel === 'epasts' && isRecv(x)), nOpen = Math.round(T.open / 100 * em.length), openSet = new Set(ord(em.filter(x => Date.parse(x.sentAt) < now - 3600e3), 'op').slice(0, nOpen).map(x => x.id));
+    const em = xs.filter(x => x.channel === 'epasts' && isRecv(x)), nOpen = Math.round(T.open / 100 * em.length), openSet = new Set(strat(em.filter(x => Date.parse(x.sentAt) < now - 3600e3), 'op').slice(0, nOpen).map(x => x.id));
     em.forEach(x => { const r = reactData(x), b = Date.parse(x.sentAt), h = hashRoll('oa' + hk(x));
       r.open = openSet.has(x.id) ? {at:new Date(Math.max(b + 6 * 60e3, Math.min(now - 15 * 60e3, b + (8 + Math.pow(h / 100, 2.2) * 40 * 60) * 60e3))).toISOString()} : null; });
     // 3) iesniegšana (kontrolēto vēstuļu veidlapas)
@@ -12077,7 +12090,7 @@ function shapeRepSeed(allR = state.respondents){
     const subOk = x => !(x.duties || []).some(id => { const d = rxDuty(id); return d && !d.arch && CEL_IDS.includes(d.respondentId); });
     // jau iesniegts reālais pienākums (pēc vēstules) – iesniegšana ir tik un tā
     const fixed = x => (x.duties || []).some(id => { const d = rxDuty(id); return d && !d.arch && d.submitted && d.submitted >= String(x.sentAt).slice(0, 10); });
-    const nFix = C.filter(fixed).length, nSub = Math.max(0, Math.round(T.sub / 100 * withF.length) - uSub - nFix), subSet = new Set(ord(C.filter(x => subOk(x) && !fixed(x)), 'sb').slice(0, nSub).map(x => x.id));
+    const nFix = C.filter(fixed).length, nSub = Math.max(0, Math.round(T.sub / 100 * withF.length) - uSub - nFix), subSet = new Set(strat(C.filter(x => subOk(x) && !fixed(x)), 'sb').slice(0, nSub).map(x => x.id));
     C.forEach(x => { const r = reactData(x); r.forms = ctlForms(x, subSet.has(x.id), now); });
     xs.filter(x => x._ctl && !isRecv(x)).forEach(x => { const r = reactData(x); r.forms = ctlForms(x, false, now); });
     };
@@ -12100,7 +12113,7 @@ function seedHistory(){
   try { seedHistoryAll(allR); } finally { state.respondents = allR; }
 }
 function seedHistoryAll(allR = state.respondents){
-  state.histSeeded = true; state.histVer = 11;
+  state.histSeeded = true; state.histVer = 12;
   if (state.sent.length) return;
   state.archDuties = [];
   const daily = seedArchive(allR) || [];
@@ -12280,7 +12293,7 @@ function seedPrint(){
   state.sent.sort((a, b) => String(b.sentAt).localeCompare(String(a.sentAt)));
 }
 // Agrāk izveidotā testa vēsture tiek aizstāta ar jauno (ja tajā ir tikai testa ieraksti)
-if (state.histSeeded && state.histVer !== 11 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
+if (state.histSeeded && state.histVer !== 12 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
   state.sent = []; state.seq = 0; state.histSeeded = false; state.tasks = [];
   state.respondents.forEach(r => { delete r.invalidAddr; });
   // Versija 196: kampaņu numuri mainās – ar tiem saistītie testa dati tiek izveidoti no jauna
