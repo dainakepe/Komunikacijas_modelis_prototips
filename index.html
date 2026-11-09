@@ -1917,7 +1917,7 @@ dialog.drawer.al-drawer{width:min(420px,100vw)}
 /* 1. solis: "Ko attiecina kampaņa" – pēc perioda un/vai pēc apsekojuma */
 .scope-lead{margin:0 0 10px}
 .scope-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
-.scope-grid.is-tall{align-items:start}
+.scope-grid.is-tall{align-items:stretch} /* Versija 237: arī ar "Vairāk filtru" – visas trīs pēc augstākās, saturs augšā */
 /* Iedzīvotāju statistika / Visi: tikai "Pēc apsekojuma" visā platumā */
 .scope-grid.is-survey{grid-template-columns:1fr}
 .fz-form{display:flex;flex-direction:column;gap:12px}
@@ -1973,6 +1973,19 @@ dialog.drawer.al-drawer{width:min(420px,100vw)}
 .more-btn{align-self:flex-start;margin-top:2px}
 .resp-more{display:flex;flex-direction:column}
 .resp-more .field{margin-bottom:10px}
+/* Versija 237: "Pēc respondenta" – kompakti lauki (augstums un fonts kā "Pēc perioda" izvēlnēm), atstarpes 10 px, etiķete 4 px virs lauka;
+   "Statusa šifrs" un "Atbildīgais operators" – blakus, ja kartīte ≥ 320 px; "+ Vairāk filtru" uzreiz zem pēdējā lauka */
+.scope-card.scope-resp{container-type:inline-size;gap:10px}
+.scope-resp h4{margin-bottom:0}
+.scope-resp .field,.scope-resp .resp-more .field{margin:0;gap:4px}
+.scope-resp .field > label,.scope-resp .field > .label{font-size:var(--fs-sm);margin:0;line-height:1.3}
+.scope-resp .field input[type="text"],.scope-resp .field select{height:32px;min-height:32px;box-sizing:border-box;padding:5px 8px;font-size:var(--fs-md);line-height:1.2}
+.scope-resp .field select{padding-right:28px}
+.scope-resp .resp-more{gap:10px}
+.scope-resp .resp-more[hidden]{display:none}
+.scope-resp .more-btn{margin-top:0}
+.cr-row{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+@container (min-width:320px){.cr-row{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .scope-card{display:flex;flex-direction:column;gap:6px;min-width:0;border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px 14px;background:var(--surface)}
 .scope-card.is-on{border-color:var(--primary-300);box-shadow:inset 3px 0 0 var(--primary)}
 .scope-card h4{display:flex;align-items:center;gap:8px;font-size:var(--fs-md);color:var(--primary-darker);margin:0 0 4px}
@@ -3927,8 +3940,10 @@ th.has-exp{padding-right:32px !important}
               <h4 id="c-sc-resp"><span class="scope-ic" aria-hidden="true"></span>Pēc respondenta <span class="pill pill-mod" id="c-resp-count" hidden></span></h4>
               <div class="field"><label for="cr-name">Nosaukums</label><input type="text" id="cr-name" data-rf="name" placeholder="Daļa no nosaukuma"></div>
               <div class="field"><label for="cr-nmkps">NMK/PS <span class="tip" tabindex="0" role="note" aria-label="Var ievadīt vienu vai vairākas vērtības, atdalot ar komatu." data-tip="Var ievadīt vienu vai vairākas vērtības, atdalot ar komatu.">i</span></label><input type="text" id="cr-nmkps" data-rf="nmkps" placeholder="40000000101/002, …"></div>
-              <div class="field"><label for="cr-ns">Statusa šifrs <span class="tip" tabindex="0" role="note" aria-label="Neiesniegšanas kods respondenta pienākumam šīs kampaņas apsekojumā un periodā." data-tip="Neiesniegšanas kods respondenta pienākumam šīs kampaņas apsekojumā un periodā.">i</span></label><select id="cr-ns" data-rf="ns"><option value="">Visi</option><option value="-">Bez koda</option><option value="1">1 – Uzņēmums nedarbojās pārskata periodā, bet turpinās to darīt</option><option value="2">2 – Uzņēmums vairs nedarbojas un neplāno darbību atsākt</option><option value="3">3 – Ar uzņēmumu nav kontakta</option><option value="4">4 – Uzņēmums ignorē vai atsakās iesniegt pārskatu</option><option value="5">5 – Uzņēmumam vairs nav attiecīgās nozares (darbības veida), vai nav derīgs apsekojumam</option><option value="8">8 – Uzņēmumi, kas atzīti par absolūti pārtraukušiem darbību (kodu liek pārskata vadītājs)</option><option value="a">a – Pārskats iesniegts alternatīviem iesniegšanas veidiem</option><option value="q">q – Dati no respondenta netiks vākti, tos imputēs vai importēs.</option><option value="v">v – Iestāžu dati no Vienotā pakalpojumu centra</option></select></div>
-              <div class="field"><label for="c-operator">Atbildīgais operators</label><select id="c-operator"></select></div>
+              <div class="cr-row">
+                <div class="field"><label for="cr-ns">Statusa šifrs <span class="tip" tabindex="0" role="note" aria-label="Neiesniegšanas kods respondenta pienākumam šīs kampaņas apsekojumā un periodā." data-tip="Neiesniegšanas kods respondenta pienākumam šīs kampaņas apsekojumā un periodā.">i</span></label><select id="cr-ns" data-rf="ns"><option value="">Visi</option><option value="-">Bez koda</option><option value="1">1 – Uzņēmums nedarbojās pārskata periodā, bet turpinās to darīt</option><option value="2">2 – Uzņēmums vairs nedarbojas un neplāno darbību atsākt</option><option value="3">3 – Ar uzņēmumu nav kontakta</option><option value="4">4 – Uzņēmums ignorē vai atsakās iesniegt pārskatu</option><option value="5">5 – Uzņēmumam vairs nav attiecīgās nozares (darbības veida), vai nav derīgs apsekojumam</option><option value="8">8 – Uzņēmumi, kas atzīti par absolūti pārtraukušiem darbību (kodu liek pārskata vadītājs)</option><option value="a">a – Pārskats iesniegts alternatīviem iesniegšanas veidiem</option><option value="q">q – Dati no respondenta netiks vākti, tos imputēs vai importēs.</option><option value="v">v – Iestāžu dati no Vienotā pakalpojumu centra</option></select></div>
+                <div class="field"><label for="c-operator">Atbildīgais operators</label><select id="c-operator"></select></div>
+              </div>
               <button type="button" class="link-btn more-btn" id="cr-more" aria-expanded="false" aria-controls="cr-more-box">+ Vairāk filtru</button>
               <div class="resp-more" id="cr-more-box" hidden>
                 <div class="field"><label for="cr-uuk">UUK</label><input type="text" id="cr-uuk" data-rf="uuk" placeholder="U30006, …"></div>
@@ -4207,7 +4222,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 236</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 237</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -10331,7 +10346,7 @@ function renderScope(){
   grid.classList.toggle('is-survey', sm);
   grid.classList.toggle('is-tall', !!ui.respMore && !sm);
   two.forEach(c => { c.style.minHeight = ''; });
-  if (ui.respMore && !sm && innerWidth >= 1000){ const h = Math.max(...two.map(c => c.offsetHeight)); two.forEach(c => { c.style.minHeight = h + 'px'; }); }
+  // Versija 237: visas trīs kartītes stiepjas pēc augstākās (CSS grid stretch) – minHeight vairs netiek iestatīts
   // izvēles, kas neatbilst adresātam, tiek noņemtas
   sel.reports = sel.reports.filter(id => reps.some(p => p.id === id));
   $('#c-sc-per .scope-ic').innerHTML = ICON.calendar; $('#c-sc-rep .scope-ic').innerHTML = ICON.doc;
