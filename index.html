@@ -1433,6 +1433,10 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .hbar .val .cmpd{margin-left:4px}
 .kpi .kpi-cmp{margin-top:6px}
 .rk-cmp-leg{display:flex;align-items:center;gap:6px;margin:0 0 4px}
+.data-ver{position:fixed;left:16px;bottom:16px;z-index:300;display:flex;gap:10px;align-items:flex-start;max-width:min(480px,calc(100vw - 32px));padding:12px 12px 12px 14px;
+  background:var(--surface);border:1px solid var(--warning-border, #E8C48A);border-left:4px solid var(--orange-ink, #B36B00);border-radius:var(--radius-sm);box-shadow:0 8px 24px rgba(0,0,0,.14);font-size:var(--fs-sm);line-height:1.45}
+.data-ver .link-btn{font-size:inherit;padding:0}
+.data-ver-x{appearance:none;border:0;background:none;font-size:18px;line-height:1;color:var(--text-muted);cursor:pointer;padding:0 2px}
 .rk-rlist-tot{margin:8px 6px 0;padding-top:8px;border-top:1px solid var(--border-light);font-size:var(--fs-sm);color:var(--text-secondary)}
 .viz-grid.g-ch{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
 @media (max-width:1000px){.viz-grid.g-ch{grid-template-columns:minmax(0,1fr)}}
@@ -4188,7 +4192,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 232</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 233</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4440,31 +4444,21 @@ const SEED_REPORTS = [
   {id:'a-dsa',  code:'1-DSA',         name:'Darbaspēka apsekojums',             freq:'cet',  aud:'fiz', rule:{type:'day', day:14}},
   {id:'a-cel',  code:'1-C',           name:'Ceļotāju apsekojums',               freq:'men',  aud:'fiz', rule:{type:'day', day:10}},
   {id:'a-mba',  code:'1-MBA',         name:'Mājsaimniecību budžeta apsekojums', freq:'gads', aud:'fiz', rule:{type:'day', day:20, months:3}},
-  // uzņēmumu statistika
-  {id:'p-apgr', code:'1-apgrozījums', name:'Pārskats par apgrozījumu',          freq:'men',  aud:'jur', rule:{type:'day', day:15}},
-  {id:'p-rup',  code:'1-Rūpniecība',  name:'Pārskats par rūpniecību',           freq:'gads', aud:'jur', dyn:5},
-  {id:'p-ds',   code:'2-darbs',       name:'Pārskats par darbu',                freq:'cet',  aud:'jur', dyn:7},
-  // papildu uzņēmumu pārskati (izdomāti) – gara saraksta pārbaudei; pienākumi tiek izveidoti automātiski (seedDutyData)
-  {id:'p-x01', code:'1-investīcijas',     name:'Pārskats par investīcijām',                                   freq:'gads', aud:'jur', rule:{type:'day', day:1, months:3}},
-  {id:'p-x02', code:'1-inovācija',        name:'Pārskats par inovācijām uzņēmumos',                           freq:'gads', aud:'jur', rule:{type:'day', day:30, months:4}},
-  {id:'p-x03', code:'1-IKT',              name:'Informācijas un komunikācijas tehnoloģiju lietošana uzņēmumos', freq:'gads', aud:'jur', rule:{type:'day', day:15, months:4}},
-  {id:'p-x04', code:'2-enerģija',         name:'Pārskats par enerģijas patēriņu',                             freq:'gads', aud:'jur', rule:{type:'day', day:1, months:4}},
-  {id:'p-x05', code:'1-vide',             name:'Pārskats par vides aizsardzības izdevumiem',                  freq:'gads', aud:'jur', rule:{type:'day', day:1, months:5}},
-  {id:'p-x06', code:'1-lauksaimniecība',  name:'Pārskats par lauksaimniecības produkciju',                    freq:'gads', aud:'jur', rule:{type:'day', day:20, months:2}},
-  {id:'p-x07', code:'1-izmaksas',         name:'Pārskats par darbaspēka izmaksām',                            freq:'pusg', aud:'jur', rule:{type:'day', day:25}},
-  {id:'p-x08', code:'2-alga',             name:'Pārskats par darba samaksu',                                  freq:'pusg', aud:'jur', rule:{type:'day', day:20}},
-  {id:'p-x09', code:'1-pakalpojumi',      name:'Pārskats par pakalpojumu apjomu',                             freq:'cet',  aud:'jur', rule:{type:'day', day:25}},
-  {id:'p-x10', code:'1-būvniecība',       name:'Pārskats par būvniecības darbu apjomu',                       freq:'cet',  aud:'jur', rule:{type:'day', day:20}},
-  {id:'p-x11', code:'1-transports',       name:'Pārskats par kravu pārvadājumiem ar autotransportu',          freq:'cet',  aud:'jur', rule:{type:'day', day:15}},
-  {id:'p-x12', code:'1-finanses',         name:'Pārskats par uzņēmuma finanšu rādītājiem',                    freq:'cet',  aud:'jur', rule:{type:'day', day:30}},
-  {id:'p-x13', code:'1-tirdzniecība',     name:'Pārskats par mazumtirdzniecības apgrozījumu',                 freq:'men',  aud:'jur', rule:{type:'day', day:12}},
-  {id:'p-x14', code:'1-cenas',            name:'Ražotāju cenu pārskats',                                      freq:'men',  aud:'jur', rule:{type:'day', day:10}},
-  {id:'p-x15', code:'1-eksports',         name:'Pārskats par preču eksportu',                                 freq:'men',  aud:'jur', rule:{type:'day', day:18}},
-  {id:'p-x16', code:'1-imports',          name:'Pārskats par preču importu',                                  freq:'men',  aud:'jur', rule:{type:'day', day:18}},
-  {id:'p-x17', code:'1-viesnīcas',        name:'Pārskats par tūristu mītņu darbību',                          freq:'men',  aud:'jur', rule:{type:'day', day:8}},
-  {id:'p-x18', code:'1-degviela',         name:'Pārskats par degvielas cenām',                                freq:'ned',  aud:'jur', rule:{type:'days', days:2}},
-  {id:'p-x19', code:'1-pārtika',          name:'Pārskats par pārtikas preču cenām',                           freq:'ned',  aud:'jur', rule:{type:'days', days:3}},
-  {id:'p-x20', code:'1-piens',            name:'Pārskats par piena iepirkumu',                                freq:'ned',  aud:'jur', rule:{type:'days', days:4}},
+  // uzņēmumu statistika (Versija 233: reāli apsekojumi; iekšējie ID saglabāti – testa dati nesalūzt)
+  {id:'p-apgr', code:'1-apgrozījums',    name:'Pārskats par apgrozījumu',                                                    freq:'men',  aud:'jur', rule:{type:'day', day:15}},
+  {id:'p-ds',   code:'2-darbs',          name:'Pārskats par darbu',                                                          freq:'cet',  aud:'jur', dyn:7},
+  {id:'p-x03',  code:'1-IKT',            name:'Pārskats par informācijas un komunikācijas tehnoloģiju izmantošanu uzņēmumos', freq:'gads', aud:'jur', rule:{type:'day', day:15, months:4}},
+  {id:'p-x04',  code:'2-enerģētika',     name:'Pārskats par elektroenerģijas ražošanu, importu un eksportu',                 freq:'gads', aud:'jur', rule:{type:'day', day:1, months:4}},
+  // 2-EK: termiņš testa datos – pēc 5 dienām no šodienas (agrāk – dzēstajam gada pārskatam p-rup)
+  {id:'p-x05',  code:'2-EK',             name:'Pārskats par enerģētisko resursu iegādi un izlietošanu',                      freq:'gads', aud:'jur', dyn:5},
+  {id:'p-x09',  code:'2-investīcijas',   name:'Pārskats par investīcijām',                                                   freq:'cet',  aud:'jur', rule:{type:'day', day:25}},
+  {id:'p-x10',  code:'1-būvniecība',     name:'Pārskats par būvniecību',                                                     freq:'cet',  aud:'jur', rule:{type:'day', day:20}},
+  {id:'p-x13',  code:'1-kokmateriāli',   name:'Pārskats par kokmateriālu iepirkumu',                                         freq:'pusg', aud:'jur', rule:{type:'day', day:20}},
+  {id:'p-x14',  code:'1-EC',             name:'Pārskats par vidējām elektroenerģijas cenām',                                 freq:'pusg', aud:'jur', rule:{type:'day', day:25}},
+  {id:'p-x16',  code:'Ievedums-1A',      name:'Pārskats par tirdzniecību ar Eiropas Savienības dalībvalstīm',                freq:'men',  aud:'jur', rule:{type:'day', day:18}},
+  {id:'p-x17',  code:'1-tūristu mītnes', name:'Pārskats par viesnīcu un citu tūrisma mītņu darbību',                         freq:'men',  aud:'jur', rule:{type:'day', day:8}},
+  {id:'p-x18',  code:'1-degviela',       name:'Pārskats par degvielas cenām',                                                freq:'ned',  aud:'jur', rule:{type:'days', days:2}},
+  {id:'p-x20',  code:'1-piens',          name:'Pārskats par piena produktu ražošanu',                                        freq:'pusg', aud:'jur', rule:{type:'day', day:15}},
 ];
 // Versija 185: apsekojumu statistikas jomas – "Mani filtri" un filtru rindās joma ierobežo apsekojumu sarakstu
 // Versija 199: tikai divas jomas – "Uzņēmumu statistika" un "Iedzīvotāju statistika" (agrākās tematiskās jomas tirdz / buvn / lauks → uzn)
@@ -4504,17 +4498,21 @@ function sfJomaRepInit(el, upd){
   vis(); sel();
 }
 // Dzēstie agrākie testa apsekojumi / pārskati – pārsaistīti uz esošajiem (melnrakstos, ieplānotajās kampaņās, saglabātajos filtros)
-const OLD_REPORT_MAP = {'p-deg':'p-apgr', 'p-vak':'p-ds', 'p-inv':'p-ds', 'p-gada':'p-rup', 'p-ino':'p-rup', 'a-lai':'a-dsa', 'a-eus':'a-mba', 'a-ikt':'a-cel'};
+// Versija 233: dzēstie izdomātie pārskati → paliekošie ar tādu pašu periodiskumu (gads → p-x03 / p-x04 / p-x05; pusgads → p-x13 / p-x14; ceturksnis → p-x09 / p-x10;
+// mēnesis → p-x16; nedēļa → p-x18); p-rup → 2-EK (p-x05)
+const OLD_REPORT_MAP = {'p-deg':'p-apgr', 'p-vak':'p-ds', 'p-inv':'p-ds', 'p-gada':'p-x05', 'p-ino':'p-x05', 'a-lai':'a-dsa', 'a-eus':'a-mba', 'a-ikt':'a-cel',
+  'p-rup':'p-x05', 'p-x01':'p-x03', 'p-x02':'p-x04', 'p-x06':'p-x05', 'p-x07':'p-x13', 'p-x08':'p-x14', 'p-x11':'p-x09', 'p-x12':'p-x10', 'p-x15':'p-x16', 'p-x19':'p-x18'};
 const mapReportId = id => OLD_REPORT_MAP[id] || id;
 // apsekojuma / pārskata apzīmējums visur vienādi: "1-DSA Darbaspēka apsekojums"
 const repTitle = p => p ? `${p.code} ${p.name}` : '';
+// Versija 233: kods kampaņas nosaukumā – bez atstarpēm (nosaukuma daļas atdala "_")
+const campIdxCode = c => String(c || '').trim().replace(/\s+/g, '-');
 // Apsekojuma dati vēstules mainīgajiem (no Metadatu pārvaldības; prototipā – izdomāti testa dati)
 const SURVEY_META = {
   'a-dsa':  {link:'https://e-anketa.csp.example/dsa', email:'dsa@csp.example', web:'csp.example/dsa'},
   'a-cel':  {link:'https://e-anketa.csp.example/cel', email:'turisms@csp.example', web:'csp.example/adb'},
   'a-mba':  {link:'https://e-anketa.csp.example/mba', email:'mba@csp.example', web:'csp.example/mba'},
   'p-apgr': {link:'https://e-anketa.csp.example/1-apgrozijums', email:'apgrozijums@csp.example', web:'csp.example/apgrozijums'},
-  'p-rup':  {link:'https://e-anketa.csp.example/1-rupnieciba', email:'rupnieciba@csp.example', web:'csp.example/rupnieciba'},
   'p-ds':   {link:'https://e-anketa.csp.example/2-darbs', email:'darbs@csp.example', web:'csp.example/darbs'},
 };
 // papildu testa pārskatiem – izdomāta e-anketas saite un e-pasts pēc koda
@@ -5438,23 +5436,23 @@ const SEED_DUTIES = [
   ['r22', 'a-mba', 1, null], ['r23', 'a-mba', 1, 2], ['r24', 'a-mba', 1, 3], ['r25', 'a-mba', 1, null],
   ['r2', 'a-mba', 0, null], ['r25', 'a-mba', 0, null],
   // Uzņēmumu statistika (juridiskās personas); daļai uzņēmumu vairāki pārskati (apkopota vēstule ar pārskatu tabulu)
-  ['r6', 'p-apgr', 1, null], ['r6', 'p-apgr', 2, 3], ['r6', 'p-ds', 1, null], ['r6', 'p-rup', 0, null],
-  ['r7', 'p-ds', 1, null], ['r7', 'p-ds', 2, 5], ['r7', 'p-rup', 1, null],
-  ['r8', 'p-apgr', 1, null], ['r8', 'p-rup', 1, 4],
-  ['r9', 'p-apgr', 2, null], ['r9', 'p-rup', 1, null],
+  ['r6', 'p-apgr', 1, null], ['r6', 'p-apgr', 2, 3], ['r6', 'p-ds', 1, null], ['r6', 'p-x05', 0, null],
+  ['r7', 'p-ds', 1, null], ['r7', 'p-ds', 2, 5], ['r7', 'p-x05', 1, null],
+  ['r8', 'p-apgr', 1, null], ['r8', 'p-x05', 1, 4],
+  ['r9', 'p-apgr', 2, null], ['r9', 'p-x05', 1, null],
   ['r10', 'p-apgr', 1, null], ['r10', 'p-apgr', 2, null], ['r10', 'p-ds', 1, null],
-  ['r11', 'p-apgr', 1, 5], ['r11', 'p-rup', 1, -3],
-  ['r12', 'p-ds', 1, null], ['r12', 'p-ds', 2, 2], ['r12', 'p-rup', 1, null],
+  ['r11', 'p-apgr', 1, 5], ['r11', 'p-x05', 1, -3],
+  ['r12', 'p-ds', 1, null], ['r12', 'p-ds', 2, 2], ['r12', 'p-x05', 1, null],
   ['r13', 'p-apgr', 1, null], ['r13', 'p-ds', 2, null],
-  ['r14', 'p-ds', 1, null], ['r14', 'p-rup', 1, null], ['r14', 'p-rup', 0, null],
-  ['r15', 'p-apgr', 1, 6], ['r15', 'p-apgr', 2, 2], ['r15', 'p-rup', 1, null],
+  ['r14', 'p-ds', 1, null], ['r14', 'p-x05', 1, null], ['r14', 'p-x05', 0, null],
+  ['r15', 'p-apgr', 1, 6], ['r15', 'p-apgr', 2, 2], ['r15', 'p-x05', 1, null],
   ['r16', 'p-apgr', 1, null], ['r16', 'p-ds', 1, 3],
   ['r17', 'p-apgr', 1, null], ['r17', 'p-ds', 2, -2],
-  ['r18', 'p-ds', 1, null], ['r18', 'p-rup', 1, null],
-  ['r19', 'p-ds', 1, 2], ['r19', 'p-rup', 1, 5], ['r19', 'p-rup', 0, null],
+  ['r18', 'p-ds', 1, null], ['r18', 'p-x05', 1, null],
+  ['r19', 'p-ds', 1, 2], ['r19', 'p-x05', 1, 5], ['r19', 'p-x05', 0, null],
   ['r20', 'p-apgr', 1, null], ['r20', 'p-ds', 1, null],
   // vairākas vienības vienā NMK
-  ['r26', 'p-apgr', 1, null], ['r26', 'p-ds', 1, null], ['r27', 'p-apgr', 1, null], ['r27', 'p-rup', 1, 2], ['r28', 'p-ds', 1, null], ['r28', 'p-apgr', 1, null],
+  ['r26', 'p-apgr', 1, null], ['r26', 'p-ds', 1, null], ['r27', 'p-apgr', 1, null], ['r27', 'p-x05', 1, 2], ['r28', 'p-ds', 1, null], ['r28', 'p-apgr', 1, null],
 ];
 // Ceļotāju apsekojums (1-C): papildu respondenti r29–r52 – pienākumi 2026. un 2027. gada mēnešos (katrā mēnesī 16 respondenti), cikls – 1. vai 2.;
 // pagājušiem periodiem daļa iesniegta, nākotnes periodiem – nav iesniegts
@@ -5555,7 +5553,7 @@ const nsLabel = k => `${k} – ${nsDesc(k)}`;
 const nsNoLet = k => !!(NS_CODES[k] || {}).noLet;
 // testa dati: ~12 % uzņēmumu pārskatu pienākumu ar kodu (vairāk – 3 un 4, kas netiek izņemti); papildus – noteikti respondenti 1-apgrozījums pārskatam
 const NS_SEED = {r14:{code:'2', rep:'*'}, r9:{code:'1', rep:'p-apgr'}, r17:{code:'5', rep:'p-ds'}, r20:{code:'8', rep:'p-apgr'},
-  r15:{code:'q', rep:'p-apgr'}, r18:{code:'a', rep:'p-ds'}, r19:{code:'v', rep:'p-rup'}, r13:{code:'3', rep:'p-apgr'}, r11:{code:'4', rep:'p-apgr'}};
+  r15:{code:'q', rep:'p-apgr'}, r18:{code:'a', rep:'p-ds'}, r19:{code:'v', rep:'p-x05'}, r13:{code:'3', rep:'p-apgr'}, r11:{code:'4', rep:'p-apgr'}};
 const NS_MIX = [['3', 25], ['4', 25], ['1', 14], ['2', 10], ['a', 10], ['q', 8], ['5', 4], ['8', 2], ['v', 2]];
 const nsHash = str => { let h = 2166136261; for (let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0) % 100; };
 function applyNsCodes(s){
@@ -5678,7 +5676,7 @@ function seedReports(today = dOnly(new Date())){
 }
 // Pienākumi: respondents × pārskats × periods; termiņš – pēc pārskata noteikuma; statuss – testa dati
 // testa pienākumi visos 2026. un 2027. gada periodos (PER_YEARS): uzņēmumu pārskatiem un iedzīvotāju apsekojumiem
-const DUTY_HIST_FROM = 2026, DUTY_HIST = {'p-apgr':1, 'p-ds':0, 'p-rup':1}, DUTY_EXTRA_FROM = 2026;
+const DUTY_HIST_FROM = 2026, DUTY_HIST = {'p-apgr':1, 'p-ds':0, 'p-x05':1}, DUTY_EXTRA_FROM = 2026;
 const dutyLast = p => periodOf(p.freq, new Date(PER_YEARS[0], 11, 31));
 function seedDutyData(s){
   const today = dOnly(new Date()), reps = seedReports(today);
@@ -5789,7 +5787,12 @@ function loadState(){
       // melnrakstos / ieplānotajās kampaņās / filtros – dzēstie apsekojumi pārsaistīti
       const remap = sel => { if (sel && Array.isArray(sel.reports)) sel.reports = [...new Set(sel.reports.map(mapReportId))]; };
       (s.drafts || []).forEach(d => remap(d.sel)); if (s.draft) remap(s.draft.sel);
-      (s.planned || []).forEach(pl => remap(pl.snap && pl.snap.sel));
+      (s.planned || []).forEach(pl => { remap(pl.snap && pl.snap.sel); if (pl.reps) pl.reps = [...new Set(pl.reps.map(k => { const [id, ...r] = String(k).split('|'); return [mapReportId(id), ...r].join('|'); }))]; });
+      // Versija 233: dzēstie pārskati – arī kampaņu momentuzņēmumos un veidņu / sagatavju / pielikumu saistītajā apsekojumā
+      Object.values(s.campSnaps || {}).forEach(sn => remap(sn && sn.sel));
+      // vēstules dati no dzēsta apsekojuma – marķieri noņem, lai saite / e-pasts tiek ņemti no paliekošā apsekojuma
+      [...(s.drafts || []), s.draft, ...(s.planned || []).map(pl => pl && pl.snap), ...Object.values(s.campSnaps || {})].forEach(d => { if (d && d.f && OLD_REPORT_MAP[d.f.surveyFor]) delete d.f.surveyFor; });
+      [...(s.templates || []), ...(s.mailSamples || []), ...(s.attachments || [])].forEach(t => { if (t && typeof t.survey === 'string' && OLD_REPORT_MAP[t.survey]) t.survey = mapReportId(t.survey); });
       s.planned = s.planned || [];
       // saglabātie tvēruma filtri ("Mani filtri") vairs netiek izmantoti
       delete s.savedFilters;
@@ -5875,11 +5878,15 @@ function unpackSent(arr, bc = {}){
     return x; });
 }
 function save(){
+  try { state.dataVer = DATA_VER; } catch (e) {} // Versija 233 (DATA_VER – pēc ielādes)
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(packState(state))); }
   catch (e) { toast('Neizdevās saglabāt datus pārlūkā (iespējams, pārsniegts apjoms).', true); }
 }
 
 let state = loadState() || seedData();
+// Versija 233: apsekojumu katalogs nomainīts – agrāk saglabātiem datiem vienreiz piedāvā "Atjaunot sākotnējos testa datus"
+const DATA_VER = 233, DATA_VER_OFFER = !!localStorage.getItem(STORAGE_KEY) && (state.dataVer || 0) < DATA_VER;
+state.dataVer = DATA_VER;
 if (!state.matSeeded) seedMaterials(state);
 
 // Versija 186: dokumenta numuru piešķir sistēma NOSŪTĪŠANAS brīdī (arī simulācijā) – viens numurs visām kampaņas vēstulēm,
@@ -5910,7 +5917,7 @@ const defaultSessionName = () => {
 };
 // Automātiskais kampaņas nosaukums – īss kods {indekss}_{gads}_{periods}_{veids}[nr]_{datums}, piem., "1-C_2026_M09_UZ3_2026-10-01", "1-DSA_2026_VISI_AT_2026-10-28":
 // datums – kampaņas izveides datums (GGGG-MM-DD; labojot melnrakstu, nemainās);
-// indekss – apsekojuma indekss (vairāki – pirmais + skaits: "1-tirdzniecība+3"); gads – vākšanas gads; periods – bez gada (C3, M09, P1, N12; gada pārskats – G),
+// indekss – apsekojuma indekss (vairāki – pirmais + skaits: "1-apgrozījums+3"); gads – vākšanas gads; periods – bez gada (C3, M09, P1, N12; gada pārskats – G),
 // vairāki – diapazons ("M07-M09") vai saraksts ("C1,C3"), visi gada periodi / nav precizēts – "VISI"; veids – UZ / AT / IN / CI.
 // Ja tāds nosaukums jau ir citai kampaņai – veidam kārtas numurs ("AT2", "AT3"). Bez apsekojuma – '' (laukā pelēks paraugs).
 const KIND_CODE = {uzaicinajums:'UZ', atgadinajums:'AT', info:'IN', cits:'CI'};
@@ -5929,7 +5936,7 @@ function campCodeBase(c = compose, scope = false){
   // bez izvēlēta apsekojuma (uzņēmumu statistikā – tvērums pēc perioda): tvērumā esošie apsekojumi
   if (!reps.length && !fiz && c === compose && (scope || c.selRun) && hasScope(sel)) reps = [...new Set(baseDuties().map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
   if (!reps.length) return null;
-  const idx = reps.length === 1 ? reps[0].code : `${reps[0].code}+${reps.length - 1}`;
+  const idx = campIdxCode(reps.length === 1 ? reps[0].code : `${reps[0].code}+${reps.length - 1}`);
   let year, per;
   if (fiz){
     const fz = sel.fz || {};
@@ -5979,7 +5986,7 @@ function campBaseFromDuties(xs){
   const pers = [...new Set(ds.map(d => d.period))].sort((a, b) => periodStart(a) - periodStart(b)), ys = pers.map(periodYear);
   const year = ys.sort((a, b) => ys.filter(v => v === b).length - ys.filter(v => v === a).length)[0] || new Date().getFullYear();
   const codes = pers.filter(k => periodYear(k) === year).map(k => perNoYear(periodCode(k)));
-  return {base:`${reps.length === 1 ? reps[0].code : `${reps[0].code}+${reps.length - 1}`}_${year}_${codes.length > 3 || new Set(codes.map(c => c[0])).size > 1 ? 'VISI' : perCodeList(codes)}`, kind:kindCodeOf(xs[0].sessionKind)};
+  return {base:`${campIdxCode(reps.length === 1 ? reps[0].code : `${reps[0].code}+${reps.length - 1}`)}_${year}_${codes.length > 3 || new Set(codes.map(c => c[0])).size > 1 ? 'VISI' : perCodeList(codes)}`, kind:kindCodeOf(xs[0].sessionKind)};
 }
 // Visām kampaņām (nosūtītajām, ieplānotajām, melnrakstiem, saskaņošanā) – nosaukums pēc tvēruma datiem izveides secībā (dublikātiem – "AT2", "AT3");
 // līdzšinējais nosaukums – apraksts (desc); bez apsekojuma – {veids}_{gads}_{kārtas nr.}
@@ -9694,7 +9701,7 @@ function matchesResp(r, q){
 }
 const repById = id => (state.reports || []).find(p => p.id === id);
 // Apsekojuma publicēšana (pieejams datu ievadei): apsekojumam – published / pubDate (ISO vai null – nav zināms); periodam – periodPub[periods]
-// testa dati relatīvi pret šodienu: 2-enerģija – plānots pēc 7 dienām (ja testa datums pagājis – tiek pārcelts)
+// testa dati relatīvi pret šodienu: 2-enerģētika – plānots pēc 7 dienām (ja testa datums pagājis – tiek pārcelts)
 const pubSeedDate = () => isoDate(addDays(7));
 const PUB_SEED = {'p-x04':{published:false, pubDate:'seed'}, 'a-dsa':{periodPub:{'Q:2026-4':{published:false, pubDate:null}}}};
 // "Kampaņas noformējums" (tēmturi, sauklis) pārcelts uz veidni: veidnēm ar baneri – līdzšinējās vērtības;
@@ -9743,7 +9750,7 @@ function pubIssues(pairs){
 }
 const pubDateTxt = d => d ? dmy(d) : '';
 const pubName = x => x.period ? `${x.code} · ${periodCode(x.period)}` : x.code;
-// īsais teksts joslām: "1 apsekojums vēl nav publicēts: 2-enerģija (plānots 20.10.2026). Respondenti nevarēs …"
+// īsais teksts joslām: "1 apsekojums vēl nav publicēts: 2-enerģētika (plānots 20.10.2026). Respondenti nevarēs …"
 function pubWarnText(xs){
   const n = xs.length, one = n === 1;
   return `${n} ${one ? 'apsekojums vēl nav publicēts' : 'apsekojumi vēl nav publicēti'}: ${xs.map(x => `${pubName(x)} (${x.pubDate ? `plānots ${pubDateTxt(x.pubDate)}` : 'datums nav zināms'})`).join(', ')}. Respondenti nevarēs uzsākt datu ievadi, līdz ${one ? 'apsekojums tiks publicēts' : 'apsekojumi tiks publicēti'}.`;
@@ -11918,7 +11925,7 @@ const OLD_SEED_NAMES = ['Darbaspēka apsekojums – uzaicinājums', 'Nokavētie 
 const jurRepCodes = freq => (state.reports || []).filter(p => p.aud === 'jur' && (!freq || p.freq === freq)).map(p => p.code).sort((a, b) => a.localeCompare(b, 'lv'));
 const archBase = (codes, per, kind) => at => {
   const cs = typeof codes === 'function' ? codes() : codes; if (!cs.length) return null;
-  const idx = cs.length === 1 ? cs[0] : `${cs[0]}+${cs.length - 1}`;
+  const idx = campIdxCode(cs.length === 1 ? cs[0] : `${cs[0]}+${cs.length - 1}`);
   const d = per === 'cet' ? new Date(at.getFullYear(), at.getMonth() - 3, 1) : per === 'men2' ? new Date(at.getFullYear(), at.getMonth() - 2, 1) : per === 'men' ? new Date(at.getFullYear(), at.getMonth() - 1, 1) : per === 'gads' ? new Date(at.getFullYear() - 1, 0, 1) : at;
   const pc = per === 'cet' ? `C${Math.floor(d.getMonth() / 3) + 1}` : per === 'gads' ? 'G' : per === 'visi' ? 'VISI' : `M${pad(d.getMonth() + 1)}`;
   return {base:`${idx}_${d.getFullYear()}_${pc}`, kind};
@@ -12783,7 +12790,10 @@ function sfJomaFix(list){
   let ch = false;
   (list || []).forEach(x => { const f = x && x.f; if (!f) return;
     if (Array.isArray(f.jomas)){ const nj = [...new Set(f.jomas.map(jomaKey))].filter(k => STAT_JOMAS[k]).sort(); if (JSON.stringify(nj) !== JSON.stringify(f.jomas)){ f.jomas = nj; ch = true; } }
-    if (f.aud && !STAT_JOMAS[f.aud] && JOMA_MAP[f.aud] && !['jur', 'fiz'].includes(f.aud)){ f.aud = jomaKey(f.aud); ch = true; } });
+    if (f.aud && !STAT_JOMAS[f.aud] && JOMA_MAP[f.aud] && !['jur', 'fiz'].includes(f.aud)){ f.aud = jomaKey(f.aud); ch = true; }
+    // Versija 233: dzēstie apsekojumi / pārskati – pārsaistīti uz paliekošajiem (OLD_REPORT_MAP) arī krātuvē
+    if (Array.isArray(f.reps) && f.reps.some(id => OLD_REPORT_MAP[id])){ f.reps = [...new Set(f.reps.map(mapReportId))]; ch = true; }
+    if (typeof f.rep === 'string' && OLD_REPORT_MAP[f.rep]){ f.rep = mapReportId(f.rep); ch = true; } });
   return ch;
 }
 function sfList(view){
@@ -17389,11 +17399,11 @@ function seedApvDrafts(){
   const L = (...its) => [{items:its.map(x => ({t:x.startsWith('g-') ? 'g' : 'p', id:x}))}];
   const r1 = L('g-met', 'g-kom', 'e-lk'), r2 = L('g-met', 'g-kom', 'e-lk'), r3 = L('g-kom');
   // 1) gaida saskaņojumu (saskaņotāji: Metodoloģijas daļa, Komunikācijas daļa, Liene Kļaviņa – visi paralēli)
-  mk({reports:['p-x01', 'p-x02'], kind:'uzaicinajums', tpl:'t8', created:day(3, 9), apv:{steps:r1, status:'pending', at:day(1, 11), by:CURRENT_USER,
+  mk({reports:['p-x03', 'p-x04'], kind:'uzaicinajums', tpl:'t8', created:day(3, 9), apv:{steps:r1, status:'pending', at:day(1, 11), by:CURRENT_USER,
     due:isoDate(addDays(5)), comment:'Lūdzu saskaņot līdz nedēļas beigām – izsūtīšana plānota pirms mēneša sākuma.', prog:[{appr:[]}],
     history:[{act:'submit', at:day(1, 11), by:CURRENT_USER}]}});
   // 2) daļēji saskaņota: Metodoloģijas daļa saskaņojusi, gaida Komunikācijas daļa (viens dalībnieks prombūtnē bez aizvietotāja) un Liene Kļaviņa
-  mk({reports:['p-ds', 'p-x07'], kind:'uzaicinajums', tpl:'t8', created:day(5, 9), apv:{steps:r2, status:'pending', at:day(3, 14), by:CURRENT_USER, due:isoDate(addDays(2)),
+  mk({reports:['p-ds', 'p-x13'], kind:'uzaicinajums', tpl:'t8', created:day(5, 9), apv:{steps:r2, status:'pending', at:day(3, 14), by:CURRENT_USER, due:isoDate(addDays(2)),
     prog:[{appr:[appr(r2[0].items[0], 'e-gk', day(2, 9))]}],
     history:[{act:'submit', at:day(3, 14), by:CURRENT_USER}, {act:'approve', at:day(2, 9), by:'Gatis Krūmiņš', item:'Metodoloģijas daļa'}]}});
   // 3) saskaņota – gatava nosūtīšanai
@@ -17401,7 +17411,7 @@ function seedApvDrafts(){
     prog:[{appr:[appr(r3[0].items[0], 'e-ab', day(1, 15))]}], approvedAt:day(1, 15), approvedBy:'Agnese Bērziņa',
     history:[{act:'submit', at:day(2, 10), by:CURRENT_USER}, {act:'approve', at:day(1, 15), by:'Agnese Bērziņa', item:'Komunikācijas daļa'}]}});
   // 4) atgriezta labošanai ar komentāru
-  mk({reports:['p-rup'], kind:'uzaicinajums', tpl:'t8', created:day(6, 9), apv:{steps:[{items:[{t:'p', id:'e-ez'}]}], status:'returned', at:day(4, 12), by:CURRENT_USER,
+  mk({reports:['p-x05'], kind:'uzaicinajums', tpl:'t8', created:day(6, 9), apv:{steps:[{items:[{t:'p', id:'e-ez'}]}], status:'returned', at:day(4, 12), by:CURRENT_USER,
     returnComment:'Lūdzu, precizējiet datu iesniegšanas termiņu vēstules tekstā un pārbaudiet uzrunu.', returnedAt:day(3, 16), returnedBy:'Edīte Zariņa', prog:[{appr:[]}],
     history:[{act:'submit', at:day(4, 12), by:CURRENT_USER}, {act:'return', at:day(3, 16), by:'Edīte Zariņa', comment:'Lūdzu, precizējiet datu iesniegšanas termiņu vēstules tekstā un pārbaudiet uzrunu.'}]}});
   state.drafts.filter(d => d.seedApv && d.apv.status === 'returned').forEach(d => { d.step = 4; });
@@ -17561,6 +17571,14 @@ renderAll();
 renderDraftInfo();
 navReady = true; navMode = 'replace'; route(); navMode = 'push';
 initClarityConsent();
+// Versija 233: apsekojumu katalogs nomainīts – agrāk saglabātiem datiem vienreiz piedāvā atjaunot sākotnējos testa datus
+if (DATA_VER_OFFER){
+  const d = document.createElement('div'); d.className = 'data-ver'; d.setAttribute('role', 'status');
+  d.innerHTML = `<div><b>Apsekojumu saraksts atjaunināts</b> – tagad 16 reāli apsekojumi. Lai kampaņas, sūtījumi un pienākumi pilnībā atbilstu jaunajam sarakstam, ieteicams <button type="button" class="link-btn" data-action="reset">atjaunot sākotnējos testa datus</button>.</div><button type="button" class="data-ver-x" aria-label="Aizvērt paziņojumu" title="Aizvērt">×</button>`;
+  document.body.appendChild(d);
+  d.addEventListener('click', e => { if (e.target.closest('.data-ver-x, [data-action="reset"]')) setTimeout(() => d.remove(), 0); });
+  save();
+}
 </script>
 </body>
 </html>
