@@ -4222,7 +4222,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 237</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 238</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4653,7 +4653,7 @@ const ICON = {
   shieldOk:'<svg class="icon" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8.2 8 9 4.6-.8 8-4 8-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>',
   users:'<svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6"/><path d="M16 4a4 4 0 0 1 0 8M22 21c0-3-1.5-5-4-5.7"/></svg>',
   inbox:'<svg class="icon" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/></svg>',
-  upload:'<svg class="icon" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>',
+  upload:'<svg class="icon" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>', download:'<svg class="icon" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>',
   print:'<svg class="icon" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2"/><rect x="6" y="14" width="12" height="7"/></svg>',
   warn:'<svg class="icon" viewBox="0 0 24 24"><path d="M12 3 2 21h20z"/><path d="M12 10v5M12 18h.01"/></svg>',
   info:'<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg>',
@@ -10928,6 +10928,7 @@ function renderAcBar(){
       </div>` : ''}
     <div class="q-acts q-links"><button type="button" class="q-link ac-recheck${busy ? ' is-busy' : ''}" data-ac-recheck ${busy ? 'disabled aria-busy="true"' : ''}><span class="ac-spin" aria-hidden="true">↻</span><span class="ac-lbl"><span ${busy ? 'aria-hidden="true"' : ''}>Pārbaudīt adreses</span><span ${busy ? '' : 'aria-hidden="true"'}>Pārbauda…</span></span></button>
       <button type="button" class="q-link" data-ci-import aria-haspopup="dialog">${ICON.upload}<span>Importēt labojumus</span></button>
+      <button type="button" class="q-link" data-tbl-for="#c-list table" aria-haspopup="menu" aria-expanded="false" title="Respondentu tabulas eksports – tā pati izvēlne kā tabulas eksporta ikonai (pašreizējie filtri)">${ICON.download}<span>Eksportēt kontaktus</span></button>
       <button type="button" class="q-link ac-reg" data-ac-reqall aria-haspopup="dialog" ${nUnres ? '' : 'disabled'} title="${nUnres ? 'Nederīgās un potenciāli kļūdainās adreses, kas nav labotas vai ziņotas, – ziņot administratoram labošanai Respondentu pārvaldībā' : 'Neatrisinātu adrešu nav'}">${ICON.mail}<span>Ziņot administratoram</span> <span class="q-link-n">(${nUnres})</span></button>${nNo && !printOn() ? `<button type="button" class="link-btn ac-excl-lnk" data-ac-excl>Izņemt bez derīgas adreses (${nNo})</button>` : ''}</div>`;
   // "Koplietojamas · Dublikāti · MI ieteikumi" – vienā rindā; ja neietilpst – "MI" (pilnais nosaukums padomā)
   { const q = $('#c-ac .q-auto'); if (q){ q.classList.remove('is-short'); if (q.scrollWidth > q.clientWidth + 1) q.classList.add('is-short'); } }
@@ -15715,7 +15716,8 @@ function tblExport(t, fmt){
 let tblMenuT = null;
 function tblMenuClose(){ const m = $('#tbl-exp-menu'); if (m) m.hidden = true; if (tblMenuT && tblMenuT.btn) tblMenuT.btn.setAttribute('aria-expanded', 'false'); tblMenuT = null; }
 function tblMenuOpen(btn){
-  const t = btn.closest('table') || (btn.hasAttribute('data-tbl-card') && btn.closest('.card') ? btn.closest('.card').querySelector('table') : null); if (!t) return;
+  // Versija 238: data-tbl-for – saite ārpus tabulas (piem., "Eksportēt kontaktus") atver tās pašas tabulas eksporta izvēlni
+  const t = (btn.dataset.tblFor && $(btn.dataset.tblFor)) || btn.closest('table') || (btn.hasAttribute('data-tbl-card') && btn.closest('.card') ? btn.closest('.card').querySelector('table') : null); if (!t) return;
   let m = $('#tbl-exp-menu'); if (!m){ m = document.createElement('div'); m.id = 'tbl-exp-menu'; m.className = 'tbl-exp-menu'; m.setAttribute('role', 'menu'); m.setAttribute('aria-label', 'Eksportēt');
     m.addEventListener('click', e => { const b = e.target.closest('[data-tx]'); if (!b || !tblMenuT) return; const {t, ctx} = tblMenuT, k = b.dataset.tx; tblMenuClose();
       if (k === 'xlsx' || k === 'csv') tblExport(t, k); else { const x = (ctx.extra || [])[+k]; if (x) x[1](); } });
@@ -15723,18 +15725,18 @@ function tblMenuOpen(btn){
       if (e.key === 'Escape'){ e.preventDefault(); const b = tblMenuT && tblMenuT.btn; tblMenuClose(); if (b) b.focus(); }
       else if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); its[(i + (e.key === 'ArrowDown' ? 1 : -1) + its.length) % its.length].focus(); } }); }
   const host = btn.closest('dialog[open]') || document.body; if (m.parentNode !== host) host.appendChild(m);
-  const ctx = tblCtx(t); tblMenuT = {t, ctx, btn};
+  const ctx = tblCtx(t); tblMenuT = {t, ctx, btn, at:Date.now()};
   m.innerHTML = `<button type="button" role="menuitem" data-tx="xlsx">Excel (.xlsx)</button><button type="button" role="menuitem" data-tx="csv">CSV</button>${(ctx.extra || []).length ? '<hr>' + ctx.extra.map(([l], i) => `<button type="button" role="menuitem" data-tx="${i}">${esc(l)}</button>`).join('') : ''}`;
   m.hidden = false; btn.setAttribute('aria-expanded', 'true');
   const r = btn.getBoundingClientRect(); m.style.left = Math.max(8, Math.min(innerWidth - m.offsetWidth - 8, r.right - m.offsetWidth)) + 'px'; m.style.top = (r.bottom + 4 + m.offsetHeight > innerHeight - 8 ? r.top - m.offsetHeight - 4 : r.bottom + 4) + 'px';
   const f = m.querySelector('[data-tx]'); if (f) f.focus({preventScroll:true});
 }
 document.addEventListener('click', e => {
-  const b = e.target.closest && e.target.closest('.tbl-exp-btn');
+  const b = e.target.closest && e.target.closest('.tbl-exp-btn, [data-tbl-for]');
   if (b){ e.preventDefault(); e.stopPropagation(); if (tblMenuT && tblMenuT.btn === b) tblMenuClose(); else tblMenuOpen(b); return; }
   if (tblMenuT && !(e.target.closest && e.target.closest('#tbl-exp-menu'))) tblMenuClose();
 }, true);
-window.addEventListener('scroll', () => { if (tblMenuT) tblMenuClose(); }, {passive:true});
+window.addEventListener('scroll', () => { if (tblMenuT && Date.now() - tblMenuT.at > 200) tblMenuClose(); }, {passive:true}); // Versija 238: ritināšana tūlīt pēc atvēršanas (fokuss / klikšķis) izvēlni neaizver
 // ikona katrā tabulā (arī dialogos un pēc pārzīmēšanas)
 function tblExpScan(){
   $$('table').forEach(t => { if (tblSkip(t)) return; const hr = t.tHead.rows[t.tHead.rows.length - 1], th = hr.cells[hr.cells.length - 1]; if (!th || th.querySelector('.tbl-exp-btn')) return;
@@ -16523,7 +16525,6 @@ $('#c-ac').addEventListener('click', e => {
     saveDraft(); renderAcBar(); toast(`${xs.length} ${plural(xs.length, 'adrese nodota', 'adreses nodotas')} labošanai`);
     const b = $('#c-ac [data-ac-reg]'); if (b) b.focus();
   }
-  if (e.target.closest('[data-ci-export]')) exportContacts();
 });
 // adrešu pārbaude: ~1 s "Pārbauda…", pēc tam atjauno skaitītājus un tabulu un īsi paziņo (pārbaudes laiks netiek rādīts)
 function acRecheck(msg = 'Adreses pārbaudītas', focus = true){
@@ -16952,7 +16953,7 @@ $('#c-list').addEventListener('keydown', e => {
 function exportContacts(){
   const sm = sharedMap(), q = v => `"${String(v == null ? '' : v).replace(/"/g, '""')}"`;
   const rows = [['Respondents', 'NMK', 'Iekļauts', 'Primārā adrese', 'Kanāls', 'eAdrese', 'E-pasts 1', 'E-pasts 2', 'E-pasts 3', 'Kvalitāte', 'Piezīmes']];
-  state.respondents.filter(matchesFilt).forEach(r => {
+  visibleResp().forEach(r => { // Versija 238: tie paši respondenti, kas tabulā (pašreizējie filtri, arī meklēšana)
     const eL = eaLaterR(r), f = eaPend(r) ? null : prePlan(r)[0], cs = Object.fromEntries(ADDR_KEYS.map(k => [k, addrCheck(r, k)])), exc = (compose.exc || {})[r.id];
     const notes = [exc ? `Izņēmums: ${exc}` : '', ...ADDR_KEYS.filter(k => !(k === 'eadrese' && eL)).map(k => { const c = cs[k]; return c.status === 'dup' ? `${addrShort(k)}: dublikāts noņemts` : c.status === 'skip' ? `${addrShort(k)}: riskanta adrese netiek izmantota` : c.verified ? `${addrShort(k)}: riskanta adrese pārbaudīta` : c.status === 'error' ? `${addrShort(k)}: ${c.msg}` : c.status === 'pot' ? `${addrShort(k)}: ${c.mi ? 'MI ieteikums ' + c.mi : c.msg}` : ''; }),
       ...sharedOf(r, sm).map(a => `Koplietojama: ${a}${sharedDec(a, r.id) ? ` (${SHARED_DEC[sharedDec(a, r.id)]})` : ''}`)].filter(Boolean);
@@ -16961,8 +16962,8 @@ function exportContacts(){
   });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['\ufeff' + rows.map(x => x.map(q).join(';')).join('\r\n')], {type:'text/csv;charset=utf-8'}));
-  a.download = `kontakti_${safeFileName(compose.name || 'kampana').replace(/\.[a-z]+$/i, '')}.csv`;
-  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+  a.download = `kontakti_${tblSlug(compose.name || 'kampana')}.csv`; // Versija 238: drošs faila nosaukums
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   toast(`Eksportēts kontaktu saraksts: ${rows.length - 1} ${plural(rows.length - 1, 'respondents', 'respondenti')}.`);
 }
 // Koplietojama adrese: kuri respondenti to izmanto; izvēle katram – "Atstāt adresi", "Neizmantot šo adresi", "Atzīmēt izvērtēšanai"
