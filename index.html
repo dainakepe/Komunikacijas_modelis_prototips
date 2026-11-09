@@ -4238,7 +4238,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 243</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 244</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -15083,11 +15083,10 @@ function deliveryView(xs){
       r.reason, {html:`<span class="pill ${t.cls}">${esc(t.label)}</span>`, text:t.label},
       {html: n.ai ? `<span class="pill pill-ai">MI klasificēts · ${Math.round(n.conf * 100)}%</span>` : '<span class="pill pill-div">DIV statuss</span>', text: n.ai ? `MI klasificēts ${Math.round(n.conf * 100)}%` : 'DIV statuss'},
       r.action, {html:`${stPill(n.x.status)}${n.x.reviewed ? ' <span class="muted">izskatīta</span>' : ''}${n.x.adminResolved ? ' <span class="muted">atrisināta</span>' : ''}`, text:stTxt(n.x)}]; });
-  const cntRows = rows => rows.map(r => [r.label, `${pct(r.v, nd.length)}%`, r.v]);
   const s2 = `<div class="rk-cards">
       ${repNdrCardHtml(xs)}
-      ${miniCard('Pa tipiem', 'Nepiegādes paziņojumi pēc tipa (pēc klasifikācijas noteikumiem). Procenti – no visiem nepiegādes paziņojumiem.', cntListHtml(byType, nd.length, ['paziņojums', 'paziņojumi'], {cmp:cmpType, good:goodType}), ['Tips', '%', 'Paziņojumi'], cntRows(byType))}
-      ${miniCard('Novirzījums', 'Kam paziņojums tiek novirzīts pēc klasifikācijas. Procenti – no visiem nepiegādes paziņojumiem.', cntListHtml(byRoute, nd.length, ['paziņojums', 'paziņojumi'], {cmp:cmpRoute, good:goodRoute}), ['Novirzījums', '%', 'Paziņojumi'], cntRows(byRoute))}</div>
+      ${miniCard('Pa tipiem', 'Nepiegādes paziņojumi pēc tipa (pēc klasifikācijas noteikumiem). Procenti – no visiem nepiegādes paziņojumiem.', cntListHtml(byType, nd.length, ['paziņojums', 'paziņojumi'], {cmp:cmpType, good:goodType}), null, null)}
+      ${miniCard('Novirzījums', 'Kam paziņojums tiek novirzīts pēc klasifikācijas. Procenti – no visiem nepiegādes paziņojumiem.', cntListHtml(byRoute, nd.length, ['paziņojums', 'paziņojumi'], {cmp:cmpRoute, good:goodRoute}), null, null)}</div>
     ${collCardHtml('dndr', 'Nepiegādes paziņojumi', nRows.length, 'Tehniskie paziņojumi par nepiegādi: NDR (Non-Delivery Report – e-pasta servera atbilde) un DIV (eAdreses piegādes statusi). Katrs paziņojums – atsevišķa rinda; klasifikācija un automātiskā rīcība – pēc noteikumiem "Piegādes statusi un kļūdas".',
       tableHtml(nHead, nRows, 'rep-table tbl-noexp', 'Atlasītajā periodā nepiegādes paziņojumu nav'))}`;
   // 3. atkārtotā nosūtīšana
@@ -15164,7 +15163,7 @@ const repChCardHtml = xs => { const ps = chPartsRes(xs), n = ps.reduce((a, q) =>
     donutChart(ps, 'Ziņas pa kanāliem', RC ? chPartsRes(RC.xs) : null), ['Daļa', 'Ziņas', '%'], ps.map(q => [q.label, q.v || 0, `${pct(q.v || 0, n)}%`])); };
 const repNdrCardHtml = xs => { const d = ndrReasonList(xs);
   return miniCard('Nepiegādes iemesli', 'Nepiegādātās ziņas pēc iemesla – katrai ziņai pēdējais tehniskais paziņojums par nepiegādi (NDR – Non-Delivery Report, DIV – eAdreses piegādes kļūda). Procenti – no nepiegādāto ziņu skaita; "Kopā" – tas pats skaits, kas "Ziņas pa kanāliem" daļā "Nepiegādātas".',
-    ndrReasonHtml(d, RC ? ndrReasonList(RC.xs) : null), ['Iemesls', '%', 'Ziņas'], d.rows.map(r => [r.label, `${r.p}%`, r.v])); };
+    ndrReasonHtml(d, RC ? ndrReasonList(RC.xs) : null), null, null); }; // Versija 244: bez eksporta ikonas
 const ndrByRuleK = nd => Object.entries(RULES).map(([k, r]) => ({k, label:`${CHANNELS[r.ch]}: ${r.reason}`, v:nd.filter(n => n.rule === k).length, sub:`${NDR_TYPES[r.type].label} · ${r.action}`})).filter(r => r.v).sort((a, b) => b.v - a.v);
 // Nosūtīšanas kopsavilkums: rādītāji, grafiki un kārtojama kampaņu tabula
 const isSent = x => !!x.sentAt;
@@ -15518,7 +15517,7 @@ function reactReportView(cmpBase){ // Versija 231: cmpBase – vēstules salīdz
     const rr = o.cmp ? rows.map(r => { const c = cOf(r); return {...r, d:c && r.n ? cmpD(r.v, c.v, o.good ?? 1, u, `${c.v}${unit}`) : ''}; }) : rows;
     // Versija 235: bez joslām – saraksts "nosaukums · vērtība · (skaits)"; datu tabula – eksporta ikonā
     const body = rows.some(r => r.n) ? valListHtml(rr.map(r => ({label:r.label, val:`${r.v}${unit.trim() === '%' ? '%' : unit}`, n:r.n, nTxt:r.sub, tip:r.sub, d:r.d})), {label:title}) : '<p class="hint">Nav datu.</p>';
-    return miniCard(title, tipTxt, body, [...cols, ...(o.cmp ? ['Salīdzinājums', 'Starpība'] : [])], rows.map(r => { const c = cOf(r); return [r.label, `${r.v}${unit.trim() === '%' ? '%' : ''}`, ...(cols.length > 2 ? [r.sub] : []), ...(o.cmp ? [c ? `${c.v}${unit.trim() === '%' ? '%' : unit}` : '—', c && r.n ? cmpDiffTxt(r.v, c.v, u === ' p.p.' ? ' p. p.' : unit) : '—'] : [])]; })); };
+    return miniCard(title, tipTxt, body); }; // Versija 244: bez eksporta ikonas (datu tabula – tikai visas atskaites eksportā)
   // tabula pa kampaņām
   const camps = [...groupBy(xs, o => o.x.batch)].sort((a, b) => b[0] - a[0]).map(([b, g]) => { const x0 = g[0].x, gf = g.flatMap(o => o.res.map(fm => ({...fm, o}))), gi = gf.filter(fm => fm.st === 'ies');
     return {b, name:x0.sessionName || `Kampaņa Nr. ${b}`, kind:SESS_LABELS[x0.sessionKind] || '', at:x0.sentAt, n:g.length, open:openPct(g).p, sub:gf.length ? pct(gi.length, gf.length) : null, kl:gf.filter(fm => fm.st === 'kl').length, t:gi.length ? toSub(gf) : null, nF:gf.length}; });
@@ -15531,10 +15530,8 @@ function reactReportView(cmpBase){ // Versija 231: cmpBase – vēstules salīdz
       ${subKpi}</div>
     ${f.camp ? repCampReact(f.camp, f.rep) : ''}
     <div class="rk-cards${f.camp ? '' : ' rx-row'}">
-      ${f.camp ? '' : `<div class="card viz-card rk-mini rx-funcard" data-title="Piltuve"><div class="rk-card-h"><h3>Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms “Piegādātas” – 100 %), iekavās – ziņu skaits. Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta.')}</h3>
-        <button type="button" class="tbl-exp-btn rk-coll-exp" data-tbl-card title="Eksportēt" aria-label="Eksportēt “Piltuve”" aria-haspopup="menu" aria-expanded="false">${TBL_DL_ICON}</button></div>
-        ${funListHtml(funnel.map(r => ({label:r.label, v:r.n})), nD, RX ? {cmp:{rows:RX.funnel.map(r => ({label:r.label, v:r.n})), n:RX.nD}} : {})}
-        <div class="rk-xtbl" hidden>${tableHtml(['Posms', '% no piegādātajām', 'Skaits', ...(RX ? ['Salīdzinājums – %', 'Salīdzinājums – skaits', 'Starpība, p. p.'] : [])], funnel.map((r, i) => [r.label, `${r.v}%`, r.n, ...(RX ? [`${RX.funnel[i].v}%`, RX.funnel[i].n, cmpDiffTxt(r.v, RX.funnel[i].v)] : [])]), 'rep-table tbl-noexp')}</div></div>`}
+      ${f.camp ? '' : `<div class="card viz-card rk-mini rx-funcard" data-title="Piltuve"><div class="rk-card-h"><h3>Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms “Piegādātas” – 100 %), iekavās – ziņu skaits. Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta.')}</h3></div>
+        ${funListHtml(funnel.map(r => ({label:r.label, v:r.n})), nD, RX ? {cmp:{rows:RX.funnel.map(r => ({label:r.label, v:r.n})), n:RX.nD}} : {})}</div>`}
       ${miniCard('Iesniegšanas % pa apsekojumiem', 'Iesniegtās veidlapas no visām vēstulēs iekļautajām šī apsekojuma veidlapām; sakārtots pēc procentiem dilstoši. Iekavās – veidlapu skaits.',
         // Versija 240: vairāk par 12 rindām – pirmās 12 un "Rādīt visus (N)" (rinda nekļūst pārāk augsta)
         byRep.length ? pctListHtml(byRep.length > RX_REP_MAX && !ui.rxRepAll ? byRep.slice(0, RX_REP_MAX) : byRep, {label:'Iesniegšanas % pa apsekojumiem', cnt:true, cmp:RX ? new Map(RX.byRep.map(r => [r.label, r.v])) : null, good:1})
