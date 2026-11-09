@@ -1376,11 +1376,13 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .rk-plist li:hover,.rk-plist li:focus-visible{background:var(--row-hover)}
 .rk-plist li:focus-visible{box-shadow:inset 0 0 0 2px var(--focus, var(--primary))}
 /* Versija 225: piltuve – kompakta un neitrāla (blīvas rindas, pelēks nosaukums, tumši % parastā svarā, plānas līnijas) */
-.viz-grid.rx-g4{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto 1fr;align-items:start}
-.viz-grid.rx-g4 > .rx-repcard{grid-row:span 2}
-.viz-grid.rx-g4 > .viz-card:last-child{grid-column:3}
-@media (max-width:1200px){.viz-grid.rx-g4{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-auto-flow:row dense}.viz-grid.rx-g4 > .viz-card:last-child{grid-column:auto}}
-@media (max-width:700px){.viz-grid.rx-g4{grid-template-columns:minmax(0,1fr)}}
+/* Versija 235: mazās kartītes – režģis ar 3 vienāda platuma kolonnām (šaurā ekrānā 2, ļoti šaurā 1); rindas pēc kārtas bez tukšumiem;
+   vienā rindā – vienāds augstums (vismaz 200 px); "Kopā: …" – kartītes apakšā; nepilnā pēdējā rindā kartītes paliek kreisajā pusē ar to pašu platumu */
+.rk-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch;grid-auto-flow:row;margin-bottom:16px}
+.rk-cards > .card{min-width:0;min-height:200px;display:flex;flex-direction:column;margin:0}
+.rk-cards > .card > .rk-rlist-tot,.rk-cards > .card > .donut-wrap:last-child{margin-top:auto}
+@media (max-width:1100px){.rk-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.rk-cards{grid-template-columns:minmax(0,1fr)}}
 /* Versija 226: vienota sakļautas tabulas josla */
 .card.rk-tcard{padding:0;overflow:hidden;margin:0 0 16px;background:var(--surface);border:1px solid var(--border)}
 .card.rk-tcard:last-child{margin-bottom:0}
@@ -4203,7 +4205,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 234</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 235</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -14798,8 +14800,9 @@ function campTimeView(){
     bs.push({label:`${d.getFullYear()}. g. ${MONTHS[d.getMonth()]}`, short:`${MONTHS[d.getMonth()].slice(0, 3)}.${d.getMonth() === 0 || !bs.length ? ' ' + d.getFullYear() : ''}`, v:wlMin(avgMs(g.map(o => o.wl.active))), n:g.length});
   }
   const card = (title, rows0, tipTxt, crows) => { const rows = crows ? rows0.map(r => { const c = crows.find(z => z.label === r.label); return {...r, d:c ? cmpD(r.v, c.v, -1, ' min', `${c.v} min`) : ''}; }) : rows0;
-    return `<div class="card viz-card"><h3>${esc(title)}${tipTxt ? tip(tipTxt) : ''}</h3>${rows.length ? singleBars(rows, ' min') : '<p class="hint">Nav datu.</p>'}
-    <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([title.replace(/^.*pēc /, '').replace(/^Pa /, ''), 'Vidēji, min', 'Kampaņas', ...(crows ? ['Salīdzinājums, min', 'Starpība'] : [])], rows0.map(r => { const c = crows && crows.find(z => z.label === r.label); return [r.label, r.v, r.n ?? camps.length, ...(crows ? [c ? c.v : '—', c ? cmpDiffTxt(r.v, c.v, ' min') : '—'] : [])]; }))}</details></div>`; };
+    // Versija 235: saraksts "nosaukums · min · (kampaņas)"; datu tabula – eksporta ikonā
+    return miniCard(title, tipTxt, valListHtml(rows.map(r => ({label:r.label, val:`${r.v} min`, n:r.n, nTxt:r.n != null ? `${r.n} ${plural(r.n, 'kampaņa', 'kampaņas')}` : '', tip:r.sub, d:r.d})), {label:title}),
+      [title.replace(/^.*pēc /, '').replace(/^Pa /, ''), 'Vidēji, min', 'Kampaņas', ...(crows ? ['Salīdzinājums, min', 'Starpība'] : [])], rows0.map(r => { const c = crows && crows.find(z => z.label === r.label); return [r.label, r.v, r.n ?? camps.length, ...(crows ? [c ? c.v : '—', c ? cmpDiffTxt(r.v, c.v, ' min') : '—'] : [])]; })); };
   const head = ['Kampaņa', 'Nr.', 'Veids', 'Statistikas joma', 'Satura avots', 'Nosūtīta', 'Aktīvais laiks, min', 'Sesijas', 'Kopējais ilgums, st.', 'Gaida saskaņojumu, st.', ...WL_STEPS.map((l, i) => `${i + 1}. ${l}, min`)];
   const sorted = [...camps].sort((x, y) => String(y.sentAt).localeCompare(String(x.sentAt)));
   const rows = sorted.map(o => [o.name, o.batch, SESS_LABELS[o.kind] || '', AUDS[o.aud] ? AUDS[o.aud].field : '', WL_SRC[o.source] || '', fmtDateTime(o.sentAt), wlMin(o.wl.active), o.wl.sessions || 0, hrsOf(o.total), hrsOf(o.waitApv), ...WL_STEPS.map((l, i) => wlMin((o.wl.steps || {})[i + 1]))]);
@@ -14819,7 +14822,7 @@ function campTimeView(){
     <div class="card viz-card" style="margin-bottom:16px"><h3>Vidējais kampaņas sagatavošanas laiks pa mēnešiem${tip('Aktīvais darba laiks (minūtēs) kampaņas izveides / rediģēšanas skatā; pēc 3 min bez aktivitātes laiks netiek skaitīts. Mēnesis – pēc nosūtīšanas datuma.')}</h3>
       ${bs.some(b => b.v) ? '<div class="wl-cols">' + colChart(bs, b => `${b.v} min vidēji · ${b.n} ${plural(b.n, 'kampaņa', 'kampaņas')}`, v => `${v} min`) + '</div>' : '<p class="hint">Nav datu.</p>'}
       <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Vidēji, min', 'Kampaņas'], bs.map(b => [b.label, b.v, b.n]))}</details></div>
-    <div class="viz-grid">
+    <div class="rk-cards">
       ${card('Vidējais laiks pēc kampaņas veida', byKind, '', cmpRows(gK))}
       ${card('Vidējais laiks pēc statistikas jomas', byAud, '', cmpRows(gA))}
       ${card('Vidējais laiks pēc satura avota', bySrc, 'Gatava veidne – izmantota bez izmaiņām; pielāgota veidne – veidne labota kampaņai; jauns saturs – noformēts kampaņā.', cmpRows(gS))}
@@ -14835,8 +14838,8 @@ function tplTimeView(){
   const byCat = grp(o => o.cat || 'cits', k => (CAT_BY_KEY[k] || {}).one || 'Cits');
   const byAud = grp(o => o.aud || 'visi', k => (AUDS[k] || {}).group || k);
   const byObj = grp(o => o.obj, k => TP_OBJ[k]);
-  const card = (title, rows, col, tipTxt) => `<div class="card viz-card"><h3>${esc(title)}${tipTxt ? tip(tipTxt) : ''}</h3>${rows.length ? singleBars(rows, ' min') : '<p class="hint">Nav datu.</p>'}
-    <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([col, 'Vidēji, min', 'Skaits'], rows.map(r => [r.label, r.v, r.n]))}</details></div>`;
+  const card = (title, rows, col, tipTxt) => miniCard(title, tipTxt, valListHtml(rows.map(r => ({label:r.label, val:`${r.v} min`, n:r.n, nTxt:`${r.n} ${plural(r.n, 'objekts', 'objekti')}`, tip:r.sub})), {label:title}),
+    [col, 'Vidēji, min', 'Skaits'], rows.map(r => [r.label, r.v, r.n])); // Versija 235: saraksts, eksporta ikona
   const sorted = [...tpls].sort((a, b) => String(b.saved).localeCompare(String(a.saved)));
   const tRows = sorted.map(o => [{html:`${esc(o.name)}${o.obj !== 'tpl' ? `<span class="cell-sub">Sagatave · ${esc(TP_OBJ[o.obj])}</span>` : ''}`}, (AUDS[o.aud] || {}).group || '—', (CAT_BY_KEY[o.cat] || {}).one || '—', fmtDur(o.wl.active), o.wl.sessions || 0, fmtDateTime(o.saved)]);
   const head = ['Objekts', 'Nosaukums', 'Adresāts', 'Kategorija', 'Aktīvais laiks, min', 'Sesijas', 'No izveides līdz pēdējai saglabāšanai, st.', 'Pēdējās izmaiņas'];
@@ -14847,7 +14850,7 @@ function tplTimeView(){
       ${kpiBox(n ? (avgMs(tpls.map(o => o.wl.sessions || 0))).toFixed(1).replace('.', ',') : '—', 'Vidējais sesiju skaits', 'redaktora sesijas uz objektu')}
       ${kpiBox(n ? fmtDur(avgMs(tpls.map(tpSpan))) : '—', 'No izveides līdz pēdējai saglabāšanai', 'vidēji')}
       ${kpiBox(String(n), 'Veidnes un sagataves', `${nT} ${plural(nT, 'veidne', 'veidnes')} · ${n - nT} ${plural(n - nT, 'sagatave', 'sagataves')}`)}</div>
-    <div class="viz-grid">
+    <div class="rk-cards">
       ${card('Vidējais laiks pēc veida', byCat, 'Veids', 'Veidnes / sagataves kategorija (uzaicinājums, atgādinājums, informatīvais ziņojums, cits).')}
       ${card('Vidējais laiks pēc adresātiem', byAud, 'Adresāti')}
       ${card('Vidējais laiks pēc objekta', byObj, 'Objekts', 'Veidne, e-pasta satura sagatave vai pielikuma sagatave.')}
@@ -14904,7 +14907,7 @@ function ndrView(xs){
   const dl = (a, b, good, unit = '') => { const v = Math.round((a - b) * 10) / 10, cls = !v ? '' : (v < 0) === good ? 'd-good' : 'd-bad'; return {html:`<span class="${cls}">${v > 0 ? '+' : v < 0 ? '−' : ''}${fmtN1(Math.abs(v))}${unit}</span>`, text:`${v > 0 ? '+' : v < 0 ? '-' : ''}${fmtN1(Math.abs(v))}${unit}`}; };
   const cmp = [['Nepiegādes ciklā', fmtN1(B.n), fmtN1(nowN), dl(nowN, B.n, true)], ['Līdz darbiniekam', fmtN1(baseM), fmtN1(nowM), dl(nowM, baseM, true)],
     ['Vid. laiks vienam, min', fmtN1(B.min), d.worked ? fmtN1(d.avgMin) : '—', d.worked ? dl(d.avgMin, B.min, true) : '—'], ['Kopā stundas ciklā', fmtN1(baseH), fmtN1(nowH), dl(nowH, baseH, true, ' h')]];
-  const cmpCard = `<div class="card viz-card tc-natural ndr-cmp"><h3>Pirms / Tagad${tip(`Viens cikls – ${cycL}. “Tagad” – atlasītā perioda vidējais vienā ciklā (${fmtN1(nCyc)} ${plural(Math.round(nCyc), 'cikls', 'cikli')}).`)}</h3>
+  const cmpCard = `<div class="card viz-card rk-mini tc-natural ndr-cmp" data-title="Pirms / Tagad"><div class="rk-card-h"><h3>Pirms / Tagad${tip(`Viens cikls – ${cycL}. “Tagad” – atlasītā perioda vidējais vienā ciklā (${fmtN1(nCyc)} ${plural(Math.round(nCyc), 'cikls', 'cikli')}).`)}</h3>${cardExpBtn('Pirms / Tagad')}</div>
     ${tableHtml(['', 'Bāzes līnija', 'Tagad', 'Starpība'], cmp)}</div>`;
   // pa mēnešiem vai cikliem: atrisinātas automātiski / manuāli (sakrauti) + patērētās stundas (līnija)
   let bk = bs.map(b => { const g = d.nd.filter(x => String(x.sentAt).slice(0, 7) === b.key), m = g.filter(isManualCase);
@@ -14924,11 +14927,12 @@ function ndrView(xs){
   const byR = [...groupBy(d.man, ndrReasonOf)].map(([k, g]) => { const t = g.map(x => (ndrWorkOf(x.id) || {}).active || 0), w = t.filter(v => v > 0), tot = t.reduce((a, b) => a + b, 0) / 60000;
     const r = k ? ruleOf(k) : null; return {k, label:r ? `${CHANNELS[r.ch]}: ${r.reason}` : 'Bez NDR (sūtītāja puse / cits)', n:g.length, avg:w.length ? tot / w.length : 0, tot}; }).sort((a, b) => b.tot - a.tot || b.n - a.n);
   const mx = Math.max(1, ...byR.map(r => r.tot));
-  const reasonCard = `<div class="card viz-card ndr-reasons"><h3>Manuālie gadījumi pēc nepiegādes iemesla${tip('Iemesls – pēdējā neveiksmīgā paziņojuma klasifikācija (“Piegādes statusi un kļūdas”). Josla – patērētais laiks kopā. Uzklikšķinot – atver sūtījumus (“Jārisina”, šis iemesls).')}</h3>
-    ${byR.length ? byR.map(r => `<div class="hbar ndr-hbar"${r.k ? drillAttr({g:'todo', f:{rule:r.k}}) + ` aria-label="${esc(`${r.label}: ${r.n} gadījumi, vidēji ${fmtN1(r.avg)} min – atvērt sūtījumos`)}"` : ''}><span class="lbl" title="${esc(r.label)}">${esc(r.label)}</span>
-      <span class="track"><span class="seg" tabindex="0" style="width:${r.tot / mx * 100}%;background:var(--s2)" data-tip="${esc(`${r.label}|${r.n} ${plural(r.n, 'gadījums', 'gadījumi')} · vidēji ${fmtN1(r.avg)} min · kopā ${fmtN1(r.tot / 60)} h`)}"></span></span>
-      <span class="val">${r.n} · ${r.avg ? `${fmtN1(r.avg)} min` : '—'}</span></div>`).join('') : '<p class="hint">Nav manuālu gadījumu.</p>'}
-    <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Iemesls', 'Gadījumi', 'Vidēji, min', 'Kopā, h'], byR.map(r => [r.label, r.n, fmtN1(r.avg), fmtN1(r.tot / 60)]))}</details></div>`;
+  // Versija 235: saraksts "iemesls · vidēji min · (gadījumi)" (bez joslām); kārtots pēc patērētā laika kopā; datu tabula – eksporta ikonā
+  const nMan = byR.reduce((a, r) => a + r.n, 0), totH = byR.reduce((a, r) => a + r.tot, 0) / 60;
+  const reasonCard = miniCard('Manuālie gadījumi pēc nepiegādes iemesla', 'Iemesls – pēdējā neveiksmīgā paziņojuma klasifikācija (“Piegādes statusi un kļūdas”). Vērtība – vidējais apstrādes laiks vienam gadījumam, iekavās – gadījumu skaits; sakārtots pēc patērētā laika kopā. Uzklikšķinot – atver sūtījumus (“Jārisina”, šis iemesls).',
+    valListHtml(byR.map(r => ({label:r.label, val:r.avg ? `${fmtN1(r.avg)} min` : '—', n:r.n, nTxt:`${r.n} ${plural(r.n, 'gadījums', 'gadījumi')}`, tip:`${r.n} ${plural(r.n, 'gadījums', 'gadījumi')} · vidēji ${fmtN1(r.avg)} min · kopā ${fmtN1(r.tot / 60)} h`, drill:r.k ? {g:'todo', f:{rule:r.k}} : null})),
+      {label:'Manuālie gadījumi pēc nepiegādes iemesla', empty:'Nav manuālu gadījumu.', tot:`Kopā: ${fmtCount(nMan)} ${plural(nMan, 'gadījums', 'gadījumi')} · ${fmtN1(totH)} h`}),
+    ['Iemesls', 'Gadījumi', 'Vidēji, min', 'Kopā, h'], byR.map(r => [r.label, r.n, fmtN1(r.avg), fmtN1(r.tot / 60)]), {cls:'ndr-reasons'});
   const sheets = [
     {name:'Nepiegāžu apstrāde – rādītāji', rows:[['Rādītājs', 'Vērtība'], ['Nepiegādes kopā', N], ['Atrisinātas automātiski', A], ['Atrisinātas automātiski, %', pct(A, N)], ['Nonākušas pie darbinieka', M], ['Nonākušas pie darbinieka, %', pct(M, N)],
       ['Vidējais laiks vienam manuālajam gadījumam, min', Math.round(d.avgMin * 10) / 10], ['Patērētais laiks kopā, h', Math.round(d.totMin / 6) / 10], ['Bāzes līnija tādam pašam nepiegāžu skaitam, h', Math.round(baseMin / 6) / 10],
@@ -14937,7 +14941,7 @@ function ndrView(xs){
     {name:'Pa periodiem', rows:[['Periods', 'Atrisinātas automātiski', 'Manuāli', 'Patērētās stundas'], ...bk.map(b => [b.label, b.auto, b.man, Math.round(b.h * 10) / 10])]},
     {name:'Pa iemesliem', rows:[['Iemesls', 'Gadījumi', 'Vidēji, min', 'Kopā, h'], ...byR.map(r => [r.label, r.n, Math.round(r.avg * 10) / 10, Math.round(r.tot / 6) / 10])]},
   ];
-  return {html:`${baseCard}${kpis}${chartCard}<div class="viz-grid">${cmpCard}${reasonCard}</div>
+  return {html:`${baseCard}${kpis}${chartCard}<div class="rk-cards">${cmpCard}${reasonCard}</div>
     <p class="hint">Aktīvais apstrādes laiks tiek uzskaitīts automātiski (vēstules detaļas vai respondenta kartīte sūtījumos ar statusu grupā “Jārisina”), un tas netiek rādīts darbiniekam. Rādīts kopsavilkums, nevis atsevišķu darbinieku rezultāti.</p>`, sheets};
 }
 // sakrautie stabiņi (automātiski / manuāli) + līnija (stundas, labā ass); nepabeigtais periods – raustīta līnija
@@ -15024,10 +15028,11 @@ function deliveryView(xs){
       r.reason, {html:`<span class="pill ${t.cls}">${esc(t.label)}</span>`, text:t.label},
       {html: n.ai ? `<span class="pill pill-ai">MI klasificēts · ${Math.round(n.conf * 100)}%</span>` : '<span class="pill pill-div">DIV statuss</span>', text: n.ai ? `MI klasificēts ${Math.round(n.conf * 100)}%` : 'DIV statuss'},
       r.action, {html:`${stPill(n.x.status)}${n.x.reviewed ? ' <span class="muted">izskatīta</span>' : ''}${n.x.adminResolved ? ' <span class="muted">atrisināta</span>' : ''}`, text:stTxt(n.x)}]; });
-  const s2 = `<div class="viz-grid g3" style="margin-bottom:16px">
+  const cntRows = rows => rows.map(r => [r.label, `${pct(r.v, nd.length)}%`, r.v]);
+  const s2 = `<div class="rk-cards">
       ${repNdrCardHtml(xs)}
-      <div class="card viz-card"><h3>Pa tipiem${tip('Nepiegādes paziņojumi pēc tipa (pēc klasifikācijas noteikumiem). Procenti – no visiem nepiegādes paziņojumiem.')}</h3>${cntListHtml(byType, nd.length, ['paziņojums', 'paziņojumi'], {cmp:cmpType, good:goodType})}</div>
-      <div class="card viz-card"><h3>Novirzījums${tip('Kam paziņojums tiek novirzīts pēc klasifikācijas. Procenti – no visiem nepiegādes paziņojumiem.')}</h3>${cntListHtml(byRoute, nd.length, ['paziņojums', 'paziņojumi'], {cmp:cmpRoute, good:goodRoute})}</div></div>
+      ${miniCard('Pa tipiem', 'Nepiegādes paziņojumi pēc tipa (pēc klasifikācijas noteikumiem). Procenti – no visiem nepiegādes paziņojumiem.', cntListHtml(byType, nd.length, ['paziņojums', 'paziņojumi'], {cmp:cmpType, good:goodType}), ['Tips', '%', 'Paziņojumi'], cntRows(byType))}
+      ${miniCard('Novirzījums', 'Kam paziņojums tiek novirzīts pēc klasifikācijas. Procenti – no visiem nepiegādes paziņojumiem.', cntListHtml(byRoute, nd.length, ['paziņojums', 'paziņojumi'], {cmp:cmpRoute, good:goodRoute}), ['Novirzījums', '%', 'Paziņojumi'], cntRows(byRoute))}</div>
     ${collCardHtml('dndr', 'Nepiegādes paziņojumi', nRows.length, 'Tehniskie paziņojumi par nepiegādi: NDR (Non-Delivery Report – e-pasta servera atbilde) un DIV (eAdreses piegādes statusi). Katrs paziņojums – atsevišķa rinda; klasifikācija un automātiskā rīcība – pēc noteikumiem "Piegādes statusi un kļūdas".',
       tableHtml(nHead, nRows, 'rep-table tbl-noexp', 'Atlasītajā periodā nepiegādes paziņojumu nav'))}`;
   // 3. atkārtotā nosūtīšana
@@ -15076,7 +15081,7 @@ function ndrReasonList(xs){
 // o.label – saraksta nosaukums ekrāna lasītājiem
 // o.cmp – Map(nosaukums → % salīdzināmajā periodā), o.good – izmaiņas virziens (Versija 231)
 const pctListHtml = (rows, o = {}) => `<ul class="rk-rlist rk-plist"${o.label ? ` aria-label="${esc(o.label)}"` : ''}>${rows.map(r =>
-  `<li tabindex="0" data-tip="${esc(`${r.tipH || r.label}|${r.tip}`)}" aria-label="${esc(`${r.label}: ${r.v}% (${r.tip})`)}"><span class="rl-l" title="${esc(r.label)}">${esc(r.label)}</span><b>${r.v}%</b>${o.cmp && o.cmp.has(r.label) ? cmpD(r.v, o.cmp.get(r.label), o.good ?? 1) : ''}</li>`).join('')}</ul>`;
+  `<li tabindex="0" data-tip="${esc(`${r.tipH || r.label}|${r.tip}`)}" aria-label="${esc(`${r.label}: ${r.v}% (${r.tip})`)}"><span class="rl-l" title="${esc(r.label)}">${esc(r.label)}</span><b>${r.v}%</b>${o.cnt ? `<span class="rl-n">(${fmtCount(r.n)})</span>` : ''}${o.cmp && o.cmp.has(r.label) ? cmpD(r.v, o.cmp.get(r.label), o.good ?? 1) : ''}</li>`).join('')}</ul>`;
 // Versija 226: saraksts "nosaukums · % · (skaits)" (stils kā "Nepiegādes iemesli"; bez joslām), apakšā – kopā
 // Versija 231: o.cmp = {rows, n} – salīdzināmais periods (atšķirība p.p. aiz %); o.good – skaitlis vai funkcija(nosaukums); o.skip – nosaukumi bez atšķirības
 const cntCmp = (r, n, o) => { if (!RC || !o.cmp || !o.cmp.n || (o.skip || []).includes(r.label)) return ''; const c = (o.cmp.rows.find(z => z.label === r.label) || {v:0}).v, g = typeof o.good === 'function' ? o.good(r.label) : o.good ?? 1;
@@ -15084,14 +15089,27 @@ const cntCmp = (r, n, o) => { if (!RC || !o.cmp || !o.cmp.n || (o.skip || []).in
 const cntTotCmp = (o, w) => RC && o.cmp ? ` <span class="cmpd" title="${esc(`Salīdzinājumā ar ${RC.label}`)}">· ${esc(RC.short)}: ${fmtCount(o.cmp.n)}</span>` : '';
 const cntListHtml = (rows, n, w, o = {}) => rows.length && n ? `<ul class="rk-rlist rk-nolink">${rows.map(r => `<li aria-label="${esc(`${r.label}: ${pct(r.v, n)}% (${r.v})`)}"><span class="rl-l">${esc(r.label)}</span><b>${pct(r.v, n)}%</b><span class="rl-n">(${fmtCount(r.v)})</span>${cntCmp(r, n, o)}</li>`).join('')}</ul>
   <p class="rk-rlist-tot">Kopā: ${fmtCount(n)} ${plural(n, w[0], w[1])}${cntTotCmp(o, w)}</p>` : '<p class="hint">Nav datu.</p>';
+// ===== Versija 235: mazās kartītes – vienots režģis (.rk-cards), saraksta stils un eksporta ikona virsraksta labajā pusē =====
+const cardExpBtn = title => `<button type="button" class="tbl-exp-btn rk-coll-exp" data-tbl-card title="Eksportēt" aria-label="${esc(`Eksportēt “${title}”`)}" aria-haspopup="menu" aria-expanded="false">${TBL_DL_ICON}</button>`;
+// saraksts "nosaukums · vērtība (treknrakstā) · (skaits) pelēkā" – rows: {label, val, n?, nTxt?, d?, drill?, tip?}; o.tot – rinda "Kopā: …" apakšā
+const valListHtml = (rows, o = {}) => rows.length ? `<ul class="rk-rlist${rows.some(r => r.drill) ? '' : ' rk-nolink'}"${o.label ? ` aria-label="${esc(o.label)}"` : ''}>${rows.map(r =>
+  `<li${r.drill ? drillAttr(r.drill) + ' title="Atvērt sūtījumos"' : ''}${r.tip ? ` data-tip="${esc(`${r.label}|${r.tip}`)}"` : ''} aria-label="${esc(`${r.label}: ${r.val}${r.n != null ? ` (${r.nTxt || r.n})` : ''}${r.drill ? ' – atvērt sūtījumos' : ''}`)}"><span class="rl-l" title="${esc(r.label)}">${esc(r.label)}</span><b>${esc(r.val)}</b><span class="rl-n">${r.n != null ? `(${esc(String(r.n))})` : ''}</span>${r.d || ''}</li>`).join('')}</ul>
+  ${o.tot ? `<p class="rk-rlist-tot">${o.tot}</p>` : ''}` : `<p class="hint">${esc(o.empty || 'Nav datu.')}</p>`;
+// kartīte: virsraksts + (i) + eksporta ikona; datu tabula – slēpta (tikai eksportam)
+const miniCard = (title, tipTxt, body, head, rows, o = {}) => `<div class="card viz-card rk-mini${o.cls ? ' ' + o.cls : ''}" data-title="${esc(title)}"><div class="rk-card-h"><h3>${esc(title)}${tipTxt ? tip(tipTxt) : ''}</h3>${head ? cardExpBtn(title) : ''}</div>
+  ${body}${head ? `<div class="rk-xtbl" hidden>${tableHtml(head, rows, 'rep-table tbl-noexp')}</div>` : ''}</div>`;
 // Versija 230: piltuve – tas pats saraksts kā "Novirzījums" (% no piegādātajām, iekavās skaits), apakšā "Kopā: N piegādātas ziņas"
 const funListHtml = (rows, n, o = {}) => n ? cntListHtml(rows, n, ['piegādāta ziņa', 'piegādātas ziņas'], {skip:['Piegādātas'], good:1, ...o}) : '<p class="hint">Nav piegādātu ziņu.</p>';
 const ndrReasonHtml = (d, dc) => d.n ? `<ul class="rk-rlist">${d.rows.map(r => { const c = dc && dc.n ? dc.rows.find(z => z.k === r.k) || {p:0, v:0} : null;
   return `<li${drillAttr(r.drill)} title="Atvērt sūtījumos" aria-label="${esc(`${r.label}: ${r.p}% (${r.v}) – atvērt sūtījumos`)}"><span class="rl-l">${esc(r.label)}</span><b>${r.p}%</b><span class="rl-n">(${fmtCount(r.v)})</span>${c ? cmpD(r.p, c.p, -1, ' p.p.', `${c.p}% (${fmtCount(c.v)})`) : ''}</li>`; }).join('')}</ul>
   <p class="rk-rlist-tot">Kopā: ${fmtCount(d.n)} ${plural(d.n, 'nepiegādāta', 'nepiegādātas')}${dc ? cntTotCmp({cmp:dc}) : ''}</p>` : '<p class="hint">Nav nepiegādes paziņojumu.</p>';
 // Versija 224: kopīgās kartītes apakšcilnēm "Pārskats" un "Piegāde" (viena komponente – izmaiņas abās vienādas)
-const repChCardHtml = xs => `<div class="card viz-card"><h3>Ziņas pa kanāliem${tip('Nosūtītās ziņas pa kanāliem, kuros vēstule faktiski nosūtīta: eAdrese, e-pasts vai drukāta vēstule (pa pastu). Uzklikšķinot uz daļas – atver sūtījumus ar šo kanālu.')}</h3>${donutChart(chPartsRes(xs), 'Ziņas pa kanāliem', RC ? chPartsRes(RC.xs) : null)}</div>`;
-const repNdrCardHtml = xs => `<div class="card viz-card"><h3>Nepiegādes iemesli${tip('Nepiegādātās ziņas pēc iemesla – katrai ziņai pēdējais tehniskais paziņojums par nepiegādi (NDR – Non-Delivery Report, DIV – eAdreses piegādes kļūda). Procenti – no nepiegādāto ziņu skaita; "Kopā" – tas pats skaits, kas "Ziņas pa kanāliem" daļā "Nepiegādātas".')}</h3>${ndrReasonHtml(ndrReasonList(xs), RC ? ndrReasonList(RC.xs) : null)}</div>`;
+const repChCardHtml = xs => { const ps = chPartsRes(xs), n = ps.reduce((a, q) => a + (q.v || 0), 0);
+  return miniCard('Ziņas pa kanāliem', 'Nosūtītās ziņas pa kanāliem, kuros vēstule faktiski nosūtīta: eAdrese, e-pasts vai drukāta vēstule (pa pastu). Uzklikšķinot uz daļas – atver sūtījumus ar šo kanālu.',
+    donutChart(ps, 'Ziņas pa kanāliem', RC ? chPartsRes(RC.xs) : null), ['Daļa', 'Ziņas', '%'], ps.map(q => [q.label, q.v || 0, `${pct(q.v || 0, n)}%`])); };
+const repNdrCardHtml = xs => { const d = ndrReasonList(xs);
+  return miniCard('Nepiegādes iemesli', 'Nepiegādātās ziņas pēc iemesla – katrai ziņai pēdējais tehniskais paziņojums par nepiegādi (NDR – Non-Delivery Report, DIV – eAdreses piegādes kļūda). Procenti – no nepiegādāto ziņu skaita; "Kopā" – tas pats skaits, kas "Ziņas pa kanāliem" daļā "Nepiegādātas".',
+    ndrReasonHtml(d, RC ? ndrReasonList(RC.xs) : null), ['Iemesls', '%', 'Ziņas'], d.rows.map(r => [r.label, `${r.p}%`, r.v])); };
 const ndrByRuleK = nd => Object.entries(RULES).map(([k, r]) => ({k, label:`${CHANNELS[r.ch]}: ${r.reason}`, v:nd.filter(n => n.rule === k).length, sub:`${NDR_TYPES[r.type].label} · ${r.action}`})).filter(r => r.v).sort((a, b) => b.v - a.v);
 // Nosūtīšanas kopsavilkums: rādītāji, grafiki un kārtojama kampaņu tabula
 const isSent = x => !!x.sentAt;
@@ -15364,9 +15382,9 @@ function summaryView(xs){
     <div class="card viz-card" style="margin-bottom:16px"><div class="rk-chart-h"><h3>Rādītāji ${GL.pa}${tip(`${bs.length ? `Līniju galā – ${GL.last} vērtība. ${part ? `Raustītā līnija – ${GL.part} (dati līdz ${bs[bs.length - 1].end}). ` : ''}${GL.none} bez sūtījumiem vai bez attiecīgajām vēstulēm – pārtraukums līnijā (nevis 0 %). Uz ${GL.on} var uzklikšķināt – atver sūtījumus ar šo periodu.\n\n${grainTip}\n\n` : ''}${RATE_TIP}`)}</h3>${grainSegHtml(G)}</div>
       ${bs.length ? legendHtml(RATE_SER) + cmpLeg + rateChart(bs, G.g, cbs) + oneNote : '<p class="hint">Nav datu.</p>'}
       <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([GL.col, 'Nosūtītas', 'Ar zināmu rezultātu', 'Piegādātas', 'Piegādes %', 'Piegādātie e-pasti', 'Atvērti', 'Atvēršanas %', 'Piegādātas ar anketām', 'Ar iesniegtu anketu', 'Iesniegšanas %', ...RT_CMP], bs.map((b, i) => [b.label, b.r.sent, b.r.base, b.r.deliv, b.r.delivP != null ? `${b.r.delivP}%` : '—', b.r.em, b.r.open, b.r.openP != null ? `${b.r.openP}%` : '—', b.r.delivF, b.r.sub, b.r.subP != null ? `${b.r.subP}%` : '—', ...rtCmp(b, i, false)]))}</details></div>
-    <div class="viz-grid g3">
+    <div class="rk-cards">
       ${repChCardHtml(xs)}
-      <div class="card viz-card" data-title="Ziņas pēc kampaņas veida"><div class="rk-card-h"><h3>Ziņas pēc kampaņas veida${tip('Nosūtītās ziņas pēc kampaņas veida: piegādes % = piegādātās / visas šī veida ziņas, iekavās – piegādātas / kopā. Pelēkā josla – visas ziņas (garums pret lielāko veidu), zaļā – piegādātās. Nepiegādātas un procesā – padomā. Uzklikšķinot uz rindas – atver sūtījumus.')}</h3>
+      <div class="card viz-card rk-mini" data-title="Ziņas pēc kampaņas veida"><div class="rk-card-h"><h3>Ziņas pēc kampaņas veida${tip('Nosūtītās ziņas pēc kampaņas veida: piegādes % = piegādātās / visas šī veida ziņas, iekavās – piegādātas / kopā. Pelēkā josla – visas ziņas (garums pret lielāko veidu), zaļā – piegādātās. Nepiegādātas un procesā – padomā. Uzklikšķinot uz rindas – atver sūtījumus.')}</h3>
         <button type="button" class="tbl-exp-btn rk-coll-exp" data-tbl-card title="Eksportēt" aria-label="Eksportēt “Ziņas pēc kampaņas veida”" aria-haspopup="menu" aria-expanded="false">${TBL_DL_ICON}</button></div>
         ${byKind.length ? kindListHtml(byKind, cKind) : '<p class="hint">Nav datu.</p>'}
         <div class="rk-xtbl" hidden>${tableHtml(['Veids', 'Kopā', 'Piegādātas', 'Nepiegādātas', 'Procesā', 'Piegādes %', ...(cKind ? ['Salīdzinājums – piegādes %', 'Starpība, p. p.'] : [])], byKind.map(g => { const c = cKind && cKind.find(z => z.k === g.k), cp = c ? pct(c.ok, c.total) : null;
@@ -15439,8 +15457,9 @@ function reactReportView(cmpBase){ // Versija 231: cmpBase – vēstules salīdz
   // Versija 231: o.cmp – salīdzināmā perioda rindas (atšķirība aiz vērtības, datu tabulā – salīdzinājums un starpība), o.good – virziens
   const card = (title, rows, unit, cols, tipTxt, o = {}) => { const cOf = r => o.cmp ? o.cmp.find(z => z.label === r.label && z.n) : null, u = unit.trim() === '%' ? ' p.p.' : unit;
     const rr = o.cmp ? rows.map(r => { const c = cOf(r); return {...r, d:c && r.n ? cmpD(r.v, c.v, o.good ?? 1, u, `${c.v}${unit}`) : ''}; }) : rows;
-    return `<div class="card viz-card"><h3>${esc(title)}${tipTxt ? tip(tipTxt) : ''}</h3>${rows.some(r => r.n) ? singleBars(rr, unit, o) : '<p class="hint">Nav datu.</p>'}
-    <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([...cols, ...(o.cmp ? ['Salīdzinājums', 'Starpība'] : [])], rows.map(r => { const c = cOf(r); return [r.label, `${r.v}${unit.trim() === '%' ? '%' : ''}`, ...(cols.length > 2 ? [r.sub] : []), ...(o.cmp ? [c ? `${c.v}${unit.trim() === '%' ? '%' : unit}` : '—', c && r.n ? cmpDiffTxt(r.v, c.v, u === ' p.p.' ? ' p. p.' : unit) : '—'] : [])]; }))}</details></div>`; };
+    // Versija 235: bez joslām – saraksts "nosaukums · vērtība · (skaits)"; datu tabula – eksporta ikonā
+    const body = rows.some(r => r.n) ? valListHtml(rr.map(r => ({label:r.label, val:`${r.v}${unit.trim() === '%' ? '%' : unit}`, n:r.n, nTxt:r.sub, tip:r.sub, d:r.d})), {label:title}) : '<p class="hint">Nav datu.</p>';
+    return miniCard(title, tipTxt, body, [...cols, ...(o.cmp ? ['Salīdzinājums', 'Starpība'] : [])], rows.map(r => { const c = cOf(r); return [r.label, `${r.v}${unit.trim() === '%' ? '%' : ''}`, ...(cols.length > 2 ? [r.sub] : []), ...(o.cmp ? [c ? `${c.v}${unit.trim() === '%' ? '%' : unit}` : '—', c && r.n ? cmpDiffTxt(r.v, c.v, u === ' p.p.' ? ' p. p.' : unit) : '—'] : [])]; })); };
   // tabula pa kampaņām
   const camps = [...groupBy(xs, o => o.x.batch)].sort((a, b) => b[0] - a[0]).map(([b, g]) => { const x0 = g[0].x, gf = g.flatMap(o => o.res.map(fm => ({...fm, o}))), gi = gf.filter(fm => fm.st === 'ies');
     return {b, name:x0.sessionName || `Kampaņa Nr. ${b}`, kind:SESS_LABELS[x0.sessionKind] || '', at:x0.sentAt, n:g.length, open:openPct(g).p, sub:gf.length ? pct(gi.length, gf.length) : null, kl:gf.filter(fm => fm.st === 'kl').length, t:gi.length ? toSub(gf) : null, nF:gf.length}; });
@@ -15452,13 +15471,14 @@ function reactReportView(cmpBase){ // Versija 231: cmpBase – vēstules salīdz
       ${kpi(ies.length ? dStr(toSub(fs)) : '—', 'Vidējais laiks no vēstules līdz iesniegšanai', `${ies.length} ${plural(ies.length, 'iesniegta veidlapa', 'iesniegtas veidlapas')}`)}
       ${subKpi}</div>
     ${f.camp ? repCampReact(f.camp, f.rep) : ''}
-    <div class="viz-grid${f.camp ? ' g3' : ' rx-g4'}">
-      ${f.camp ? '' : `<div class="card viz-card rx-funcard" data-title="Piltuve"><div class="rk-card-h"><h3>Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms “Piegādātas” – 100 %), iekavās – ziņu skaits. Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta.')}</h3>
+    <div class="rk-cards">
+      ${f.camp ? '' : `<div class="card viz-card rk-mini rx-funcard" data-title="Piltuve"><div class="rk-card-h"><h3>Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms “Piegādātas” – 100 %), iekavās – ziņu skaits. Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta.')}</h3>
         <button type="button" class="tbl-exp-btn rk-coll-exp" data-tbl-card title="Eksportēt" aria-label="Eksportēt “Piltuve”" aria-haspopup="menu" aria-expanded="false">${TBL_DL_ICON}</button></div>
         ${funListHtml(funnel.map(r => ({label:r.label, v:r.n})), nD, RX ? {cmp:{rows:RX.funnel.map(r => ({label:r.label, v:r.n})), n:RX.nD}} : {})}
         <div class="rk-xtbl" hidden>${tableHtml(['Posms', '% no piegādātajām', 'Skaits', ...(RX ? ['Salīdzinājums – %', 'Salīdzinājums – skaits', 'Starpība, p. p.'] : [])], funnel.map((r, i) => [r.label, `${r.v}%`, r.n, ...(RX ? [`${RX.funnel[i].v}%`, RX.funnel[i].n, cmpDiffTxt(r.v, RX.funnel[i].v)] : [])]), 'rep-table tbl-noexp')}</div></div>`}
-      <div class="card viz-card rx-repcard"><h3>Iesniegšanas % pa apsekojumiem${tip('Iesniegtās veidlapas no visām vēstulēs iekļautajām šī apsekojuma veidlapām; sakārtots pēc procentiem dilstoši. Skaits – padomā un eksportā.')}</h3>${byRep.length ? pctListHtml(byRep, {label:'Iesniegšanas % pa apsekojumiem', cmp:RX ? new Map(RX.byRep.map(r => [r.label, r.v])) : null, good:1}) : '<p class="hint">Nav datu.</p>'}
-        <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Apsekojums', 'Iesniegšanas %', ...(RX ? ['Salīdzinājums', 'Starpība'] : [])], byRep.map(r => { const c = RX && RX.byRep.find(z => z.label === r.label); return [r.label, `${r.v}%`, ...(RX ? [c ? `${c.v}%` : '—', c ? cmpDiffTxt(r.v, c.v) : '—'] : [])]; }))}</details></div>
+      ${miniCard('Iesniegšanas % pa apsekojumiem', 'Iesniegtās veidlapas no visām vēstulēs iekļautajām šī apsekojuma veidlapām; sakārtots pēc procentiem dilstoši. Iekavās – veidlapu skaits.',
+        byRep.length ? pctListHtml(byRep, {label:'Iesniegšanas % pa apsekojumiem', cnt:true, cmp:RX ? new Map(RX.byRep.map(r => [r.label, r.v])) : null, good:1}) : '<p class="hint">Nav datu.</p>',
+        ['Apsekojums', 'Iesniegšanas %', 'Iesniegtas', 'Veidlapas', ...(RX ? ['Salīdzinājums', 'Starpība'] : [])], byRep.map(r => { const c = RX && RX.byRep.find(z => z.label === r.label); return [r.label, `${r.v}%`, r.ies, r.n, ...(RX ? [c ? `${c.v}%` : '—', c ? cmpDiffTxt(r.v, c.v) : '—'] : [])]; }))}
       ${card('Atvēršanas % pa kampaņu veidiem', byKind, '%', ['Kampaņas veids', 'Atvēršanas %', 'Vēstules'], '', RX ? {cmp:RX.byKind, good:1} : {})}
       ${card('Vidējais laiks', times, ' st.', ['Posms', 'Vidēji, st.', 'Veidlapas'], 'Atvēršana → iesākšana: no vēstules atvēršanas līdz veidlapas iesākšanai; iesākšana → iesniegšana: no iesākšanas līdz (pēdējai) iesniegšanai.', RX ? {cmp:RX.times, good:-1} : {})}
     </div>
