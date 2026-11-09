@@ -1509,6 +1509,17 @@ table.cl-table td.c-name .camp-name{max-width:100%}
 .hf-cust-f .dt-field input[type="text"]{width:180px;padding-top:6px;padding-bottom:6px}
 .hf-cust .err{margin:0}
 .hf-cust-act{display:flex;justify-content:flex-end;gap:6px}
+/* Versija 234: "Cits periods…" – Gads / Datumu intervāls */
+.hf-cust-y{width:300px}
+.hf-cmode{display:flex}
+.hf-cmode button{flex:1;padding:5px 8px;font-size:var(--fs-xs);white-space:nowrap}
+.hf-cmode button.on{background:var(--primary-100);color:var(--primary-darker);box-shadow:inset 0 -2px 0 var(--primary)}
+.hf-years{display:flex;flex-wrap:wrap;gap:6px}
+.hf-years[hidden]{display:none}
+.hf-year{appearance:none;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:999px;padding:4px 14px;font-size:var(--fs-sm);font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums}
+.hf-year:hover{border-color:var(--primary);color:var(--primary-darker)}
+.hf-year.on{background:var(--primary-100);border-color:var(--primary);color:var(--primary-darker)}
+.hf-cust-f[hidden]{display:none}
 .hf-more{position:relative;flex:none}
 .hf-row .hf-btn{margin-left:0;padding-top:0;padding-bottom:0}
 .sc-later{margin-top:2px;font-size:var(--fs-xs)}
@@ -4192,7 +4203,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 233</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 234</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11940,7 +11951,7 @@ function seedArchive(allR = state.respondents){
     base:[archBase(() => jurRepCodes('gads'), 'gads', 'AT'), archBase(['1-DSA'], 'cet', 'UZ'), archBase(() => jurRepCodes('men'), 'men', 'AT')][i]}));
   // Versija 196: pēdējie 11 pilnie mēneši – kontrolētās testa kampaņas (repCtlPlan)
   // Versija 231: iepriekšējā gada mēneši (12–23 mēn. atpakaļ) – arī kontrolētas kampaņas (piegāde, atvēršana, veidlapas un iesniegšana) ar nedaudz
-  // zemākiem rādītājiem (REP_PY) – salīdzinājumam "Tas pats pirms gada"; kampaņu secība un numuri – kā līdz šim
+  // zemākiem rādītājiem (REP_PY) – salīdzinājumam ar 2025. gadu; kampaņu secība un numuri – kā līdz šim
   const pyIds = fr => (state.reports || []).filter(p => p.aud === 'jur' && [].concat(fr).includes(p.freq)).map(p => p.id), EMF = ['email1', 'email2', 'eadrese'];
   for (let m = 23; m >= 12; m--){
     const py = {ctl:true, py:true};
@@ -12793,7 +12804,9 @@ function sfJomaFix(list){
     if (f.aud && !STAT_JOMAS[f.aud] && JOMA_MAP[f.aud] && !['jur', 'fiz'].includes(f.aud)){ f.aud = jomaKey(f.aud); ch = true; }
     // Versija 233: dzēstie apsekojumi / pārskati – pārsaistīti uz paliekošajiem (OLD_REPORT_MAP) arī krātuvē
     if (Array.isArray(f.reps) && f.reps.some(id => OLD_REPORT_MAP[id])){ f.reps = [...new Set(f.reps.map(mapReportId))]; ch = true; }
-    if (typeof f.rep === 'string' && OLD_REPORT_MAP[f.rep]){ f.rep = mapReportId(f.rep); ch = true; } });
+    if (typeof f.rep === 'string' && OLD_REPORT_MAP[f.rep]){ f.rep = mapReportId(f.rep); ch = true; }
+    // Versija 234: "Tas pats pirms gada" → "Cits periods" (datumu intervāls)
+    if (f.cq === 'year' && typeof cmpYearFix === 'function'){ cmpYearFix(f); ch = true; } });
   return ch;
 }
 function sfList(view){
@@ -12858,7 +12871,7 @@ const SF_ITEMS = {
     f.reps.length ? ['Apsekojums', sfRepVals(f.reps)] : null,
     f.kinds.length ? ['Kampaņas veids', f.kinds.map(k => (SESS_KINDS[k] || {}).label || k)] : null,
     f.quick || f.from || f.to ? ['Periods', [perLabel(REP_QUICK, f)]] : null,
-    f.cq ? ['Salīdzināt ar', [perLabel(REP_CMP_OPTS, {quick:f.cq, from:f.cf, to:f.ct}, '—')]] : null,
+    f.cq ? ['Salīdzināt ar', [cmpLabel({quick:f.cq, from:f.cf, to:f.ct})]] : null,
     f.chs.length ? ['Kanāls', f.chs.map(k => REP_CH_L[k] || k)] : null].filter(Boolean); },
 };
 // kopsavilkuma rinda tieši zem filtru rīkjoslas: "Filtrā: {kritērijs} – {vērtība} · …  Labot"; filtru lauki netiek aizpildīti (filtrs – kā slānis)
@@ -13547,17 +13560,38 @@ const perOn = s => !!(s.quick || s.from || s.to);
 const perChip = s => perOn(s) ? [['period', `Periods: ${hfPerLabel(s)}`]] : [];
 const perMatch = (s, iso) => { const d = iso ? isoDate(new Date(iso)) : ''; return (!s.from || (d && d >= s.from)) && (!s.to || (d && d <= s.to)); };
 function perRender(p){
-  const P = PERIODS[p], s = P.get(), sum = $(`#${p}-per-sum`), l = perLabel(P.opts, s, P.none);
+  const P = PERIODS[p], s = P.get(), sum = $(`#${p}-per-sum`), l = perLabel(P.opts, s, P.none, P.full);
   sum.textContent = l; sum.title = l; sum.classList.toggle('is-on', P.always || perOn(s));
   $(`#${p}-per-list`).innerHTML = P.opts.map(([k, t]) => hfOpt(k, (s.quick || '') === k, `<span class="hf-o">${esc(t)}</span>${k === 'custom' && s.quick === 'custom' ? `<small>${esc(l)}</small>` : ''}`)).join('');
 }
 // o.opts – vērtību saraksts (noklusējums – HF_QUICK), o.range – ātrās izvēles datumi, o.always – periods vienmēr ir norādīts (Atskaites)
-const perLabel = (opts, s, none = 'Jebkurā laikā') => s.quick && s.quick !== 'custom' ? (opts.find(([k]) => k === s.quick) || [, ''])[1]
-  : s.from && s.to ? `${hfDay(s.from)}–${hfDay(s.to)}` : s.from ? `no ${hfDay(s.from)}` : s.to ? `līdz ${hfDay(s.to)}` : none;
+// Versija 234: vesels kalendārais gads → "2025"; full – pilni datumi ("01.03.2025.–31.05.2025.")
+const perLabel = (opts, s, none = 'Jebkurā laikā', full = false) => { const dd = full ? fmtDate : hfDay;
+  return s.quick && s.quick !== 'custom' ? (opts.find(([k]) => k === s.quick) || [, ''])[1]
+  : s.from && s.to ? wholeYear(s.from, s.to) || `${dd(s.from)}–${dd(s.to)}` : s.from ? `no ${dd(s.from)}` : s.to ? `līdz ${dd(s.to)}` : none; };
 function perInit(p, get, set, o = {}){
   const range = o.range || histRange;
-  PERIODS[p] = {get, set, opts:o.opts || HF_QUICK, always:!!o.always, none:o.none};
+  PERIODS[p] = {get, set, opts:o.opts || HF_QUICK, always:!!o.always, none:o.none, full:!!o.full};
   const dd = $(`#${p}-per-dd`), sum = $(`#${p}-per-sum`), list = $(`#${p}-per-list`), cust = $(`#${p}-cust`), err = $(`#${p}-per-err`), fi = $(`#${p}-from`), ti = $(`#${p}-to`);
+  // Versija 234: o.years – "Cits periods…" augšā izvēle "Gads" (veseli gadi ar datiem; 01.01.–31.12.) / "Datumu intervāls" (no–līdz)
+  let cm = 'range', selY = '';
+  if (o.applyLbl) $(`#${p}-cust-apply`).textContent = o.applyLbl;
+  if (o.years){
+    cust.classList.add('hf-cust-y');
+    cust.insertAdjacentHTML('afterbegin', `<div class="seg hf-cmode" role="radiogroup" aria-label="Salīdzināmais periods"><button type="button" role="radio" data-cm="year">Gads</button><button type="button" role="radio" data-cm="range">Datumu intervāls</button></div>
+      <div class="hf-years" id="${p}-years" role="group" aria-label="Gads"></div>`);
+  }
+  const yrs = $(`#${p}-years`);
+  const setCm = m => { cm = m; $$('[data-cm]', cust).forEach(b => { const on = b.dataset.cm === m; b.setAttribute('aria-checked', String(on)); b.classList.toggle('on', on); b.tabIndex = on ? 0 : -1; });
+    yrs.hidden = m !== 'year'; $$('.hf-cust-f', cust).forEach(x => x.hidden = m === 'year'); err.hidden = true; };
+  const drawYears = () => { const ys = o.years(); yrs.innerHTML = ys.length ? ys.map(y => `<button type="button" class="chip hf-year${y === selY ? ' on' : ''}" data-year="${y}" aria-pressed="${y === selY}">${y}</button>`).join('') : '<span class="hint">Nav datu par veseliem gadiem.</span>'; };
+  if (o.years){
+    cust.addEventListener('click', e => { const m = e.target.closest('[data-cm]'); if (m){ setCm(m.dataset.cm); (m.dataset.cm === 'year' ? ($('.hf-year.on', yrs) || $('.hf-year', yrs) || m) : fi).focus(); return; }
+      const y = e.target.closest('[data-year]'); if (!y) return; selY = y.dataset.year; fi.value = `01.01.${selY}`; ti.value = `31.12.${selY}`; err.hidden = true;
+      $$('[data-year]', yrs).forEach(x => { const on = x === y; x.classList.toggle('on', on); x.setAttribute('aria-pressed', String(on)); }); y.focus(); }); // bez pārzīmēšanas – lai panelis neaizveras
+    cust.addEventListener('keydown', e => { const m = e.target.closest('[data-cm]'); if (m && ['ArrowLeft', 'ArrowRight'].includes(e.key)){ e.preventDefault(); const n = m.dataset.cm === 'year' ? 'range' : 'year'; setCm(n); $(`[data-cm="${n}"]`, cust).focus(); }
+      if (e.key === 'Escape' && e.target.closest('.hf-cmode, .hf-years')){ e.preventDefault(); dd.open = false; sum.focus(); } });
+  }
   const done = v => { dd.open = false; set(v); sum.focus(); };
   dd.addEventListener('toggle', () => {
     if (!dd.open) return;
@@ -13569,9 +13603,14 @@ function perInit(p, get, set, o = {}){
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp'){ e.preventDefault(); const o = os[i + (e.key === 'ArrowDown' ? 1 : -1)]; if (o) o.focus(); }
     if (e.key === 'Escape'){ e.preventDefault(); dd.open = false; sum.focus(); } });
   list.addEventListener('click', e => { const o = e.target.closest('[role="option"]'); if (!o) return;
-    if (o.dataset.v === 'custom'){ const v = get(); list.hidden = true; cust.hidden = false; err.hidden = true; fi.value = dmy(v.from); ti.value = dmy(v.to); [fi, ti].forEach(i => i.removeAttribute('aria-invalid')); fi.focus(); return; }
+    if (o.dataset.v === 'custom'){ const v = get(); list.hidden = true; cust.hidden = false; err.hidden = true; fi.value = dmy(v.from); ti.value = dmy(v.to); [fi, ti].forEach(i => i.removeAttribute('aria-invalid'));
+      if (yrs){ const wy = v.quick === 'custom' ? wholeYear(v.from, v.to) : null; selY = wy || ''; drawYears(); setCm(wy || !(v.quick === 'custom' && (v.from || v.to)) ? 'year' : 'range');
+        if (cm === 'year'){ ($('.hf-year.on', yrs) || $('.hf-year', yrs) || $('[data-cm="year"]', cust)).focus(); return; } }
+      fi.focus(); return; }
     done({quick:o.dataset.v, ...range(o.dataset.v)}); });
   const apply = () => {
+    if (yrs && cm === 'year'){ if (!selY){ err.hidden = false; err.textContent = 'Izvēlieties gadu.'; ($('.hf-year', yrs) || $('[data-cm="year"]', cust)).focus(); return; }
+      done({quick:'custom', from:`${selY}-01-01`, to:`${selY}-12-31`}); return; }
     const f = fi.value.trim(), t = ti.value.trim(), a = f ? parseDmy(f) : '', b = t ? parseDmy(t) : '';
     const bf = (f && !a) || (!f && !t) || (!!a && !!b && a > b), bt = !!(t && !b);
     const msg = (f && !a) || bt ? 'Nederīgs datums – ievadiet DD.MM.GGGG.' : !f && !t ? 'Norādiet vismaz vienu datumu.' : a && b && a > b ? 'Datums “no” ir vēlāks par “līdz”.' : '';
@@ -14402,7 +14441,7 @@ function quickRange(q){
 // ===== Atskaites: "Mani filtri" (Versija 170) – saglabātais filtrs kā atsevišķs slānis (filtru rindas lauki netiek aizpildīti) =====
 // kanoniskā forma: kampaņas, apsekojumi, veidi, kanāli (vairākizvēle), joma, periods (ātrā izvēle vai datumi); Versija 215: apakšcilne filtrā netiek glabāta
 function repFCanon(f){
-  f = f || {}; const so = a => [...new Set((a || []).map(String))].sort(), q = f.quick || '';
+  f = f || {}; if (f.cq === 'year'){ f = {...f}; cmpYearFix(f); } const so = a => [...new Set((a || []).map(String))].sort(), q = f.quick || '';
   return {camps:so(f.camps), reps:so((f.reps || []).map(mapReportId)), kinds:so(f.kinds), chs:so(f.chs), jomas:jomasOfF(f), quick:q, from:q && q !== 'custom' ? '' : f.from || '', to:q && q !== 'custom' ? '' : f.to || '',
     cq:f.cq || '', cf:f.cq === 'custom' ? f.cf || '' : '', ct:f.cq === 'custom' ? f.ct || '' : ''};
 }
@@ -14443,17 +14482,31 @@ function repPrevPer(){
   return {from:isoDate(addDaysTo(a, -len)), to:isoDate(addDaysTo(a, -1))};
 }
 // ===== Versija 231: globāls salīdzinājums ar citu periodu (visām apakšcilnēm) =====
-// Salīdzināmais periods – tie paši filtri, cits periods: iepriekšējais (tāda paša garuma), tas pats pirms gada vai cits (datumi).
+// Salīdzināmais periods – tie paši filtri, cits periods: iepriekšējais vai cits (gads vai datumi).
 // Izvēle – filtru rindā "Salīdzināt ar:" (ui.rep.cq / cf / ct); "Mani filtri" to saglabā un, izvēloties filtru, piemēro.
-const REP_CMP_OPTS = [['', '—'], ['prev', 'Iepriekšējais periods'], ['year', 'Tas pats pirms gada'], ['custom', 'Cits periods…']];
+// Versija 234: "Tas pats pirms gada" noņemts – vesela gada salīdzinājums ir "Cits periods…" → "Gads" (piem., 2025)
+const REP_CMP_OPTS = [['', '—'], ['prev', 'Iepriekšējais periods'], ['custom', 'Cits periods…']];
+// veseli (pabeigti) gadi, par kuriem ir dati – pogas "Cits periods…" → "Gads"
+const cmpYears = () => { const cy = new Date().getFullYear(); return [...new Set((state.sent || []).map(x => +String(x.sentAt || '').slice(0, 4)).filter(y => y && y < cy))].sort((a, b) => b - a).map(String); };
+// vesels kalendārais gads (01.01.–31.12.) → "2025", citādi null
+const wholeYear = (from, to) => from && to && from.slice(0, 4) === to.slice(0, 4) && from.slice(5) === '01-01' && to.slice(5) === '12-31' ? from.slice(0, 4) : null;
+// salīdzinājuma teksts: "2025" / "01.03.2025.–31.05.2025." / "Iepriekšējais periods"
+const cmpLabel = s => perLabel(REP_CMP_OPTS, s, '—', true);
+// agrāk saglabātā izvēle "Tas pats pirms gada" (cq:'year') → "Cits periods" ar tās pašas dienas iepriekšējā gadā datumiem
+function cmpYearFix(f, per){
+  if (!f || f.cq !== 'year') return false;
+  const pr = per || (f.quick && f.quick !== 'custom' ? quickRange(f.quick) : {from:f.from || '', to:f.to || ''});
+  if (pr.from){ f.cq = 'custom'; f.cf = shiftM(pr.from, -12); f.ct = shiftM(pr.to || todayIso(), -12); } else { f.cq = ''; f.cf = ''; f.ct = ''; }
+  return true;
+}
 function repCmpPer(){
+  if (ui.rep.cq === 'year') cmpYearFix(ui.rep, repPer());
   const q = ui.rep.cq; if (!q) return null;
   const pr = repPer(), today = todayIso();
   if (q === 'custom') return ui.rep.cf || ui.rep.ct ? {q, from:ui.rep.cf || '2000-01-01', to:ui.rep.ct || today} : null;
   if (!pr.from) return null;
   const to = pr.to || today;
   if (q === 'prev') return {q, ...repPrevPer()};
-  if (q === 'year') return {q, from:shiftM(pr.from, -12), to:shiftM(to, -12)}; // tās pašas dienas iepriekšējā gadā
   return null;
 }
 // īsais nosaukums ("pret 2025", "pret iepr. periodu") un pilnais ("01.12.2024.–09.11.2025.")
@@ -14461,7 +14514,8 @@ function repCmpPer(){
 const repCmpShort = c => { const y1 = c.from.slice(0, 4), y2 = c.to.slice(0, 4);
   if (y1 === y2 && c.from.slice(5) === '01-01') return `pret ${y1}`;
   if (c.from.slice(0, 7) === c.to.slice(0, 7) && c.from.slice(8) === '01') return `pret ${MONTHS[+c.from.slice(5, 7) - 1].slice(0, 3)}. ${y1}`;
-  return c.q === 'prev' ? 'pret iepr. periodu' : y1 === y2 ? `pret ${y1}` : c.q === 'year' ? `pret ${y1}/${y2.slice(2)}` : `pret ${hfDay(c.from)}–${hfDay(c.to)}`; };
+  // Versija 234: cits datumu intervāls – "pret 01.03.–31.05.2025."
+  return c.q === 'prev' ? 'pret iepr. periodu' : y1 === y2 ? `pret ${c.from.slice(8)}.${c.from.slice(5, 7)}.–${fmtDate(c.to)}` : `pret ${fmtDate(c.from)}–${fmtDate(c.to)}`; };
 // starpība tabulām / eksportam: "+4 p. p." (tabula) vai skaitlis (eksports)
 const cmpDiffTxt = (a, b, unit = ' p. p.') => a == null || b == null ? '—' : `${a - b > 0 ? '+' : a - b < 0 ? '−' : ''}${cmpNum(a - b)}${unit}`;
 const cmpDiffNum = (a, b) => a == null || b == null ? '' : Math.round((a - b) * 10) / 10;
@@ -14480,7 +14534,7 @@ function repCmpAi(xs){
     .filter(z => z[2]).map(([k, l]) => ({k, l, d:a[k] - b[k]})).sort((x, y) => Math.abs(y.d) - Math.abs(x.d))[0];
   return c ? [{t:`Salīdzinājumā ar ${RC.label} ${c.l} ${chg(c.d, ' p. p.')} (${a[c.k]}% pret ${b[c.k]}%).`}] : [];
 }
-const repCmpLong = c => `${fmtDate(c.from)}–${fmtDate(c.to)}`;
+const repCmpLong = c => wholeYear(c.from, c.to) ? `${c.from.slice(0, 4)}. gadu` : `${fmtDate(c.from)}–${fmtDate(c.to)}`;
 // salīdzinājuma dati vienai atskaites pārzīmēšanai (renderReports): periods, vēstules
 let RC = null;
 const CMP_MIN = 5; // salīdzinājuma līnijās – posmi ar mazāk vēstulēm netiek attēloti (pārāk maza izlase; vērtības – padomā un tabulā)
@@ -14594,7 +14648,7 @@ sfRegister('rep', {
       f.reps.length ? `Apsekojums: ${f.reps.map(id => (repById(id) || {}).code || id).join(', ')}` : '',
       f.kinds.length ? `Veids: ${f.kinds.map(k => (SESS_KINDS[k] || {}).label || k).join(', ')}` : '',
       f.quick || f.from || f.to ? `Periods: ${perLabel(REP_QUICK, f)}` : '',
-      f.cq ? `Salīdzināt ar: ${perLabel(REP_CMP_OPTS, {quick:f.cq, from:f.cf, to:f.ct}, '—')}` : '',
+      f.cq ? `Salīdzināt ar: ${cmpLabel({quick:f.cq, from:f.cf, to:f.ct})}` : '',
       f.chs.length ? `Kanāls: ${f.chs.map(k => REP_CH_L[k] || k).join(', ')}` : '', f.jomas.length ? `Joma: ${jomasLabel(f.jomas)}` : ''].filter(Boolean).join(' · ') || 'Bez filtriem'; },
   editor:{
     norm:f => { const c = repFCanon(f); return {...c, per:{quick:c.quick, from:c.from, to:c.to}, cmp:{quick:c.cq, from:c.cf, to:c.ct}}; },
@@ -14614,7 +14668,7 @@ sfRegister('rep', {
         $(`[data-sfl-q="${k}"]`, box).addEventListener('input', e => { const q = norm(e.target.value); let n = 0; $$('.sf-rep', box).forEach(l => { const on = !q || l.dataset.q.includes(q); l.hidden = !on; n += on; }); $('.sf-rep-none', box).hidden = !!n; });
         box.addEventListener('change', sel); sel(); });
       perInit('sfr', () => w.per, v => { Object.assign(w.per, v); perRender('sfr'); upd(); }, {opts:REP_QUICK, range:quickRange}); perRender('sfr');
-      perInit('sfrc', () => w.cmp, v => { Object.assign(w.cmp, v); perRender('sfrc'); upd(); }, {opts:REP_CMP_OPTS, range:() => ({from:'', to:''}), none:'—'}); perRender('sfrc'); },
+      perInit('sfrc', () => w.cmp, v => { Object.assign(w.cmp, v); perRender('sfrc'); upd(); }, {opts:REP_CMP_OPTS, range:() => ({from:'', to:''}), none:'—', full:true, years:cmpYears, applyLbl:'Piemērot'}); perRender('sfrc'); },
     read:(el, w) => { const ms = k => $$(`[data-sfm="${k}"]:checked`, el).map(i => i.value);
       return repFCanon({camps:ms('camps'), reps:ms('reps'), kinds:ms('kinds'), chs:ms('chs'), jomas:ms('jomas'), quick:w.per.quick || '', from:w.per.from || '', to:w.per.to || '',
         cq:w.cmp.quick || '', cf:w.cmp.from || '', ct:w.cmp.to || ''}); },
@@ -14995,10 +15049,10 @@ function deliveryView(xs){
       tableHtml(aHead, aRows, 'rep-table tbl-noexp', 'Atlasītajā periodā atkārtotas nosūtīšanas nav'))}`;
   // grafiks "Nosūtītās un piegādātās ziņas pa mēnešiem" (pārvietots no "Pārskata"; skaits / %)
   const bs = monthBuckets(xs), mode = ui.rep.chart === 'p' ? 'p' : 'n', part = bs.length && bs[bs.length - 1].partial;
-  const cbs = RC ? periodBuckets(RC.xs, {g:'m', from:RC.from, to:RC.to < todayIso() ? RC.to : todayIso()}) : null, mp = b => b && b.base ? pct(b.deliv, b.base) : null;
+  const cbs = cmpBuckets(bs, 'm'), mp = b => b && b.base ? pct(b.deliv, b.base) : null;
   const s0 = `<div class="card viz-card" style="margin-bottom:16px"><div class="rk-chart-h"><h3>${mode === 'p' ? 'Piegādes īpatsvars pa mēnešiem' : 'Nosūtītās un piegādātās ziņas pa mēnešiem'}${tip('Piegādātas – e-adresē “Saņēmēja pieņemts”, e-pastā – 72 h laikā nav saņemts NDR. Uz mēneša var uzklikšķināt – atver sūtījumus ar šo periodu.')}</h3>
       <span class="seg" role="group" aria-label="Rādīt grafikā"><button type="button" data-rk-mode="n" aria-pressed="${mode === 'n'}">Skaits</button><button type="button" data-rk-mode="p" aria-pressed="${mode === 'p'}">%</button></span></div>
-      ${bs.length ? (cbs ? `<p class="rk-note rk-cmp-leg"><svg width="26" height="8" aria-hidden="true"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="3 3" opacity=".7"/></svg>Raustītās gaišākās līnijas – salīdzināmais periods (${esc(RC.label)})</p>` : '') + lineChart(bs, mode, cbs) : '<p class="hint">Nav datu.</p>'}
+      ${bs.length ? (cbs ? `<p class="rk-note rk-cmp-leg"><svg width="26" height="8" aria-hidden="true"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="3 3" opacity=".7"/></svg>Raustītās gaišākās līnijas – salīdzināmais periods (${esc(wholeYear(RC.from, RC.to) ? `${RC.from.slice(0, 4)}. gads` : RC.label)})</p>` : '') + lineChart(bs, mode, cbs) : '<p class="hint">Nav datu.</p>'}
       ${bs.length ? `<p class="rk-note">${part ? `Raustītā līnija – nepabeigts periods (dati līdz ${esc(bs[bs.length - 1].end)}). ` : ''}${bs.some(b => !b.sent) ? 'Mēneši bez sūtījumiem – pārtraukums līnijā. ' : ''}Uz mēneša var uzklikšķināt.</p>` : ''}
       <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %', ...(cbs ? ['Salīdzinājums – mēnesis', 'Salīdzinājums – nosūtītas', 'Salīdzinājums – piegādes %', 'Starpība, p. p.'] : [])], bs.map((b, i) => [b.label, b.sent, b.deliv, b.base ? `${pct(b.deliv, b.base)}%` : '—', ...(cbs ? (c => c ? [c.label, c.sent, mp(c) == null ? '—' : `${mp(c)}%`, cmpDiffTxt(mp(b), mp(c))] : ['', '', '', ''])(cbs[i]) : [])]))}</details></div>`;
   return {html:sec('Piegādes rezultāti', s0 + s1) + sec('Nepiegādātās ziņas', s2) + sec('Atkārtotā nosūtīšana', s3),
@@ -15161,6 +15215,15 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
   const n = $(`#rep-body [data-rk-grain="${g}"]`); if (n) n.focus(); });
 // Līniju grafiks pa mēnešiem: "Skaits" – nosūtītās un piegādātās (2 sērijas, viena ass); "%" – piegādes īpatsvars (1 sērija).
 // Mēneši bez sūtījumiem – pārtraukums līnijā (nevis 0); pēdējais nepabeigtais mēnesis – raustīta līnija un piezīme "līdz …"; mēnesis – klikšķināms.
+// Versija 234: salīdzināmā perioda posmi – ja salīdzina ar veselu gadu un griezums ir mēneši, pārklājas pa kalendārajiem mēnešiem (jan.–dec.),
+// citādi – pēc kārtas
+function cmpBuckets(bs, g){
+  if (!RC) return null;
+  const cbs = periodBuckets(RC.xs, {g, from:RC.from, to:RC.to < todayIso() ? RC.to : todayIso()}), wy = wholeYear(RC.from, RC.to);
+  if (!wy || g !== 'm') return cbs;
+  const by = new Map(cbs.map(b => [b.key.slice(5, 7), b]));
+  return bs.map(b => by.get(b.key.slice(5, 7)) || {key:`${wy}-${b.key.slice(5, 7)}`, label:`${wy}. g. ${MONTHS[+b.key.slice(5, 7) - 1]}`, short:'', sent:0, deliv:0, base:0, r:repRates([])});
+}
 function lineChart(bs, mode, cbs = null){
   const W = Math.max(300, Math.round((($('#rep-body') || {}).clientWidth || 720) - 40)), H = 262, L = 38, R = W < 480 ? 70 : 96, T = 14, B = 44, iw = W - L - R, ih = H - T - B;
   const pm = mode === 'p', ser = pm ? [['rate', 'Piegādes %', 's2']] : [['sent', 'Nosūtītas', 's1'], ['deliv', 'Piegādātas', 's2']];
@@ -15273,8 +15336,8 @@ function summaryView(xs){
   // Versija 222: laika griezums pēc perioda (dienas / nedēļas / mēneši), pārslēgs virsraksta rindā
   const G = repGrain(xs), GL = GRAIN[G.g], bs = periodBuckets(xs, G), part = bs.length && bs[bs.length - 1].partial, withData = bs.filter(b => b.sent);
   // Versija 231: salīdzināmais periods – tie paši posmi (pēc kārtas) salīdzināmajā periodā
-  const cbs = RC ? periodBuckets(RC.xs, {g:G.g, from:RC.from, to:RC.to < todayIso() ? RC.to : todayIso()}) : null;
-  const cmpLeg = cbs ? `<p class="rk-note rk-cmp-leg"><svg width="26" height="8" aria-hidden="true"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="3 3" opacity=".7"/></svg>Raustītās gaišākās līnijas – salīdzināmais periods (${esc(RC.label)})</p>` : '';
+  const cbs = cmpBuckets(bs, G.g);
+  const cmpLeg = cbs ? `<p class="rk-note rk-cmp-leg"><svg width="26" height="8" aria-hidden="true"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="3 3" opacity=".7"/></svg>Raustītās gaišākās līnijas – salīdzināmais periods (${esc(wholeYear(RC.from, RC.to) ? `${RC.from.slice(0, 4)}. gads` : RC.label)})</p>` : '';
   const RT_CMP = cbs ? ['Salīdzinājums – periods', 'Salīdzinājums – piegādes %', 'Starpība – piegāde, p. p.', 'Salīdzinājums – atvēršanas %', 'Starpība – atvēršana, p. p.', 'Salīdzinājums – iesniegšanas %', 'Starpība – iesniegšana, p. p.'] : [];
   const rtCmp = (b, i, num) => { if (!cbs) return []; const c = cbs[i]; if (!c) return ['', '', '', '', '', '', ''];
     const v = k => c.r[k] == null ? (num ? '' : '—') : num ? c.r[k] : `${c.r[k]}%`, d = k => num ? cmpDiffNum(b.r[k], c.r[k]) : cmpDiffTxt(b.r[k], c.r[k]);
@@ -15480,7 +15543,7 @@ function renderRepFilters(){
   perRender('rep'); perRender('repc');
   // Versija 231: piezīme "Salīdzināts ar: … ×"
   { const n = $('#rep-cmp-note'), c = repCmpPer(); n.hidden = !c;
-    n.innerHTML = c ? `Salīdzināts ar: ${esc(`${fmtDate(c.from)}–${fmtDate(c.to)}`)}<button type="button" class="link-btn" data-cmp-clear aria-label="Noņemt salīdzinājumu" title="Noņemt salīdzinājumu">×</button>` : ''; }
+    n.innerHTML = c ? `Salīdzināt ar: ${esc(wholeYear(c.from, c.to) || `${fmtDate(c.from)}–${fmtDate(c.to)}`)}<button type="button" class="link-btn" data-cmp-clear aria-label="Noņemt salīdzinājumu" title="Noņemt salīdzinājumu">×</button>` : ''; }
   const cq = norm($('#rep-camp-q').value), cl = camps.filter(c => !cq || norm(`${c.name} ${c.desc || ''} ${c.b}`).includes(cq));
   $('#rep-camp-list').innerHTML = (cq ? '' : hfOpt('', !f.camp, '<span class="hf-o">Visas kampaņas</span>')) + cl.map(c => hfOpt(c.b, String(c.b) === String(f.camp), `<span class="hf-o">${esc(c.name)}${c.desc ? `<span class="hf-desc">${esc(c.desc)}</span>` : ''}</span><small>${esc(fmtDate(isoDate(new Date(c.at))))}</small>`, c.name + (c.desc ? `\n${c.desc}` : ''))).join('') + (!cl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   const rq = norm($('#rep-rep-q').value), rl = reps.filter(r => (!STAT_JOMAS[jomaKey(f.aud)] || repJoma(r.id) === jomaKey(f.aud)) && (!rq || norm(`${r.code} ${r.name}`).includes(rq)));
@@ -16207,8 +16270,8 @@ repDd('camp', (v, dd, sum) => { ui.rep.camp = v; dd.open = false; renderReports(
 repDd('rep', (v, dd, sum) => { ui.rep.rep = v; dd.open = false; renderReports(); sum.focus(); });
 perInit('rep', () => ui.rep, v => { Object.assign(ui.rep, v); renderReports(); }, {opts:REP_QUICK, range:quickRange, always:true});
 // Versija 231: "Salīdzināt ar:" – tā pati perioda komponente
-perInit('repc', () => ({quick:ui.rep.cq || '', from:ui.rep.cf || '', to:ui.rep.ct || ''}), v => { Object.assign(ui.rep, {cq:v.quick || '', cf:v.quick === 'custom' ? v.from || '' : '', ct:v.quick === 'custom' ? v.to || '' : ''}); renderReports(); },
-  {opts:REP_CMP_OPTS, range:() => ({from:'', to:''}), none:'—'});
+perInit('repc', () => { if (ui.rep.cq === 'year') cmpYearFix(ui.rep, repPer()); return {quick:ui.rep.cq || '', from:ui.rep.cf || '', to:ui.rep.ct || ''}; }, v => { Object.assign(ui.rep, {cq:v.quick || '', cf:v.quick === 'custom' ? v.from || '' : '', ct:v.quick === 'custom' ? v.to || '' : ''}); renderReports(); },
+  {opts:REP_CMP_OPTS, range:() => ({from:'', to:''}), none:'—', full:true, years:cmpYears, applyLbl:'Piemērot'});
 document.addEventListener('click', e => { if (!(e.target.closest && e.target.closest('[data-cmp-clear]'))) return; Object.assign(ui.rep, {cq:'', cf:'', ct:''}); renderReports(); const s = $('#repc-per-sum'); if (s) s.focus(); });
 $('#rep-kind').addEventListener('change', e => { ui.rep.kind = e.target.value; renderReports(); });
 // "Filtri" panelis: Kanāls · Statistikas joma
