@@ -1098,6 +1098,12 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 235 – mazo kartīšu izkārtojums (Pārskats, Piegāde, Reakcija un iesniegšana, Patērētais laiks):**
+  - Viens režģis `.rk-cards`: 3 vienāda platuma kolonnas, atstarpes 14 px, kartītes aizpilda rindas pēc kārtas no kreisās uz labo (bez "peldošā" izkārtojuma un tukšumiem); nepilnā pēdējā rindā kartītes paliek kreisajā pusē ar to pašu platumu. Šaurā ekrānā (≤ 1100 px) – 2 kolonnas, ļoti šaurā (≤ 640 px) – 1.
+  - Vienā rindā visām kartītēm vienāds augstums (vismaz 200 px); rinda "Kopā: …" vienmēr kartītes apakšā (vienā līmenī visā rindā).
+  - Vienots saraksta stils (kā "Piltuve" un "Nepiegādes iemesli"): nosaukums · vērtība treknrakstā · (skaits) pelēkā, ja ir; bez zilajām joslām – "Atvēršanas % pa kampaņu veidiem", "Vidējais laiks", Patērētā laika kartītes ("Vidējais laiks pēc …", "pa soļiem") un "Manuālie gadījumi pēc nepiegādes iemesla" (vidējais laiks · (gadījumi), apakšā "Kopā: N gadījumi · X h"). "Iesniegšanas % pa apsekojumiem" – iekavās veidlapu skaits.
+  - "Rādīt datu tabulu" aizstāts ar **eksporta ikonu virsraksta labajā pusē** (kā "Piltuvē") visās mazajās kartītēs, arī "Ziņas pa kanāliem", "Nepiegādes iemesli", "Pa tipiem", "Novirzījums", "Pirms / Tagad"; datu tabula tiek eksportēta (Excel / CSV).
+
 - **Versija 234 – "Salīdzināt ar:" bez "Tas pats pirms gada":**
   - Izvēles: **"—"** · **"Iepriekšējais periods"** · **"Cits periods…"**.
   - "Cits periods…" panelī augšā – pārslēgs **"Gads"** / **"Datumu intervāls"**:
