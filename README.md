@@ -1083,6 +1083,11 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 232 – salīdzinājums kalendārā gada griezumā (pārskati ir kalendārā gada griezumā – mēneša pārskats 12 reizes gadā, gada pārskats – reizi gadā):**
+  - Periodā jaunas izvēles **"Šis gads"** (1. janvāris – šodiena) un **"Iepriekšējais gads"** (viss iepriekšējais kalendārais gads); Atskaišu noklusējuma periods – **"Šis gads"** (agrāk "Pēdējie 12 mēneši").
+  - **"Tas pats pirms gada"** – tās pašas dienas iepriekšējā gadā: "Šis gads" (01.01.–09.11.2026.) → 01.01.–09.11.2025., uzraksts "pret 2025"; "Iepriekšējais gads" (2025) → 2024 ("pret 2024"). Grafikā mēneši sakrīt (janvāris pret janvāri u. t. t.).
+  - **Iepriekšējais periods kalendāra griezumā** (arī KPI salīdzinājumam bez izvēles "Salīdzināt ar"): "Šis mēnesis" → tās pašas dienas iepriekšējā mēnesī ("pret okt. 2026"); "Šis gads" / "Iepriekšējais gads" → tās pašas dienas iepriekšējā gadā ("pret 2025"); pēdējie 3 / 6 / 12 mēneši un cits periods – tāda paša garuma periods tieši pirms ("pret iepr. periodu").
+
 - **Versija 231 – globāls salīdzinājums ar citu periodu (visām apakšcilnēm):**
   - **Filtru rindā** aiz "Periods" – **"Salīdzināt ar:"** (tā pati perioda komponente): "—" (nav, noklusējums) · "Iepriekšējais periods" (tāda paša garuma, tieši pirms) · "Tas pats pirms gada" · "Cits periods…" (datumi). Aktīvā izvēle – izcelta kā citi aktīvi filtri. Zem filtru rindas – pelēks teksts "Salīdzināts ar: 01.12.2024.–09.11.2025." un "×" (noņem salīdzinājumu). Izvēle saglabājas "Mani filtri" (redaktorā – rinda "Salīdzināt ar", kopsavilkuma rindā – "Salīdzināt ar – …"; izvēloties filtru, tā tiek piemērota).
   - **Viens kopīgs aprēķins** (`repCmpPer`, `repLetters(periods)`): tie paši filtri, cits periods; **vienots atšķirības formāts** (`cmpD`): mazs pelēks "▲4 p.p." / "▼2 p.p." – bultiņa zaļa, ja izmaiņa laba, sarkana – ja slikta (problēmu rādītājiem – nepiegādes iemesli, NDR tipi, nepiegādātas, laiks – kritums ir labs), pelēka – neitrāli; padomā – salīdzināmā perioda vērtība.
