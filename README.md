@@ -1106,6 +1106,8 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 244 – mazajām kopsavilkuma kartītēm noņemta eksporta ikona:** "Reakcija un iesniegšana" – "Piltuve", "Atvēršanas % pa kampaņu veidiem", "Vidējais laiks"; "Pārskats" un "Piegāde" – "Nepiegādes iemesli", "Pa tipiem", "Novirzījums". Eksporta ikona paliek kartītei "Iesniegšanas % pa apsekojumiem", kartītēm "Ziņas pa kanāliem" un "Ziņas pēc kampaņas veida" un visām detalizētajām tabulām (sakļautās tabulas joslās); šo kartīšu dati joprojām ir visas atskaites eksportā (Excel / CSV).
+
 - **Versija 243 – skaitļu kartīšu iepriekšējais izskats atjaunots** (Versijas 241 izmaiņas atceltas visās apakšcilnēs): pilni virsraksti (piem., "Atvēršanas īpatsvars (e-pasts, aptuveni)"), iepriekšējās atstarpes un skaitļa izmērs, paskaidrojuma teksts zem skaitļa, "Atvērt →" kartītes apakšējā labajā stūrī. Paliek: salīdzinājuma rinda – tikai, ja ieslēgts "Salīdzināt ar:" (Versija 236; kartītes augstums nemainās). Vienīgā izmaiņa: **"Atvērt →" neitrāls** – pelēks (#6B7C84), parasta svara; uzbraucot ar peli uz kartītes vai saites (vai fokusā) – teal un pasvītrots.
 
 - **Versija 241 – zemas, vienotas skaitļu kartītes visās apakšcilnēs** (Pārskats, Piegāde, Reakcija un iesniegšana, Patērētais laiks – arī Nepiegāžu apstrāde); viena kopīga komponente `kpiCard` un CSS (`.kc`):
