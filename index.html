@@ -509,6 +509,7 @@ td.contacts{display:table-cell}
 .rx-sec-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}
 .rx-sec-h h4{margin:0;font-size:var(--fs-md);color:var(--primary-darker)}
 .rx-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px 28px;margin:4px 0 8px}
+.rx-sub .tip{margin-left:4px}
 .rx-sub{margin:0 0 4px;font-size:var(--fs-sm);font-weight:600;color:var(--text-secondary)}
 .rx-err{margin:8px 6px 0;font-size:var(--fs-sm);color:var(--orange-ink)}
 .rx-note{margin:8px 0 0;font-size:var(--fs-xs);color:var(--text-muted)}
@@ -1375,16 +1376,10 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .rk-plist li:hover,.rk-plist li:focus-visible{background:var(--row-hover)}
 .rk-plist li:focus-visible{box-shadow:inset 0 0 0 2px var(--focus, var(--primary))}
 /* Versija 225: piltuve – kompakta un neitrāla (blīvas rindas, pelēks nosaukums, tumši % parastā svarā, plānas līnijas) */
-.rk-pfun{gap:0;max-width:380px}
-.rk-pfun li{min-height:28px;padding:3px 4px;align-items:center;font-size:var(--fs-sm);color:var(--text-muted);border-radius:0}
-.rk-pfun li:hover{background:none}
-.rk-pfun li + li{border-top:1px solid var(--border-light)}
-.rk-pfun b{font-size:var(--fs-md);font-weight:400;color:var(--text)}
-.rk-pfun-note{margin:6px 4px 0;font-size:var(--fs-xs);color:var(--text-muted)}
-.viz-grid.rx-g4{grid-template-columns:minmax(240px,380px) minmax(0,1.3fr) minmax(0,1fr);grid-template-rows:auto 1fr;align-items:start}
+.viz-grid.rx-g4{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto 1fr;align-items:start}
 .viz-grid.rx-g4 > .rx-repcard{grid-row:span 2}
 .viz-grid.rx-g4 > .viz-card:last-child{grid-column:3}
-@media (max-width:1200px){.viz-grid.rx-g4{grid-template-columns:minmax(240px,380px) minmax(0,1fr);grid-template-rows:none;grid-auto-flow:row dense}.viz-grid.rx-g4 > .viz-card:last-child{grid-column:auto}}
+@media (max-width:1200px){.viz-grid.rx-g4{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none;grid-auto-flow:row dense}.viz-grid.rx-g4 > .viz-card:last-child{grid-column:auto}}
 @media (max-width:700px){.viz-grid.rx-g4{grid-template-columns:minmax(0,1fr)}}
 /* Versija 226: vienota sakļautas tabulas josla */
 .card.rk-tcard{padding:0;overflow:hidden;margin:0 0 16px;background:var(--surface);border:1px solid var(--border)}
@@ -4174,7 +4169,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 229</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 230</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5757,6 +5752,7 @@ function onlyLv(s){
 function loadState(){
   try {
     const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (s && s._pk){ s.sent = unpackSent(s._sent, s._bc); s.archDuties = (s._ad || []).map(d => unpkObj(d, PKD)); delete s._sent; delete s._ad; delete s._bc; delete s._pk; } // Versija 230: kompaktais formāts
     if (s && Array.isArray(s.templates) && Array.isArray(s.respondents) && Array.isArray(s.sent)){
       s.layout = {...clone(DEFAULT_LAYOUT), ...(s.layout || {})};
       s.images = s.images || {};
@@ -5823,8 +5819,44 @@ function loadState(){
   } catch (e) {}
   return null;
 }
+// ===== Versija 230: kompakta glabāšana pārlūkā (localStorage ierobežojums ~5 milj. rakstzīmju) =====
+// Saglabājot: vēstuļu (state.sent) un piegādes mēģinājumu lauku nosaukumi – īsi kodi ("~0", "~1", …), noklusētās vērtības (tukšs teksts / saraksts,
+// "lv", "tpl" u. c.) netiek glabātas; ielādējot – viss atjaunots (tie paši lauki un vērtības). Agrākais (nepakotais) formāts tiek nolasīts kā līdz šim.
+const PK_L = ['id', 'batch', 'seed', 'createdBy', 'createdAt', 'sessionName', 'sessionDesc', 'campBase', 'sessionKind', 'plannedFor', 'contentSource', 'sentAt', 'templateId', 'templateName',
+  'kind', 'respondentId', 'recipient', 'address', 'addrType', 'channel', 'prio', 'attempts', 'docNr', 'subject', 'bodyHtml', 'bodyText', 'footer', 'lang', 'wantLang', 'fallback', 'org',
+  'attachments', 'main', 'files', 'status', 'note', 'statusAt', 'manual', 'awayUntil', 'react', 'archived', 'duties', 'printOn', 'aiFix', 'eaSubject', 'eaText', 'customized', 'print',
+  'variant', 'visEls', 'hasEp', 'reviewed', 'adminResolved'];
+const PK_A = ['type', 'address', 'kind', 'note', 'ok', 'done', 'rule', 'try', 'offset', 'at', 'ndr', 'invalid', 'away', 'informResp', 'noAttach'];
+const PK_DEF = {plannedFor:'', contentSource:'tpl', bodyHtml:'', bodyText:'', footer:'', lang:'lv', wantLang:'lv', fallback:false, org:DEFAULT_LAYOUT.org, attachments:[], main:null, files:[], note:'', manual:[]};
+const pkCode = (list, i) => '~' + i.toString(36), pkMap = list => ({enc:new Map(list.map((k, i) => [k, pkCode(list, i)])), dec:new Map(list.map((k, i) => [pkCode(list, i), k]))});
+// arhīva pienākumi (testa vēsture) – tāpat
+const PK_D = ['id', 'respondentId', 'reportId', 'period', 'deadline', 'submitted', 'arch'];
+const PKL = pkMap(PK_L), PKA = pkMap(PK_A), PKD = pkMap(PK_D);
+const pkIsDef = (k, v) => k in PK_DEF && (Array.isArray(PK_DEF[k]) ? Array.isArray(v) && !v.length : v === PK_DEF[k]);
+const pkObj = (o, m, def) => { const r = {}; for (const k in o){ const v = o[k]; if (v === undefined || (def && pkIsDef(k, v))) continue; r[m.enc.get(k) || k] = v; } return r; };
+const unpkObj = (o, m) => { const r = {}; for (const k in o) r[m.dec.get(k) || k] = o[k]; return r; };
+// lauki, kas vienādi visām vienas kampaņas vēstulēm (nosaukums, apraksts, veidne, nosūtīšanas laiks, prioritāte u. c.), – vienreiz kampaņai (_bc)
+function packState(st){
+  const ak = PKL.enc.get('attempts'), bk = PKL.enc.get('batch'), keep = new Set([PKL.enc.get('id'), bk]);
+  const sent = (st.sent || []).map(x => { const y = pkObj(x, PKL, true);
+    if (Array.isArray(x.attempts)) y[ak] = x.attempts.map(a => a && typeof a === 'object' ? pkObj(a, PKA, false) : a); return y; });
+  const bc = {};
+  groupBy(sent.filter(y => y[bk] != null), y => String(y[bk])).forEach((g, b) => { if (g.length < 2) return;
+    const com = {}; Object.keys(g[0]).forEach(k => { if (keep.has(k)) return; const j = JSON.stringify(g[0][k]); if (g.every(y => k in y && JSON.stringify(y[k]) === j)) com[k] = g[0][k]; });
+    if (!Object.keys(com).length) return; bc[b] = com; g.forEach(y => Object.keys(com).forEach(k => { delete y[k]; })); });
+  return {...st, sent:undefined, archDuties:undefined, _pk:2, _ad:(st.archDuties || []).map(d => pkObj(d, PKD, false)), _bc:bc, _sent:sent};
+}
+function unpackSent(arr, bc = {}){
+  const bk = PKL.enc.get('batch');
+  return (arr || []).map(y0 => { const com = y0[bk] != null && bc[String(y0[bk])], y = com ? {...y0} : y0;
+    if (com) Object.keys(com).forEach(k => { const v = com[k]; y[k] = v && typeof v === 'object' ? JSON.parse(JSON.stringify(v)) : v; }); // katrai vēstulei – sava kopija
+    const x = unpkObj(y, PKL);
+    if (Array.isArray(x.attempts)) x.attempts = x.attempts.map(a => a && typeof a === 'object' ? unpkObj(a, PKA) : a);
+    for (const k in PK_DEF) if (!(k in x)) x[k] = Array.isArray(PK_DEF[k]) ? [] : PK_DEF[k];
+    return x; });
+}
 function save(){
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(packState(state))); }
   catch (e) { toast('Neizdevās saglabāt datus pārlūkā (iespējams, pārsniegts apjoms).', true); }
 }
 
@@ -13777,17 +13809,15 @@ function reactSectionHtml(batch, xs, rep){
   const inRep = fm => !rep || (fm.d && fm.d.reportId === rep), fs = vs.flatMap(o => o.v.res).filter(inRep), nF = fs.length, nStart = fs.filter(f => f.st !== 'nav').length, nIes = fs.filter(f => f.st === 'ies').length, nKl = fs.filter(f => f.st === 'kl').length;
   const nPre = vs.reduce((s, o) => s + o.v.forms.filter(inRep).length - o.v.res.filter(inRep).length, 0);
   const pc = (a, b) => b ? Math.round(a / b * 100) : 0;
-  // Versija 220: posmos – tikai procenti no piegādātajām ziņām; skaits – padomā
+  // Versija 230: piltuve – saraksts "posms · % · (skaits)" (kā "Novirzījums"); % – no piegādātajām ziņām
   const dl = sentXs.filter(o => histFinal(o.x) === 'ok'), dS = dl.filter(o => o.v.res.filter(inRep).some(f => f.st !== 'nav')).length, dI = dl.filter(o => o.v.res.filter(inRep).some(f => f.st === 'ies')).length, dO = dl.filter(o => o.v.open || o.v.res.filter(inRep).some(f => f.st !== 'nav')).length;
-  // Versija 223: bez joslām – saraksts "posms – %" (skaits – padomā)
-  const step = (n, l, base) => ({label:l, v:pc(n, base), tip:`${fmtCount(n)} no ${fmtCount(base)} piegādātajām ziņām`});
   const byRep = new Map(); fs.forEach(f => { const k = f.d.reportId; if (!byRep.has(k)) byRep.set(k, []); byRep.get(k).push(f); });
   const rows = [...byRep.entries()].map(([k, a]) => { const p = repById(k), n = a.length, ies = a.filter(f => f.st === 'ies').length; return {p, k, n, ies, sak:a.filter(f => f.st === 'sak').length, kl:a.filter(f => f.st === 'kl').length, v:pc(ies, n)}; })
     .sort((a, b) => b.v - a.v || String(a.k).localeCompare(String(b.k), 'lv')).map(r => ({label:r.p ? repTitle(r.p) : r.k, v:r.v, tip:`Iesniegtas ${r.ies} no ${r.n} ${plural(r.n, 'veidlapas', 'veidlapām')} · iesāktas ${r.sak} · kļūdainas ${r.kl}`}));
   const {g} = reactGroups(xs);
   const btn = nF ? `<button type="button" class="btn btn-secondary btn-sm" data-action="react-menu" data-id="${esc(batch)}" aria-haspopup="menu" aria-expanded="false">${ICON.send}Veidot atgādinājumu</button>` : '';
   return `<section class="rx-sec" aria-labelledby="rx-h-${esc(batch)}"><div class="rx-sec-h"><h4 id="rx-h-${esc(batch)}">Reakcija un iesniegšana</h4>${btn}</div>
-    <div class="rx-cols"><div><h5 class="rx-sub">Piltuve</h5>${dl.length ? pctListHtml([step(dl.length, 'Piegādātas', dl.length), step(dO, 'Atvērtas', dl.length), step(dS, 'Anketa uzsākta', dl.length), step(dI, 'Iesniegtas', dl.length)], {big:true, label:'Piltuve'}) : '<p class="hint">Nav piegādātu ziņu.</p>'}
+    <div class="rx-cols"><div><h5 class="rx-sub">Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms “Piegādātas” – 100 %), iekavās – ziņu skaits. Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta.')}</h5>${funListHtml([['Piegādātas', dl.length], ['Atvērtas', dO], ['Anketa uzsākta', dS], ['Iesniegtas', dI]].map(([label, v]) => ({label, v})), dl.length)}
       <p class="rx-err">Kļūdainas veidlapas: <b>${nKl}</b></p></div>
     <div><h5 class="rx-sub">Iesniegšanas % pa apsekojumiem</h5>${nF ? pctListHtml(rows, {label:'Iesniegšanas % pa apsekojumiem'}) : '<p class="hint">Kampaņas vēstulēs nav iekļautu veidlapu.</p>'}</div></div>
     <p class="rx-note">Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena.${nPre ? ` Iesniegtas pirms vēstules (neieskaita): ${nPre}.` : ''} Piltuve – % no piegādātajām ziņām${nF ? `; apsekojumi – % no vēstulēs iekļautajām veidlapām (${nF})` : ''}. Skaits – padomā.</p></section>`;
@@ -14861,12 +14891,14 @@ function ndrReasonList(xs){
     .sort((a, b) => (a.k === 'cits') - (b.k === 'cits') || b.v - a.v || a.label.localeCompare(b.label, 'lv'))};
 }
 // Versija 223: vienkāršs saraksts "nosaukums – %" (tāds pats stils kā "Nepiegādes iemesli"; bez joslām); skaitļi – padomā (data-tip "teksts|skaits")
-// o.big – lielāki procenti un plānas atdalītājlīnijas (piltuve); o.label – saraksta nosaukums ekrāna lasītājiem
-const pctListHtml = (rows, o = {}) => `<${o.big ? 'ol' : 'ul'} class="rk-rlist rk-plist${o.big ? ' rk-pfun' : ''}"${o.label ? ` aria-label="${esc(o.label)}"` : ''}>${rows.map(r =>
-  `<li tabindex="0" data-tip="${esc(`${r.tipH || r.label}|${r.tip}`)}" aria-label="${esc(`${r.label}: ${r.v}% (${r.tip})`)}"><span class="rl-l" title="${esc(r.label)}">${esc(r.label)}</span><b>${r.v}%</b></li>`).join('')}</${o.big ? 'ol' : 'ul'}>${o.big ? '<p class="rk-pfun-note">% no piegādātajām ziņām</p>' : ''}`;
+// o.label – saraksta nosaukums ekrāna lasītājiem
+const pctListHtml = (rows, o = {}) => `<ul class="rk-rlist rk-plist"${o.label ? ` aria-label="${esc(o.label)}"` : ''}>${rows.map(r =>
+  `<li tabindex="0" data-tip="${esc(`${r.tipH || r.label}|${r.tip}`)}" aria-label="${esc(`${r.label}: ${r.v}% (${r.tip})`)}"><span class="rl-l" title="${esc(r.label)}">${esc(r.label)}</span><b>${r.v}%</b></li>`).join('')}</ul>`;
 // Versija 226: saraksts "nosaukums · % · (skaits)" (stils kā "Nepiegādes iemesli"; bez joslām), apakšā – kopā
 const cntListHtml = (rows, n, w) => rows.length && n ? `<ul class="rk-rlist rk-nolink">${rows.map(r => `<li aria-label="${esc(`${r.label}: ${pct(r.v, n)}% (${r.v})`)}"><span class="rl-l">${esc(r.label)}</span><b>${pct(r.v, n)}%</b><span class="rl-n">(${fmtCount(r.v)})</span></li>`).join('')}</ul>
   <p class="rk-rlist-tot">Kopā: ${fmtCount(n)} ${plural(n, w[0], w[1])}</p>` : '<p class="hint">Nav datu.</p>';
+// Versija 230: piltuve – tas pats saraksts kā "Novirzījums" (% no piegādātajām, iekavās skaits), apakšā "Kopā: N piegādātas ziņas"
+const funListHtml = (rows, n) => n ? cntListHtml(rows, n, ['piegādāta ziņa', 'piegādātas ziņas']) : '<p class="hint">Nav piegādātu ziņu.</p>';
 const ndrReasonHtml = d => d.n ? `<ul class="rk-rlist">${d.rows.map(r => `<li${drillAttr(r.drill)} title="Atvērt sūtījumos" aria-label="${esc(`${r.label}: ${r.p}% (${r.v}) – atvērt sūtījumos`)}"><span class="rl-l">${esc(r.label)}</span><b>${r.p}%</b><span class="rl-n">(${fmtCount(r.v)})</span></li>`).join('')}</ul>
   <p class="rk-rlist-tot">Kopā: ${fmtCount(d.n)} ${plural(d.n, 'nepiegādāta', 'nepiegādātas')}</p>` : '<p class="hint">Nav nepiegādes paziņojumu.</p>';
 // Versija 224: kopīgās kartītes apakšcilnēm "Pārskats" un "Piegāde" (viena komponente – izmaiņas abās vienādas)
@@ -15195,8 +15227,10 @@ function reactReportView(){
       ${subKpi}</div>
     ${f.camp ? repCampReact(f.camp, f.rep) : ''}
     <div class="viz-grid${f.camp ? ' g3' : ' rx-g4'}">
-      ${f.camp ? '' : `<div class="card viz-card rx-funcard"><h3>Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms – 100%). Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta. Skaits – padomā.')}</h3>${nD ? pctListHtml(funnel, {big:true, label:'Piltuve'}) : '<p class="hint">Nav piegādātu ziņu.</p>'}
-      <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Posms', '%'], funnel.map(r => [r.label, `${r.v}%`]))}</details></div>`}
+      ${f.camp ? '' : `<div class="card viz-card rx-funcard" data-title="Piltuve"><div class="rk-card-h"><h3>Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms “Piegādātas” – 100 %), iekavās – ziņu skaits. Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta.')}</h3>
+        <button type="button" class="tbl-exp-btn rk-coll-exp" data-tbl-card title="Eksportēt" aria-label="Eksportēt “Piltuve”" aria-haspopup="menu" aria-expanded="false">${TBL_DL_ICON}</button></div>
+        ${funListHtml(funnel.map(r => ({label:r.label, v:r.n})), nD)}
+        <div class="rk-xtbl" hidden>${tableHtml(['Posms', '% no piegādātajām', 'Skaits'], funnel.map(r => [r.label, `${r.v}%`, r.n]), 'rep-table tbl-noexp')}</div></div>`}
       <div class="card viz-card rx-repcard"><h3>Iesniegšanas % pa apsekojumiem${tip('Iesniegtās veidlapas no visām vēstulēs iekļautajām šī apsekojuma veidlapām; sakārtots pēc procentiem dilstoši. Skaits – padomā un eksportā.')}</h3>${byRep.length ? pctListHtml(byRep, {label:'Iesniegšanas % pa apsekojumiem'}) : '<p class="hint">Nav datu.</p>'}
         <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Apsekojums', 'Iesniegšanas %'], byRep.map(r => [r.label, `${r.v}%`]))}</details></div>
       ${card('Atvēršanas % pa kampaņu veidiem', byKind, '%', ['Kampaņas veids', 'Atvēršanas %', 'Vēstules'])}
