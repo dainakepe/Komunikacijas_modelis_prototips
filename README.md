@@ -1098,6 +1098,16 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 234 – "Salīdzināt ar:" bez "Tas pats pirms gada":**
+  - Izvēles: **"—"** · **"Iepriekšējais periods"** · **"Cits periods…"**.
+  - "Cits periods…" panelī augšā – pārslēgs **"Gads"** / **"Datumu intervāls"**:
+    - "Gads" – pogas ar veseliem (pabeigtiem) gadiem, par kuriem ir dati (piem., "2025", "2024"); klikšķis izvēlas 01.01.–31.12.;
+    - "Datumu intervāls" – no–līdz (kā līdz šim);
+    - pogas "Atcelt" / "Piemērot". Tāpat "Mani filtri" redaktora rindā "Salīdzināt ar".
+  - Teksts filtrā, kopsavilkuma rindā zem filtriem un piezīmē: "Salīdzināt ar: 2025" (vesels gads) vai "Salīdzināt ar: 01.03.2025.–31.05.2025." (intervāls); KPI kartītēs – "pret 2025".
+  - Salīdzinot ar veselu gadu, grafiku mēnešu griezumā līnijas pārklājas pa kalendārajiem mēnešiem (jan. pret jan. … dec. pret dec.), arī ja atlasītais periods nesākas janvārī; citādi – posmi pēc kārtas.
+  - Agrāk saglabātā izvēle "Tas pats pirms gada" ("Mani filtri" un pārlūka stāvoklī) tiek pārvērsta par "Cits periods" ar tās pašas dienas iepriekšējā gadā datumu intervālu (piem., "Šis gads" → 01.01.–09.11.2025.; "Iepriekšējais gads" → 2024). Piezīme zem filtriem – arī "Salīdzināt ar: …"; datumu intervālam KPI – "pret 01.03.–31.05.2025.".
+
 - **Versija 232 – salīdzinājums kalendārā gada griezumā (pārskati ir kalendārā gada griezumā – mēneša pārskats 12 reizes gadā, gada pārskats – reizi gadā):**
   - Periodā jaunas izvēles **"Šis gads"** (1. janvāris – šodiena) un **"Iepriekšējais gads"** (viss iepriekšējais kalendārais gads); Atskaišu noklusējuma periods – **"Šis gads"** (agrāk "Pēdējie 12 mēneši").
   - **"Tas pats pirms gada"** – tās pašas dienas iepriekšējā gadā: "Šis gads" (01.01.–09.11.2026.) → 01.01.–09.11.2025., uzraksts "pret 2025"; "Iepriekšējais gads" (2025) → 2024 ("pret 2024"). Grafikā mēneši sakrīt (janvāris pret janvāri u. t. t.).
