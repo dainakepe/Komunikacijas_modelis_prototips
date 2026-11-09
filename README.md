@@ -1106,6 +1106,8 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 243 – skaitļu kartīšu iepriekšējais izskats atjaunots** (Versijas 241 izmaiņas atceltas visās apakšcilnēs): pilni virsraksti (piem., "Atvēršanas īpatsvars (e-pasts, aptuveni)"), iepriekšējās atstarpes un skaitļa izmērs, paskaidrojuma teksts zem skaitļa, "Atvērt →" kartītes apakšējā labajā stūrī. Paliek: salīdzinājuma rinda – tikai, ja ieslēgts "Salīdzināt ar:" (Versija 236; kartītes augstums nemainās). Vienīgā izmaiņa: **"Atvērt →" neitrāls** – pelēks (#6B7C84), parasta svara; uzbraucot ar peli uz kartītes vai saites (vai fokusā) – teal un pasvītrots.
+
 - **Versija 241 – zemas, vienotas skaitļu kartītes visās apakšcilnēs** (Pārskats, Piegāde, Reakcija un iesniegšana, Patērētais laiks – arī Nepiegāžu apstrāde); viena kopīga komponente `kpiCard` un CSS (`.kc`):
   - **virsraksts vienā rindā** (13 px); precizējums – (i) padomā pie virsraksta, piem., "Atvēršanas īpatsvars" (i: "E-pasts, aptuveni…"), "Vid. laiks līdz iesniegšanai", "Vidējais aktīvais laiks" (i: izveide / labošana), "Līdz pēdējai saglabāšanai", Nepiegāžu apstrādē "Automātiski", "Pie darbinieka", "Vid. laiks gadījumam", "Ietaupījums";
   - **"→" (Atvērt)** virsraksta rindas labajā pusē (padoms – kur tiek atvērts); visa kartīte paliek klikšķināma (bulta pārklāj kartīti), tastatūrā – Enter uz bultas;

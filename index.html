@@ -1114,7 +1114,26 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .rk-flow{display:grid;grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr) 22px minmax(0,1fr) 25px minmax(0,1fr);align-items:stretch;margin-bottom:16px}
 .rk-arr{display:flex;align-items:center;justify-content:center;color:var(--icon-muted);font-size:16px}
 .rk-sep{border-left:1px solid var(--border);margin:8px 12px}
+.rk-kpi{appearance:none;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:border-color .12s,box-shadow .12s}
+.rk-kpi > span{display:block}
+.rk-kpi:hover,.rk-kpi:focus-visible{border-color:var(--primary-300);box-shadow:0 2px 8px rgba(0,60,60,.12)}
 /* Versija 214: "Atvērt →" – kartītes apakšējā labajā stūrī (vienmēr redzama, mazs teal teksts); virsraksts – visā platumā, garš pārnesas; kartītes vienā augstumā */
+.rk-kpi{height:100%;box-sizing:border-box}
+.rk-kpi .go{position:static;order:99;margin-top:auto;padding-top:8px;align-self:flex-end;float:none;font-size:var(--fs-xs);font-weight:400;line-height:1.2;color:#6B7C84;opacity:1;white-space:nowrap}
+/* Versija 243: "Atvērt →" – neitrāls pelēks; uzbraucot uz kartītes vai saites – teal un pasvītrots */
+.rk-kpi:hover .go,.rk-kpi:focus-visible .go,.rk-kpi.rk-kpi-box:hover .go,.rk-kpi .go:hover,.rk-kpi .go:focus-visible{color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px}
+.rk-kpi .l{padding-right:0;overflow-wrap:anywhere}
+.rk-kpi.rk-kpi-box{cursor:default}
+.rk-kpi.rk-kpi-box:hover{border-color:var(--border);box-shadow:none}
+.rk-kpi.rk-kpi-box .go{appearance:none;border:0;background:none;font-family:inherit;cursor:pointer;border-radius:var(--radius-xs)}
+.rk-kpi.rk-kpi-box .go:hover,.rk-kpi.rk-kpi-box .go:focus-visible{color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px}
+.rk-kpi.rk-kpi-box .go:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px}
+.rk-kpi .l .tip{margin-left:4px;vertical-align:1px}
+.rk-kpi.is-todo{background:var(--orange-bg);border-color:var(--warning-border)}
+.rk-kpi.is-todo .n{color:var(--orange-ink)}
+.rk-kpi .delta.d-good{color:var(--success)}
+.rk-kpi .delta.d-bad{color:var(--danger)}
+.rk-kpi .delta.d-neu{color:var(--text-muted)}
 /* klikšķināmi grafika elementi (atver sūtījumus ar filtriem) */
 .viz [data-drill]{cursor:pointer}
 .hbar[data-drill]{border-radius:var(--radius-xs);margin-left:-4px;margin-right:-4px;padding:0 4px}
@@ -1426,26 +1445,6 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .hbar.has-cmp,.hbar.wide-val.has-cmp{grid-template-columns:minmax(80px,140px) minmax(0,1fr) auto}
 .hbar .val .cmpd{margin-left:4px}
 .kpi .kpi-cmp{margin-top:6px}
-/* Versija 241: vienota kompakta skaitļu kartīte (.kc) – ~95–110 px bez salīdzinājuma; visām kartītēm rindā vienāds augstums */
-.kpi.kc{padding:12px 14px;gap:0;justify-content:flex-start;min-width:0}
-.kc > *{order:0}
-.kc-h{display:flex;align-items:center;gap:5px;min-width:0;margin:0 0 4px}
-.kc-h .l{order:0;margin:0;min-width:0;flex:0 1 auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;font-weight:700;color:#1F5E69;line-height:1.3}
-.kc-h .tip{flex:none;position:relative;z-index:2}
-.kc-go{flex:none;margin-left:auto;appearance:none;border:0;background:none;padding:0 2px;font:inherit;font-size:16px;font-weight:700;line-height:1;color:var(--primary-dark);cursor:pointer;border-radius:var(--radius-xs)}
-.kc-go::after{content:'';position:absolute;inset:0;border-radius:inherit;z-index:1}
-.kc-link{cursor:pointer;transition:border-color .12s,box-shadow .12s}
-.kc-link:hover,.kc-link:focus-within{border-color:var(--primary-300);box-shadow:0 2px 8px rgba(0,60,60,.12)}
-.kc-link:hover .kc-go{color:var(--primary-darker)}
-.kc-go:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px}
-.kc .n{font-size:26px;line-height:1.1;font-weight:700;color:var(--text)}
-.kc .sub{margin-top:4px;font-size:var(--fs-xs);color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.35}
-.kc .delta,.kc .kpi-cmp{margin-top:4px;font-size:var(--fs-xs);line-height:1.35}
-.kc .delta.d-good{color:var(--success)}
-.kc .delta.d-bad{color:var(--danger)}
-.kc .delta.d-neu{color:var(--text-muted)}
-.kc.is-todo{background:var(--orange-bg);border-color:var(--warning-border)}
-.kc.is-todo .n{color:var(--orange-ink)}
 .kpi .kpi-ph{font-size:var(--fs-xs);margin-top:4px;order:1;visibility:hidden}
 .kpi .kpi-cmp.kpi-ph{margin-top:6px;font-size:inherit}
 .rk-cmp-leg{display:flex;align-items:center;gap:6px;margin:0 0 4px}
@@ -4239,7 +4238,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 242</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 243</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -14832,16 +14831,8 @@ function timeData(per){ // Versija 231: per – salīdzināmais periods
 const avgMs = xs => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0;
 const tpSpan = o => o.wl.createdAt ? Math.max(0, Date.parse(o.saved) - Date.parse(o.wl.createdAt)) : 0;
 // Versija 236: KPI kartītēs bez salīdzinājuma – neredzama rinda salīdzinājuma vietā, lai kartītes augstums nemainās
-// ===== Versija 241: vienota skaitļu kartīte visās Atskaišu apakšcilnēs (Pārskats, Piegāde, Reakcija un iesniegšana, Patērētais laiks) =====
-// virsraksts vienā rindā (precizējums – (i) padomā), "→" (Atvērt) virsraksta rindas labajā pusē – visa kartīte klikšķināma;
-// skaitlis; viena paskaidrojuma rinda ("…", pilns teksts – padomā); salīdzinājums (o.d) – tikai, ja ieslēgts (vieta netiek rezervēta)
-// o: {n, l, tip, sub, d, drill, go (pogas padoms), cls}
-const kpiCard = o => {
-  const go = o.drill ? `<button type="button" class="kc-go" data-drill="${esc(JSON.stringify(o.drill))}" title="${esc(o.go || 'Atvērt')}" aria-label="${esc(`${o.l}: ${String(o.n).replace(/<[^>]+>/g, '')} – ${o.go || 'atvērt'}`)}">→</button>` : '';
-  return `<div class="card kpi kc${o.drill ? ' kc-link' : ''}${o.cls ? ' ' + o.cls : ''}"><div class="kc-h"><span class="l" title="${esc(o.l)}">${esc(o.l)}</span>${o.tip ? tip(o.tip) : ''}${go}</div>
-    <div class="n">${o.n}</div>${o.sub ? `<div class="sub" title="${esc(o.subTip || o.sub)}">${esc(o.sub)}</div>` : ''}${o.d || ''}</div>`;
-};
-const kpiBox = (n, l, sub, d = '', o = {}) => kpiCard({n, l, sub, d, ...o});
+const KPI_PH = '<span class="kpi-ph" aria-hidden="true">&nbsp;</span>', KPI_PH_CMP = '<div class="kpi-cmp kpi-ph" aria-hidden="true"><span class="cmpd">&nbsp;</span></div>';
+const kpiBox = (n, l, sub, d = '') => `<div class="card kpi"><div class="n">${n}</div><div class="l">${esc(l)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}${d}</div>`;
 const hrsOf = ms => Math.round(ms / 360000) / 10;
 function timeView(){ return ui.repTime.part === 'tpl' ? tplTimeView() : campTimeView(); }
 function campTimeView(){
@@ -14849,7 +14840,7 @@ function campTimeView(){
   const mn = ms => Math.round(ms / 6000) / 10, hr = ms => Math.round(ms / 360000) / 10; // starpība ≥ 2 st. – stundās
   const tD = (a, b) => cc && cc.length && b != null ? `<div class="kpi-cmp">${Math.abs(a - b) >= 2 * 3600e3 ? cmpD(hr(a), hr(b), -1, ' st.', fmtDur(b)) : cmpD(mn(a), mn(b), -1, ' min', fmtDur(b))}</div>` : '';
   const apv = camps.filter(o => o.hadApv);
-  const kpi = (n, l, sub, d) => kpiBox(n, l, sub, d || ''); // Versija 241: salīdzinājums – tikai, ja ieslēgts (vieta netiek rezervēta)
+  const kpi = (n, l, sub, d) => kpiBox(n, l, sub, d || KPI_PH_CMP); // Versija 236: bez salīdzinājuma – neredzama rezervētā rinda (augstums nemainās)
   const grp = (key, label, list = camps) => [...groupBy(list, key)].map(([k, g]) => ({label:label(k), v:wlMin(avgMs(g.map(o => o.wl.active))), sub:`${g.length} ${plural(g.length, 'kampaņa', 'kampaņas')}`, n:g.length})).sort((a, b) => b.v - a.v);
   const gK = [o => SESS_LABELS[o.kind] ? o.kind : 'cits', k => SESS_LABELS[k] || 'Cits'], gA = [o => o.aud || '—', k => AUDS[k] ? AUDS[k].field : '—'], gS = [o => o.source === 'custom' ? 'custom' : o.source === 'tplmod' ? 'tplmod' : 'tpl', k => WL_SRC[k]];
   const byKind = grp(...gK), byAud = grp(...gA), bySrc = grp(...gS);
@@ -14910,9 +14901,9 @@ function tplTimeView(){
   const rows = sorted.map(o => [TP_OBJ[o.obj], o.name, (AUDS[o.aud] || {}).group || '', (CAT_BY_KEY[o.cat] || {}).one || '', wlMin(o.wl.active), o.wl.sessions || 0, hrsOf(tpSpan(o)), fmtDateTime(o.saved)]);
   const objL = {'':'veidnes un sagataves', tpl:'veidnes', sag:'sagataves'}[ui.repTime.obj];
   return {html:`<div class="kpis k4">
-      ${kpiBox(fmtDur(avgMs(tpls.map(o => o.wl.active))), 'Vidējais aktīvais laiks', `${n} ${plural(n, 'objekts', 'objekti', '', {tip:'Izveide / labošana redaktorā – aktīvais laiks, summēts pa sesijām; pēc 3 min bez aktivitātes laiks netiek skaitīts.'})} · ${objL}`)}
+      ${kpiBox(fmtDur(avgMs(tpls.map(o => o.wl.active))), 'Vidējais aktīvais laiks (izveide / labošana)', `${n} ${plural(n, 'objekts', 'objekti')} · ${objL}`)}
       ${kpiBox(n ? (avgMs(tpls.map(o => o.wl.sessions || 0))).toFixed(1).replace('.', ',') : '—', 'Vidējais sesiju skaits', 'redaktora sesijas uz objektu')}
-      ${kpiBox(n ? fmtDur(avgMs(tpls.map(tpSpan))) : '—', 'Līdz pēdējai saglabāšanai', 'vidēji', '', {tip:'No izveides līdz pēdējai saglabāšanai (vidēji).'})}
+      ${kpiBox(n ? fmtDur(avgMs(tpls.map(tpSpan))) : '—', 'No izveides līdz pēdējai saglabāšanai', 'vidēji')}
       ${kpiBox(String(n), 'Veidnes un sagataves', `${nT} ${plural(nT, 'veidne', 'veidnes')} · ${n - nT} ${plural(n - nT, 'sagatave', 'sagataves')}`)}</div>
     <div class="rk-cards">
       ${card('Vidējais laiks pēc veida', byCat, 'Veids', 'Veidnes / sagataves kategorija (uzaicinājums, atgādinājums, informatīvais ziņojums, cits).')}
@@ -14951,7 +14942,8 @@ function ndrView(xs){
   // ietaupījums: bāzes līnija tādam pašam nepiegāžu skaitam pret faktisko manuālo laiku
   const baseMin = N * B.share / 100 * B.min, saveMin = baseMin - d.totMin, saveP = baseMin ? Math.round(saveMin / baseMin * 100) : 0;
   const bs = monthBuckets(xs), nCyc = Math.max(1, bs.length / cycM);
-  const kpi = (n, l, sub, o = {}) => kpiCard({n, l, sub, tip:o.tip || (o.drill ? '' : o.title), drill:o.drill, go:o.drill ? o.title : '', cls:o.cls}); // Versija 241
+  const kpi = (n, l, sub, o = {}) => o.drill ? `<button type="button" class="card kpi rk-kpi${o.cls ? ' ' + o.cls : ''}"${drillAttr(o.drill).replace(' role="button"', '')} title="${esc(o.title || '')}"><span class="go" aria-hidden="true">Atvērt →</span><span class="n">${n}</span><span class="l">${esc(l)}</span>${sub ? `<span class="sub">${esc(sub)}</span>` : ''}</button>`
+    : `<div class="card kpi${o.cls ? ' ' + o.cls : ''}"${o.title ? ` title="${esc(o.title)}"` : ''}><div class="n">${n}</div><div class="l">${esc(l)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}</div>`;
   const baseCard = `<div class="card ndr-base"><div class="ndr-base-h"><h3>Bāzes līnija (esošais process)</h3><span class="muted">Aptuvenas vērtības no darbinieku aptaujas – var labot.</span></div>
     <div class="ndr-base-f">
       <label><span>Nepiegādes vienā ciklā</span><input type="number" min="0" step="1" data-ndrb="n" value="${B.n}"></label>
@@ -14960,11 +14952,11 @@ function ndrView(xs){
       <label><span>Cikls</span><select data-ndrb="cycle">${Object.entries(NDR_CYCLES).map(([k, [l]]) => `<option value="${k}" ${B.cycle === k ? 'selected' : ''}>${l}</option>`).join('')}</select></label></div></div>`;
   const kpis = `<div class="kpis k6 ndr-kpis">
       ${kpi(N, 'Nepiegādes kopā', 'neveiksmīga piegāde vai novērsta pirms sūtīšanas')}
-      ${kpi(`${pct(A, N)}%`, 'Automātiski', `${A} – nākamā adrese, atkārtots mēģinājums, izlaista nederīgā adrese, MI labojums`, {tip:'Atrisinātas automātiski: nākamā adrese, atkārtots mēģinājums, izlaista nederīgā adrese vai pieņemts MI labojums.'})}
-      ${kpi(`${pct(M, N)}%`, 'Pie darbinieka', `${M} ${plural(M, 'gadījums', 'gadījumi')}`, {drill:{g:'todo'}, title:'Atvērt sūtījumus ar “Jārisina” un šiem filtriem', tip:'Nonākušas pie darbinieka – nepiegādes, kurām bija vajadzīga darbinieka rīcība.'})}
-      ${kpi(d.worked ? `${fmtN1(d.avgMin)} min` : '—', 'Vid. laiks gadījumam', `${d.worked} ${plural(d.worked, 'apstrādāts gadījums', 'apstrādāti gadījumi', {tip:'Vidējais aktīvais apstrādes laiks vienam manuālajam gadījumam.'})}`)}
+      ${kpi(`${pct(A, N)}%`, 'Atrisinātas automātiski', `${A} – nākamā adrese, atkārtots mēģinājums, izlaista nederīgā adrese, MI labojums`)}
+      ${kpi(`${pct(M, N)}%`, 'Nonākušas pie darbinieka', `${M} ${plural(M, 'gadījums', 'gadījumi')}`, {drill:{g:'todo'}, title:'Atvērt sūtījumus ar “Jārisina” un šiem filtriem'})}
+      ${kpi(d.worked ? `${fmtN1(d.avgMin)} min` : '—', 'Vidējais laiks vienam manuālajam gadījumam', `${d.worked} ${plural(d.worked, 'apstrādāts gadījums', 'apstrādāti gadījumi')}`)}
       ${kpi(`${fmtN1(d.totMin / 60)} h`, 'Patērētais laiks kopā', 'aktīvais apstrādes laiks')}
-      ${kpi(`${fmtN1(saveMin / 60)} h`, 'Ietaupījums', `${saveP}% · bāzes līnija ${fmtN1(baseMin / 60)} h ${N} nepiegādēm`, {cls:saveMin >= 0 ? 'is-save' : 'is-loss', title:'Ietaupījums pret bāzes līniju: (bāzes gadījumi × bāzes min) − (faktiskie manuālie gadījumi × faktiskās vid. min); bāzes gadījumi = nepiegādes × daļa, kas nonāk pie darbinieka'})}</div>`;
+      ${kpi(`${fmtN1(saveMin / 60)} h`, 'Ietaupījums pret bāzes līniju', `${saveP}% · bāzes līnija ${fmtN1(baseMin / 60)} h ${N} nepiegādēm`, {cls:saveMin >= 0 ? 'is-save' : 'is-loss', title:'(bāzes gadījumi × bāzes min) − (faktiskie manuālie gadījumi × faktiskās vid. min); bāzes gadījumi = nepiegādes × daļa, kas nonāk pie darbinieka'})}</div>`;
   // Pirms / Tagad (vienam ciklam)
   const nowN = N / nCyc, nowM = M / nCyc, nowH = d.totMin / 60 / nCyc, baseM = B.n * B.share / 100, baseH = baseM * B.min / 60;
   const dl = (a, b, good, unit = '') => { const v = Math.round((a - b) * 10) / 10, cls = !v ? '' : (v < 0) === good ? 'd-good' : 'd-bad'; return {html:`<span class="${cls}">${v > 0 ? '+' : v < 0 ? '−' : ''}${fmtN1(Math.abs(v))}${unit}</span>`, text:`${v > 0 ? '+' : v < 0 ? '-' : ''}${fmtN1(Math.abs(v))}${unit}`}; };
@@ -15110,9 +15102,9 @@ function deliveryView(xs){
   const aRows = rs.map(x => [{html:letterLink(x), text:x.recipient}, x.sessionName || '', (x.attempts || []).filter(a => attKind(a) !== 'skip').length, why(x), `${addrShort(x.addrType || '')}: ${x.address}`, STATUSES[x.status].label]);
   const okAfter = rs.filter(x => ['piegadats', 'nosutits', 'div_pienemts', 'piegade'].includes(x.status)).length;
   const s3 = `<div class="kpis" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-      ${kpiCard({n:rs.length, l:'Atkārtoti nosūtītas', sub:`${pct(rs.length, xs.length)}% no visām vēstulēm`, tip:'Vēstules ar vairāk par vienu piegādes mēģinājumu (pagaidu kļūda, nākamā adrese, ziņa bez pielikuma vai manuāla atkārtota nosūtīšana).'})}
-      ${kpiCard({n:okAfter, l:'Veiksmīgas pēc atkārtojuma', sub:`${pct(okAfter, rs.length)}% no atkārtotajām`})}
-      ${kpiCard({n:rs.length - okAfter, l:'Neveiksmīgas vai vēl atkārto', sub:`${pct(rs.length - okAfter, rs.length)}% no atkārtotajām`})}</div>
+      <div class="card kpi"><div class="n">${rs.length}</div><div class="l">Atkārtoti nosūtītas</div><div class="sub">${pct(rs.length, xs.length)}% no visām vēstulēm</div></div>
+      <div class="card kpi"><div class="n">${okAfter}</div><div class="l">Veiksmīgas pēc atkārtojuma</div></div>
+      <div class="card kpi"><div class="n">${rs.length - okAfter}</div><div class="l">Neveiksmīgas vai vēl atkārto</div></div></div>
     ${collCardHtml('dret', 'Atkārtotā nosūtīšana', aRows.length, 'Vēstules, kurām bijis vairāk par vienu piegādes mēģinājumu: pagaidu kļūda, pāreja uz nākamo adresi, ziņa bez pielikuma vai manuāla atkārtota nosūtīšana.',
       tableHtml(aHead, aRows, 'rep-table tbl-noexp', 'Atlasītajā periodā atkārtotas nosūtīšanas nav'))}`;
   // grafiks "Nosūtītās un piegādātās ziņas pa mēnešiem" (pārvietots no "Pārskata"; skaits / %)
@@ -15406,16 +15398,15 @@ function summaryView(xs){
   // Versija 236: salīdzinājums – tikai, ja "Salīdzināt ar:" ir izvēlēts (RC); ar "—" KPI kartītēs atšķirību nav
   const k = repKpis(xs), prevXs = RC ? RC.xs : [], hasPrev = !!RC && prevXs.length > 0, kp = hasPrev ? repKpis(prevXs) : null;
   const relCnt = (a, b) => b ? Math.round((a - b) / b * 100) : null;
-  // Versija 241: kopīgā kartīte; o.tip – precizējums (i), o.go – "Atvērt" padoms
-  const card = o => kpiCard(o);
+  const card = o => `<button type="button" class="card kpi rk-kpi${o.cls ? ' ' + o.cls : ''}"${drillAttr(o.drill).replace(' role="button"', '')} title="${esc(o.title)}"><span class="go" aria-hidden="true">Atvērt →</span><span class="n">${o.n}</span><span class="l">${esc(o.l)}</span>${o.sub ? `<span class="sub">${esc(o.sub)}</span>` : ''}${o.d || KPI_PH}</button>`;
   const arr = '<span class="rk-arr" aria-hidden="true">→</span>';
   const flow = `<div class="rk-flow">
-      ${card({n:k.sent, l:'Nosūtītas', sub:`${new Set(xs.filter(isSent).map(x => x.batch)).size} ${plural(new Set(xs.filter(isSent).map(x => x.batch)).size, 'kampaņa', 'kampaņas')}`, d:hasPrev ? repDelta(relCnt(k.sent, kp.sent), 0, '%', 0) : '', drill:{}, go:'Atvērt visas nosūtītās vēstules sūtījumos'})}${arr}
-      ${card({n:k.base ? `${k.delivP}%` : '—', l:'Piegādes īpatsvars', sub:`${fmtCount(k.deliv)} no ${fmtCount(k.base)} piegādātas`, subTip:`${fmtCount(k.deliv)} no ${fmtCount(k.base)} piegādātas · ${fmtCount(k.base - k.deliv)} nepiegādātas`, d:hasPrev ? repDelta(k.delivP, kp.delivP, ' p. p.', 1) : '', drill:{g:'ok'}, go:'Atvērt piegādātās sūtījumos', tip:'Elektroniski piegādātās / (piegādātās + nepiegādātās) vēstules (procesā esošās un drukātās vēstules respondentiem bez elektroniskās adreses neieskaita). Nepiegādāto skaits – tas pats, kas “Ziņas pa kanāliem” un “Nepiegādes iemesli”.'})}${arr}
-      ${card({n:k.em ? `${k.openP}%` : '—', l:'Atvēršanas īpatsvars', sub:k.em ? `${fmtCount(k.open)} no ${fmtCount(k.em)} e-pastiem` : 'nav piegādātu e-pastu', subTip:k.em ? `${fmtCount(k.open)} no ${fmtCount(k.em)} piegādātiem e-pastiem` : '', d:hasPrev && k.em && kp.em ? repDelta(k.openP, kp.openP, ' p. p.', 1) : '', drill:{f:{mr:'open'}}, go:'Atvērt atvērtās vēstules sūtījumos', tip:'E-pasts, aptuveni. Atvērtie e-pasti / piegādātie e-pasti (arī tie, kas vēl gaida 72 h NDR logā; eAdreses un drukātās vēstules neieskaita; aptuveni – izsekošanas attēls).'})}${arr}
-      ${card({n:k.delivF ? `${k.subP}%` : '—', l:'Iesniegšanas īpatsvars', sub:k.delivF ? `${fmtCount(k.sub)} no ${fmtCount(k.delivF)} ar anketām` : 'nav piegādātu vēstuļu ar anketām', subTip:k.delivF ? `${fmtCount(k.sub)} no ${fmtCount(k.delivF)} piegādātām vēstulēm ar anketām` : '', d:hasPrev && k.delivF && kp.delivF ? repDelta(k.subP, kp.subP, ' p. p.', 1) : '', drill:{f:{fa:'ies'}}, go:'Atvērt sūtījumos ar filtru “Anketa iesniegta”', tip:'Vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām.'})}
+      ${card({n:k.sent, l:'Nosūtītas', sub:`${new Set(xs.filter(isSent).map(x => x.batch)).size} ${plural(new Set(xs.filter(isSent).map(x => x.batch)).size, 'kampaņa', 'kampaņas')}`, d:hasPrev ? repDelta(relCnt(k.sent, kp.sent), 0, '%', 0) : '', drill:{}, title:'Visas nosūtītās vēstules – atvērt sūtījumos'})}${arr}
+      ${card({n:k.base ? `${k.delivP}%` : '—', l:'Piegādes īpatsvars', sub:`${fmtCount(k.deliv)} no ${fmtCount(k.base)} piegādātas · ${fmtCount(k.base - k.deliv)} nepiegādātas`, d:hasPrev ? repDelta(k.delivP, kp.delivP, ' p. p.', 1) : '', drill:{g:'ok'}, title:'Elektroniski piegādātās / (piegādātās + nepiegādātās) vēstules (procesā esošās un drukātās vēstules respondentiem bez elektroniskās adreses neieskaita). Nepiegādāto skaits – tas pats, kas “Ziņas pa kanāliem” un “Nepiegādes iemesli”. Atvērt piegādātās sūtījumos.'})}${arr}
+      ${card({n:k.em ? `${k.openP}%` : '—', l:'Atvēršanas īpatsvars (e-pasts, aptuveni)', sub:k.em ? `${fmtCount(k.open)} no ${fmtCount(k.em)} piegādātiem e-pastiem` : 'nav piegādātu e-pastu', d:hasPrev && k.em && kp.em ? repDelta(k.openP, kp.openP, ' p. p.', 1) : '', drill:{f:{mr:'open'}}, title:'Atvērtie e-pasti / piegādātie e-pasti (arī tie, kas vēl gaida 72 h NDR logā; eAdreses un drukātās vēstules neieskaita; aptuveni – izsekošanas attēls). Atvērt sūtījumos.'})}${arr}
+      ${card({n:k.delivF ? `${k.subP}%` : '—', l:'Iesniegšanas īpatsvars', sub:k.delivF ? `${fmtCount(k.sub)} no ${fmtCount(k.delivF)} piegādātām vēstulēm ar anketām` : 'nav piegādātu vēstuļu ar anketām', d:hasPrev && k.delivF && kp.delivF ? repDelta(k.subP, kp.subP, ' p. p.', 1) : '', drill:{f:{fa:'ies'}}, title:'Vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām – atvērt sūtījumos'})}
       <span class="rk-sep" aria-hidden="true"></span>
-      ${card({n:k.todo, l:'Jārisina', sub:'nepiegādātas, aizturētas, manuāli, jādrukā', d:hasPrev ? repDelta(k.todo, kp.todo, '', -1) : '', drill:{g:'todo'}, cls:k.todo ? 'is-todo' : '', go:'Atvērt sūtījumos ar “Jārisina”', tip:'Vēstules, kas prasa rīcību: nepiegādātas, aizturētas, manuāli pārbaudāmas, jādrukā.'})}</div>`;
+      ${card({n:k.todo, l:'Jārisina', sub:'nepiegādātas, aizturētas, manuāli, jādrukā', d:hasPrev ? repDelta(k.todo, kp.todo, '', -1) : '', drill:{g:'todo'}, cls:k.todo ? 'is-todo' : '', title:'Vēstules, kas prasa rīcību – atvērt sūtījumos ar “Jārisina”'})}</div>`;
   // Versija 222: laika griezums pēc perioda (dienas / nedēļas / mēneši), pārslēgs virsraksta rindā
   const G = repGrain(xs), GL = GRAIN[G.g], bs = periodBuckets(xs, G), part = bs.length && bs[bs.length - 1].partial, withData = bs.filter(b => b.sent);
   // Versija 231: salīdzināmais periods – tie paši posmi (pēc kārtas) salīdzināmajā periodā
@@ -15507,11 +15498,11 @@ function reactReportView(cmpBase){ // Versija 231: cmpBase – vēstules salīdz
   // (vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām; repKpis ar tiem pašiem filtriem) un tas pats salīdzinājums ar iepriekšējo periodu;
   // kļūdainās veidlapas – (i) padomā
   const sk = repKpis(repLetters()), prevXs = RC ? RC.xs : [], hasPrev = !!RC && prevXs.length > 0, skp = hasPrev ? repKpis(prevXs) : null; // Versija 236: tikai ar "Salīdzināt ar:"
-  // Versija 241: kopīgā kartīte
-  const subKpi = kpiCard({n:sk.delivF ? `${sk.subP}%` : '—', l:'Iesniegto veidlapu īpatsvars', tip:`Vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (tas pats aprēķins kā Pārskata rādītājā “Iesniegšanas īpatsvars”).\n\nKļūdainas veidlapas: ${kl.length} (${pct(kl.length, nF)}%)`,
-    sub:sk.delivF ? `${fmtCount(sk.sub)} iesniegtas no ${fmtCount(sk.delivF)} piegādātām` : 'nav piegādātu vēstuļu ar anketām', d:hasPrev && sk.delivF && skp.delivF ? repDelta(sk.subP, skp.subP, ' p. p.', 1) : '',
-    drill:{f:{fa:'ies'}}, go:'Atvērt sūtījumos ar filtru “Anketa iesniegta”'});
-  const kpi = (n, l, sub, t) => kpiCard({n, l, sub, tip:t});
+  const subKpi = `<div class="card kpi rk-kpi rk-kpi-box"><span class="n">${sk.delivF ? `${sk.subP}%` : '—'}</span>
+      <span class="l">Iesniegto veidlapu īpatsvars${tip(`Vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (tas pats aprēķins kā Pārskata rādītājā “Iesniegšanas īpatsvars”).\n\nKļūdainas veidlapas: ${kl.length} (${pct(kl.length, nF)}%)`)}</span>
+      <span class="sub">${sk.delivF ? `${fmtCount(sk.sub)} iesniegtas no ${fmtCount(sk.delivF)} piegādātām` : 'nav piegādātu vēstuļu ar anketām'}</span>${hasPrev && sk.delivF && skp.delivF ? repDelta(sk.subP, skp.subP, ' p. p.', 1) : KPI_PH}
+      <button type="button" class="go"${drillAttr({f:{fa:'ies'}})} aria-label="Atvērt sūtījumos ar filtru “Anketa iesniegta”">Atvērt →</button></div>`;
+  const kpi = (n, l, sub, t) => `<div class="card kpi"${t ? ` title="${esc(t)}"` : ''}><div class="n">${n}</div><div class="l">${esc(l)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}</div>`;
   const nSent = xs.length, nDeliv = xs.filter(o => histFinal(o.x) === 'ok').length;
   // Versija 220: piltuve – tikai procenti no piegādātajām ziņām (pirmais posms – 100 %); skaits – padomā
   const dlv = xs.filter(o => histFinal(o.x) === 'ok'), nD = dlv.length, fOf = st => dlv.filter(o => o.res.some(fm => st === 'sak' ? fm.st !== 'nav' : fm.st === 'ies')).length;
@@ -15534,9 +15525,9 @@ function reactReportView(cmpBase){ // Versija 231: cmpBase – vēstules salīdz
   const head = ['Kampaņa', 'Veids', 'Nosūtīts', 'Atvērtas %', 'Iesniegtas %', 'Kļūdainas', 'Vid. laiks līdz iesniegšanai'];
   const rows = camps.map(c => [{html:`${esc(c.name)}<span class="cell-sub">Nr. ${c.b} · ${c.n} ${plural(c.n, 'vēstule', 'vēstules')}${c.nF ? ` · ${c.nF} ${plural(c.nF, 'veidlapa', 'veidlapas')}` : ''}</span>`}, c.kind, fmtDate(isoDate(new Date(c.at))), `${c.open}%`, c.sub == null ? '—' : `${c.sub}%`, c.kl, c.t == null ? '—' : dStr(c.t)]);
   return {html:`<div class="kpis k4">
-      ${kpi(`${ea.n ? ea.p + '%' : '—'} · ${ep.n ? ep.p + '%' : '—'}`, 'Atvēršanas rādītājs', `eAdrese ${ea.n ? ea.p + '%' : '—'} · E-pasts ${ep.n ? ep.p + '%' : '—'} (aptuveni)`, 'eAdrese · e-pasts. Atvērtās vēstules no nosūtītajām (izņemot nepiegādātās un aizturētās). E-pasta atvēršana ir aptuvena (izsekošanas attēls).')}
-      ${kpi(nF ? `${pct(ies.length, nF)}%` : '—', 'Iesniegšanas rādītājs', `${ies.length} no ${nF} ${plural(nF, 'veidlapas', 'veidlapām')} vēstulēs`, 'Iesniegtās veidlapas no visām vēstulēs iekļautajām veidlapām.')}
-      ${kpi(ies.length ? dStr(toSub(fs)) : '—', 'Vid. laiks līdz iesniegšanai', `${ies.length} ${plural(ies.length, 'iesniegta veidlapa', 'iesniegtas veidlapas')}`, 'Vidējais laiks no vēstules nosūtīšanas līdz veidlapas iesniegšanai.')}
+      ${kpi(`${ea.n ? ea.p + '%' : '—'} · ${ep.n ? ep.p + '%' : '—'}`, 'Atvēršanas rādītājs', `eAdrese ${ea.n ? ea.p + '%' : '—'} · E-pasts ${ep.n ? ep.p + '%' : '—'} (aptuveni)`, 'Atvērtās vēstules no nosūtītajām (izņemot nepiegādātās un aizturētās). E-pasta atvēršana ir aptuvena (izsekošanas attēls).')}
+      ${kpi(nF ? `${pct(ies.length, nF)}%` : '—', 'Iesniegšanas rādītājs', `${ies.length} no ${nF} ${plural(nF, 'veidlapas', 'veidlapām')} vēstulēs`)}
+      ${kpi(ies.length ? dStr(toSub(fs)) : '—', 'Vidējais laiks no vēstules līdz iesniegšanai', `${ies.length} ${plural(ies.length, 'iesniegta veidlapa', 'iesniegtas veidlapas')}`)}
       ${subKpi}</div>
     ${f.camp ? repCampReact(f.camp, f.rep) : ''}
     <div class="rk-cards${f.camp ? '' : ' rx-row'}">
