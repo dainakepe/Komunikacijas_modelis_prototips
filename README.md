@@ -37,7 +37,7 @@ Atverot prototipu, vispirms redzama DELTA sistēmas sākumlapa ar moduļu kartī
   - uz ekrāniem, kas šaurāki par 900 px, ilustrācija nesamazinās (lai teksts tajā paliek salasāms), bet to var ritināt horizontāli. Zem tās ir norāde "Ritiniet ilustrāciju uz sāniem →".
 - Visas moduļu kartītes ir vienāda izmēra un neaktīvas (pelēkas). Tajās ir tikai ikona un nosaukums, bez paskaidrojošiem tekstiem. Pirmajā rindā ir "Metadatu pārvaldība", "Respondentu pārvaldība" un "Datu vākšana", otrajā – "Datu vākšanas pārraudzība", "Mikrodatu pārvaldība" un "Administrēšana".
 - Kartītē **Respondentu pārvaldība** ir maza aktīva zaļa poga **Komunikācija** (tikai aploksnes ikona, nosaukums un bultiņa →). Tā atver komunikācijas moduli ar cilni "Kampaņas". Pārējā kartītes daļa nav klikšķināma – prototipā pieejama tikai komunikācija.
-- **Navigācija.** Komunikācijas moduļa galvenē ir nosaukums "Komunikācija" ar apakšvirsrakstu "Respondentu pārvaldība" un navigācijas ceļš, piem., "DELTA › Respondentu pārvaldība › Komunikācija › Kampaņas" (kampaņas redaktorā arī kampaņas nosaukums). Sākumlapā var atgriezties ar saitēm "DELTA" vai "Respondentu pārvaldība" ceļā, ar CSP logo vai ar saiti "← DELTA sākums".
+- **Navigācija (Versija 242).** Galvene – viena zema josla (~56 px): kreisajā pusē CSP logo (36 px), "Komunikācija" un tajā pašā rindā mazāks, gaišāks "· Respondentu pārvaldība" (šaurā ekrānā – paslēpts); labajā – "← DELTA sākums", "PROTOTIPS", lietotājs. Navigācijas ceļa rindas ("DELTA › Respondentu pārvaldība › Komunikācija › …") vairs nav: sākumlapā var atgriezties ar "← DELTA sākums" vai CSP logo, sadaļas – cilnēs zem galvenes. DELTA sākumlapas galvene – tāda pati zema josla ("DELTA · Centrālā statistikas pārvalde · …"). Atstarpe no cilnēm līdz sadaļas virsraksta rindai – 20 px.
 
 ## Paskaidrojošie teksti un kļūdas
 
@@ -59,7 +59,7 @@ Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
 
 - **Noformējums.** Cilnēm nav skaita ciparu. Teksts 15 px, pustrekns, ar ikonu pirms nosaukuma. Aktīvajai cilnei ir tumši tirkīzzaļš teksts un 3 px pamatkrāsas (#297785) apakšlīnija (bez fona). Neaktīvās ir tumši pelēkas un, uzbraucot ar peli, kļūst tirkīzzaļas. Aktīvā un neaktīvā cilne ir vienāda platuma (treknraksts un apmales biezums nemainās, mainās tikai krāsa).
 - **Stabila galvene.** Lapas saknes elementam ir `scrollbar-gutter: stable` (pārlūkiem bez tā atbalsta – `overflow-y: scroll`), tāpēc vieta vertikālajai ritjoslai vienmēr ir rezervēta, un, pārslēdzoties starp cilnēm ar īsu un garu saturu (piem., "Veidnes" bez ritjoslas un "Kampaņas" ar to), galvene un cilņu nosaukumi nenobīdās. Visas cilnes izmanto vienu satura konteineru ar vienādu platumu un atstarpēm; galvene un cilņu josla ir ārpus cilņu satura. Uz šauriem ekrāniem cilņu josla ritinās horizontāli, un aktīvā cilne tiek ieritināta redzamajā daļā.
-- **Navigācijas ceļš:** "DELTA › Respondentu pārvaldība › Komunikācija › [cilne]".
+- ~~**Navigācijas ceļš**~~ – Versija 242: noņemts (sk. "Navigācija").
 - **Apakšsadaļas** ir filtru pogas zem virsraksta (bez skaitītājiem):
   - Kampaņas: Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās. Atverot cilni, vienmēr aktīva ir "Visas";
   - Veidnes: adresāta filtru pogas (Visas · Fiziskām personām · Juridiskām personām · Cita komunikācija) tādā pašā stilā kā kampaņu statusa pogas. "Sagataves" ir poga augšējā labajā stūrī starp "Nemainīgā informācija" un "+ Jauna veidne", un tā atver atsevišķu skatu ar grupu pogām "E-pasta satura sagataves" · "Pielikumu sagataves";
