@@ -1120,6 +1120,12 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .rk-kpi .go{position:static;order:99;margin-top:auto;padding-top:8px;align-self:flex-end;float:none;font-size:var(--fs-xs);font-weight:600;line-height:1.2;color:var(--primary-dark);opacity:1;white-space:nowrap}
 .rk-kpi:hover .go,.rk-kpi:focus-visible .go{text-decoration:underline;text-underline-offset:2px}
 .rk-kpi .l{padding-right:0;overflow-wrap:anywhere}
+.rk-kpi.rk-kpi-box{cursor:default}
+.rk-kpi.rk-kpi-box:hover{border-color:var(--border);box-shadow:none}
+.rk-kpi.rk-kpi-box .go{appearance:none;border:0;background:none;font-family:inherit;cursor:pointer;border-radius:var(--radius-xs)}
+.rk-kpi.rk-kpi-box .go:hover,.rk-kpi.rk-kpi-box .go:focus-visible{text-decoration:underline;text-underline-offset:2px}
+.rk-kpi.rk-kpi-box .go:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px}
+.rk-kpi .l .tip{margin-left:4px;vertical-align:1px}
 .rk-kpi.is-todo{background:var(--orange-bg);border-color:var(--warning-border)}
 .rk-kpi.is-todo .n{color:var(--orange-ink)}
 .rk-kpi .delta.d-good{color:var(--success)}
@@ -4168,7 +4174,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 228</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 229</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -15158,6 +15164,14 @@ function reactReportView(){
   const o2s = fs.filter(fm => fm.o.v.open && firstSak(fm) != null && firstSak(fm) >= Date.parse(fm.o.v.open.at)).map(fm => firstSak(fm) - Date.parse(fm.o.v.open.at));
   const s2i = ies.filter(fm => firstSak(fm) != null).map(fm => Math.max(0, lastIes(fm) - firstSak(fm)));
   const ea = openPct(xs.filter(o => o.x.channel === 'eadrese')), ep = openPct(xs.filter(o => o.x.channel !== 'eadrese')), all = openPct(xs);
+  // Versija 229: "Iesniegto veidlapu īpatsvars" (aizstāj "Kļūdaino veidlapu īpatsvars") – tas pats aprēķins kā Pārskata "Iesniegšanas īpatsvars"
+  // (vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām; repKpis ar tiem pašiem filtriem) un tas pats salīdzinājums ar iepriekšējo periodu;
+  // kļūdainās veidlapas – (i) padomā
+  const sk = repKpis(repLetters()), prevXs = repLetters(true), hasPrev = !!repPer().from && !f.camp && prevXs.length > 0, skp = hasPrev ? repKpis(prevXs) : null;
+  const subKpi = `<div class="card kpi rk-kpi rk-kpi-box"><span class="n">${sk.delivF ? `${sk.subP}%` : '—'}</span>
+      <span class="l">Iesniegto veidlapu īpatsvars${tip(`Vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (tas pats aprēķins kā Pārskata rādītājā “Iesniegšanas īpatsvars”).\n\nKļūdainas veidlapas: ${kl.length} (${pct(kl.length, nF)}%)`)}</span>
+      <span class="sub">${sk.delivF ? `${fmtCount(sk.sub)} iesniegtas no ${fmtCount(sk.delivF)} piegādātām` : 'nav piegādātu vēstuļu ar anketām'}</span>${hasPrev && sk.delivF && skp.delivF ? repDelta(sk.subP, skp.subP, ' p. p.', 1) : ''}
+      <button type="button" class="go"${drillAttr({f:{fa:'ies'}})} aria-label="Atvērt sūtījumos ar filtru “Anketa iesniegta”">Atvērt →</button></div>`;
   const kpi = (n, l, sub, t) => `<div class="card kpi"${t ? ` title="${esc(t)}"` : ''}><div class="n">${n}</div><div class="l">${esc(l)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}</div>`;
   const nSent = xs.length, nDeliv = xs.filter(o => histFinal(o.x) === 'ok').length;
   // Versija 220: piltuve – tikai procenti no piegādātajām ziņām (pirmais posms – 100 %); skaits – padomā
@@ -15178,7 +15192,7 @@ function reactReportView(){
       ${kpi(`${ea.n ? ea.p + '%' : '—'} · ${ep.n ? ep.p + '%' : '—'}`, 'Atvēršanas rādītājs', `eAdrese ${ea.n ? ea.p + '%' : '—'} · E-pasts ${ep.n ? ep.p + '%' : '—'} (aptuveni)`, 'Atvērtās vēstules no nosūtītajām (izņemot nepiegādātās un aizturētās). E-pasta atvēršana ir aptuvena (izsekošanas attēls).')}
       ${kpi(nF ? `${pct(ies.length, nF)}%` : '—', 'Iesniegšanas rādītājs', `${ies.length} no ${nF} ${plural(nF, 'veidlapas', 'veidlapām')} vēstulēs`)}
       ${kpi(ies.length ? dStr(toSub(fs)) : '—', 'Vidējais laiks no vēstules līdz iesniegšanai', `${ies.length} ${plural(ies.length, 'iesniegta veidlapa', 'iesniegtas veidlapas')}`)}
-      ${kpi(nF ? `${pct(kl.length, nF)}%` : '—', 'Kļūdaino veidlapu īpatsvars', `${kl.length} ${plural(kl.length, 'kļūdaina veidlapa', 'kļūdainas veidlapas')}`)}</div>
+      ${subKpi}</div>
     ${f.camp ? repCampReact(f.camp, f.rep) : ''}
     <div class="viz-grid${f.camp ? ' g3' : ' rx-g4'}">
       ${f.camp ? '' : `<div class="card viz-card rx-funcard"><h3>Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms – 100%). Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta. Skaits – padomā.')}</h3>${nD ? pctListHtml(funnel, {big:true, label:'Piltuve'}) : '<p class="hint">Nav piegādātu ziņu.</p>'}
