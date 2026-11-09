@@ -1083,6 +1083,8 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 229 – "Reakcija un iesniegšana": kartīte "Iesniegto veidlapu īpatsvars"** (aizstāj "Kļūdaino veidlapu īpatsvars"): lielais skaitlis – tas pats aprēķins kā Pārskata rādītājā "Iesniegšanas īpatsvars" (vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām; ar tiem pašiem filtriem skaitļi sakrīt); zem skaitļa – "N iesniegtas no N piegādātām" un, ja ir, salīdzinājums ar iepriekšējo periodu (kā Pārskatā). Kļūdaino veidlapu skaits – (i) padomā pie virsraksta ("Kļūdainas veidlapas: N (N%)"); "Atvērt →" atver Sūtījumus ar filtru "Anketas aktivitāte: Iesniegta". Kļūdaino veidlapu dati tabulā pa kampaņām un eksportā – nemainīti.
+
 - **Versija 228 – testa dati: pilnas līknes arī filtrējot apsekojumu vai statistikas jomu ("Rādītāji pa mēnešiem"):**
   - `repCtlPlan`: katrā no pēdējiem pilnajiem mēnešiem – vismaz viena kampaņa (uzaicinājums vai atgādinājums) ar piegādes, atvēršanas un iesniegšanas datiem: **1-C Ceļotāju apsekojums** (pievienoti trūkstošie mēneši – janv., febr., apr., jūl.), **1-DSA**, **1-MBA** (agrāk tikai martā) un katru mēnesi "Mēneša pārskati – individuālie atgādinājumi" pa e-pastu (atvēršanas dati katram mēneša pārskatam). Papildu kampaņās – tikai respondenti, kuriem piegāde var izdoties.
   - Vērtības – pēc tiem pašiem mēneša mērķiem: papildu (un ikdienas) kampaņām – tie paši rādītāji, ko mēnesī sasniedz pārējās vēstules; tās izveido pēc pārējām testa kampaņām (agrāko kampaņu numuri un dati nemainās). Atvēršana un iesniegšana sadalīta proporcionāli pa apsekojumiem (katram apsekojumam – neliela svārstība ap mēneša līmeni, mēneša kopskaits nemainās). Kopējās mēneša vērtības mainās ne vairāk kā par ±2 p. p.
