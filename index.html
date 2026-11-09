@@ -1416,6 +1416,23 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .rk-klist .kl-ok{display:block;height:100%;border-radius:2px;background:#5BAA84}
 .rk-rlist.rk-nolink li{cursor:default}
 .rk-rlist.rk-nolink li:hover{background:none}
+/* Versija 231: salīdzinājums */
+.rep-cmp-note{margin:6px 0 0;font-size:var(--fs-xs);color:var(--text-muted);display:flex;align-items:center;gap:4px}
+.rep-cmp-note .link-btn{font-size:var(--fs-md);line-height:1;padding:0 4px;color:var(--text-muted)}
+.rep-cmp-note .link-btn:hover{color:var(--danger)}
+.cmpd{font-size:var(--fs-xs);font-weight:400;color:var(--text-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.cmpd-ar{font-style:normal;font-size:.85em;margin-right:2px}
+.cmpd-good{color:var(--success,#2E7D4F)} .cmpd-bad{color:var(--danger,#C8473D)} .cmpd-neu{color:var(--text-muted)}
+.rk-rlist li{grid-template-columns:minmax(0,1fr) auto 3.6em auto}
+.rk-plist li{grid-template-columns:minmax(0,1fr) auto auto}
+.rk-rlist .cmpd{min-width:4.6em;text-align:right}
+.donut-leg .cmpd{margin-left:6px}
+.rk-klist .kl-row{grid-template-columns:minmax(0,1fr) auto auto auto}
+.rk-klist .kl-cbar{display:block;height:2px;margin-top:-2px;border-radius:1px;background:#9FB0B6}
+.hbar.has-cmp,.hbar.wide-val.has-cmp{grid-template-columns:minmax(80px,140px) minmax(0,1fr) auto}
+.hbar .val .cmpd{margin-left:4px}
+.kpi .kpi-cmp{margin-top:6px}
+.rk-cmp-leg{display:flex;align-items:center;gap:6px;margin:0 0 4px}
 .rk-rlist-tot{margin:8px 6px 0;padding-top:8px;border-top:1px solid var(--border-light);font-size:var(--fs-sm);color:var(--text-secondary)}
 .viz-grid.g-ch{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
 @media (max-width:1000px){.viz-grid.g-ch{grid-template-columns:minmax(0,1fr)}}
@@ -4146,6 +4163,7 @@ th.has-exp{padding-right:32px !important}
           <div class="dd-list cf-dd hf-list"><input type="search" id="rep-rep-q" placeholder="Meklēt apsekojumu…" aria-label="Meklēt apsekojumu"><div id="rep-rep-list" role="listbox" aria-label="Apsekojums"></div></div></details>
         <label class="hf-selw"><span class="sr-only">Kampaņas veids</span><select id="rep-kind" class="hf-sel"></select></label>
         <div data-per="rep"></div>
+        <div data-per="repc" data-per-label="Salīdzināt ar:" data-per-none="—"></div>
         <div class="hf-more"><button type="button" class="flt-adv-btn hf-btn" id="rep-more-f" aria-expanded="false" aria-controls="rep-fpanel" aria-haspopup="dialog"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filtri<span class="hf-badge" id="rep-more-n" hidden></span></button>
           <div class="hf-panel" id="rep-fpanel" role="dialog" aria-label="Filtri" hidden>
             <div class="hf-pgrid">
@@ -4159,6 +4177,7 @@ th.has-exp{padding-right:32px !important}
       </div>
     </div>
     <div class="flt-chips" id="rep-chipbar" hidden><span class="flt-chip-list" id="rep-chips" aria-label="Aktīvie filtri"></span><button type="button" class="link-btn flt-clear" id="rep-clear">Notīrīt visus</button></div>
+    <div class="rep-cmp-note" id="rep-cmp-note" hidden></div>
     <div class="subnav camp-sub rep-sub" id="rep-sub" role="group" aria-label="Atskaites veids"></div>
     <div id="rep-part" hidden></div>
     <div id="rep-ai"></div>
@@ -4169,7 +4188,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 230</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 231</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11912,16 +11931,23 @@ function seedArchive(allR = state.respondents){
   [31, 28, 25].forEach((m, i) => plan.push({m, day:[12, 9, 16][i], name:['Gada pārskati – atgādinājums', 'Darbaspēka apsekojums – uzaicinājums', 'Mēneša pārskati – atgādinājums'][i],
     kind:['atg-pec', 'uzaicinajums', 'atg-pirms'][i], tpl:['t9', 't2', 't9'][i], list:[jur, fiz, jur][i], share:55, prio:DEFAULT_PRIO,
     base:[archBase(() => jurRepCodes('gads'), 'gads', 'AT'), archBase(['1-DSA'], 'cet', 'UZ'), archBase(() => jurRepCodes('men'), 'men', 'AT')][i]}));
-  // Versija 196: pēdējie 11 pilnie mēneši – kontrolētās testa kampaņas (repCtlPlan); vecākie – kā līdz šim
+  // Versija 196: pēdējie 11 pilnie mēneši – kontrolētās testa kampaņas (repCtlPlan)
+  // Versija 231: iepriekšējā gada mēneši (12–23 mēn. atpakaļ) – arī kontrolētas kampaņas (piegāde, atvēršana, veidlapas un iesniegšana) ar nedaudz
+  // zemākiem rādītājiem (REP_PY) – salīdzinājumam "Tas pats pirms gada"; kampaņu secība un numuri – kā līdz šim
+  const pyIds = fr => (state.reports || []).filter(p => p.aud === 'jur' && [].concat(fr).includes(p.freq)).map(p => p.id), EMF = ['email1', 'email2', 'eadrese'];
   for (let m = 23; m >= 12; m--){
-    // pēdējos mēnešos biežāk izmanto e-pastu (lai redzētu tendences)
-    const emailFirst = m <= 6 ? ['email1', 'email2', 'eadrese'] : DEFAULT_PRIO;
-    plan.push({m, day:10, name:'Mēneša pārskati – pirmstermiņa atgādinājums', kind:'atg-pirms', tpl:'t9', list:jur, share:60 + (m % 4) * 8, prio:DEFAULT_PRIO, base:archBase(() => jurRepCodes('men'), 'men', 'AT')});
-    plan.push({m, day:20, name:'Nokavētie pārskati – atgādinājums', kind:'atg-pec', tpl:'t9', list:jur, share:30 + (m % 3) * 10, prio:emailFirst, base:archBase(() => jurRepCodes(), 'visi', 'AT')});
-    if (m % 3 === 0) plan.push({m, day:4, name:'Darbaspēka apsekojums – uzaicinājums', kind:'uzaicinajums', tpl:'t2', list:fiz, share:85, prio:DEFAULT_PRIO, base:archBase(['1-DSA'], 'cet', 'UZ')});
-    if (m % 3 === 1) plan.push({m, day:14, name:'Ceļotāju apsekojums – atgādinājums', kind:'atg-pec', tpl:'t3', list:fiz, share:55, prio:emailFirst, base:archBase(['1-C'], 'men2', 'AT')});
-    if (m % 4 === 2) plan.push({m, day:25, name:'Rezultātu publicēšana', kind:'info', tpl:m % 8 === 2 ? 't10' : 't5', list:m % 8 === 2 ? jur : fiz, share:90, prio:['email1', 'email2', 'eadrese'], base:m % 8 === 2 ? archBase(() => jurRepCodes(), 'visi', 'IN') : null});
-    if (m % 12 === 9) plan.push({m, day:27, name:'Pateicība par datu iesniegšanu', kind:'cits', tpl:'t11', list:jur, share:70, prio:DEFAULT_PRIO});
+    const py = {ctl:true, py:true};
+    plan.push({m, day:10, name:'Mēneša pārskati – pirmstermiņa atgādinājums', kind:'atg-pirms', tpl:'t9', list:jur, share:60 + (m % 4) * 8, prio:DEFAULT_PRIO, base:archBase(() => jurRepCodes('men'), 'men', 'AT'), reps:pyIds('men'), per:'men', ...py});
+    plan.push({m, day:20, name:'Nokavētie pārskati – atgādinājums', kind:'atg-pec', tpl:'t9', list:jur, share:45 + (m % 3) * 10, prio:EMF, base:archBase(() => jurRepCodes(), 'visi', 'AT'), reps:pyIds(['men', 'cet']), per:'visi', ...py});
+    if (m % 3 === 0) plan.push({m, day:4, name:'Darbaspēka apsekojums – uzaicinājums', kind:'uzaicinajums', tpl:'t2', list:fiz, share:85, prio:DEFAULT_PRIO, base:archBase(['1-DSA'], 'cet', 'UZ'), reps:['a-dsa'], per:'cet', ...py});
+    if (m % 3 === 1) plan.push({m, day:14, name:'Ceļotāju apsekojums – atgādinājums', kind:'atg-pec', tpl:'t3', list:fiz, share:55, prio:EMF, base:archBase(['1-C'], 'men2', 'AT'), reps:['a-cel'], per:'men2', ...py});
+    if (m % 4 === 2) plan.push({m, day:25, name:'Rezultātu publicēšana', kind:'info', tpl:m % 8 === 2 ? 't10' : 't5', list:m % 8 === 2 ? jur : fiz, share:90, prio:EMF, base:m % 8 === 2 ? archBase(() => jurRepCodes(), 'visi', 'IN') : null, reps:[], ...py});
+    if (m % 12 === 9) plan.push({m, day:27, name:'Pateicība par datu iesniegšanu', kind:'cits', tpl:'t11', list:jur, share:70, prio:DEFAULT_PRIO, reps:[], ...py});
+    // papildu ikmēneša kampaņas (apjoms tuvāk šim gadam); izveido pēc pārējām (agrāko kampaņu numuri nemainās), rādītāji – kā pārējām mēneša vēstulēm
+    const cov = {...py, cover:true};
+    plan.push({m, day:6 + (m % 3), name:m % 2 ? 'Ceļotāju apsekojums – atgādinājums' : 'Ceļotāju apsekojums – uzaicinājums', kind:m % 2 ? 'atg-pec' : 'uzaicinajums', tpl:m % 2 ? 't3' : 't2', list:fiz, share:65, prio:EMF, base:archBase(['1-C'], 'men', m % 2 ? 'AT' : 'UZ'), reps:['a-cel'], per:'men', ...cov});
+    plan.push({m, day:15, name:'Mēneša pārskati – individuālie atgādinājumi', kind:'atg-pec', tpl:'t9', list:jur, share:100, prio:EMF, base:archBase(() => jurRepCodes('men'), 'men', 'AT'), reps:pyIds('men'), per:'men', ...cov});
+    plan.push({m, day:22, name:'Darbaspēka apsekojums – atgādinājums', kind:'atg-pec', tpl:'t3', list:fiz, share:75, prio:EMF, base:archBase(['1-DSA'], 'cet', 'AT'), reps:['a-dsa'], per:'cet', ...cov});
   }
   const now = new Date(), daily = [];
   plan.push(...repCtlPlan(allR));
@@ -11956,6 +11982,8 @@ function seedArchive(allR = state.respondents){
 // atvēršana 55–75 % (jūl.–aug. ~50 %), iesniegšana 55–80 % (atgādinājumu mēnešos augstāka); tekošais mēnesis – reakcija tikai sākas.
 const REP_TGT = {deliv:[96, 94, 97, 85, 96, 97, 95, 96, 97, 96, 95, 95], open:[66, 70, 68, 63, 72, 61, 51, 49, 64, 69, 60, 62], sub:[62, 59, 76, 70, 61, 74, 57, 60, 66, 78, 64, 58]};
 const REP_TGT_PART = {deliv:95, open:45, sub:18};
+// Versija 231: iepriekšējā gada mēnešos rādītāji nedaudz zemāki (p. p.)
+const REP_PY = {deliv:2, open:5, sub:7};
 // Versija 222: testa kampaņas – darba dienās (sestdiena / svētdiena → tuvākā darba diena tajā pašā mēnesī, pirms šodienas)
 const wdShift = (d, lim = todayIso()) => { const w = d.getDay(); if (w % 6) return d;
   const at = n => { const x = addDaysTo(d, n); return x.getMonth() === d.getMonth() && isoDate(x) < lim ? x : null; };
@@ -12084,7 +12112,8 @@ function ctlForms(x, ies, now){
 }
 // mēneša rādītāji pēc mērķiem: kontrolētajām vēstulēm – piegāde (arhīvs) un veidlapas; visām testa vēstulēm – e-pasta atvēršana
 function shapeRepSeed(allR = state.respondents){
-  const now = Date.now(), cur = isoDate(new Date()).slice(0, 7), from = new Date(); from.setMonth(from.getMonth() - 11, 1);
+  const now = Date.now(), cur = isoDate(new Date()).slice(0, 7), from = new Date(); from.setMonth(from.getMonth() - 23, 1);
+  const pyFrom = new Date(); pyFrom.setMonth(pyFrom.getMonth() - 11, 1); const pyKey = isoDate(pyFrom).slice(0, 7); // Versija 231: vecāki mēneši – REP_PY
   const fromKey = isoDate(from).slice(0, 7), byKey = new Map(), rOf = id => allR.find(r => r.id === id);
   state.sent.filter(x => x.seed && String(x.sentAt).slice(0, 7) >= fromKey).forEach(x => { const k = String(x.sentAt).slice(0, 7); if (!byKey.has(k)) byKey.set(k, []); byKey.get(k).push(x); });
   // deterministiski (katrā ielādē vienādi): pēc kampaņas un respondenta, nevis nejaušā vēstules ID
@@ -12095,7 +12124,8 @@ function shapeRepSeed(allR = state.respondents){
   const strat = (xs, salt) => { const key = new Map(); groupBy(ord(xs, salt), grpOf).forEach(g => g.forEach((x, i) => key.set(x, (i + 0.5) / g.length)));
     return [...xs].sort((a, b) => key.get(a) - key.get(b) || hashRoll(salt + 'g' + hk(a)) - hashRoll(salt + 'g' + hk(b)) || hk(a).localeCompare(hk(b))); };
   byKey.forEach((all, k) => {
-    const cm = +k.slice(5, 7) - 1, part = k === cur, T0 = part ? REP_TGT_PART : {deliv:REP_TGT.deliv[cm], open:REP_TGT.open[cm], sub:REP_TGT.sub[cm]};
+    const cm = +k.slice(5, 7) - 1, part = k === cur, py = k < pyKey;
+    const T0 = part ? REP_TGT_PART : {deliv:REP_TGT.deliv[cm] - (py ? REP_PY.deliv : 0), open:REP_TGT.open[cm] - (py ? REP_PY.open : 0), sub:REP_TGT.sub[cm] - (py ? REP_PY.sub : 0)};
     const shape = (xs, T, o = {}) => {
     if (o.deliv !== false){
     // 1) piegāde (arhīva kontrolētās vēstules; sliktās adreses – vispirms aprīļa kampaņā)
@@ -12151,7 +12181,7 @@ function seedHistory(){
   try { seedHistoryAll(allR); } finally { state.respondents = allR; }
 }
 function seedHistoryAll(allR = state.respondents){
-  state.histSeeded = true; state.histVer = 12;
+  state.histSeeded = true; state.histVer = 13;
   if (state.sent.length) return;
   state.archDuties = [];
   const daily = seedArchive(allR) || [];
@@ -12331,7 +12361,7 @@ function seedPrint(){
   state.sent.sort((a, b) => String(b.sentAt).localeCompare(String(a.sentAt)));
 }
 // Agrāk izveidotā testa vēsture tiek aizstāta ar jauno (ja tajā ir tikai testa ieraksti)
-if (state.histSeeded && state.histVer !== 12 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
+if (state.histSeeded && state.histVer !== 13 && state.sent.length && state.sent.every(x => x.seed || OLD_SEED_NAMES.includes(x.sessionName))){
   state.sent = []; state.seq = 0; state.histSeeded = false; state.tasks = [];
   state.respondents.forEach(r => { delete r.invalidAddr; });
   // Versija 196: kampaņu numuri mainās – ar tiem saistītie testa dati tiek izveidoti no jauna
@@ -12818,6 +12848,7 @@ const SF_ITEMS = {
     f.reps.length ? ['Apsekojums', sfRepVals(f.reps)] : null,
     f.kinds.length ? ['Kampaņas veids', f.kinds.map(k => (SESS_KINDS[k] || {}).label || k)] : null,
     f.quick || f.from || f.to ? ['Periods', [perLabel(REP_QUICK, f)]] : null,
+    f.cq ? ['Salīdzināt ar', [perLabel(REP_CMP_OPTS, {quick:f.cq, from:f.cf, to:f.ct}, '—')]] : null,
     f.chs.length ? ['Kanāls', f.chs.map(k => REP_CH_L[k] || k)] : null].filter(Boolean); },
 };
 // kopsavilkuma rinda tieši zem filtru rīkjoslas: "Filtrā: {kritērijs} – {vērtība} · …  Labot"; filtru lauki netiek aizpildīti (filtrs – kā slānis)
@@ -12990,7 +13021,7 @@ sfRegister('camp', {
         + row('Periods', `<div data-per="sfd"></div>`)
         + row('Kampaņas veidotājs', `<select id="sfd-creator"><option value="">Visi veidotāji</option>${creators.map(n => `<option${w.creator === n ? ' selected' : ''}>${esc(n)}</option>`).join('')}</select>`, 'sfd-creator')
         + (carry.length ? `<div class="sf-ed-row"><span class="sf-ed-l">Saglabāts arī</span><div class="sf-ed-carry">${esc(carry.join(' · '))}</div></div>` : ''); },
-    init:(el, w, upd) => { $$('[data-per]', el).forEach(h => { h.outerHTML = perHtml(h.dataset.per); });
+    init:(el, w, upd) => { $$('[data-per]', el).forEach(h => { h.outerHTML = perHtml(h.dataset.per, h.dataset.perLabel); });
       sfJomaRepInit(el, upd);
       perInit('sfd', () => w.per, v => { Object.assign(w.per, v); perRender('sfd'); upd(); }); perRender('sfd'); },
     read:(el, w) => { const ms = k => $$(`[data-sfm="${k}"]:checked`, el).map(i => i.value);
@@ -13487,11 +13518,11 @@ const HF_QUICK = [['', 'Jebkurā laikā'], ['today', 'Šodien'], ['7d', 'Pēdēj
 // "Periods:" + izkrītošā izvēlne (Jebkurā laikā · Šodien · Pēdējās 7 dienas · Pēdējās 30 dienas · Šis gads · Cits periods…);
 // "Cits periods…" – mazs logs ar datumiem no–līdz un "Lietot". Stāvoklis – {quick, from, to}; katrs skats nosaka, kuru datumu filtrē.
 const CAL_IC = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
-function perHtml(p){
+function perHtml(p, label = 'Periods:'){
   const f = (k, l) => `<div class="hf-cust-f"><label for="${p}-${k}">${l}</label><div class="dt-field"><input type="text" id="${p}-${k}" inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-describedby="${p}-per-err">
       <button type="button" class="dt-btn" data-per-cal="${k}" aria-label="Periods ${l.toLowerCase()} – izvēlēties datumu kalendārā" title="Kalendārs">${CAL_IC}</button>
       <input type="date" id="${p}-${k}-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div></div>`;
-  return `<div class="hf-per" id="${p}-per"><span class="hf-per-l" id="${p}-per-l">Periods:</span>
+  return `<div class="hf-per" id="${p}-per"><span class="hf-per-l" id="${p}-per-l">${esc(label)}</span>
     <details class="dd hf-dd" id="${p}-per-dd"><summary id="${p}-per-sum" aria-labelledby="${p}-per-l ${p}-per-sum">Jebkurā laikā</summary>
       <div class="dd-list cf-dd hf-list hf-per-list"><div id="${p}-per-list" role="listbox" aria-label="Periods"></div>
         <div class="hf-cust" id="${p}-cust" role="group" aria-label="Cits periods" hidden>${f('from', 'No')}${f('to', 'Līdz')}
@@ -13499,23 +13530,23 @@ function perHtml(p){
           <div class="hf-cust-act"><button type="button" class="btn btn-ghost btn-sm" id="${p}-cust-cancel">Atcelt</button><button type="button" class="btn btn-primary btn-sm" id="${p}-cust-apply">Lietot</button></div>
         </div></div></details></div>`;
 }
-$$('[data-per]').forEach(el => { el.outerHTML = perHtml(el.dataset.per); });
+$$('[data-per]').forEach(el => { el.outerHTML = perHtml(el.dataset.per, el.dataset.perLabel); });
 const PERIODS = {};
 const perOn = s => !!(s.quick || s.from || s.to);
 // aktīvā perioda birka (zem filtru rindas) – vienāda visos skatos
 const perChip = s => perOn(s) ? [['period', `Periods: ${hfPerLabel(s)}`]] : [];
 const perMatch = (s, iso) => { const d = iso ? isoDate(new Date(iso)) : ''; return (!s.from || (d && d >= s.from)) && (!s.to || (d && d <= s.to)); };
 function perRender(p){
-  const P = PERIODS[p], s = P.get(), sum = $(`#${p}-per-sum`), l = perLabel(P.opts, s);
+  const P = PERIODS[p], s = P.get(), sum = $(`#${p}-per-sum`), l = perLabel(P.opts, s, P.none);
   sum.textContent = l; sum.title = l; sum.classList.toggle('is-on', P.always || perOn(s));
   $(`#${p}-per-list`).innerHTML = P.opts.map(([k, t]) => hfOpt(k, (s.quick || '') === k, `<span class="hf-o">${esc(t)}</span>${k === 'custom' && s.quick === 'custom' ? `<small>${esc(l)}</small>` : ''}`)).join('');
 }
 // o.opts – vērtību saraksts (noklusējums – HF_QUICK), o.range – ātrās izvēles datumi, o.always – periods vienmēr ir norādīts (Atskaites)
-const perLabel = (opts, s) => s.quick && s.quick !== 'custom' ? (opts.find(([k]) => k === s.quick) || [, ''])[1]
-  : s.from && s.to ? `${hfDay(s.from)}–${hfDay(s.to)}` : s.from ? `no ${hfDay(s.from)}` : s.to ? `līdz ${hfDay(s.to)}` : 'Jebkurā laikā';
+const perLabel = (opts, s, none = 'Jebkurā laikā') => s.quick && s.quick !== 'custom' ? (opts.find(([k]) => k === s.quick) || [, ''])[1]
+  : s.from && s.to ? `${hfDay(s.from)}–${hfDay(s.to)}` : s.from ? `no ${hfDay(s.from)}` : s.to ? `līdz ${hfDay(s.to)}` : none;
 function perInit(p, get, set, o = {}){
   const range = o.range || histRange;
-  PERIODS[p] = {get, set, opts:o.opts || HF_QUICK, always:!!o.always};
+  PERIODS[p] = {get, set, opts:o.opts || HF_QUICK, always:!!o.always, none:o.none};
   const dd = $(`#${p}-per-dd`), sum = $(`#${p}-per-sum`), list = $(`#${p}-per-list`), cust = $(`#${p}-cust`), err = $(`#${p}-per-err`), fi = $(`#${p}-from`), ti = $(`#${p}-to`);
   const done = v => { dd.open = false; set(v); sum.focus(); };
   dd.addEventListener('toggle', () => {
@@ -14361,7 +14392,8 @@ function quickRange(q){
 // kanoniskā forma: kampaņas, apsekojumi, veidi, kanāli (vairākizvēle), joma, periods (ātrā izvēle vai datumi); Versija 215: apakšcilne filtrā netiek glabāta
 function repFCanon(f){
   f = f || {}; const so = a => [...new Set((a || []).map(String))].sort(), q = f.quick || '';
-  return {camps:so(f.camps), reps:so((f.reps || []).map(mapReportId)), kinds:so(f.kinds), chs:so(f.chs), jomas:jomasOfF(f), quick:q, from:q && q !== 'custom' ? '' : f.from || '', to:q && q !== 'custom' ? '' : f.to || ''};
+  return {camps:so(f.camps), reps:so((f.reps || []).map(mapReportId)), kinds:so(f.kinds), chs:so(f.chs), jomas:jomasOfF(f), quick:q, from:q && q !== 'custom' ? '' : f.from || '', to:q && q !== 'custom' ? '' : f.to || '',
+    cq:f.cq || '', cf:f.cq === 'custom' ? f.cf || '' : '', ct:f.cq === 'custom' ? f.ct || '' : ''};
 }
 // aktīvā saglabātā filtra nosacījumi (ar perioda datumiem) vai null
 function repSf(){ const c = typeof sfCur === 'function' && SF_CFG.rep ? sfCur('rep') : null; if (!c) return null; const f = repFCanon(c.f); return {...f, ...(f.quick && f.quick !== 'custom' ? quickRange(f.quick) : {}), name:c.name}; }
@@ -14377,14 +14409,63 @@ const repSfLetter = (x, sf) => !sf || ((!sf.camps.length || sf.camps.includes(St
 function repLetters(prev){
   const f = ui.rep, sf = repSf(), pr = repPer();
   let from = pr.from, to = pr.to;
-  if (prev){
+  if (prev && typeof prev === 'object'){ from = prev.from; to = prev.to; } // Versija 231: salīdzināmais periods – tie paši filtri
+  else if (prev){
     if (!from || f.camp || (sf && sf.camps.length)) return [];
     const a = parseIso(from), b = parseIso(to || todayIso()), len = dayDiff(b, a) + 1;
     to = isoDate(addDaysTo(a, -1)); from = isoDate(addDaysTo(a, -len));
   }
   return state.sent.filter(x => { const d = isoDate(new Date(x.sentAt));
-    return (!f.camp || prev || String(x.batch) === String(f.camp)) && (!f.rep || histReps(x).includes(f.rep)) && (!f.kind || baseKind(x.sessionKind) === f.kind) && (!f.ch || x.channel === f.ch)
+    return (!f.camp || prev === true || String(x.batch) === String(f.camp)) && (!f.rep || histReps(x).includes(f.rep)) && (!f.kind || baseKind(x.sessionKind) === f.kind) && (!f.ch || x.channel === f.ch)
       && letterInJoma(x, f.aud) && repSfLetter(x, sf) && (!from || d >= from) && (!to || d <= to); });
+}
+// ===== Versija 231: globāls salīdzinājums ar citu periodu (visām apakšcilnēm) =====
+// Salīdzināmais periods – tie paši filtri, cits periods: iepriekšējais (tāda paša garuma), tas pats pirms gada vai cits (datumi).
+// Izvēle – filtru rindā "Salīdzināt ar:" (ui.rep.cq / cf / ct); "Mani filtri" to saglabā un, izvēloties filtru, piemēro.
+const REP_CMP_OPTS = [['', '—'], ['prev', 'Iepriekšējais periods'], ['year', 'Tas pats pirms gada'], ['custom', 'Cits periods…']];
+function repCmpPer(){
+  const q = ui.rep.cq; if (!q) return null;
+  const pr = repPer(), today = todayIso();
+  if (q === 'custom') return ui.rep.cf || ui.rep.ct ? {q, from:ui.rep.cf || '2000-01-01', to:ui.rep.ct || today} : null;
+  if (!pr.from) return null;
+  const to = pr.to || today;
+  if (q === 'prev'){ const a = parseIso(pr.from), len = dayDiff(parseIso(to), a) + 1; return {q, from:isoDate(addDaysTo(a, -len)), to:isoDate(addDaysTo(a, -1))}; }
+  if (q === 'year'){ const y = d => { const x = parseIso(d); x.setFullYear(x.getFullYear() - 1); return isoDate(x); }; return {q, from:y(pr.from), to:y(to)}; }
+  return null;
+}
+// īsais nosaukums ("pret 2025", "pret iepr. periodu") un pilnais ("01.12.2024.–09.11.2025.")
+const repCmpShort = c => { const y1 = c.from.slice(0, 4), y2 = c.to.slice(0, 4);
+  return c.q === 'prev' ? 'pret iepr. periodu' : y1 === y2 ? `pret ${y1}` : c.q === 'year' ? `pret ${y1}/${y2.slice(2)}` : `pret ${hfDay(c.from)}–${hfDay(c.to)}`; };
+// starpība tabulām / eksportam: "+4 p. p." (tabula) vai skaitlis (eksports)
+const cmpDiffTxt = (a, b, unit = ' p. p.') => a == null || b == null ? '—' : `${a - b > 0 ? '+' : a - b < 0 ? '−' : ''}${cmpNum(a - b)}${unit}`;
+const cmpDiffNum = (a, b) => a == null || b == null ? '' : Math.round((a - b) * 10) / 10;
+// MI kopsavilkums: viens teikums par galveno izmaiņu pret salīdzināmo periodu
+function repCmpAi(xs){
+  if (!RC || !RC.xs.length) return [];
+  const chg = (d, u) => d > 0 ? `pieaudzis par ${cmpNum(d)}${u}` : d < 0 ? `samazinājies par ${cmpNum(d)}${u}` : 'nav mainījies';
+  if (ui.repSub === 'laiks'){
+    if ((ui.repTime.part || 'camp') !== 'camp') return [];
+    const a = timeData().camps, b = timeData({from:RC.from, to:RC.to}).camps; if (!a.length || !b.length) return [];
+    const ma = avgMs(a.map(o => o.wl.active)), mb = avgMs(b.map(o => o.wl.active));
+    return [{t:`Salīdzinājumā ar ${RC.label} vidējais aktīvais laiks uz kampaņu ${chg(Math.round((ma - mb) / 6000) / 10, ' min')} (${fmtDur(ma)} pret ${fmtDur(mb)}).`}];
+  }
+  const a = repKpis(xs), b = repKpis(RC.xs);
+  const c = [['delivP', 'piegādes īpatsvars', a.base && b.base], ['openP', 'atvēršanas īpatsvars (e-pasts)', a.em && b.em], ['subP', 'iesniegšanas īpatsvars', a.delivF && b.delivF]]
+    .filter(z => z[2]).map(([k, l]) => ({k, l, d:a[k] - b[k]})).sort((x, y) => Math.abs(y.d) - Math.abs(x.d))[0];
+  return c ? [{t:`Salīdzinājumā ar ${RC.label} ${c.l} ${chg(c.d, ' p. p.')} (${a[c.k]}% pret ${b[c.k]}%).`}] : [];
+}
+const repCmpLong = c => `${fmtDate(c.from)}–${fmtDate(c.to)}`;
+// salīdzinājuma dati vienai atskaites pārzīmēšanai (renderReports): periods, vēstules
+let RC = null;
+const CMP_MIN = 5; // salīdzinājuma līnijās – posmi ar mazāk vēstulēm netiek attēloti (pārāk maza izlase; vērtības – padomā un tabulā)
+function repCmpCalc(){ const c = repCmpPer(); return c ? {...c, xs:repLetters(c), short:repCmpShort(c), label:repCmpLong(c)} : null; }
+// vienots atšķirības formāts sarakstiem: "▲4 p.p." / "▼2 p.p." (pelēks teksts; bultiņa zaļa – izmaiņa laba, sarkana – slikta, pelēka – neitrāla)
+// good: 1 – pieaugums labs, −1 – kritums labs (problēmu rādītāji), 0 – neitrāli
+const cmpNum = v => String(Math.round(Math.abs(v) * 10) / 10).replace('.', ',');
+function cmpD(cur, prev, good = 1, unit = ' p.p.', cmpTxt){
+  if (!RC || cur == null || prev == null || isNaN(cur) || isNaN(prev)) return '';
+  const d = Math.round((cur - prev) * 10) / 10, cls = !d || !good ? 'neu' : (d > 0) === (good > 0) ? 'good' : 'bad';
+  return `<span class="cmpd" title="${esc(`Salīdzinājumā ar ${RC.label}: ${cmpTxt != null ? cmpTxt : prev + unit.replace(' p.p.', '%')}`)}"><i class="cmpd-ar cmpd-${cls}" aria-hidden="true">${d > 0 ? '▲' : d < 0 ? '▼' : '='}</i>${d ? cmpNum(d) : '0'}${unit}<span class="sr-only"> salīdzinājumā ar ${esc(RC.label)}</span></span>`;
 }
 // klikšķināms elements: atver sūtījumus ar atskaites filtriem un precizējumu (statusu grupa, kanāls, periods u. c.)
 const drillAttr = o => ` data-drill="${esc(JSON.stringify(o))}" tabindex="0" role="button"`;
@@ -14457,7 +14538,7 @@ sfRegister('jrn', {
         + row('Sūtīšanas statuss', chips('sends', JRN_SF_SENDS.map(k => [k, SEND_ST[k].label]), w.sends))
         + row('Periods', `<div data-per="sfj"></div>`)
         + row('Nosūtītājs', `<select id="sfj-sender"><option value="">Visi nosūtītāji</option>${senders.map(n => `<option${w.sender === n ? ' selected' : ''}>${esc(n)}</option>`).join('')}</select>`, 'sfj-sender'); },
-    init:(el, w, upd) => { $$('[data-per]', el).forEach(h => { h.outerHTML = perHtml(h.dataset.per); });
+    init:(el, w, upd) => { $$('[data-per]', el).forEach(h => { h.outerHTML = perHtml(h.dataset.per, h.dataset.perLabel); });
       sfJomaRepInit(el, upd);
       perInit('sfj', () => w.per, v => { Object.assign(w.per, v); perRender('sfj'); upd(); }, {opts:JRN_SF_QUICK, range:histRange}); perRender('sfj'); },
     read:(el, w) => { const ms = k => $$(`[data-sfm="${k}"]:checked`, el).map(i => i.value);
@@ -14476,6 +14557,8 @@ sfRegister('rep', {
   get:() => repFCanon({}),
   apply:() => {},
   render:() => renderReports(),
+  // Versija 231: izvēloties filtru ar saglabātu salīdzinājumu – tas tiek piemērots filtru rindā "Salīdzināt ar:"
+  onPick:x => { const f = repFCanon(x.f); if (f.cq) Object.assign(ui.rep, {cq:f.cq, cf:f.cf, ct:f.ct}); },
   // izvēloties filtru – atveras arī norādītā apakšcilne
   // Versija 215: filtra izvēle atvērto apakšcilni nemaina – filtrs tiek piemērots atvērtajai apakšcilnei
   // agrāk saglabātie filtri – bez apakšcilnes (f.sub); piemēra filtrs "1-C Ceļotāji – reakcija" → "1-C Ceļotāji"
@@ -14485,9 +14568,10 @@ sfRegister('rep', {
       f.reps.length ? `Apsekojums: ${f.reps.map(id => (repById(id) || {}).code || id).join(', ')}` : '',
       f.kinds.length ? `Veids: ${f.kinds.map(k => (SESS_KINDS[k] || {}).label || k).join(', ')}` : '',
       f.quick || f.from || f.to ? `Periods: ${perLabel(REP_QUICK, f)}` : '',
+      f.cq ? `Salīdzināt ar: ${perLabel(REP_CMP_OPTS, {quick:f.cq, from:f.cf, to:f.ct}, '—')}` : '',
       f.chs.length ? `Kanāls: ${f.chs.map(k => REP_CH_L[k] || k).join(', ')}` : '', f.jomas.length ? `Joma: ${jomasLabel(f.jomas)}` : ''].filter(Boolean).join(' · ') || 'Bez filtriem'; },
   editor:{
-    norm:f => { const c = repFCanon(f); return {...c, per:{quick:c.quick, from:c.from, to:c.to}}; },
+    norm:f => { const c = repFCanon(f); return {...c, per:{quick:c.quick, from:c.from, to:c.to}, cmp:{quick:c.cq, from:c.cf, to:c.ct}}; },
     html:w => { const row = (l, html, id) => `<div class="sf-ed-row"><${id ? `label for="${id}"` : 'span class="sf-ed-l"'}>${l}</${id ? 'label' : 'span'}><div>${html}</div></div>`;
       const chips = (key, entries, sel) => `<div class="sf-chips" role="group" aria-label="${key}">${entries.map(([k, l]) => `<label class="sf-chip"><input type="checkbox" data-sfm="${key}" value="${esc(k)}"${sel.includes(k) ? ' checked' : ''}><span>${esc(l)}</span></label>`).join('')}</div>`;
       const plist = (key, ph, items, sel) => `<div class="sf-reps" data-sfl="${key}"><input type="search" data-sfl-q="${key}" placeholder="${esc(ph)}" aria-label="${esc(ph)}"><div class="sf-rep-list" role="group">${items.map(([v, b, t]) => `<label class="sf-rep" data-q="${esc(norm(b + ' ' + t))}"><input type="checkbox" data-sfm="${key}" value="${esc(v)}"${sel.includes(String(v)) ? ' checked' : ''}><span><b>${esc(b)}</b> ${esc(t)}</span></label>`).join('')}<div class="sf-rep-none" hidden>Nav atrasts</div></div><div class="sf-rep-sel" data-sfl-sel="${key}" aria-live="polite"></div></div>`;
@@ -14496,16 +14580,19 @@ sfRegister('rep', {
         + sfJomaRepRows(row, w, reps)
         + row('Kampaņas veids', chips('kinds', Object.entries(SESS_KINDS).map(([k, v]) => [k, v.label]), w.kinds))
         + row('Periods', `<div data-per="sfr"></div>`)
+        + row('Salīdzināt ar', `<div data-per="sfrc" data-per-label="Salīdzināt ar:"></div>`)
         + row('Kanāls', chips('chs', Object.entries(REP_CH_L), w.chs)); },
-    init:(el, w, upd) => { $$('[data-per]', el).forEach(h => { h.outerHTML = perHtml(h.dataset.per); });
+    init:(el, w, upd) => { $$('[data-per]', el).forEach(h => { h.outerHTML = perHtml(h.dataset.per, h.dataset.perLabel); });
       sfJomaRepInit(el, upd);
       $$('[data-sfl]:not([data-sfl="reps"])', el).forEach(box => { const k = box.dataset.sfl, sel = () => { const v = $$('[data-sfm]:checked', box).map(i => i.closest('.sf-rep').querySelector('b').textContent); $(`[data-sfl-sel="${k}"]`, box).textContent = v.length ? `Izvēlēti: ${v.length > 3 ? `${v.slice(0, 3).join(', ')} +${v.length - 3}` : v.join(', ')}` : ''; };
         $(`[data-sfl-q="${k}"]`, box).addEventListener('input', e => { const q = norm(e.target.value); let n = 0; $$('.sf-rep', box).forEach(l => { const on = !q || l.dataset.q.includes(q); l.hidden = !on; n += on; }); $('.sf-rep-none', box).hidden = !!n; });
         box.addEventListener('change', sel); sel(); });
-      perInit('sfr', () => w.per, v => { Object.assign(w.per, v); perRender('sfr'); upd(); }, {opts:REP_QUICK, range:quickRange}); perRender('sfr'); },
+      perInit('sfr', () => w.per, v => { Object.assign(w.per, v); perRender('sfr'); upd(); }, {opts:REP_QUICK, range:quickRange}); perRender('sfr');
+      perInit('sfrc', () => w.cmp, v => { Object.assign(w.cmp, v); perRender('sfrc'); upd(); }, {opts:REP_CMP_OPTS, range:() => ({from:'', to:''}), none:'—'}); perRender('sfrc'); },
     read:(el, w) => { const ms = k => $$(`[data-sfm="${k}"]:checked`, el).map(i => i.value);
-      return repFCanon({camps:ms('camps'), reps:ms('reps'), kinds:ms('kinds'), chs:ms('chs'), jomas:ms('jomas'), quick:w.per.quick || '', from:w.per.from || '', to:w.per.to || ''}); },
-    any:f => !!(f.camps.length || f.reps.length || f.kinds.length || f.chs.length || f.jomas.length || f.quick || f.from || f.to),
+      return repFCanon({camps:ms('camps'), reps:ms('reps'), kinds:ms('kinds'), chs:ms('chs'), jomas:ms('jomas'), quick:w.per.quick || '', from:w.per.from || '', to:w.per.to || '',
+        cq:w.cmp.quick || '', cf:w.cmp.from || '', ct:w.cmp.to || ''}); },
+    any:f => !!(f.camps.length || f.reps.length || f.kinds.length || f.chs.length || f.jomas.length || f.quick || f.from || f.to || f.cq),
   },
   // testa dati: divi piemēri
   seed:() => [{id:'sfr-seed-1', name:'Uzņēmumu uzaicinājumi – 12 mēn.', def:false, f:{kinds:['uzaicinajums'], jomas:['uzn'], quick:'12m'}},
@@ -14521,8 +14608,9 @@ function stackBars(groups, series){
     <span class="val">${g.total}</span></div>`).join('');
 }
 // Apļveida (donut) diagramma: daļas ar nosaukumu, procentiem un skaitu iekavās; klikšķis – sūtījumi ar attiecīgo filtru
-function donutChart(parts, label){
-  const tot = parts.reduce((a, p) => a + p.v, 0), R = 70, r = 44, C = 90;
+function donutChart(parts, label, cparts){
+  const tot = parts.reduce((a, p) => a + p.v, 0), R = 70, r = 44, C = 90, ctot = cparts ? cparts.reduce((a, p) => a + p.v, 0) : 0;
+  const cOf = p => cparts && ctot ? cparts.find(z => z.label === p.label) || {v:0} : null; // Versija 231: salīdzināmais periods
   if (!tot) return '<p class="hint">Nav datu.</p>';
   const txt = p => `${p.label} ${pct(p.v, tot)}% (${fmtCount(p.v)})`;
   let a0 = -Math.PI / 2;
@@ -14537,7 +14625,8 @@ function donutChart(parts, label){
       ${segs.map(({p, d}) => `<path d="${d}" fill="var(--${p.color})" class="donut-seg" data-tip="${esc(`${p.label}${p.tip ? ` – ${p.tip}` : ''}|${pct(p.v, tot)}% (${fmtCount(p.v)})`)}"${p.drill ? drillAttr(p.drill) + ` aria-label="${esc(txt(p))} – atvērt sūtījumos"` : ''}></path>`).join('')}
       ${segs.filter(sg => sg.p.v / tot >= 0.06).map(({p, mid}) => `<text x="${(C + (R + r) / 2 * Math.cos(mid)).toFixed(1)}" y="${(C + (R + r) / 2 * Math.sin(mid)).toFixed(1)}" class="donut-pc" aria-hidden="true">${pct(p.v, tot)}%</text>`).join('')}
       <text x="${C}" y="${C - 4}" class="donut-tot" aria-hidden="true">${fmtCount(tot)}</text><text x="${C}" y="${C + 14}" class="donut-sub" aria-hidden="true">ziņas</text></svg>
-    <ul class="donut-leg">${parts.map(p => `<li${p.drill && p.v ? drillAttr(p.drill) + ` title="Atvērt sūtījumos"` : ''}><i style="background:var(--${p.color})" aria-hidden="true"></i><span>${esc(p.label)}</span><b>${pct(p.v, tot)}%</b><span class="muted">(${fmtCount(p.v)})</span></li>`).join('')}</ul></div>`;
+    <ul class="donut-leg">${parts.map(p => { const c = cOf(p), t = c ? `${p.label}: šajā periodā ${pct(p.v, tot)}% (${fmtCount(p.v)}) · ${RC.label}: ${pct(c.v, ctot)}% (${fmtCount(c.v)})${p.drill && p.v ? ' – atvērt sūtījumos' : ''}` : 'Atvērt sūtījumos';
+      return `<li${p.drill && p.v ? drillAttr(p.drill) : ''}${p.drill && p.v || c ? ` title="${esc(t)}"` : ''}><i style="background:var(--${p.color})" aria-hidden="true"></i><span>${esc(p.label)}</span><b>${pct(p.v, tot)}%</b><span class="muted">(${fmtCount(p.v)})</span>${c ? cmpD(pct(p.v, tot), pct(c.v, ctot), p.label === 'Nepiegādātas' ? -1 : 0, ' p.p.', `${pct(c.v, ctot)}% (${fmtCount(c.v)})`) : ''}</li>`; }).join('')}</ul></div>`;
 }
 const CH_PARTS = [['eadrese', 'eAdrese', 's1'], ['epasts', 'E-pasts', 's3'], ['pasts', 'Drukāta vēstule', 's2']];
 // Versija 217: rezultāta grupa vēstulei (tās pašas vēstules, kas kanālu diagrammā: nosūtītas; drukātās – nosūtītas pa pastu)
@@ -14554,19 +14643,21 @@ function chPartsRes(xs){
 }
 // Versija 227: "Ziņas pēc kampaņas veida" – kompakts saraksts (stils kā "Nepiegādes iemesli"): ikona + nosaukums, piegādes % un (piegādātas/kopā);
 // zem rindas – plāna 4 px josla: gaiši pelēks – kopā (garums pret lielāko veidu), mierīgi zaļš – piegādātas
-function kindListHtml(rows){
+// Versija 231: crows – salīdzināmais periods: zem joslas plāna pelēka josla (piegādātās tajā pašā mērogā), atšķirība aiz %, padomā – abas vērtības
+function kindListHtml(rows, crows){
   const max = Math.max(1, ...rows.map(r => r.total));
-  return `<ul class="rk-klist">${rows.map(r => { const p = pct(r.ok, r.total), ic = ICON[KIND_IC[baseKind(r.k)]] || '';
-    return `<li${r.drill ? drillAttr(r.drill) : ' tabindex="0"'} data-tip="${esc(`${r.label}|Piegādātas ${fmtCount(r.ok)} no ${fmtCount(r.total)} (${p}%) · nepiegādātas ${fmtCount(r.bad)} · procesā ${fmtCount(r.proc)}`)}" aria-label="${esc(`${r.label}: piegādātas ${r.ok} no ${r.total} (${p}%), nepiegādātas ${r.bad}, procesā ${r.proc} – atvērt sūtījumos`)}">
-      <span class="kl-row"><span class="kl-l">${ic}<span>${esc(r.label)}</span></span><b>${p}%</b><span class="rl-n">(${fmtCount(r.ok)}/${fmtCount(r.total)})</span></span>
-      <span class="kl-bar" aria-hidden="true"><span class="kl-tot" style="width:${r.total / max * 100}%"><span class="kl-ok" style="width:${r.total ? r.ok / r.total * 100 : 0}%"></span></span></span></li>`; }).join('')}</ul>`;
+  return `<ul class="rk-klist">${rows.map(r => { const p = pct(r.ok, r.total), ic = ICON[KIND_IC[baseKind(r.k)]] || '', c = crows ? crows.find(z => z.k === r.k) : null, cp = c ? pct(c.ok, c.total) : null;
+    const ct = c ? ` · ${RC.label}: piegādātas ${fmtCount(c.ok)} no ${fmtCount(c.total)} (${cp}%)` : crows ? ` · ${RC.label}: nav ziņu` : '';
+    return `<li${r.drill ? drillAttr(r.drill) : ' tabindex="0"'} data-tip="${esc(`${r.label}|Piegādātas ${fmtCount(r.ok)} no ${fmtCount(r.total)} (${p}%) · nepiegādātas ${fmtCount(r.bad)} · procesā ${fmtCount(r.proc)}${ct}`)}" aria-label="${esc(`${r.label}: piegādātas ${r.ok} no ${r.total} (${p}%), nepiegādātas ${r.bad}, procesā ${r.proc}${ct} – atvērt sūtījumos`)}">
+      <span class="kl-row"><span class="kl-l">${ic}<span>${esc(r.label)}</span></span><b>${p}%</b><span class="rl-n">(${fmtCount(r.ok)}/${fmtCount(r.total)})</span>${c ? cmpD(p, cp, 1, ' p.p.', `${cp}% (${fmtCount(c.ok)}/${fmtCount(c.total)})`) : ''}</span>
+      <span class="kl-bar" aria-hidden="true"><span class="kl-tot" style="width:${r.total / max * 100}%"><span class="kl-ok" style="width:${r.total ? r.ok / r.total * 100 : 0}%"></span></span></span>${c ? `<span class="kl-cbar" aria-hidden="true" style="width:${Math.min(100, c.ok / max * 100)}%"></span>` : ''}</li>`; }).join('')}</ul>`;
 }
 
 // Versija 179: "Drukāta vēstule" – tikai vēstules ar statusu "Nosūtīts pa pastu"
 // Vienas sērijas horizontāli stabiņi
 function singleBars(rows, unit = '', o = {}){
-  const max = o.max || Math.max(1, ...rows.map(r => r.v));
-  return rows.map(r => `<div class="hbar${unit ? ' wide-val' : ''}"${r.drill ? drillAttr(r.drill) + ` aria-label="${esc(`${r.label}: ${r.v}${unit} – atvērt sūtījumos`)}"` : ''}><span class="lbl" title="${esc(r.label)}">${esc(r.label)}</span><span class="track">${r.v ? `<span class="seg" tabindex="0" style="width:${r.v / max * 100}%;background:var(--s1)" data-tip="${esc(`${r.label}|${r.v}${unit}${r.sub ? ' · ' + r.sub : ''}`)}"></span>` : ''}</span><span class="val">${r.v}${unit}</span></div>`).join('');
+  const max = o.max || Math.max(1, ...rows.map(r => r.v)), hc = rows.some(r => r.d);
+  return rows.map(r => `<div class="hbar${unit ? ' wide-val' : ''}${hc ? ' has-cmp' : ''}"${r.drill ? drillAttr(r.drill) + ` aria-label="${esc(`${r.label}: ${r.v}${unit} – atvērt sūtījumos`)}"` : ''}><span class="lbl" title="${esc(r.label)}">${esc(r.label)}</span><span class="track">${r.v ? `<span class="seg" tabindex="0" style="width:${r.v / max * 100}%;background:var(--s1)" data-tip="${esc(`${r.label}|${r.v}${unit}${r.sub ? ' · ' + r.sub : ''}`)}"></span>` : ''}</span><span class="val">${r.v}${unit}${r.d ? ' ' + r.d : ''}</span></div>`).join('');
 }
 // Kolonnas pa periodiem (rezerves komponents)
 function colChart(buckets, tipFmt = b => `${b.v} ${plural(b.v, 'vēstule', 'vēstules')}`, valFmt = v => v){
@@ -14585,8 +14676,8 @@ const statusCounts = xs => Object.fromEntries(REP_SERIES.map(([k]) => [k, xs.fil
 ui.repTime = {part:'camp', obj:''};
 const TP_OBJ = {tpl:'Veidne', ms:'E-pasta satura sagatave', att:'Pielikuma sagatave'};
 const sagWl = id => (state.sagWl || {})[id];
-function timeData(){
-  const f = ui.rep, pr = repPer(), sf = repSf(), inP = iso => { const d = iso ? isoDate(new Date(iso)) : ''; return (!pr.from || d >= pr.from) && (!pr.to || d <= pr.to); };
+function timeData(per){ // Versija 231: per – salīdzināmais periods
+  const f = ui.rep, pr = per || repPer(), sf = repSf(), inP = iso => { const d = iso ? isoDate(new Date(iso)) : ''; return (!pr.from || d >= pr.from) && (!pr.to || d <= pr.to); };
   // kampaņas: kampaņa, apsekojums (vēstuļu pienākumi), veids, joma, periods (pēc nosūtīšanas datuma)
   const camps = Object.keys(state.campWl || {}).map(b => campWork(b)).filter(o => o && o.done && inP(o.sentAt) && (!f.camp || String(o.batch) === String(f.camp)) && (!f.kind || baseKind(o.kind) === f.kind) && (!f.aud || o.aud === f.aud)
     && (!f.rep || state.sent.some(x => String(x.batch) === String(o.batch) && histReps(x).includes(f.rep)))
@@ -14604,17 +14695,19 @@ function timeData(){
 }
 const avgMs = xs => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0;
 const tpSpan = o => o.wl.createdAt ? Math.max(0, Date.parse(o.saved) - Date.parse(o.wl.createdAt)) : 0;
-const kpiBox = (n, l, sub) => `<div class="card kpi"><div class="n">${n}</div><div class="l">${esc(l)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}</div>`;
+const kpiBox = (n, l, sub, d = '') => `<div class="card kpi"><div class="n">${n}</div><div class="l">${esc(l)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}${d}</div>`;
 const hrsOf = ms => Math.round(ms / 360000) / 10;
 function timeView(){ return ui.repTime.part === 'tpl' ? tplTimeView() : campTimeView(); }
 function campTimeView(){
-  const {camps} = timeData(), f = ui.rep;
+  const {camps} = timeData(), f = ui.rep, cc = RC ? timeData({from:RC.from, to:RC.to}).camps : null; // Versija 231: salīdzināmais periods
+  const mn = ms => Math.round(ms / 6000) / 10, hr = ms => Math.round(ms / 360000) / 10; // starpība ≥ 2 st. – stundās
+  const tD = (a, b) => cc && cc.length && b != null ? `<div class="kpi-cmp">${Math.abs(a - b) >= 2 * 3600e3 ? cmpD(hr(a), hr(b), -1, ' st.', fmtDur(b)) : cmpD(mn(a), mn(b), -1, ' min', fmtDur(b))}</div>` : '';
   const apv = camps.filter(o => o.hadApv);
   const kpi = kpiBox;
-  const grp = (key, label) => [...groupBy(camps, key)].map(([k, g]) => ({label:label(k), v:wlMin(avgMs(g.map(o => o.wl.active))), sub:`${g.length} ${plural(g.length, 'kampaņa', 'kampaņas')}`, n:g.length})).sort((a, b) => b.v - a.v);
-  const byKind = grp(o => SESS_LABELS[o.kind] ? o.kind : 'cits', k => SESS_LABELS[k] || 'Cits');
-  const byAud = grp(o => o.aud || '—', k => AUDS[k] ? AUDS[k].field : '—');
-  const bySrc = grp(o => o.source === 'custom' ? 'custom' : o.source === 'tplmod' ? 'tplmod' : 'tpl', k => WL_SRC[k]);
+  const grp = (key, label, list = camps) => [...groupBy(list, key)].map(([k, g]) => ({label:label(k), v:wlMin(avgMs(g.map(o => o.wl.active))), sub:`${g.length} ${plural(g.length, 'kampaņa', 'kampaņas')}`, n:g.length})).sort((a, b) => b.v - a.v);
+  const gK = [o => SESS_LABELS[o.kind] ? o.kind : 'cits', k => SESS_LABELS[k] || 'Cits'], gA = [o => o.aud || '—', k => AUDS[k] ? AUDS[k].field : '—'], gS = [o => o.source === 'custom' ? 'custom' : o.source === 'tplmod' ? 'tplmod' : 'tpl', k => WL_SRC[k]];
+  const byKind = grp(...gK), byAud = grp(...gA), bySrc = grp(...gS);
+  const cmpRows = g => cc && cc.length ? grp(...g, cc) : null;
   const stepAvg = WL_STEPS.map((l, i) => avgMs(camps.map(o => (o.wl.steps || {})[i + 1] || 0))), stepSum = stepAvg.reduce((a, b) => a + b, 0) || 1;
   const bySteps = WL_STEPS.map((l, i) => ({label:`${i + 1}. ${l}`, v:wlMin(stepAvg[i]), sub:`${Math.round(stepAvg[i] / stepSum * 100)}% no aktīvā laika`}));
   const topI = stepAvg.reduce((m, v, i) => v > stepAvg[m] ? i : m, 0), topStep = bySteps[topI];
@@ -14624,8 +14717,9 @@ function campTimeView(){
     const key = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`, g = camps.filter(o => String(o.sentAt).slice(0, 7) === key);
     bs.push({label:`${d.getFullYear()}. g. ${MONTHS[d.getMonth()]}`, short:`${MONTHS[d.getMonth()].slice(0, 3)}.${d.getMonth() === 0 || !bs.length ? ' ' + d.getFullYear() : ''}`, v:wlMin(avgMs(g.map(o => o.wl.active))), n:g.length});
   }
-  const card = (title, rows, tipTxt) => `<div class="card viz-card"><h3>${esc(title)}${tipTxt ? tip(tipTxt) : ''}</h3>${rows.length ? singleBars(rows, ' min') : '<p class="hint">Nav datu.</p>'}
-    <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([title.replace(/^.*pēc /, '').replace(/^Pa /, ''), 'Vidēji, min', 'Kampaņas'], rows.map(r => [r.label, r.v, r.n ?? camps.length]))}</details></div>`;
+  const card = (title, rows0, tipTxt, crows) => { const rows = crows ? rows0.map(r => { const c = crows.find(z => z.label === r.label); return {...r, d:c ? cmpD(r.v, c.v, -1, ' min', `${c.v} min`) : ''}; }) : rows0;
+    return `<div class="card viz-card"><h3>${esc(title)}${tipTxt ? tip(tipTxt) : ''}</h3>${rows.length ? singleBars(rows, ' min') : '<p class="hint">Nav datu.</p>'}
+    <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([title.replace(/^.*pēc /, '').replace(/^Pa /, ''), 'Vidēji, min', 'Kampaņas', ...(crows ? ['Salīdzinājums, min', 'Starpība'] : [])], rows0.map(r => { const c = crows && crows.find(z => z.label === r.label); return [r.label, r.v, r.n ?? camps.length, ...(crows ? [c ? c.v : '—', c ? cmpDiffTxt(r.v, c.v, ' min') : '—'] : [])]; }))}</details></div>`; };
   const head = ['Kampaņa', 'Nr.', 'Veids', 'Statistikas joma', 'Satura avots', 'Nosūtīta', 'Aktīvais laiks, min', 'Sesijas', 'Kopējais ilgums, st.', 'Gaida saskaņojumu, st.', ...WL_STEPS.map((l, i) => `${i + 1}. ${l}, min`)];
   const sorted = [...camps].sort((x, y) => String(y.sentAt).localeCompare(String(x.sentAt)));
   const rows = sorted.map(o => [o.name, o.batch, SESS_LABELS[o.kind] || '', AUDS[o.aud] ? AUDS[o.aud].field : '', WL_SRC[o.source] || '', fmtDateTime(o.sentAt), wlMin(o.wl.active), o.wl.sessions || 0, hrsOf(o.total), hrsOf(o.waitApv), ...WL_STEPS.map((l, i) => wlMin((o.wl.steps || {})[i + 1]))]);
@@ -14639,16 +14733,16 @@ function campTimeView(){
         <dt>Kopējais ilgums:</dt><dd>${camps.length ? esc(fmtDur(avgMs(camps.map(o => o.total)))) : '—'} <span class="muted">(no izveides līdz nosūtīšanai)</span></dd></dl></div></div>
     <p class="proc-note">Laiks tiek uzskaitīts automātiski procesa uzlabošanai.</p></div>`;
   return {html:`${procBlock}<div class="kpis k3">
-      ${kpi(fmtDur(avgMs(camps.map(o => o.wl.active))), 'Vidējais aktīvais laiks uz kampaņu', `${camps.length} ${plural(camps.length, 'kampaņa', 'kampaņas')}`)}
-      ${kpi(apv.length ? fmtDur(avgMs(apv.map(o => o.waitApv))) : '—', 'Vidēji gaida saskaņojumu', `${apv.length} ${plural(apv.length, 'kampaņa', 'kampaņas')} ar saskaņošanu`)}
-      ${kpi(fmtDur(avgMs(camps.map(o => o.total))), 'Vidējais kopējais ilgums', 'no izveides līdz nosūtīšanai')}</div>
+      ${kpi(fmtDur(avgMs(camps.map(o => o.wl.active))), 'Vidējais aktīvais laiks uz kampaņu', `${camps.length} ${plural(camps.length, 'kampaņa', 'kampaņas')}`, cc ? tD(avgMs(camps.map(o => o.wl.active)), cc.length ? avgMs(cc.map(o => o.wl.active)) : null) : '')}
+      ${kpi(apv.length ? fmtDur(avgMs(apv.map(o => o.waitApv))) : '—', 'Vidēji gaida saskaņojumu', `${apv.length} ${plural(apv.length, 'kampaņa', 'kampaņas')} ar saskaņošanu`, cc && apv.length ? (ca => tD(avgMs(apv.map(o => o.waitApv)), ca.length ? avgMs(ca.map(o => o.waitApv)) : null))(cc.filter(o => o.hadApv)) : '')}
+      ${kpi(fmtDur(avgMs(camps.map(o => o.total))), 'Vidējais kopējais ilgums', 'no izveides līdz nosūtīšanai', cc ? tD(avgMs(camps.map(o => o.total)), cc.length ? avgMs(cc.map(o => o.total)) : null) : '')}</div>
     <div class="card viz-card" style="margin-bottom:16px"><h3>Vidējais kampaņas sagatavošanas laiks pa mēnešiem${tip('Aktīvais darba laiks (minūtēs) kampaņas izveides / rediģēšanas skatā; pēc 3 min bez aktivitātes laiks netiek skaitīts. Mēnesis – pēc nosūtīšanas datuma.')}</h3>
       ${bs.some(b => b.v) ? '<div class="wl-cols">' + colChart(bs, b => `${b.v} min vidēji · ${b.n} ${plural(b.n, 'kampaņa', 'kampaņas')}`, v => `${v} min`) + '</div>' : '<p class="hint">Nav datu.</p>'}
       <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Vidēji, min', 'Kampaņas'], bs.map(b => [b.label, b.v, b.n]))}</details></div>
     <div class="viz-grid">
-      ${card('Vidējais laiks pēc kampaņas veida', byKind)}
-      ${card('Vidējais laiks pēc statistikas jomas', byAud)}
-      ${card('Vidējais laiks pēc satura avota', bySrc, 'Gatava veidne – izmantota bez izmaiņām; pielāgota veidne – veidne labota kampaņai; jauns saturs – noformēts kampaņā.')}
+      ${card('Vidējais laiks pēc kampaņas veida', byKind, '', cmpRows(gK))}
+      ${card('Vidējais laiks pēc statistikas jomas', byAud, '', cmpRows(gA))}
+      ${card('Vidējais laiks pēc satura avota', bySrc, 'Gatava veidne – izmantota bez izmaiņām; pielāgota veidne – veidne labota kampaņai; jauns saturs – noformēts kampaņā.', cmpRows(gS))}
       ${card('Vidējais laiks pa soļiem', bySteps, 'Kurš kampaņas solis aizņem visvairāk aktīvā laika (vidēji vienai kampaņai).')}
     </div>
     ${collCardHtml('tcamp', 'Patērētais laiks pa kampaņām', tRows.length, '', tableHtml(['Kampaņa', 'Veids', 'Satura avots', 'Aktīvais laiks', 'Sesijas', 'Saskaņošanā', 'Kopējais ilgums', 'Nosūtīta'], tRows, 'rep-table tbl-noexp', 'Atlasītajā periodā nav kampaņu'), {id:'tp-camp-table'})}
@@ -14821,6 +14915,7 @@ function reportView(xs){
 const csvRows = rows => rows.map(r => r.map(c => c && typeof c === 'object' ? c.text : c));
 // Piegāde: piegādes rezultāti · neveiksmīgās ziņas · atkārtotā nosūtīšana (agrāk – "Citi pārskati")
 function deliveryView(xs){
+  const cx = RC ? RC.xs : null; // Versija 231: salīdzināmā perioda vēstules
   const sec = (title, html) => `<section class="rep-sec"><h2 class="rep-sec-h">${esc(title)}</h2>${html}</section>`;
   // 1. piegādes rezultāti
   const camps = [...groupBy(xs, x => x.batch)].sort((a, b) => b[0] - a[0]);
@@ -14828,15 +14923,20 @@ function deliveryView(xs){
     return [g[0].sessionName || `Kampaņa Nr. ${b}`, SESS_LABELS[g[0].sessionKind] || '', fmtDateTime(g[0].sentAt), g.length, v.piegadats, v.proc, v.fail, `${pct(v.piegadats, g.length)}%`]; });
   const pHead = ['Kampaņa', 'Veids', 'Datums', 'Vēstules', 'Piegādātas', 'Procesā', 'Nepiegādātas', 'Piegādes %'];
   const byCh = ['eadrese', 'epasts', 'pasts'].map(ch => { const g = xs.filter(x => x.channel === ch), v = statusCounts(g); return [ch === 'pasts' ? 'Pasts (drukāta vēstule)' : CHANNELS[ch], g.length, v.piegadats, v.proc, v.fail, `${pct(v.piegadats, g.length)}%`]; });
+  const chCmp = ch => { const g = cx.filter(x => x.channel === ch); return g.length ? pct(statusCounts(g).piegadats, g.length) : null; }, CHS3 = ['eadrese', 'epasts', 'pasts'];
+  const byChT = cx ? byCh.map((r, i) => { const c = chCmp(CHS3[i]), a = r[1] ? parseInt(r[5]) : null; return [...r, c == null ? '—' : `${c}%`, cmpDiffTxt(a, c)]; }) : byCh;
   // Versija 224/225: tabula pa kampaņām – kopīgais sakļaujamais bloks (pēc noklusējuma sakļauts)
   const s1 = `${collCardHtml('dcamp', 'Piegādes rezultāti pa kampaņām', camps.length, 'Piegādātas – e-adresē “Saņēmēja pieņemts”, e-pastā – 72 h laikā nav saņemts NDR. Procesā – piegāde vēl notiek (Nosūtīta, Pieņemts DIV, Notiek piegāde, Atkārtots mēģinājums). Nepiegādātas – elektroniskā piegāde neizdevās (arī gaida manuālu pārbaudi vai administratoru, jādrukā vai nosūtīta pa pastu pēc neveiksmes). Rindu var atvērt sūtījumos.',
       tableHtml(pHead, pRows, 'rep-table tbl-noexp', 'Nav datu atlasītajam periodam', camps.map(([b]) => ({f:{camp:String(b)}}))))}
-    <div class="viz-grid g-ch"><div class="card viz-card tc-natural"><h3>Pa kanāliem</h3>${tableHtml(['Kanāls', 'Vēstules', 'Piegādātas', 'Procesā', 'Nepiegādātas', 'Piegādes %'], byCh, undefined, undefined, ['eadrese', 'epasts', 'pasts'].map(ch => ({f:{ch}})))}</div>
+    <div class="viz-grid g-ch"><div class="card viz-card tc-natural"><h3>Pa kanāliem</h3>${tableHtml(['Kanāls', 'Vēstules', 'Piegādātas', 'Procesā', 'Nepiegādātas', 'Piegādes %', ...(cx ? ['Salīdzinājums', 'Starpība'] : [])], byChT, undefined, undefined, ['eadrese', 'epasts', 'pasts'].map(ch => ({f:{ch}})))}</div>
       ${repChCardHtml(xs)}</div>`;
   // 2. neveiksmīgās ziņas (NDR / DIV)
   const nd = xs.flatMap(x => ndrsOf(x).map(n => ({...n, x})));
   const byType = ndrByType(nd);
-  const byRoute = Object.entries(NDR_ROUTES).map(([k, l]) => ({label:l, v:nd.filter(n => ruleOf(n.rule).route === k).length})).filter(r => r.v);
+  const routeRows = list => Object.entries(NDR_ROUTES).map(([k, l]) => ({label:l, v:list.filter(n => ruleOf(n.rule).route === k).length})).filter(r => r.v), byRoute = routeRows(nd);
+  const cnd = cx ? cx.flatMap(x => ndrsOf(x).map(n => ({...n, x}))) : null, cmpType = cnd ? {rows:ndrByType(cnd), n:cnd.length} : null, cmpRoute = cnd ? {rows:routeRows(cnd), n:cnd.length} : null;
+  // problēmu rādītāji: kritums – labi; "Nav kļūda" – neitrāli; automātiska apstrāde ("Sistēma") – pieaugums labi
+  const goodType = l => l === 'Nav kļūda' ? 0 : -1, goodRoute = l => l === NDR_ROUTES.system || /^Sistēma$/.test(l) ? 1 : -1;
   const nHead = ['Laiks', 'Respondents', 'Kampaņa', 'Kanāls un adrese', 'Iemesls', 'Tips', 'Klasifikācija', 'Automātiskā rīcība', 'Vēstules statuss'];
   const stTxt = x => STATUSES[x.status].label + (STATUSES[x.status].next ? ` → ${STATUSES[x.status].next}` : '') + (x.reviewed ? ' · izskatīta' : '') + (x.adminResolved ? ' · atrisināta' : '');
   const nRows = nd.sort((a, b) => String(b.at).localeCompare(String(a.at))).map(n => { const r = ruleOf(n.rule), t = NDR_TYPES[r.type];
@@ -14846,8 +14946,8 @@ function deliveryView(xs){
       r.action, {html:`${stPill(n.x.status)}${n.x.reviewed ? ' <span class="muted">izskatīta</span>' : ''}${n.x.adminResolved ? ' <span class="muted">atrisināta</span>' : ''}`, text:stTxt(n.x)}]; });
   const s2 = `<div class="viz-grid g3" style="margin-bottom:16px">
       ${repNdrCardHtml(xs)}
-      <div class="card viz-card"><h3>Pa tipiem${tip('Nepiegādes paziņojumi pēc tipa (pēc klasifikācijas noteikumiem). Procenti – no visiem nepiegādes paziņojumiem.')}</h3>${cntListHtml(byType, nd.length, ['paziņojums', 'paziņojumi'])}</div>
-      <div class="card viz-card"><h3>Novirzījums${tip('Kam paziņojums tiek novirzīts pēc klasifikācijas. Procenti – no visiem nepiegādes paziņojumiem.')}</h3>${cntListHtml(byRoute, nd.length, ['paziņojums', 'paziņojumi'])}</div></div>
+      <div class="card viz-card"><h3>Pa tipiem${tip('Nepiegādes paziņojumi pēc tipa (pēc klasifikācijas noteikumiem). Procenti – no visiem nepiegādes paziņojumiem.')}</h3>${cntListHtml(byType, nd.length, ['paziņojums', 'paziņojumi'], {cmp:cmpType, good:goodType})}</div>
+      <div class="card viz-card"><h3>Novirzījums${tip('Kam paziņojums tiek novirzīts pēc klasifikācijas. Procenti – no visiem nepiegādes paziņojumiem.')}</h3>${cntListHtml(byRoute, nd.length, ['paziņojums', 'paziņojumi'], {cmp:cmpRoute, good:goodRoute})}</div></div>
     ${collCardHtml('dndr', 'Nepiegādes paziņojumi', nRows.length, 'Tehniskie paziņojumi par nepiegādi: NDR (Non-Delivery Report – e-pasta servera atbilde) un DIV (eAdreses piegādes statusi). Katrs paziņojums – atsevišķa rinda; klasifikācija un automātiskā rīcība – pēc noteikumiem "Piegādes statusi un kļūdas".',
       tableHtml(nHead, nRows, 'rep-table tbl-noexp', 'Atlasītajā periodā nepiegādes paziņojumu nav'))}`;
   // 3. atkārtotā nosūtīšana
@@ -14869,13 +14969,15 @@ function deliveryView(xs){
       tableHtml(aHead, aRows, 'rep-table tbl-noexp', 'Atlasītajā periodā atkārtotas nosūtīšanas nav'))}`;
   // grafiks "Nosūtītās un piegādātās ziņas pa mēnešiem" (pārvietots no "Pārskata"; skaits / %)
   const bs = monthBuckets(xs), mode = ui.rep.chart === 'p' ? 'p' : 'n', part = bs.length && bs[bs.length - 1].partial;
+  const cbs = RC ? periodBuckets(RC.xs, {g:'m', from:RC.from, to:RC.to < todayIso() ? RC.to : todayIso()}) : null, mp = b => b && b.base ? pct(b.deliv, b.base) : null;
   const s0 = `<div class="card viz-card" style="margin-bottom:16px"><div class="rk-chart-h"><h3>${mode === 'p' ? 'Piegādes īpatsvars pa mēnešiem' : 'Nosūtītās un piegādātās ziņas pa mēnešiem'}${tip('Piegādātas – e-adresē “Saņēmēja pieņemts”, e-pastā – 72 h laikā nav saņemts NDR. Uz mēneša var uzklikšķināt – atver sūtījumus ar šo periodu.')}</h3>
       <span class="seg" role="group" aria-label="Rādīt grafikā"><button type="button" data-rk-mode="n" aria-pressed="${mode === 'n'}">Skaits</button><button type="button" data-rk-mode="p" aria-pressed="${mode === 'p'}">%</button></span></div>
-      ${bs.length ? lineChart(bs, mode) : '<p class="hint">Nav datu.</p>'}
+      ${bs.length ? (cbs ? `<p class="rk-note rk-cmp-leg"><svg width="26" height="8" aria-hidden="true"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="3 3" opacity=".7"/></svg>Raustītās gaišākās līnijas – salīdzināmais periods (${esc(RC.label)})</p>` : '') + lineChart(bs, mode, cbs) : '<p class="hint">Nav datu.</p>'}
       ${bs.length ? `<p class="rk-note">${part ? `Raustītā līnija – nepabeigts periods (dati līdz ${esc(bs[bs.length - 1].end)}). ` : ''}${bs.some(b => !b.sent) ? 'Mēneši bez sūtījumiem – pārtraukums līnijā. ' : ''}Uz mēneša var uzklikšķināt.</p>` : ''}
-      <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %'], bs.map(b => [b.label, b.sent, b.deliv, b.base ? `${pct(b.deliv, b.base)}%` : '—']))}</details></div>`;
+      <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %', ...(cbs ? ['Salīdzinājums – mēnesis', 'Salīdzinājums – nosūtītas', 'Salīdzinājums – piegādes %', 'Starpība, p. p.'] : [])], bs.map((b, i) => [b.label, b.sent, b.deliv, b.base ? `${pct(b.deliv, b.base)}%` : '—', ...(cbs ? (c => c ? [c.label, c.sent, mp(c) == null ? '—' : `${mp(c)}%`, cmpDiffTxt(mp(b), mp(c))] : ['', '', '', ''])(cbs[i]) : [])]))}</details></div>`;
   return {html:sec('Piegādes rezultāti', s0 + s1) + sec('Nepiegādātās ziņas', s2) + sec('Atkārtotā nosūtīšana', s3),
-    sheets:[{name:'Pa mēnešiem', rows:[['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %'], ...bs.map(b => [b.label, b.sent, b.deliv, b.base ? pct(b.deliv, b.base) : ''])]}, {name:'Piegādes rezultāti', rows:[pHead, ...pRows]}, {name:'Nepiegādes paziņojumi', rows:[nHead, ...csvRows(nRows)]}, {name:'Atkārtotā nosūtīšana', rows:[aHead, ...csvRows(aRows)]}]};
+    sheets:[{name:'Pa mēnešiem', rows:[['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %', ...(cbs ? ['Salīdzinājums – mēnesis', 'Salīdzinājums – nosūtītas', 'Salīdzinājums – piegādes %', 'Starpība, p. p.'] : [])], ...bs.map((b, i) => [b.label, b.sent, b.deliv, b.base ? pct(b.deliv, b.base) : '', ...(cbs ? (c => c ? [c.label, c.sent, mp(c) ?? '', cmpDiffNum(mp(b), mp(c))] : ['', '', '', ''])(cbs[i]) : [])])]},
+      {name:'Pa kanāliem', rows:[['Kanāls', 'Vēstules', 'Piegādātas', 'Procesā', 'Nepiegādātas', 'Piegādes %', ...(cx ? ['Salīdzinājums – piegādes %', 'Starpība, p. p.'] : [])], ...byCh.map((r, i) => [...r.slice(0, 5), parseInt(r[5]), ...(cx ? [chCmp(CHS3[i]) ?? '', cmpDiffNum(r[1] ? parseInt(r[5]) : null, chCmp(CHS3[i]))] : [])])]}, {name:'Piegādes rezultāti', rows:[pHead, ...pRows]}, {name:'Nepiegādes paziņojumi', rows:[nHead, ...csvRows(nRows)]}, {name:'Atkārtotā nosūtīšana', rows:[aHead, ...csvRows(aRows)]}]};
 }
 // NDR iemesli ar noteikuma atslēgu (klikšķim)
 // Versija 218: "Nepiegādes iemesli" – saprotami nosaukumi; katra ziņa ieskaitīta vienreiz (pēdējais nepiegādes paziņojums);
@@ -14892,18 +14994,24 @@ function ndrReasonList(xs){
 }
 // Versija 223: vienkāršs saraksts "nosaukums – %" (tāds pats stils kā "Nepiegādes iemesli"; bez joslām); skaitļi – padomā (data-tip "teksts|skaits")
 // o.label – saraksta nosaukums ekrāna lasītājiem
+// o.cmp – Map(nosaukums → % salīdzināmajā periodā), o.good – izmaiņas virziens (Versija 231)
 const pctListHtml = (rows, o = {}) => `<ul class="rk-rlist rk-plist"${o.label ? ` aria-label="${esc(o.label)}"` : ''}>${rows.map(r =>
-  `<li tabindex="0" data-tip="${esc(`${r.tipH || r.label}|${r.tip}`)}" aria-label="${esc(`${r.label}: ${r.v}% (${r.tip})`)}"><span class="rl-l" title="${esc(r.label)}">${esc(r.label)}</span><b>${r.v}%</b></li>`).join('')}</ul>`;
+  `<li tabindex="0" data-tip="${esc(`${r.tipH || r.label}|${r.tip}`)}" aria-label="${esc(`${r.label}: ${r.v}% (${r.tip})`)}"><span class="rl-l" title="${esc(r.label)}">${esc(r.label)}</span><b>${r.v}%</b>${o.cmp && o.cmp.has(r.label) ? cmpD(r.v, o.cmp.get(r.label), o.good ?? 1) : ''}</li>`).join('')}</ul>`;
 // Versija 226: saraksts "nosaukums · % · (skaits)" (stils kā "Nepiegādes iemesli"; bez joslām), apakšā – kopā
-const cntListHtml = (rows, n, w) => rows.length && n ? `<ul class="rk-rlist rk-nolink">${rows.map(r => `<li aria-label="${esc(`${r.label}: ${pct(r.v, n)}% (${r.v})`)}"><span class="rl-l">${esc(r.label)}</span><b>${pct(r.v, n)}%</b><span class="rl-n">(${fmtCount(r.v)})</span></li>`).join('')}</ul>
-  <p class="rk-rlist-tot">Kopā: ${fmtCount(n)} ${plural(n, w[0], w[1])}</p>` : '<p class="hint">Nav datu.</p>';
+// Versija 231: o.cmp = {rows, n} – salīdzināmais periods (atšķirība p.p. aiz %); o.good – skaitlis vai funkcija(nosaukums); o.skip – nosaukumi bez atšķirības
+const cntCmp = (r, n, o) => { if (!RC || !o.cmp || !o.cmp.n || (o.skip || []).includes(r.label)) return ''; const c = (o.cmp.rows.find(z => z.label === r.label) || {v:0}).v, g = typeof o.good === 'function' ? o.good(r.label) : o.good ?? 1;
+  return cmpD(pct(r.v, n), pct(c, o.cmp.n), g, ' p.p.', `${pct(c, o.cmp.n)}% (${fmtCount(c)})`); };
+const cntTotCmp = (o, w) => RC && o.cmp ? ` <span class="cmpd" title="${esc(`Salīdzinājumā ar ${RC.label}`)}">· ${esc(RC.short)}: ${fmtCount(o.cmp.n)}</span>` : '';
+const cntListHtml = (rows, n, w, o = {}) => rows.length && n ? `<ul class="rk-rlist rk-nolink">${rows.map(r => `<li aria-label="${esc(`${r.label}: ${pct(r.v, n)}% (${r.v})`)}"><span class="rl-l">${esc(r.label)}</span><b>${pct(r.v, n)}%</b><span class="rl-n">(${fmtCount(r.v)})</span>${cntCmp(r, n, o)}</li>`).join('')}</ul>
+  <p class="rk-rlist-tot">Kopā: ${fmtCount(n)} ${plural(n, w[0], w[1])}${cntTotCmp(o, w)}</p>` : '<p class="hint">Nav datu.</p>';
 // Versija 230: piltuve – tas pats saraksts kā "Novirzījums" (% no piegādātajām, iekavās skaits), apakšā "Kopā: N piegādātas ziņas"
-const funListHtml = (rows, n) => n ? cntListHtml(rows, n, ['piegādāta ziņa', 'piegādātas ziņas']) : '<p class="hint">Nav piegādātu ziņu.</p>';
-const ndrReasonHtml = d => d.n ? `<ul class="rk-rlist">${d.rows.map(r => `<li${drillAttr(r.drill)} title="Atvērt sūtījumos" aria-label="${esc(`${r.label}: ${r.p}% (${r.v}) – atvērt sūtījumos`)}"><span class="rl-l">${esc(r.label)}</span><b>${r.p}%</b><span class="rl-n">(${fmtCount(r.v)})</span></li>`).join('')}</ul>
-  <p class="rk-rlist-tot">Kopā: ${fmtCount(d.n)} ${plural(d.n, 'nepiegādāta', 'nepiegādātas')}</p>` : '<p class="hint">Nav nepiegādes paziņojumu.</p>';
+const funListHtml = (rows, n, o = {}) => n ? cntListHtml(rows, n, ['piegādāta ziņa', 'piegādātas ziņas'], {skip:['Piegādātas'], good:1, ...o}) : '<p class="hint">Nav piegādātu ziņu.</p>';
+const ndrReasonHtml = (d, dc) => d.n ? `<ul class="rk-rlist">${d.rows.map(r => { const c = dc && dc.n ? dc.rows.find(z => z.k === r.k) || {p:0, v:0} : null;
+  return `<li${drillAttr(r.drill)} title="Atvērt sūtījumos" aria-label="${esc(`${r.label}: ${r.p}% (${r.v}) – atvērt sūtījumos`)}"><span class="rl-l">${esc(r.label)}</span><b>${r.p}%</b><span class="rl-n">(${fmtCount(r.v)})</span>${c ? cmpD(r.p, c.p, -1, ' p.p.', `${c.p}% (${fmtCount(c.v)})`) : ''}</li>`; }).join('')}</ul>
+  <p class="rk-rlist-tot">Kopā: ${fmtCount(d.n)} ${plural(d.n, 'nepiegādāta', 'nepiegādātas')}${dc ? cntTotCmp({cmp:dc}) : ''}</p>` : '<p class="hint">Nav nepiegādes paziņojumu.</p>';
 // Versija 224: kopīgās kartītes apakšcilnēm "Pārskats" un "Piegāde" (viena komponente – izmaiņas abās vienādas)
-const repChCardHtml = xs => `<div class="card viz-card"><h3>Ziņas pa kanāliem${tip('Nosūtītās ziņas pa kanāliem, kuros vēstule faktiski nosūtīta: eAdrese, e-pasts vai drukāta vēstule (pa pastu). Uzklikšķinot uz daļas – atver sūtījumus ar šo kanālu.')}</h3>${donutChart(chPartsRes(xs), 'Ziņas pa kanāliem')}</div>`;
-const repNdrCardHtml = xs => `<div class="card viz-card"><h3>Nepiegādes iemesli${tip('Nepiegādātās ziņas pēc iemesla – katrai ziņai pēdējais tehniskais paziņojums par nepiegādi (NDR – Non-Delivery Report, DIV – eAdreses piegādes kļūda). Procenti – no nepiegādāto ziņu skaita; "Kopā" – tas pats skaits, kas "Ziņas pa kanāliem" daļā "Nepiegādātas".')}</h3>${ndrReasonHtml(ndrReasonList(xs))}</div>`;
+const repChCardHtml = xs => `<div class="card viz-card"><h3>Ziņas pa kanāliem${tip('Nosūtītās ziņas pa kanāliem, kuros vēstule faktiski nosūtīta: eAdrese, e-pasts vai drukāta vēstule (pa pastu). Uzklikšķinot uz daļas – atver sūtījumus ar šo kanālu.')}</h3>${donutChart(chPartsRes(xs), 'Ziņas pa kanāliem', RC ? chPartsRes(RC.xs) : null)}</div>`;
+const repNdrCardHtml = xs => `<div class="card viz-card"><h3>Nepiegādes iemesli${tip('Nepiegādātās ziņas pēc iemesla – katrai ziņai pēdējais tehniskais paziņojums par nepiegādi (NDR – Non-Delivery Report, DIV – eAdreses piegādes kļūda). Procenti – no nepiegādāto ziņu skaita; "Kopā" – tas pats skaits, kas "Ziņas pa kanāliem" daļā "Nepiegādātas".')}</h3>${ndrReasonHtml(ndrReasonList(xs), RC ? ndrReasonList(RC.xs) : null)}</div>`;
 const ndrByRuleK = nd => Object.entries(RULES).map(([k, r]) => ({k, label:`${CHANNELS[r.ch]}: ${r.reason}`, v:nd.filter(n => n.rule === k).length, sub:`${NDR_TYPES[r.type].label} · ${r.action}`})).filter(r => r.v).sort((a, b) => b.v - a.v);
 // Nosūtīšanas kopsavilkums: rādītāji, grafiki un kārtojama kampaņu tabula
 const isSent = x => !!x.sentAt;
@@ -15027,12 +15135,12 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
   const n = $(`#rep-body [data-rk-grain="${g}"]`); if (n) n.focus(); });
 // Līniju grafiks pa mēnešiem: "Skaits" – nosūtītās un piegādātās (2 sērijas, viena ass); "%" – piegādes īpatsvars (1 sērija).
 // Mēneši bez sūtījumiem – pārtraukums līnijā (nevis 0); pēdējais nepabeigtais mēnesis – raustīta līnija un piezīme "līdz …"; mēnesis – klikšķināms.
-function lineChart(bs, mode){
+function lineChart(bs, mode, cbs = null){
   const W = Math.max(300, Math.round((($('#rep-body') || {}).clientWidth || 720) - 40)), H = 262, L = 38, R = W < 480 ? 70 : 96, T = 14, B = 44, iw = W - L - R, ih = H - T - B;
   const pm = mode === 'p', ser = pm ? [['rate', 'Piegādes %', 's2']] : [['sent', 'Nosūtītas', 's1'], ['deliv', 'Piegādātas', 's2']];
   const val = (b, k) => !b.sent ? null : k === 'rate' ? (b.base ? pct(b.deliv, b.base) : null) : b[k];
   const every = Math.ceil(bs.length / Math.max(2, Math.floor(iw / 58)));
-  const mx = pm ? 100 : Math.max(1, ...bs.map(b => b.sent)), step = pm ? 25 : mx <= 5 ? 1 : mx <= 20 ? 5 : mx <= 50 ? 10 : 25, top = pm ? 100 : Math.ceil(mx / step) * step;
+  const mx = pm ? 100 : Math.max(1, ...bs.map(b => b.sent), ...(cbs || []).map(b => b.sent)), step = pm ? 25 : mx <= 5 ? 1 : mx <= 20 ? 5 : mx <= 50 ? 10 : 25, top = pm ? 100 : Math.ceil(mx / step) * step;
   const x = i => L + (bs.length === 1 ? iw / 2 : i * iw / (bs.length - 1)), y = v => T + ih - v / top * ih;
   const ticks = []; for (let v = 0; v <= top; v += step) ticks.push(v);
   const last = bs.length - 1, colW = bs.length > 1 ? iw / (bs.length - 1) : iw, part = bs.length && bs[last].partial;
@@ -15047,14 +15155,21 @@ function lineChart(bs, mode){
   const ends = li < 0 ? '' : (() => { const ys = ser.map(([k]) => y(val(bs[li], k))); if (ys.length > 1 && Math.abs(ys[0] - ys[1]) < 14){ ys[0] -= 7; ys[1] += 7; }
     return ser.map(([k, , v]) => `<circle cx="${x(li)}" cy="${y(val(bs[li], k))}" r="4.5" fill="var(--${v})" stroke="#fff" stroke-width="2"/>`).join('')
       + ser.map(([k, l], j) => `<text class="lbl-end" x="${x(li) + 9}" y="${ys[j] + 4}">${esc(W < 480 ? '' : l.replace(' %', '') + ' ')}${val(bs[li], k)}${pm ? '%' : ''}</text>`).join(''); })();
-  const tipOf = b => `${b.label}|${!b.sent ? 'Nav sūtījumu' : pm ? `Piegādes % ${b.base ? pct(b.deliv, b.base) + '%' : '—'} (${b.deliv} no ${b.base})` : `Nosūtītas ${b.sent} · Piegādātas ${b.deliv}`}`;
+  // Versija 231: salīdzināmais periods – raustītas gaišākas līnijas (mēneši pēc kārtas)
+  const cn = cbs ? Math.min(cbs.length, bs.length) : 0;
+  const cLines = cn ? ser.map(([k, , v]) => { const out = []; let cur = [];
+    for (let i = 0; i < cn; i++){ const vv = cbs[i].sent >= CMP_MIN ? val(cbs[i], k) : null; if (vv == null){ if (cur.length) out.push(cur); cur = []; } else cur.push([x(i), y(Math.min(vv, top))]); } if (cur.length) out.push(cur);
+    return out.map(sg => sg.length > 1 ? `<path class="ln ln-cmp" d="${sg.map(([a, b2], j) => `${j ? 'L' : 'M'}${a.toFixed(1)},${b2.toFixed(1)}`).join(' ')}" fill="none" stroke="var(--${v})" stroke-width="1.6" stroke-dasharray="3 3" opacity=".45"/>`
+      : `<circle class="pt-cmp" cx="${sg[0][0]}" cy="${sg[0][1]}" r="2.5" fill="var(--${v})" opacity=".45"/>`).join(''); }).join('') : '';
+  const tipOne = b => !b.sent ? 'nav sūtījumu' : pm ? `Piegādes % ${b.base ? pct(b.deliv, b.base) + '%' : '—'} (${b.deliv} no ${b.base})` : `Nosūtītas ${b.sent} · Piegādātas ${b.deliv}`;
+  const tipOf = (b, i) => `${b.label}|${!b.sent ? 'Nav sūtījumu' : tipOne(b)}${i < cn ? ` · ${RC.short}: ${tipOne(cbs[i])}` : ''}`;
   return (pm ? '' : legendHtml(ser)) + `<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${pm ? 'Piegādes īpatsvars pa mēnešiem' : 'Nosūtītās un piegādātās ziņas pa mēnešiem'}">
     ${ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${v ? 'var(--grid)' : 'var(--axis)'}" stroke-width="1"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}${pm ? '%' : ''}</text>`).join('')}
     ${bs.map((b, i) => ((last - i) % every === 0) ? `<text x="${x(i)}" y="${H - 24}" text-anchor="middle">${esc(b.short)}</text>` : '').join('')}
     ${part ? `<text class="lbl-part" x="${x(last)}" y="${H - 8}" text-anchor="middle">līdz ${esc(bs[last].end)}</text>` : ''}
-    ${lines}${ends}
+    ${cLines}${lines}${ends}
     ${bs.map((b, i) => `<g class="xh"><line x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${T + ih}" stroke="var(--ink3)" stroke-width="1"/>
-      <rect x="${x(i) - colW / 2}" y="${T}" width="${colW}" height="${ih}" tabindex="0" data-tip="${esc(tipOf(b))}"${b.sent ? ` data-drill="${esc(JSON.stringify({f:{from:b.from, to:b.to}}))}" role="button" aria-label="${esc(`${b.label}: atvērt sūtījumos`)}"` : ''}/></g>`).join('')}
+      <rect x="${x(i) - colW / 2}" y="${T}" width="${colW}" height="${ih}" tabindex="0" data-tip="${esc(tipOf(b, i))}"${b.sent ? ` data-drill="${esc(JSON.stringify({f:{from:b.from, to:b.to}}))}" role="button" aria-label="${esc(`${b.label}: atvērt sūtījumos`)}"` : ''}/></g>`).join('')}
   </svg>`;
 }
 // Īpatsvari – vieni aprēķini KPI kartītēm un grafikam "Rādītāji pa mēnešiem":
@@ -15076,7 +15191,7 @@ const RATE_TIP = 'Piegādes īpatsvars = elektroniski piegādātās / (piegādā
 const rateTxt = r => `Piegāde ${r.delivP ?? '—'}${r.delivP != null ? '%' : ''} (${fmtCount(r.deliv)} no ${fmtCount(r.base)}) · Atvēršana ${r.openP ?? '—'}${r.openP != null ? '%' : ''} (${fmtCount(r.open)} no ${fmtCount(r.em)}) · Iesniegšana ${r.subP ?? '—'}${r.subP != null ? '%' : ''} (${fmtCount(r.sub)} no ${fmtCount(r.delivF)})`;
 // Līniju grafiks "Rādītāji pa mēnešiem" (Y ass 0–100 %): trīs īpatsvari; līniju galā – pēdējā pilnā mēneša vērtība; nepabeigtais mēnesis – raustīta līnija;
 // mēneši bez sūtījumiem (vai bez saucēja) – pārtraukums līnijā; mēnesis – klikšķināms (atver sūtījumus ar mēneša periodu)
-function rateChart(bs, g = 'm'){
+function rateChart(bs, g = 'm', cbs = null){
   const W = Math.max(300, Math.round((($('#rep-body') || {}).clientWidth || 720) - 40)), H = 262, L = 42, R = 56, T = 14, B = 44, iw = W - L - R, ih = H - T - B;
   const val = (b, k) => b.r[k];
   const every = Math.ceil(bs.length / Math.max(2, Math.floor(iw / 58)));
@@ -15094,25 +15209,31 @@ function rateChart(bs, g = 'm'){
   const ly = fin.map(f => ({f, y:y(f.val)})).sort((a, b) => a.y - b.y); ly.forEach((o, j) => { if (j && o.y - ly[j - 1].y < 14) o.y = ly[j - 1].y + 14; });
   const ends = fin.map(f => `<circle cx="${x(f.i)}" cy="${y(f.val)}" r="4.5" fill="var(--${f.v})" stroke="#fff" stroke-width="2"/>`).join('')
     + ly.map(o => `<text class="lbl-end rate-end" x="${W - R + 8}" y="${o.y + 4}" style="fill:var(--${o.f.v})">${o.f.val}%</text>`).join('');
-  const tipOf = b => `${b.label}|${!b.sent ? 'Nav sūtījumu' : rateTxt(b.r)}`;
-  return `<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Rādītāji ${GRAIN[g].pa}: piegādes, atvēršanas un iesniegšanas īpatsvars">
+  // Versija 231: salīdzināmais periods – raustītas gaišākas līnijas (tie paši posmi pēc kārtas)
+  const cn = cbs ? Math.min(cbs.length, bs.length) : 0;
+  const cLines = cn ? RATE_SER.map(([k, , v]) => { const out = []; let cur = [];
+    for (let i = 0; i < cn; i++){ const vv = cbs[i].sent >= CMP_MIN ? cbs[i].r[k] : null; if (vv == null){ if (cur.length) out.push(cur); cur = []; } else cur.push([x(i), y(vv)]); } if (cur.length) out.push(cur);
+    return out.map(sg => sg.length > 1 ? `<path class="ln ln-cmp" d="${sg.map(([a, b2], j) => `${j ? 'L' : 'M'}${a.toFixed(1)},${b2.toFixed(1)}`).join(' ')}" fill="none" stroke="var(--${v})" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round" opacity=".45"/>`
+      : `<circle class="pt-cmp" cx="${sg[0][0]}" cy="${sg[0][1]}" r="2.5" fill="var(--${v})" opacity=".45"/>`).join(''); }).join('') : '';
+  const tipOf = (b, i) => `${b.label}|${!b.sent ? 'Nav sūtījumu' : rateTxt(b.r)}${i < cn ? ` · ${RC.short}: ${cbs[i].sent ? rateTxt(cbs[i].r) : 'nav sūtījumu'}` : ''}`;
+  return `<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Rādītāji ${GRAIN[g].pa}: piegādes, atvēršanas un iesniegšanas īpatsvars${cn ? `; raustītas līnijas – salīdzināmais periods ${esc(RC.label)}` : ''}">
     ${[0, 25, 50, 75, 100].map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${v ? 'var(--grid)' : 'var(--axis)'}" stroke-width="1"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}%</text>`).join('')}
     ${bs.map((b, i) => ((last - i) % every === 0) ? `<text x="${x(i)}" y="${H - 24}" text-anchor="middle">${esc(b.short)}</text>` : '').join('')}
     ${part ? `<text class="lbl-part" x="${x(last)}" y="${H - 8}" text-anchor="middle">līdz ${esc(bs[last].end)}</text>` : ''}
-    ${lines}${ends}
+    ${cLines}${lines}${ends}
     ${bs.map((b, i) => `<g class="xh"><line x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${T + ih}" stroke="var(--ink3)" stroke-width="1"/>
-      <rect x="${x(i) - colW / 2}" y="${T}" width="${colW}" height="${ih}" tabindex="0" data-tip="${esc(tipOf(b))}"${b.sent ? ` data-drill="${esc(JSON.stringify({f:{from:b.from, to:b.to}}))}" role="button" aria-label="${esc(`${b.label}: ${rateTxt(b.r)} – atvērt sūtījumos`)}"` : ''}/></g>`).join('')}
+      <rect x="${x(i) - colW / 2}" y="${T}" width="${colW}" height="${ih}" tabindex="0" data-tip="${esc(tipOf(b, i))}"${b.sent ? ` data-drill="${esc(JSON.stringify({f:{from:b.from, to:b.to}}))}" role="button" aria-label="${esc(`${b.label}: ${rateTxt(b.r)} – atvērt sūtījumos`)}"` : ''}/></g>`).join('')}
   </svg>`;
 }
 // salīdzinājums ar iepriekšējo tāda paša garuma periodu: good = 1 (pieaugums – labi), -1 (pieaugums – slikti), 0 (neitrāls)
 function repDelta(cur, prev, unit, good){
   if (cur == null || prev == null) return '';
-  const d = cur - prev, cls = !d || !good ? 'd-neu' : (d > 0) === (good > 0) ? 'd-good' : 'd-bad';
-  return `<span class="delta ${cls}" title="Salīdzinājumā ar iepriekšējo tāda paša garuma periodu">${d ? `${d > 0 ? '+' : '−'}${Math.abs(d)}${unit} pret iepr. periodu` : 'Bez izmaiņām pret iepr. periodu'}</span>`;
+  const d = cur - prev, cls = !d || !good ? 'd-neu' : (d > 0) === (good > 0) ? 'd-good' : 'd-bad', lbl = RC ? RC.short : 'pret iepr. periodu'; // Versija 231: atbilst izvēlei "Salīdzināt ar"
+  return `<span class="delta ${cls}" title="${esc(RC ? `Salīdzinājumā ar ${RC.label}` : 'Salīdzinājumā ar iepriekšējo tāda paša garuma periodu')}">${d ? `${d > 0 ? '+' : '−'}${Math.abs(d)}${unit} ${lbl}` : `Bez izmaiņām ${lbl}`}</span>`;
 }
 const SUM_COLS = [['name', 'Kampaņa'], ['date', 'Datums'], ['kind', 'Veids'], ['sent', 'Nosūtītas'], ['deliv', 'Piegādātas'], ['fail', 'Nepiegādātas'], ['rate', 'Piegādes %']];
 function summaryView(xs){
-  const k = repKpis(xs), prevXs = repLetters(true), hasPrev = !!repPer().from && !ui.rep.camp && prevXs.length > 0, kp = hasPrev ? repKpis(prevXs) : null;
+  const k = repKpis(xs), prevXs = RC ? RC.xs : repLetters(true), hasPrev = RC ? prevXs.length > 0 : !!repPer().from && !ui.rep.camp && prevXs.length > 0, kp = hasPrev ? repKpis(prevXs) : null;
   const relCnt = (a, b) => b ? Math.round((a - b) / b * 100) : null;
   const card = o => `<button type="button" class="card kpi rk-kpi${o.cls ? ' ' + o.cls : ''}"${drillAttr(o.drill).replace(' role="button"', '')} title="${esc(o.title)}"><span class="go" aria-hidden="true">Atvērt →</span><span class="n">${o.n}</span><span class="l">${esc(o.l)}</span>${o.sub ? `<span class="sub">${esc(o.sub)}</span>` : ''}${o.d || ''}</button>`;
   const arr = '<span class="rk-arr" aria-hidden="true">→</span>';
@@ -15125,13 +15246,21 @@ function summaryView(xs){
       ${card({n:k.todo, l:'Jārisina', sub:'nepiegādātas, aizturētas, manuāli, jādrukā', d:hasPrev ? repDelta(k.todo, kp.todo, '', -1) : '', drill:{g:'todo'}, cls:k.todo ? 'is-todo' : '', title:'Vēstules, kas prasa rīcību – atvērt sūtījumos ar “Jārisina”'})}</div>`;
   // Versija 222: laika griezums pēc perioda (dienas / nedēļas / mēneši), pārslēgs virsraksta rindā
   const G = repGrain(xs), GL = GRAIN[G.g], bs = periodBuckets(xs, G), part = bs.length && bs[bs.length - 1].partial, withData = bs.filter(b => b.sent);
+  // Versija 231: salīdzināmais periods – tie paši posmi (pēc kārtas) salīdzināmajā periodā
+  const cbs = RC ? periodBuckets(RC.xs, {g:G.g, from:RC.from, to:RC.to < todayIso() ? RC.to : todayIso()}) : null;
+  const cmpLeg = cbs ? `<p class="rk-note rk-cmp-leg"><svg width="26" height="8" aria-hidden="true"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="3 3" opacity=".7"/></svg>Raustītās gaišākās līnijas – salīdzināmais periods (${esc(RC.label)})</p>` : '';
+  const RT_CMP = cbs ? ['Salīdzinājums – periods', 'Salīdzinājums – piegādes %', 'Starpība – piegāde, p. p.', 'Salīdzinājums – atvēršanas %', 'Starpība – atvēršana, p. p.', 'Salīdzinājums – iesniegšanas %', 'Starpība – iesniegšana, p. p.'] : [];
+  const rtCmp = (b, i, num) => { if (!cbs) return []; const c = cbs[i]; if (!c) return ['', '', '', '', '', '', ''];
+    const v = k => c.r[k] == null ? (num ? '' : '—') : num ? c.r[k] : `${c.r[k]}%`, d = k => num ? cmpDiffNum(b.r[k], c.r[k]) : cmpDiffTxt(b.r[k], c.r[k]);
+    return [c.label, v('delivP'), d('delivP'), v('openP'), d('openP'), v('subP'), d('subP')]; };
   repGrainLast = G;
   const finer = ['d', 'w'].filter(k => k !== G.g && (G.g === 'm' || k === 'd') && G.cnt[k] <= GRAIN_MAX).map(k => `“${GRAIN[k].btn}”`);
   const oneNote = withData.length === 1 ? `<p class="rk-note">Atlasītajā periodā visi sūtījumi ir ${GL.one} (${esc(withData[0].label.replace(/ \(.*\)$/, ''))}).${finer.length ? ` Sīkākam sadalījumam izvēlieties ${finer.join(' vai ')}.` : ''}</p>` : '';
   const grainTip = `Laika griezums – automātiski pēc perioda: līdz 31 dienai – dienas, 32–92 dienas – nedēļas (pirmdiena–svētdiena), ilgāks periods – mēneši. Pārslēgā var izvēlēties citu griezumu (nav pieejams, ja punktu būtu vairāk par ${GRAIN_MAX}).`;
   // Versija 219: "Ziņas pēc kampaņas veida" – kopā (nosūtītas) un piegādātas (tās pašas definīcijas kā kopsavilkuma rādītājos "Nosūtītas" un "Piegādātas")
-  const byKind = Object.keys(SESS_LABELS).map(kk => { const g = xs.filter(x => x.sessionKind === kk && isSent(x)), c = r => g.filter(x => delivRes(x) === r).length;
+  const kindRowsOf = ys => Object.keys(SESS_LABELS).map(kk => { const g = ys.filter(x => x.sessionKind === kk && isSent(x)), c = r => g.filter(x => delivRes(x) === r).length;
     return {k:kk, label:SESS_LABELS[kk], total:g.length, ok:c('ok'), bad:c('bad'), proc:c('proc'), drill:{f:{kind:baseKind(kk)}}}; }).filter(r => r.total).sort((a, b) => b.total - a.total);
+  const byKind = kindRowsOf(xs), cKind = RC ? kindRowsOf(RC.xs) : null;
   const nd = xs.flatMap(ndrsOf), byNdr = ndrByRuleK(nd).slice(0, 6).map(r => ({...r, drill:{f:{rule:r.k}}}));
   // kampaņu tabula (kārtojama; rinda atver sūtījumus)
   const dm = dutyRepMap(), rows = [...groupBy(xs, x => x.batch)].map(([b, g]) => { const kk = kpiSet(g);
@@ -15144,19 +15273,22 @@ function summaryView(xs){
       <td class="num">${r.sent}</td><td class="num">${r.deliv}</td><td class="num">${r.fail}</td><td class="num">${r.rate}%</td></tr>`).join('')}</tbody></table>${rows.length ? '' : `<div class="tc-empty">${tcEmptyBox('Atlasītajā periodā kampaņu nav')}</div>`}</div>`;
   return {html:`${flow}
     <div class="card viz-card" style="margin-bottom:16px"><div class="rk-chart-h"><h3>Rādītāji ${GL.pa}${tip(`${bs.length ? `Līniju galā – ${GL.last} vērtība. ${part ? `Raustītā līnija – ${GL.part} (dati līdz ${bs[bs.length - 1].end}). ` : ''}${GL.none} bez sūtījumiem vai bez attiecīgajām vēstulēm – pārtraukums līnijā (nevis 0 %). Uz ${GL.on} var uzklikšķināt – atver sūtījumus ar šo periodu.\n\n${grainTip}\n\n` : ''}${RATE_TIP}`)}</h3>${grainSegHtml(G)}</div>
-      ${bs.length ? legendHtml(RATE_SER) + rateChart(bs, G.g) + oneNote : '<p class="hint">Nav datu.</p>'}
-      <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([GL.col, 'Nosūtītas', 'Ar zināmu rezultātu', 'Piegādātas', 'Piegādes %', 'Piegādātie e-pasti', 'Atvērti', 'Atvēršanas %', 'Piegādātas ar anketām', 'Ar iesniegtu anketu', 'Iesniegšanas %'], bs.map(b => [b.label, b.r.sent, b.r.base, b.r.deliv, b.r.delivP != null ? `${b.r.delivP}%` : '—', b.r.em, b.r.open, b.r.openP != null ? `${b.r.openP}%` : '—', b.r.delivF, b.r.sub, b.r.subP != null ? `${b.r.subP}%` : '—']))}</details></div>
+      ${bs.length ? legendHtml(RATE_SER) + cmpLeg + rateChart(bs, G.g, cbs) + oneNote : '<p class="hint">Nav datu.</p>'}
+      <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([GL.col, 'Nosūtītas', 'Ar zināmu rezultātu', 'Piegādātas', 'Piegādes %', 'Piegādātie e-pasti', 'Atvērti', 'Atvēršanas %', 'Piegādātas ar anketām', 'Ar iesniegtu anketu', 'Iesniegšanas %', ...RT_CMP], bs.map((b, i) => [b.label, b.r.sent, b.r.base, b.r.deliv, b.r.delivP != null ? `${b.r.delivP}%` : '—', b.r.em, b.r.open, b.r.openP != null ? `${b.r.openP}%` : '—', b.r.delivF, b.r.sub, b.r.subP != null ? `${b.r.subP}%` : '—', ...rtCmp(b, i, false)]))}</details></div>
     <div class="viz-grid g3">
       ${repChCardHtml(xs)}
       <div class="card viz-card" data-title="Ziņas pēc kampaņas veida"><div class="rk-card-h"><h3>Ziņas pēc kampaņas veida${tip('Nosūtītās ziņas pēc kampaņas veida: piegādes % = piegādātās / visas šī veida ziņas, iekavās – piegādātas / kopā. Pelēkā josla – visas ziņas (garums pret lielāko veidu), zaļā – piegādātās. Nepiegādātas un procesā – padomā. Uzklikšķinot uz rindas – atver sūtījumus.')}</h3>
         <button type="button" class="tbl-exp-btn rk-coll-exp" data-tbl-card title="Eksportēt" aria-label="Eksportēt “Ziņas pēc kampaņas veida”" aria-haspopup="menu" aria-expanded="false">${TBL_DL_ICON}</button></div>
-        ${byKind.length ? kindListHtml(byKind) : '<p class="hint">Nav datu.</p>'}
-        <div class="rk-xtbl" hidden>${tableHtml(['Veids', 'Kopā', 'Piegādātas', 'Nepiegādātas', 'Procesā', 'Piegādes %'], byKind.map(g => [g.label, g.total, g.ok, g.bad, g.proc, `${pct(g.ok, g.total)}%`]), 'rep-table tbl-noexp')}</div></div>
+        ${byKind.length ? kindListHtml(byKind, cKind) : '<p class="hint">Nav datu.</p>'}
+        <div class="rk-xtbl" hidden>${tableHtml(['Veids', 'Kopā', 'Piegādātas', 'Nepiegādātas', 'Procesā', 'Piegādes %', ...(cKind ? ['Salīdzinājums – piegādes %', 'Starpība, p. p.'] : [])], byKind.map(g => { const c = cKind && cKind.find(z => z.k === g.k), cp = c ? pct(c.ok, c.total) : null;
+          return [g.label, g.total, g.ok, g.bad, g.proc, `${pct(g.ok, g.total)}%`, ...(cKind ? [cp == null ? '—' : `${cp}%`, cmpDiffTxt(pct(g.ok, g.total), cp)] : [])]; }), 'rep-table tbl-noexp')}</div></div>
       ${repNdrCardHtml(xs)}
     </div>
     ${collCardHtml('scamp', 'Kampaņas', rows.length, 'Tabulu var kārtot, uzklikšķinot uz kolonnas nosaukuma; rinda atver sūtījumus.', tbl)}`,
-    sheets:[{name:'Pārskats – rādītāji', rows:[['Rādītājs', 'Vērtība', 'Piezīme'], ['Nosūtītas', k.sent, ''], ['Piegādes īpatsvars, %', k.base ? k.delivP : '', `${k.deliv} no ${k.base}`], ['Atvēršanas īpatsvars (e-pasts, aptuveni), %', k.em ? k.openP : '', k.em ? `${k.open} no ${k.em} piegādātiem e-pastiem` : ''], ['Iesniegšanas īpatsvars, %', k.delivF ? k.subP : '', `${k.sub} no ${k.delivF} piegādātām vēstulēm ar anketām`], ['Jārisina', k.todo, '']]},
-      {name:`Rādītāji ${GL.pa}`, rows:[[GL.col, 'Nosūtītas', 'Ar zināmu rezultātu', 'Piegādātas', 'Piegādes %', 'Piegādātie e-pasti', 'Atvērti', 'Atvēršanas %', 'Piegādātas ar anketām', 'Ar iesniegtu anketu', 'Iesniegšanas %'], ...bs.map(b => [b.label, b.r.sent, b.r.base, b.r.deliv, b.r.delivP ?? '', b.r.em, b.r.open, b.r.openP ?? '', b.r.delivF, b.r.sub, b.r.subP ?? ''])]},
+    sheets:[{name:'Pārskats – rādītāji', rows:(() => { const rows = [['Nosūtītas', k.sent, '', 'sent'], ['Piegādes īpatsvars, %', k.base ? k.delivP : '', `${k.deliv} no ${k.base}`, 'delivP'], ['Atvēršanas īpatsvars (e-pasts, aptuveni), %', k.em ? k.openP : '', k.em ? `${k.open} no ${k.em} piegādātiem e-pastiem` : '', 'openP'], ['Iesniegšanas īpatsvars, %', k.delivF ? k.subP : '', `${k.sub} no ${k.delivF} piegādātām vēstulēm ar anketām`, 'subP'], ['Jārisina', k.todo, '', 'todo']];
+      // Versija 231: salīdzinājuma kolonnas
+      return RC && kp ? [['Rādītājs', 'Vērtība', 'Piezīme', `Salīdzinājums (${RC.label})`, 'Starpība'], ...rows.map(([l, v, n, kk]) => [l, v, n, kp[kk], v === '' ? '' : cmpDiffNum(v, kp[kk])])] : [['Rādītājs', 'Vērtība', 'Piezīme'], ...rows.map(r => r.slice(0, 3))]; })()},
+      {name:`Rādītāji ${GL.pa}`, rows:[[GL.col, 'Nosūtītas', 'Ar zināmu rezultātu', 'Piegādātas', 'Piegādes %', 'Piegādātie e-pasti', 'Atvērti', 'Atvēršanas %', 'Piegādātas ar anketām', 'Ar iesniegtu anketu', 'Iesniegšanas %', ...RT_CMP], ...bs.map((b, i) => [b.label, b.r.sent, b.r.base, b.r.deliv, b.r.delivP ?? '', b.r.em, b.r.open, b.r.openP ?? '', b.r.delivF, b.r.sub, b.r.subP ?? '', ...rtCmp(b, i, true)])]},
       {name:'Kampaņas', rows:[SUM_COLS.map(c => c[1]), ...rows.map(r => [r.name, fmtDate(isoDate(new Date(r.date))), r.kind, r.sent, r.deliv, r.fail, `${r.rate}%`])]}]};
 }
 // jaunā apakšcilne: ja visas apakšcilnes neietilpst vienā rindā, rāda īso nosaukumu "Reakcija" (pilns – padomā), lai rinda nepārnestos
@@ -15179,11 +15311,11 @@ function repCampReact(batch, rep){
   return `<div class="card rep-campreact" id="rep-campreact"><div class="rcr-h"><b>${esc(x0.sessionName || `Kampaņa Nr. ${batch}`)}</b>${kind || aud ? ` <span class="muted">${esc([SESS_LABELS[kind] || '', aud && AUDS[aud] ? AUDS[aud].field : ''].filter(Boolean).join(' · '))}</span>` : ''}</div>
     <dl class="proc-dl rcr-dl"><dt>Nosūtīta:</dt><dd>${esc(fmtDateTime(wl.sentAt || x0.sentAt))}</dd><dt>Vēstules:</dt><dd>${esc(parts.join(' · '))}</dd></dl>${reactSectionHtml(batch, xs, rep)}</div>`;
 }
-function reactReportView(){
+function reactReportView(cmpBase){ // Versija 231: cmpBase – vēstules salīdzināmajam periodam (atgriež tikai datus)
   const f = ui.rep, now = Date.now(), H = 3600e3, D = 864e5, sf = repSf();
   // apsekojumu ierobežojums veidlapām: filtru rindas apsekojums, citādi – saglabātā filtra apsekojumi
   const rs = f.rep ? [f.rep] : sf && sf.reps.length ? sf.reps : [];
-  const xs = repLetters()
+  const xs = (cmpBase || repLetters())
     .map(x => { const v = reactView(x, now); return {x, v, res:rs.length ? v.res.filter(fm => rs.includes(fm.d.reportId)) : v.res}; })
     .filter(o => !rs.length || o.res.length || o.v.forms.some(fm => rs.includes(fm.d.reportId)));
   const canOpen = o => !['fail', 'held', 'man'].includes(histFinal(o.x)), base = o => Date.parse(o.x.sentAt);
@@ -15199,7 +15331,7 @@ function reactReportView(){
   // Versija 229: "Iesniegto veidlapu īpatsvars" (aizstāj "Kļūdaino veidlapu īpatsvars") – tas pats aprēķins kā Pārskata "Iesniegšanas īpatsvars"
   // (vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām; repKpis ar tiem pašiem filtriem) un tas pats salīdzinājums ar iepriekšējo periodu;
   // kļūdainās veidlapas – (i) padomā
-  const sk = repKpis(repLetters()), prevXs = repLetters(true), hasPrev = !!repPer().from && !f.camp && prevXs.length > 0, skp = hasPrev ? repKpis(prevXs) : null;
+  const sk = repKpis(repLetters()), prevXs = RC ? RC.xs : repLetters(true), hasPrev = RC ? prevXs.length > 0 : !!repPer().from && !f.camp && prevXs.length > 0, skp = hasPrev ? repKpis(prevXs) : null;
   const subKpi = `<div class="card kpi rk-kpi rk-kpi-box"><span class="n">${sk.delivF ? `${sk.subP}%` : '—'}</span>
       <span class="l">Iesniegto veidlapu īpatsvars${tip(`Vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (tas pats aprēķins kā Pārskata rādītājā “Iesniegšanas īpatsvars”).\n\nKļūdainas veidlapas: ${kl.length} (${pct(kl.length, nF)}%)`)}</span>
       <span class="sub">${sk.delivF ? `${fmtCount(sk.sub)} iesniegtas no ${fmtCount(sk.delivF)} piegādātām` : 'nav piegādātu vēstuļu ar anketām'}</span>${hasPrev && sk.delivF && skp.delivF ? repDelta(sk.subP, skp.subP, ' p. p.', 1) : ''}
@@ -15213,8 +15345,13 @@ function reactReportView(){
   const byRep = [...groupBy(fs, fm => fm.d.reportId)].map(([k, g]) => { const p = repById(k), n = g.filter(fm => fm.st === 'ies').length; return {label:p ? repTitle(p) : k, v:pct(n, g.length), sub:`${n} no ${g.length} veidlapām`, n:g.length, ies:n, tip:`Iesniegtas ${fmtCount(n)} no ${fmtCount(g.length)} ${plural(g.length, 'veidlapas', 'veidlapām')}`}; }).sort((a, b) => b.v - a.v || a.label.localeCompare(b.label, 'lv'));
   const byKind = Object.entries(SESS_KINDS).map(([k, s]) => { const r = openPct(xs.filter(o => baseKind(o.x.sessionKind) === k)); return {label:s.label, v:r.p, sub:`${r.o} no ${r.n} vēstulēm`, n:r.n}; }).filter(r => r.n);
   const times = [{label:'Atvēršana → iesākšana', v:Math.round(avgMs(o2s) / H), sub:`≈ ${dStr(avgMs(o2s))} · ${o2s.length} ${plural(o2s.length, 'veidlapa', 'veidlapas')}`, n:o2s.length}, {label:'Iesākšana → iesniegšana', v:Math.round(avgMs(s2i) / H), sub:`≈ ${dStr(avgMs(s2i))} · ${s2i.length} ${plural(s2i.length, 'veidlapa', 'veidlapas')}`, n:s2i.length}];
-  const card = (title, rows, unit, cols, tipTxt, o = {}) => `<div class="card viz-card"><h3>${esc(title)}${tipTxt ? tip(tipTxt) : ''}</h3>${rows.some(r => r.n) ? singleBars(rows, unit, o) : '<p class="hint">Nav datu.</p>'}
-    <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(cols, rows.map(r => [r.label, `${r.v}${unit.trim() === '%' ? '%' : ''}`, ...(cols.length > 2 ? [r.sub] : [])]))}</details></div>`;
+  if (cmpBase) return {funnel, nD, byRep, byKind, times};
+  const RX = RC ? reactReportView(RC.xs) : null; // Versija 231: salīdzināmais periods
+  // Versija 231: o.cmp – salīdzināmā perioda rindas (atšķirība aiz vērtības, datu tabulā – salīdzinājums un starpība), o.good – virziens
+  const card = (title, rows, unit, cols, tipTxt, o = {}) => { const cOf = r => o.cmp ? o.cmp.find(z => z.label === r.label && z.n) : null, u = unit.trim() === '%' ? ' p.p.' : unit;
+    const rr = o.cmp ? rows.map(r => { const c = cOf(r); return {...r, d:c && r.n ? cmpD(r.v, c.v, o.good ?? 1, u, `${c.v}${unit}`) : ''}; }) : rows;
+    return `<div class="card viz-card"><h3>${esc(title)}${tipTxt ? tip(tipTxt) : ''}</h3>${rows.some(r => r.n) ? singleBars(rr, unit, o) : '<p class="hint">Nav datu.</p>'}
+    <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([...cols, ...(o.cmp ? ['Salīdzinājums', 'Starpība'] : [])], rows.map(r => { const c = cOf(r); return [r.label, `${r.v}${unit.trim() === '%' ? '%' : ''}`, ...(cols.length > 2 ? [r.sub] : []), ...(o.cmp ? [c ? `${c.v}${unit.trim() === '%' ? '%' : unit}` : '—', c && r.n ? cmpDiffTxt(r.v, c.v, u === ' p.p.' ? ' p. p.' : unit) : '—'] : [])]; }))}</details></div>`; };
   // tabula pa kampaņām
   const camps = [...groupBy(xs, o => o.x.batch)].sort((a, b) => b[0] - a[0]).map(([b, g]) => { const x0 = g[0].x, gf = g.flatMap(o => o.res.map(fm => ({...fm, o}))), gi = gf.filter(fm => fm.st === 'ies');
     return {b, name:x0.sessionName || `Kampaņa Nr. ${b}`, kind:SESS_LABELS[x0.sessionKind] || '', at:x0.sentAt, n:g.length, open:openPct(g).p, sub:gf.length ? pct(gi.length, gf.length) : null, kl:gf.filter(fm => fm.st === 'kl').length, t:gi.length ? toSub(gf) : null, nF:gf.length}; });
@@ -15229,19 +15366,19 @@ function reactReportView(){
     <div class="viz-grid${f.camp ? ' g3' : ' rx-g4'}">
       ${f.camp ? '' : `<div class="card viz-card rx-funcard" data-title="Piltuve"><div class="rk-card-h"><h3>Piltuve${tip('Procenti – no piegādāto ziņu skaita (pirmais posms “Piegādātas” – 100 %), iekavās – ziņu skaits. Atvērtas – piegādātās ziņas, kas atvērtas (e-pastā – aptuveni) vai kurās uzsākta anketa; anketa uzsākta / iesniegtas – piegādātās ziņas, kurās vismaz viena anketa uzsākta / iesniegta.')}</h3>
         <button type="button" class="tbl-exp-btn rk-coll-exp" data-tbl-card title="Eksportēt" aria-label="Eksportēt “Piltuve”" aria-haspopup="menu" aria-expanded="false">${TBL_DL_ICON}</button></div>
-        ${funListHtml(funnel.map(r => ({label:r.label, v:r.n})), nD)}
-        <div class="rk-xtbl" hidden>${tableHtml(['Posms', '% no piegādātajām', 'Skaits'], funnel.map(r => [r.label, `${r.v}%`, r.n]), 'rep-table tbl-noexp')}</div></div>`}
-      <div class="card viz-card rx-repcard"><h3>Iesniegšanas % pa apsekojumiem${tip('Iesniegtās veidlapas no visām vēstulēs iekļautajām šī apsekojuma veidlapām; sakārtots pēc procentiem dilstoši. Skaits – padomā un eksportā.')}</h3>${byRep.length ? pctListHtml(byRep, {label:'Iesniegšanas % pa apsekojumiem'}) : '<p class="hint">Nav datu.</p>'}
-        <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Apsekojums', 'Iesniegšanas %'], byRep.map(r => [r.label, `${r.v}%`]))}</details></div>
-      ${card('Atvēršanas % pa kampaņu veidiem', byKind, '%', ['Kampaņas veids', 'Atvēršanas %', 'Vēstules'])}
-      ${card('Vidējais laiks', times, ' st.', ['Posms', 'Vidēji, st.', 'Veidlapas'], 'Atvēršana → iesākšana: no vēstules atvēršanas līdz veidlapas iesākšanai; iesākšana → iesniegšana: no iesākšanas līdz (pēdējai) iesniegšanai.')}
+        ${funListHtml(funnel.map(r => ({label:r.label, v:r.n})), nD, RX ? {cmp:{rows:RX.funnel.map(r => ({label:r.label, v:r.n})), n:RX.nD}} : {})}
+        <div class="rk-xtbl" hidden>${tableHtml(['Posms', '% no piegādātajām', 'Skaits', ...(RX ? ['Salīdzinājums – %', 'Salīdzinājums – skaits', 'Starpība, p. p.'] : [])], funnel.map((r, i) => [r.label, `${r.v}%`, r.n, ...(RX ? [`${RX.funnel[i].v}%`, RX.funnel[i].n, cmpDiffTxt(r.v, RX.funnel[i].v)] : [])]), 'rep-table tbl-noexp')}</div></div>`}
+      <div class="card viz-card rx-repcard"><h3>Iesniegšanas % pa apsekojumiem${tip('Iesniegtās veidlapas no visām vēstulēs iekļautajām šī apsekojuma veidlapām; sakārtots pēc procentiem dilstoši. Skaits – padomā un eksportā.')}</h3>${byRep.length ? pctListHtml(byRep, {label:'Iesniegšanas % pa apsekojumiem', cmp:RX ? new Map(RX.byRep.map(r => [r.label, r.v])) : null, good:1}) : '<p class="hint">Nav datu.</p>'}
+        <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Apsekojums', 'Iesniegšanas %', ...(RX ? ['Salīdzinājums', 'Starpība'] : [])], byRep.map(r => { const c = RX && RX.byRep.find(z => z.label === r.label); return [r.label, `${r.v}%`, ...(RX ? [c ? `${c.v}%` : '—', c ? cmpDiffTxt(r.v, c.v) : '—'] : [])]; }))}</details></div>
+      ${card('Atvēršanas % pa kampaņu veidiem', byKind, '%', ['Kampaņas veids', 'Atvēršanas %', 'Vēstules'], '', RX ? {cmp:RX.byKind, good:1} : {})}
+      ${card('Vidējais laiks', times, ' st.', ['Posms', 'Vidēji, st.', 'Veidlapas'], 'Atvēršana → iesākšana: no vēstules atvēršanas līdz veidlapas iesākšanai; iesākšana → iesniegšana: no iesākšanas līdz (pēdējai) iesniegšanai.', RX ? {cmp:RX.times, good:-1} : {})}
     </div>
     ${collCardHtml('rcamp', 'Reakcija un iesniegšana pa kampaņām', camps.length, 'Katrai kampaņai – atvērto vēstuļu un iesniegto veidlapu īpatsvars, kļūdainās veidlapas un vidējais laiks līdz iesniegšanai.', tableHtml(head, rows, 'rep-table tbl-noexp', 'Atlasītajā periodā nav kampaņu'))}
     <p class="hint">Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena (izsekošanas attēls).</p>`,
     sheets:[{name:'Pa kampaņām', rows:[['Kampaņa', 'Nr.', 'Veids', 'Nosūtīts', 'Vēstules', 'Veidlapas', 'Atvērtas %', 'Iesniegtas %', 'Kļūdainas', 'Vid. laiks līdz iesniegšanai, d.'],
       ...camps.map(c => [c.name, c.b, c.kind, fmtDate(isoDate(new Date(c.at))), c.n, c.nF, c.open, c.sub ?? '', c.kl, c.t == null ? '' : (Math.round(c.t / D * 10) / 10).toFixed(1).replace('.', ',')])]},
-      {name:'Piltuve', rows:[['Posms', '% no piegādātajām', 'Skaits', 'Piegādātas'], ...funnel.map(r => [r.label, r.v, r.n, nD])]},
-      {name:'Iesniegšana pa apsekojumiem', rows:[['Apsekojums', 'Iesniegšanas %', 'Iesniegtas', 'Veidlapas'], ...byRep.map(r => [r.label, r.v, r.ies, r.n])]}]};
+      {name:'Piltuve', rows:[['Posms', '% no piegādātajām', 'Skaits', 'Piegādātas', ...(RX ? ['Salīdzinājums – %', 'Salīdzinājums – skaits', 'Starpība, p. p.'] : [])], ...funnel.map((r, i) => [r.label, r.v, r.n, nD, ...(RX ? [RX.funnel[i].v, RX.funnel[i].n, cmpDiffNum(r.v, RX.funnel[i].v)] : [])])]},
+      {name:'Iesniegšana pa apsekojumiem', rows:[['Apsekojums', 'Iesniegšanas %', 'Iesniegtas', 'Veidlapas', ...(RX ? ['Salīdzinājums – %', 'Starpība, p. p.'] : [])], ...byRep.map(r => { const c = RX && RX.byRep.find(z => z.label === r.label); return [r.label, r.v, r.ies, r.n, ...(RX ? [c ? c.v : '', c ? cmpDiffNum(r.v, c.v) : ''] : [])]; })]}]};
 }
 // MI kopsavilkums (simulēts teksts no atlasītajiem datiem)
 function aiSummary(xs){
@@ -15304,7 +15441,7 @@ function aiSummaryMain(xs){
 }
 // pēdējā skata dati eksportam
 let repLast = null;
-const repFilterDefaults = () => ({camp:'', rep:'', kind:'', ch:'', aud:'', quick:'12m', ...quickRange('12m')});
+const repFilterDefaults = () => ({camp:'', rep:'', kind:'', ch:'', aud:'', quick:'12m', ...quickRange('12m'), cq:'', cf:'', ct:''});
 // aktīvo papildu filtru birkas (panelis "Filtri")
 const repChips = f => [f.ch ? ['ch', `Kanāls: ${CHANNELS[f.ch] || f.ch}`] : null, f.aud ? ['aud', `Statistikas joma: ${STAT_JOMAS[jomaKey(f.aud)] || f.aud}`] : null].filter(Boolean);
 function renderRepFilters(){
@@ -15313,7 +15450,10 @@ function renderRepFilters(){
   const sum = (id, txt, on, title) => { const el = $(id); el.textContent = txt; el.classList.toggle('is-on', on); el.title = title || txt; };
   sum('#rep-camp-sum', cur ? cur.name : 'Visas kampaņas', !!f.camp);
   sum('#rep-rep-sum', rp ? rp.code : 'Visi apsekojumi', !!f.rep, rp ? `${rp.code} – ${rp.name}` : '');
-  perRender('rep');
+  perRender('rep'); perRender('repc');
+  // Versija 231: piezīme "Salīdzināts ar: … ×"
+  { const n = $('#rep-cmp-note'), c = repCmpPer(); n.hidden = !c;
+    n.innerHTML = c ? `Salīdzināts ar: ${esc(`${fmtDate(c.from)}–${fmtDate(c.to)}`)}<button type="button" class="link-btn" data-cmp-clear aria-label="Noņemt salīdzinājumu" title="Noņemt salīdzinājumu">×</button>` : ''; }
   const cq = norm($('#rep-camp-q').value), cl = camps.filter(c => !cq || norm(`${c.name} ${c.desc || ''} ${c.b}`).includes(cq));
   $('#rep-camp-list').innerHTML = (cq ? '' : hfOpt('', !f.camp, '<span class="hf-o">Visas kampaņas</span>')) + cl.map(c => hfOpt(c.b, String(c.b) === String(f.camp), `<span class="hf-o">${esc(c.name)}${c.desc ? `<span class="hf-desc">${esc(c.desc)}</span>` : ''}</span><small>${esc(fmtDate(isoDate(new Date(c.at))))}</small>`, c.name + (c.desc ? `\n${c.desc}` : ''))).join('') + (!cl.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   const rq = norm($('#rep-rep-q').value), rl = reps.filter(r => (!STAT_JOMAS[jomaKey(f.aud)] || repJoma(r.id) === jomaKey(f.aud)) && (!rq || norm(`${r.code} ${r.name}`).includes(rq)));
@@ -15345,6 +15485,7 @@ function renderReports(){
   repSubFit();
   renderTimePart();
   renderRepFilters();
+  RC = repCmpCalc(); // Versija 231
   const xs = repLetters(), v = reportView(xs);
   repLast = v;
   $('#rep-export').disabled = !!v.empty;
@@ -15355,7 +15496,7 @@ function renderReports(){
       : `<div class="card rep-empty"><p>Šiem filtriem nav datu</p><button type="button" class="link-btn" data-rep-reset>Notīrīt filtrus</button></div>`;
     return;
   }
-  const items = aiSummary(xs).slice(0, 3);
+  const items = [...repCmpAi(xs), ...aiSummary(xs)].slice(0, 3); // Versija 231: salīdzinājums – pirmais teikums
   $('#rep-ai').innerHTML = `<div class="ai-box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.6L18 9.4l-4.2 1.8L12 16l-1.8-4.8L6 9.4l4.2-1.8z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg>
     <div><h3>MI kopsavilkums <span class="pill pill-ai">MI ģenerēts · simulācija</span></h3><ul>${items.map(it => `<li>${esc(it.t)}${it.go ? ` <button type="button" class="link-btn ai-go" data-drill="${esc(JSON.stringify(it.go))}">→ Atvērt</button>` : ''}</li>`).join('')}</ul></div></div>`;
   $('#rep-body').innerHTML = v.html;
@@ -16038,6 +16179,10 @@ function repDd(key, pick){
 repDd('camp', (v, dd, sum) => { ui.rep.camp = v; dd.open = false; renderReports(); sum.focus(); });
 repDd('rep', (v, dd, sum) => { ui.rep.rep = v; dd.open = false; renderReports(); sum.focus(); });
 perInit('rep', () => ui.rep, v => { Object.assign(ui.rep, v); renderReports(); }, {opts:REP_QUICK, range:quickRange, always:true});
+// Versija 231: "Salīdzināt ar:" – tā pati perioda komponente
+perInit('repc', () => ({quick:ui.rep.cq || '', from:ui.rep.cf || '', to:ui.rep.ct || ''}), v => { Object.assign(ui.rep, {cq:v.quick || '', cf:v.quick === 'custom' ? v.from || '' : '', ct:v.quick === 'custom' ? v.to || '' : ''}); renderReports(); },
+  {opts:REP_CMP_OPTS, range:() => ({from:'', to:''}), none:'—'});
+document.addEventListener('click', e => { if (!(e.target.closest && e.target.closest('[data-cmp-clear]'))) return; Object.assign(ui.rep, {cq:'', cf:'', ct:''}); renderReports(); const s = $('#repc-per-sum'); if (s) s.focus(); });
 $('#rep-kind').addEventListener('change', e => { ui.rep.kind = e.target.value; renderReports(); });
 // "Filtri" panelis: Kanāls · Statistikas joma
 // Versija 199: jomas izvēle – no STAT_JOMAS (vienots saraksts visā prototipā)
