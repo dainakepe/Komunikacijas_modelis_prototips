@@ -154,12 +154,13 @@ input[type="checkbox"]:not([role="switch"]):focus-visible{box-shadow:0 0 0 3px v
 
 /* ===== Galvene ===== */
 .app-header{background:var(--primary);background-image:var(--header-gradient);color:var(--on-primary)}
-.header-inner{display:flex;align-items:center;gap:16px;min-height:68px}
+.header-inner{display:flex;align-items:center;gap:16px;min-height:56px} /* Versija 242: viena zema josla */
 .brand{display:flex;align-items:center;gap:14px;min-width:0}
 .brand > div{min-width:0}
-.logo{width:44px;height:44px;border-radius:var(--radius-sm);background:var(--surface);color:var(--primary-darker);display:grid;place-items:center;font-weight:800;font-size:var(--fs-md);letter-spacing:.5px;flex:none}
-.brand-title{font-size:var(--fs-xl);font-weight:700;letter-spacing:.1px}
-.brand-sub{font-size:var(--fs-sm);font-weight:600;opacity:.95}
+.brand-txt{display:flex;align-items:baseline;gap:8px;min-width:0;white-space:nowrap}
+.logo{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--surface);color:var(--primary-darker);display:grid;place-items:center;font-weight:800;font-size:var(--fs-md);letter-spacing:.5px;flex:none}
+.brand-title{font-size:var(--fs-xl);font-weight:700;letter-spacing:.1px;flex:none}
+.brand-sub{font-size:var(--fs-sm);font-weight:500;opacity:.8;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .header-right{margin-left:auto;display:flex;align-items:center;gap:16px;flex:none}
 .badge-proto{background:var(--surface);color:var(--primary-darker);font-size:var(--fs-2xs);font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:var(--radius-xs)}
 .user{display:flex;align-items:center;gap:6px;font-size:var(--fs-md);font-weight:600}
@@ -183,7 +184,7 @@ input[type="checkbox"]:not([role="switch"]):focus-visible{box-shadow:0 0 0 3px v
 .todo-card .icon{width:34px;height:34px;color:var(--primary-300)}
 
 /* ===== Saturs ===== */
-main.container{padding-top:28px;padding-bottom:48px}
+main.container{padding-top:20px;padding-bottom:48px} /* Versija 242: ~20 px no cilnēm līdz sadaļas virsrakstam */
 .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
 .page-head p{color:var(--text-muted);margin-top:4px;max-width:760px}
 /* Atskaitēm galvenē nav pogas (eksports – filtru rindā): tāds pats augstums kā citām cilnēm, lai virsraksts un filtri ir vienā līmenī */
@@ -3582,13 +3583,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
 .mod-sub-link span{flex:1;min-width:0;display:flex;flex-direction:column}
 .mod-sub-link b{font-size:var(--fs-md)}
 .mod-sub-link small{font-size:var(--fs-xs);opacity:.92}
-/* Navigācijas ceļš moduļa galvenē */
-#module-view .header-inner{padding-top:10px;padding-bottom:10px}
-.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:var(--fs-xs);font-weight:600;opacity:.95;margin-bottom:1px}
-.crumbs a{color:var(--on-primary);text-decoration:none}
-.crumbs a:hover{text-decoration:underline}
-.crumbs .sep{opacity:.75}
-#crumb-tail{display:contents}
 
 /* ===== Kājene ===== */
 .app-footer{border-top:1px solid var(--border);background:var(--surface);padding:16px 0;font-size:var(--fs-sm);color:var(--text-muted)}
@@ -3607,8 +3601,6 @@ a.logo:hover{box-shadow:0 0 0 3px rgba(255,255,255,.45)}
   .brand-title{font-size:var(--fs-xl)}
   .form-grid,.mod-grid{grid-template-columns:1fr}
   .mod-grid{grid-auto-rows:auto}
-  .crumbs{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:var(--fs-xs)}
-  .crumbs .sep{margin:0 3px}
   .home-link{display:none}
   .tpl-block-head .btn .lbl{display:none}
   .channel-opts{grid-template-columns:1fr}
@@ -3704,10 +3696,7 @@ th.has-exp{padding-right:32px !important}
   <div class="container header-inner">
     <div class="brand">
       <div class="logo" aria-hidden="true">CSP</div>
-      <div>
-        <div class="brand-title">DELTA</div>
-        <div class="brand-sub">Centrālā statistikas pārvalde · Datu vākšanas un transformācijas sistēma</div>
-      </div>
+      <div class="brand-txt"><span class="brand-title">DELTA</span><span class="brand-sub">· Centrālā statistikas pārvalde · Datu vākšanas un transformācijas sistēma</span></div>
     </div>
     <div class="header-right">
       <span class="badge-proto">Prototips</span>
@@ -3764,11 +3753,7 @@ th.has-exp{padding-right:32px !important}
   <div class="container header-inner">
     <div class="brand">
       <a href="#sakums" class="logo" aria-label="Uz DELTA sākumlapu" title="DELTA sākums">CSP</a>
-      <div>
-        <nav class="crumbs" aria-label="Navigācijas ceļš"><a href="#sakums">DELTA</a><span class="sep" aria-hidden="true">›</span><a href="#sakums">Respondentu pārvaldība</a><span class="sep" aria-hidden="true">›</span><a href="#kampanas">Komunikācija</a><span id="crumb-tail"></span></nav>
-        <div class="brand-title">Komunikācija</div>
-        <div class="brand-sub">Respondentu pārvaldība</div>
-      </div>
+      <div class="brand-txt"><span class="brand-title">Komunikācija</span><span class="brand-sub">· Respondentu pārvaldība</span></div>
     </div>
     <div class="header-right">
       <a href="#sakums" class="home-link">← DELTA sākums</a>
@@ -4254,7 +4239,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 241</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 242</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7908,12 +7893,6 @@ function route(){
   else { if (h === 'veidnes') ui.tplView = 'veidnes'; showTab(h); }
   trackNav(); navMode = 'push';
 }
-// Navigācijas ceļš: DELTA › Respondentu pārvaldība › Komunikācija › [cilne] (› kampaņa)
-// Navigācijas ceļš: DELTA › Respondentu pārvaldība › Komunikācija › [cilne]
-function setCrumb(){
-  const sep = '<span class="sep" aria-hidden="true">›</span>', edit = ui.tab === 'kampanas' && ui.campView === 'edit';
-  $('#crumb-tail').innerHTML = edit ? `${sep}<a href="#kampanas">Kampaņas</a>` : `${sep}<span aria-current="page">${esc(TAB_LABELS[ui.tab] || '')}</span>`;
-}
 function showTab(name, opts = {}){
   scheduleFit();
   const prevTab = $('#module-view').hidden ? '' : ui.tab;
@@ -7937,7 +7916,6 @@ function showTab(name, opts = {}){
   if (name === 'kampanas') ui.campView === 'edit' ? renderCompose() : renderCampaigns();
   if (name === 'vesture') renderSent();
   if (name === 'atskaites'){ if (prevTab !== 'atskaites' && !ui.repRestoring) ui.repSub = REP_SUBS[0][0]; renderReports(); } // Versija 215: atverot sadaļu – "Pārskats"
-  setCrumb();
   trackNav();
   if (!opts.keepScroll) window.scrollTo({top:0});
 }
@@ -16485,7 +16463,7 @@ $('#c-show-addr').addEventListener('change', e => { ui.showAddr = e.target.check
 // Versija 182: papildinājums – atstarpes kļūst par "_", neatļautās zīmes tiek izlaistas; automātiskā daļa nemainās
 $('#c-name').addEventListener('input', e => { const el = e.target, v = cleanNameSfx(el.value);
   if (v !== el.value){ const pos = Math.max(0, (el.selectionStart || 0) - (el.value.length - v.length)); el.value = v; try { el.setSelectionRange(pos, pos); } catch (err) {} }
-  const base = campNameAuto(); compose.nameSfx = v; compose.name = joinCampName(base, v); syncAutoName(); setCrumb(); saveDraft(); });
+  const base = campNameAuto(); compose.nameSfx = v; compose.name = joinCampName(base, v); syncAutoName(); saveDraft(); });
 $('#c-name').addEventListener('blur', e => { const v = e.target.value.replace(/^_+|_+$/g, ''); if (v !== e.target.value){ e.target.value = v; e.target.dispatchEvent(new Event('input')); } });
 $('#c-name-grp').addEventListener('mouseover', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
 $('#c-name-grp').addEventListener('mouseout', e => { const el = e.target.closest('[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
