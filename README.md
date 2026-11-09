@@ -1098,6 +1098,11 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 236 – salīdzinājums tikai tad, ja tas izvēlēts:**
+  - Ja "Salīdzināt ar:" ir **"—"** (noklusējums, ja vien noklusējuma "Mani filtri" nenosaka citādi), salīdzinājums netiek rādīts nekur: KPI kartītēs nav rindas "+4 p. p. pret …" (vietā – neredzama rinda, kartītes augstums nemainās, "Atvērt →" apakšā), MI kopsavilkumā nav pieminēts cits periods, sarakstos, diagrammās, grafikos, tabulās un eksportā nav atšķirību (▲/▼, salīdzinājuma līnijas, kolonnas "Salīdzinājums" / "Starpība").
+  - Salīdzinājumi parādās tikai ar "Iepriekšējais periods" vai "Cits periods…"; teksts atbilst izvēlei – "pret iepr. periodu" / "pret 2025" / "pret 01.03.–31.05.2025." (arī MI: "piegādes īpatsvars 93% (pret iepr. periodu: 90%)").
+  - "Nepiegāžu apstrāde" kartīte "Pirms / Tagad" (bāzes līnija pret tagad) nav periodu salīdzinājums un paliek.
+
 - **Versija 235 – mazo kartīšu izkārtojums (Pārskats, Piegāde, Reakcija un iesniegšana, Patērētais laiks):**
   - Viens režģis `.rk-cards`: 3 vienāda platuma kolonnas, atstarpes 14 px, kartītes aizpilda rindas pēc kārtas no kreisās uz labo (bez "peldošā" izkārtojuma un tukšumiem); nepilnā pēdējā rindā kartītes paliek kreisajā pusē ar to pašu platumu. Šaurā ekrānā (≤ 1100 px) – 2 kolonnas, ļoti šaurā (≤ 640 px) – 1.
   - Vienā rindā visām kartītēm vienāds augstums (vismaz 200 px); rinda "Kopā: …" vienmēr kartītes apakšā (vienā līmenī visā rindā).

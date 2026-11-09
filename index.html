@@ -1434,6 +1434,8 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 .hbar.has-cmp,.hbar.wide-val.has-cmp{grid-template-columns:minmax(80px,140px) minmax(0,1fr) auto}
 .hbar .val .cmpd{margin-left:4px}
 .kpi .kpi-cmp{margin-top:6px}
+.kpi .kpi-ph{font-size:var(--fs-xs);margin-top:4px;order:1;visibility:hidden}
+.kpi .kpi-cmp.kpi-ph{margin-top:6px;font-size:inherit}
 .rk-cmp-leg{display:flex;align-items:center;gap:6px;margin:0 0 4px}
 .data-ver{position:fixed;left:16px;bottom:16px;z-index:300;display:flex;gap:10px;align-items:flex-start;max-width:min(480px,calc(100vw - 32px));padding:12px 12px 12px 14px;
   background:var(--surface);border:1px solid var(--warning-border, #E8C48A);border-left:4px solid var(--orange-ink, #B36B00);border-radius:var(--radius-sm);box-shadow:0 8px 24px rgba(0,0,0,.14);font-size:var(--fs-sm);line-height:1.45}
@@ -4205,7 +4207,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 235</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 236</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -14514,6 +14516,7 @@ function repCmpPer(){
 // īsais nosaukums ("pret 2025", "pret iepr. periodu") un pilnais ("01.12.2024.–09.11.2025.")
 // Versija 232: kalendārais gads → "pret 2025"; kalendārais mēnesis → "pret okt. 2026"
 const repCmpShort = c => { const y1 = c.from.slice(0, 4), y2 = c.to.slice(0, 4);
+  if (c.q === 'prev') return 'pret iepr. periodu'; // Versija 236: teksts atbilst izvēlei "Iepriekšējais periods"
   if (y1 === y2 && c.from.slice(5) === '01-01') return `pret ${y1}`;
   if (c.from.slice(0, 7) === c.to.slice(0, 7) && c.from.slice(8) === '01') return `pret ${MONTHS[+c.from.slice(5, 7) - 1].slice(0, 3)}. ${y1}`;
   // Versija 234: cits datumu intervāls – "pret 01.03.–31.05.2025."
@@ -14777,6 +14780,8 @@ function timeData(per){ // Versija 231: per – salīdzināmais periods
 }
 const avgMs = xs => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0;
 const tpSpan = o => o.wl.createdAt ? Math.max(0, Date.parse(o.saved) - Date.parse(o.wl.createdAt)) : 0;
+// Versija 236: KPI kartītēs bez salīdzinājuma – neredzama rinda salīdzinājuma vietā, lai kartītes augstums nemainās
+const KPI_PH = '<span class="kpi-ph" aria-hidden="true">&nbsp;</span>', KPI_PH_CMP = '<div class="kpi-cmp kpi-ph" aria-hidden="true"><span class="cmpd">&nbsp;</span></div>';
 const kpiBox = (n, l, sub, d = '') => `<div class="card kpi"><div class="n">${n}</div><div class="l">${esc(l)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}${d}</div>`;
 const hrsOf = ms => Math.round(ms / 360000) / 10;
 function timeView(){ return ui.repTime.part === 'tpl' ? tplTimeView() : campTimeView(); }
@@ -14785,7 +14790,7 @@ function campTimeView(){
   const mn = ms => Math.round(ms / 6000) / 10, hr = ms => Math.round(ms / 360000) / 10; // starpība ≥ 2 st. – stundās
   const tD = (a, b) => cc && cc.length && b != null ? `<div class="kpi-cmp">${Math.abs(a - b) >= 2 * 3600e3 ? cmpD(hr(a), hr(b), -1, ' st.', fmtDur(b)) : cmpD(mn(a), mn(b), -1, ' min', fmtDur(b))}</div>` : '';
   const apv = camps.filter(o => o.hadApv);
-  const kpi = kpiBox;
+  const kpi = (n, l, sub, d) => kpiBox(n, l, sub, d || KPI_PH_CMP); // Versija 236: bez salīdzinājuma – neredzama rezervētā rinda (augstums nemainās)
   const grp = (key, label, list = camps) => [...groupBy(list, key)].map(([k, g]) => ({label:label(k), v:wlMin(avgMs(g.map(o => o.wl.active))), sub:`${g.length} ${plural(g.length, 'kampaņa', 'kampaņas')}`, n:g.length})).sort((a, b) => b.v - a.v);
   const gK = [o => SESS_LABELS[o.kind] ? o.kind : 'cits', k => SESS_LABELS[k] || 'Cits'], gA = [o => o.aud || '—', k => AUDS[k] ? AUDS[k].field : '—'], gS = [o => o.source === 'custom' ? 'custom' : o.source === 'tplmod' ? 'tplmod' : 'tpl', k => WL_SRC[k]];
   const byKind = grp(...gK), byAud = grp(...gA), bySrc = grp(...gS);
@@ -15334,15 +15339,16 @@ function rateChart(bs, g = 'm', cbs = null){
 }
 // salīdzinājums ar iepriekšējo tāda paša garuma periodu: good = 1 (pieaugums – labi), -1 (pieaugums – slikti), 0 (neitrāls)
 function repDelta(cur, prev, unit, good){
-  if (cur == null || prev == null) return '';
-  const d = cur - prev, cls = !d || !good ? 'd-neu' : (d > 0) === (good > 0) ? 'd-good' : 'd-bad', lbl = RC ? RC.short : (pp => pp ? repCmpShort({q:'prev', ...pp}) : 'pret iepr. periodu')(repPrevPer()); // Versija 231/232: atbilst izvēlei / periodam
+  if (!RC || cur == null || prev == null) return ''; // Versija 236: tikai ar "Salīdzināt ar:"
+  const d = cur - prev, cls = !d || !good ? 'd-neu' : (d > 0) === (good > 0) ? 'd-good' : 'd-bad', lbl = RC ? RC.short : ''; // Versija 231/232: atbilst izvēlei / periodam
   return `<span class="delta ${cls}" title="${esc(RC ? `Salīdzinājumā ar ${RC.label}` : (pp => pp ? `Salīdzinājumā ar ${repCmpLong(pp)}` : 'Salīdzinājumā ar iepriekšējo periodu')(repPrevPer()))}">${d ? `${d > 0 ? '+' : '−'}${Math.abs(d)}${unit} ${lbl}` : `Bez izmaiņām ${lbl}`}</span>`;
 }
 const SUM_COLS = [['name', 'Kampaņa'], ['date', 'Datums'], ['kind', 'Veids'], ['sent', 'Nosūtītas'], ['deliv', 'Piegādātas'], ['fail', 'Nepiegādātas'], ['rate', 'Piegādes %']];
 function summaryView(xs){
-  const k = repKpis(xs), prevXs = RC ? RC.xs : repLetters(true), hasPrev = RC ? prevXs.length > 0 : !!repPer().from && !ui.rep.camp && prevXs.length > 0, kp = hasPrev ? repKpis(prevXs) : null;
+  // Versija 236: salīdzinājums – tikai, ja "Salīdzināt ar:" ir izvēlēts (RC); ar "—" KPI kartītēs atšķirību nav
+  const k = repKpis(xs), prevXs = RC ? RC.xs : [], hasPrev = !!RC && prevXs.length > 0, kp = hasPrev ? repKpis(prevXs) : null;
   const relCnt = (a, b) => b ? Math.round((a - b) / b * 100) : null;
-  const card = o => `<button type="button" class="card kpi rk-kpi${o.cls ? ' ' + o.cls : ''}"${drillAttr(o.drill).replace(' role="button"', '')} title="${esc(o.title)}"><span class="go" aria-hidden="true">Atvērt →</span><span class="n">${o.n}</span><span class="l">${esc(o.l)}</span>${o.sub ? `<span class="sub">${esc(o.sub)}</span>` : ''}${o.d || ''}</button>`;
+  const card = o => `<button type="button" class="card kpi rk-kpi${o.cls ? ' ' + o.cls : ''}"${drillAttr(o.drill).replace(' role="button"', '')} title="${esc(o.title)}"><span class="go" aria-hidden="true">Atvērt →</span><span class="n">${o.n}</span><span class="l">${esc(o.l)}</span>${o.sub ? `<span class="sub">${esc(o.sub)}</span>` : ''}${o.d || KPI_PH}</button>`;
   const arr = '<span class="rk-arr" aria-hidden="true">→</span>';
   const flow = `<div class="rk-flow">
       ${card({n:k.sent, l:'Nosūtītas', sub:`${new Set(xs.filter(isSent).map(x => x.batch)).size} ${plural(new Set(xs.filter(isSent).map(x => x.batch)).size, 'kampaņa', 'kampaņas')}`, d:hasPrev ? repDelta(relCnt(k.sent, kp.sent), 0, '%', 0) : '', drill:{}, title:'Visas nosūtītās vēstules – atvērt sūtījumos'})}${arr}
@@ -15438,10 +15444,10 @@ function reactReportView(cmpBase){ // Versija 231: cmpBase – vēstules salīdz
   // Versija 229: "Iesniegto veidlapu īpatsvars" (aizstāj "Kļūdaino veidlapu īpatsvars") – tas pats aprēķins kā Pārskata "Iesniegšanas īpatsvars"
   // (vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām; repKpis ar tiem pašiem filtriem) un tas pats salīdzinājums ar iepriekšējo periodu;
   // kļūdainās veidlapas – (i) padomā
-  const sk = repKpis(repLetters()), prevXs = RC ? RC.xs : repLetters(true), hasPrev = RC ? prevXs.length > 0 : !!repPer().from && !f.camp && prevXs.length > 0, skp = hasPrev ? repKpis(prevXs) : null;
+  const sk = repKpis(repLetters()), prevXs = RC ? RC.xs : [], hasPrev = !!RC && prevXs.length > 0, skp = hasPrev ? repKpis(prevXs) : null; // Versija 236: tikai ar "Salīdzināt ar:"
   const subKpi = `<div class="card kpi rk-kpi rk-kpi-box"><span class="n">${sk.delivF ? `${sk.subP}%` : '—'}</span>
       <span class="l">Iesniegto veidlapu īpatsvars${tip(`Vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (tas pats aprēķins kā Pārskata rādītājā “Iesniegšanas īpatsvars”).\n\nKļūdainas veidlapas: ${kl.length} (${pct(kl.length, nF)}%)`)}</span>
-      <span class="sub">${sk.delivF ? `${fmtCount(sk.sub)} iesniegtas no ${fmtCount(sk.delivF)} piegādātām` : 'nav piegādātu vēstuļu ar anketām'}</span>${hasPrev && sk.delivF && skp.delivF ? repDelta(sk.subP, skp.subP, ' p. p.', 1) : ''}
+      <span class="sub">${sk.delivF ? `${fmtCount(sk.sub)} iesniegtas no ${fmtCount(sk.delivF)} piegādātām` : 'nav piegādātu vēstuļu ar anketām'}</span>${hasPrev && sk.delivF && skp.delivF ? repDelta(sk.subP, skp.subP, ' p. p.', 1) : KPI_PH}
       <button type="button" class="go"${drillAttr({f:{fa:'ies'}})} aria-label="Atvērt sūtījumos ar filtru “Anketa iesniegta”">Atvērt →</button></div>`;
   const kpi = (n, l, sub, t) => `<div class="card kpi"${t ? ` title="${esc(t)}"` : ''}><div class="n">${n}</div><div class="l">${esc(l)}</div>${sub ? `<div class="sub">${esc(sub)}</div>` : ''}</div>`;
   const nSent = xs.length, nDeliv = xs.filter(o => histFinal(o.x) === 'ok').length;
@@ -15538,9 +15544,9 @@ function aiSummaryTime(){
 }
 // Pārskata MI teksts: līdz 3 punktiem; kur iespējams – saite uz darbību
 function aiSummaryMain(xs){
-  const k = kpiSet(xs), prev = repLetters(true), kp = kpiSet(prev), out = [];
+  const prev = RC ? RC.xs : [], k = kpiSet(xs), kp = kpiSet(prev), out = []; // Versija 236: salīdzinājums – tikai ar "Salīdzināt ar:"
   const per = repPer().from ? `${fmtDate(repPer().from)}–${fmtDate(repPer().to || todayIso())}` : 'visā periodā';
-  out.push({t:`Periodā ${per} nosūtītas ${k.sent} ${plural(k.sent, 'ziņa', 'ziņas')} ${(n => `${n} ${plural(n, 'kampaņā', 'kampaņās')}`)(new Set(xs.map(x => x.batch)).size)}; piegādes īpatsvars ${k.rate}%${prev.length ? ` (iepriekšējā periodā ${kp.rate}%)` : ''}.`});
+  out.push({t:`Periodā ${per} nosūtītas ${k.sent} ${plural(k.sent, 'ziņa', 'ziņas')} ${(n => `${n} ${plural(n, 'kampaņā', 'kampaņās')}`)(new Set(xs.map(x => x.batch)).size)}; piegādes īpatsvars ${k.rate}%${prev.length ? ` (${RC.short}: ${kp.rate}%)` : ''}.`});
   const nr = ndrReasonList(xs), top = nr.rows[0], todo = xs.filter(isTodo).length;
   if (top && top.k !== 'cits') out.push({t:`Biežākais nepiegādes iemesls – ${top.label.charAt(0).toLowerCase() + top.label.slice(1)} (${top.p}% no ${nr.n} nepiegādātajām ziņām).`, go:{f:{nr:top.k}}});
   if (todo) out.push({t:`${todo} ${plural(todo, 'ziņa prasa', 'ziņas prasa')} manuālu pārbaudi vai risinājumu.`, go:{g:'todo'}});
