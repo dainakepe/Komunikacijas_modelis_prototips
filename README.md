@@ -1106,6 +1106,13 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 241 – zemas, vienotas skaitļu kartītes visās apakšcilnēs** (Pārskats, Piegāde, Reakcija un iesniegšana, Patērētais laiks – arī Nepiegāžu apstrāde); viena kopīga komponente `kpiCard` un CSS (`.kc`):
+  - **virsraksts vienā rindā** (13 px); precizējums – (i) padomā pie virsraksta, piem., "Atvēršanas īpatsvars" (i: "E-pasts, aptuveni…"), "Vid. laiks līdz iesniegšanai", "Vidējais aktīvais laiks" (i: izveide / labošana), "Līdz pēdējai saglabāšanai", Nepiegāžu apstrādē "Automātiski", "Pie darbinieka", "Vid. laiks gadījumam", "Ietaupījums";
+  - **"→" (Atvērt)** virsraksta rindas labajā pusē (padoms – kur tiek atvērts); visa kartīte paliek klikšķināma (bulta pārklāj kartīti), tastatūrā – Enter uz bultas;
+  - **viena paskaidrojuma rinda** zem skaitļa, saīsināta ar "…" (pilns teksts – padomā), piem., "1452 no 1565 piegādātas";
+  - **salīdzinājuma rinda** ("+4 p. p. pret …") – tikai, ja salīdzinājums ieslēgts; bez tā vieta netiek rezervēta (kartīte tad ir par vienu rindu augstāka);
+  - iekšējās atstarpes 12 px augšā / apakšā, 14 px sānos, skaitlis 26 px; augstums ~93–96 px (ar salīdzinājumu ~116 px); visām kartītēm rindā vienāds augstums; bultas starp Pārskata kartītēm un "Jārisina" noformējums – kā līdz šim.
+
 - **Versija 240 – "Reakcija un iesniegšana": mazās kartītes vienā rindā:**
   - 3 vienāda platuma kolonnas: "Piltuve" · "Iesniegšanas % pa apsekojumiem" · divas kartītes viena virs otras ("Atvēršanas % pa kampaņu veidiem", zem tās "Vidējais laiks", atstarpe 14 px).
   - Rindas augstumu nosaka augstākā kolonna (parasti vidējā); 3. kolonnas kartītes dala šo augstumu uz pusēm (flex:1), bet nekļūst zemākas par savu saturu – ja vidējā kartīte ir ļoti īsa (piem., 1 apsekojums), rindu nosaka 3. kolonna, un visas kartītes ir tajā pašā augstumā. "Piltuve" – tajā pašā augstumā, "Kopā: …" apakšā. Šai rindai nav minimālā kartītes augstuma (~200 px).
