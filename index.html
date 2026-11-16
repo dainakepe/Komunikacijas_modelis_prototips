@@ -4266,7 +4266,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 245</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 246</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4608,7 +4608,7 @@ const ATT_KINDS = {info:'Informatīvais materiāls', variants:'Vēstules saturs'
 // bijušais veids "Pielikuma sagatave" un sagataves bez veida: bibliotēkas vēstules – "Vēstules saturs", citas – "Informatīvais materiāls"
 const attKindOf = a => ATT_KINDS[a.kind] ? a.kind : a.lib ? 'variants' : 'info';
 const ATT_DIR = 'pielikumi/';
-const ATT_LIB = [
+const ATT_LIB_BASE = [
   {id:'lib-dsa-intervija', namejs:'https://namejs.example/doc/2026-0412', file:'uzaicinajums_darbaspeka_apsekojums_intervija_lv.pdf', pages:2, size:751636,
    name:'Uzaicinājums – Darbaspēka apsekojums (telefona vai klātienes intervija)', cat:'uzaicinajums', aud:'fiz', lang:'lv', survey:'Darbaspēka apsekojums',
    desc:'Garā uzaicinājuma vēstule mājsaimniecībām ar baneri: kāpēc dalība ir svarīga, kā notiek intervija pa telefonu vai klātienē, datu konfidencialitāte un plašāka informācija. Beigās – teikumi tiem, kas piedalījās iepriekš, un tiem, kas nepiedalījās.'},
@@ -4628,6 +4628,11 @@ const ATT_LIB = [
    name:'Uzaicinājums – IKT lietošana 2026 (e-anketa)', cat:'uzaicinajums', aud:'fiz', lang:'lv', survey:'Informācijas un komunikāciju tehnoloģiju lietošana 2026. gadā',
    desc:'Garā uzaicinājuma vēstule par interneta lietošanas aptauju ar baneri, konkrētiem e-anketas un telefonintervijas datumiem un kvadrātkodu.'},
 ].map(a => ({...a, lib:true, fileName:a.file, thumb:'sikbildes/' + a.file.replace(/\.pdf$/, '.jpg')}));
+// Versija 246: bibliotēkas sagataves var rediģēt un dzēst kā citas – izmaiņas (state.attLibEd) un dzēstās (state.attLibDel) glabājas pārlūkā;
+// oriģinālais PDF paraugs mapē pielikumi/ netiek mainīts (aizstāts fails – pārlūkā); "Atjaunot sākotnējos testa datus" atjauno sākotnējo stāvokli
+const libAtts = () => { let st = {}; try { st = state || {}; } catch (e) {} // state vēl nav inicializēts (testa datu veidošana)
+  const ed = st.attLibEd || {}, del = new Set(st.attLibDel || []);
+  return ATT_LIB_BASE.filter(a => !del.has(a.id)).map(a => ed[a.id] ? {...a, ...ed[a.id]} : a); };
 const ATT_MAX = 1048576;
 // Neliels PDF testa materiāliem (viena lapa, Helvetica; diakritiskās zīmes noņemtas)
 function miniPdf(title, lines){
@@ -9160,7 +9165,7 @@ function openTemplateEditor(id, preset = {}){
 /* =====================================================================
    PIELIKUMU BIBLIOTĒKA
    ===================================================================== */
-const allAtts = () => [...ATT_LIB, ...state.attachments];
+const allAtts = () => [...libAtts(), ...state.attachments];
 const attById = id => allAtts().find(a => a.id === id);
 const attHref = a => ATT_DIR + a.file;
 const attAudLabel = k => AUDS[k].label;
@@ -9197,7 +9202,7 @@ function attPreviewHtml(a){
   if (attExt(a.fileName) !== 'pdf') return `<div class="lp-noprev">${ICON.file}<p><b>${esc(attExt(a.fileName).toUpperCase())}</b> faila priekšskatījums pārlūkā nav pieejams.</p>
     <button type="button" class="btn btn-secondary btn-sm" data-action="att-download" data-id="${esc(a.id)}">Lejupielādēt</button></div>`;
   // šaurā ekrānā (kur pārlūks PDF rāmī bieži nerāda) sagatavei rāda pirmās lapas attēlu
-  const thumb = a.lib && a.thumb ? `<img class="pdf-thumb" src="${esc(ATT_DIR + a.thumb)}" alt="Pirmā lapa: ${esc(a.name)}">` : '';
+  const thumb = a.lib && a.thumb && !a.data ? `<img class="pdf-thumb" src="${esc(ATT_DIR + a.thumb)}" alt="Pirmā lapa: ${esc(a.name)}">` : '';
   return `<iframe class="pdf-frame${thumb ? ' has-thumb' : ''}" src="${esc(attUrl(a))}#view=FitH" title="Priekšskatījums: ${esc(a.name)}"></iframe>${thumb}`;
 }
 const attMetaLine = a => [a.fileName, a.pages ? `${a.pages} ${plural(a.pages, 'lapa', 'lapas')}` : '', fmtSize(a.size)].filter(Boolean).join(' · ');
@@ -9229,7 +9234,7 @@ function openLibPicker({title, onlySag = false, aud = '', back, onPick, intro = 
     </div>
     <div class="lp-grid"><div class="lp-list" id="lp-list" role="list"></div><div class="lp-pv" id="lp-pv"></div></div>`, actions});
   const okBtn = $('.modal-foot .btn-primary', submodal);
-  const items = () => (onlySag ? ATT_LIB : allAtts()).filter(a => (!f.aud || a.aud === f.aud) && (!f.cat || a.cat === f.cat) &&
+  const items = () => (onlySag ? libAtts() : allAtts()).filter(a => (!f.aud || a.aud === f.aud) && (!f.cat || a.cat === f.cat) &&
     (!f.lang || (a.lang || '') === (f.lang === '-' ? '' : f.lang)) && (!f.q || norm([a.name, a.desc, a.fileName, a.survey].join(' ')).includes(norm(f.q))));
   function renderPv(){
     const a = attById(sel);
@@ -9243,7 +9248,7 @@ function openLibPicker({title, onlySag = false, aud = '', back, onPick, intro = 
     const list = items();
     if (!list.some(a => a.id === sel)) sel = list[0] ? list[0].id : null;
     $('#lp-list').innerHTML = list.length ? list.map(a => `<button type="button" class="lp-item" role="listitem" data-id="${esc(a.id)}" aria-pressed="${a.id === sel}">
-        <span class="att-thumb sm">${a.lib ? `<img src="${esc(ATT_DIR + a.thumb)}" alt="" loading="lazy">` : ICON.file}</span>
+        <span class="att-thumb sm">${a.lib && !a.data ? `<img src="${esc(ATT_DIR + a.thumb)}" alt="" loading="lazy">` : ICON.file}</span>
         <span><b>${esc(a.name)}</b><small>${esc(attAudLabel(a.aud))} · ${esc(attExt(a.fileName).toUpperCase())}, ${fmtSize(a.size)}${a.lib ? ' · Sagatave' : ''}</small></span></button>`).join('')
       : `<div class="lp-noprev">${ICON.file}<p>Nav dokumentu, kas atbilst atlasei.${f.aud ? ' Mēģiniet izvēlēties “Jebkuri adresāti”.' : ''}</p></div>`;
     $$('.lp-item', submodal).forEach(b => b.addEventListener('click', () => {
@@ -9332,7 +9337,7 @@ function dataUrlToBlob(url){
   return new Blob([arr], {type:(head.match(/data:([^;]+)/) || [])[1] || 'application/pdf'});
 }
 // Sagataves atver no mapes pielikumi/ (relatīvs ceļš); pašu pievienotos – no pārlūkā saglabātā satura
-function attUrl(a){ return a.lib ? attHref(a) : a.data ? URL.createObjectURL(dataUrlToBlob(a.data)) : ''; }
+function attUrl(a){ return a.data ? URL.createObjectURL(dataUrlToBlob(a.data)) : a.lib ? attHref(a) : ''; }
 function openAtt(id){
   const a = attById(id);
   if (!a) return;
@@ -9409,7 +9414,7 @@ function msCard(x){
 }
 function attCard(a){
   const used = tplsUsing(a.id);
-  const thumb = a.lib
+  const thumb = a.lib && !a.data
     ? `<a class="att-thumb" href="${esc(attHref(a))}" target="_blank" rel="noopener" aria-label="Atvērt ${esc(a.name)}"><img src="${esc(ATT_DIR + a.thumb)}" alt="" loading="lazy"></a>`
     : `<span class="att-thumb" aria-hidden="true">${ICON.doc}</span>`;
   return `<article class="card att-card ${a.lib ? 'is-lib' : ''}">
@@ -9428,8 +9433,8 @@ function attCard(a){
     <div class="tpl-actions">
       <button class="btn btn-ghost btn-sm" data-action="att-open" data-id="${esc(a.id)}">${ICON.eye}Atvērt</button>
       <button class="btn btn-ghost btn-sm" data-action="att-download" data-id="${esc(a.id)}">${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Lejupielādēt</button>
-      ${a.lib ? '' : `<button class="btn btn-ghost btn-sm" data-action="att-edit" data-id="${esc(a.id)}">${ICON.edit}Rediģēt</button>
-      <button class="btn btn-danger-ghost btn-sm" data-action="att-delete" data-id="${esc(a.id)}">${ICON.trash}Dzēst</button>`}
+      <button class="btn btn-ghost btn-sm" data-action="att-edit" data-id="${esc(a.id)}">${ICON.edit}Rediģēt</button>
+      <button class="btn btn-danger-ghost btn-sm" data-action="att-delete" data-id="${esc(a.id)}">${ICON.trash}Dzēst</button>
       <button class="btn btn-secondary btn-sm" data-action="att-to-tpl" data-id="${esc(a.id)}">${ICON.clip}Pievienot veidnei</button>
     </div>
   </article>`;
@@ -9464,7 +9469,7 @@ function msMenuItems(x){
 function attMenuItems(a){
   const it = (action, icon, label, cls = '') => `<button type="button" role="menuitem" tabindex="-1" class="${cls}" data-action="${action}" data-id="${esc(a.id)}">${ICON[icon]}${esc(label)}</button>`;
   return [it('att-open', 'eye', 'Atvērt'), `<button type="button" role="menuitem" tabindex="-1" data-action="att-download" data-id="${esc(a.id)}">${ICON.upload.replace('M12 15V3M7 8l5-5 5 5', 'M12 3v12M7 10l5 5 5-5')}Lejupielādēt</button>`,
-    it('att-to-tpl', 'clip', 'Pievienot veidnei'), it('att-hist', 'clock', 'Rediģēšanas vēsture'), ...(a.lib ? [] : [it('att-edit', 'edit', 'Rediģēt'), '<hr>', it('att-delete', 'trash', 'Dzēst', 'danger')])].join('');
+    it('att-to-tpl', 'clip', 'Pievienot veidnei'), it('att-hist', 'clock', 'Rediģēšanas vēsture'), it('att-edit', 'edit', 'Rediģēt'), '<hr>', it('att-delete', 'trash', 'Dzēst', 'danger')].join(''); // Versija 246: arī bibliotēkas sagatavēm
 }
 function renderSagataves(){
   renderTplViews();
@@ -9627,7 +9632,8 @@ async function deleteMailSample(id){
 }
 // Jauna pielikuma pievienošana vai pašu pievienotā pielikuma rediģēšana
 function openAttForm(id){
-  const existing = state.attachments.find(a => a.id === id);
+  // Versija 246: arī bibliotēkas sagatavēm (izmaiņas – state.attLibEd)
+  const own = state.attachments.find(a => a.id === id), existing = own || libAtts().find(a => a.id === id && a.lib), isLib = !own && !!existing;
   const a = existing ? {...existing} : {name:'', desc:'', cat:ui.sag.cat || 'uzaicinajums', aud:ui.sag.aud || 'fiz', lang:'lv'};
   let file = null;
   const opts = (entries, cur) => entries.map(([k, v]) => `<option value="${k}" ${k === cur ? 'selected' : ''}>${esc(v)}</option>`).join('');
@@ -9639,7 +9645,7 @@ function openAttForm(id){
         ${existing ? `<span class="hint">Pašreizējais fails: <b>${esc(a.fileName)}</b> (${fmtSize(a.size)})</span>` : ''}
         <span class="err" id="af-file-err" hidden></span></div>
       ${existing && (existing.versions || []).length ? `<div class="field full"><span class="label">Iepriekšējās versijas</span><ul class="ver-list">${existing.versions.map((v, i) =>
-        `<li>${esc(v.fileName)} · ${fmtSize(v.size)} · aizstāta ${fmtDateTime(v.replaced)} <button type="button" class="link-btn" data-ver="${i}">Atvērt</button></li>`).join('')}</ul></div>` : ''}
+        `<li>${esc(v.fileName)}${v.file ? ' (oriģināls)' : ''} · ${fmtSize(v.size)} · aizstāta ${fmtDateTime(v.replaced)} <button type="button" class="link-btn" data-ver="${i}">Atvērt</button></li>`).join('')}</ul></div>` : ''}
       <div class="field full"><label for="af-name">Nosaukums <span class="req">*</span></label>
         <input type="text" id="af-name" value="${esc(a.name)}" placeholder="piem., Instrukcija e-anketas aizpildīšanai">
         <span class="err" id="af-name-err" hidden></span></div>
@@ -9648,6 +9654,8 @@ function openAttForm(id){
       <div class="field"><label for="af-kind">Veids</label><select id="af-kind">${opts(Object.entries(ATT_KINDS), attKindOf(a))}</select></div>
       <div class="field"><label for="af-cat">Kategorija</label><select id="af-cat">${opts(Object.entries(ATT_CATS), a.cat)}</select></div>
       <div class="field"><label for="af-aud">Adresāti</label><select id="af-aud">${opts(Object.keys(AUDS).map(k => [k, attAudLabel(k)]), a.aud)}</select></div>
+      <div class="field"><label for="af-lang">Valoda</label><select id="af-lang">${opts([['lv', 'Latviešu'], ['', 'Nav norādīta']], a.lang || '')}</select></div>
+      <div class="field full"><label for="af-survey">Apsekojums</label><select id="af-survey">${opts([['', '—'], ...[...new Set([...(a.survey ? [a.survey] : []), ...state.reports.map(r => r.name)])].map(n => [n, n])], a.survey || '')}</select></div>
       <div class="field full"><label for="af-namejs">Adrese (saite uz NAMEJS)${tip(NAMEJS_TIP)}</label>
         <input type="url" id="af-namejs" value="${esc(a.namejs || '')}" placeholder="https://namejs.example/doc/…" inputmode="url" autocomplete="off">
         <span class="err" id="af-namejs-err" hidden></span></div>
@@ -9663,15 +9671,18 @@ function openAttForm(id){
         if (fErr){ $('#af-file').focus(); return; }
         if (!name){ $('#af-name').focus(); return; }
         if (njErr){ $('#af-namejs').focus(); return; }
-        const d = {name, desc:$('#af-desc').value.trim(), kind:$('#af-kind').value, cat:$('#af-cat').value, aud:$('#af-aud').value, namejs:nj};
+        const d = {name, desc:$('#af-desc').value.trim(), kind:$('#af-kind').value, cat:$('#af-cat').value, aud:$('#af-aud').value, lang:$('#af-lang').value, survey:$('#af-survey').value, namejs:nj};
         if (file) Object.assign(d, await readAttFile(file));
         if (existing){
           // aizstājot failu, iepriekšējo saglabā kā versiju (pēdējās 3)
           edPrep('att', existing);
           const dd = [file && `Aizstāts fails: ${d.fileName}`, existing.name !== d.name && 'Mainīts nosaukums', (existing.desc || '') !== d.desc && 'Mainīts apraksts', attKindOf(existing) !== d.kind && 'Mainīts veids',
-            existing.cat !== d.cat && 'Mainīta kategorija', existing.aud !== d.aud && 'Mainīti adresāti', (existing.namejs || '') !== d.namejs && 'Mainīta saite uz NAMEJS'].filter(Boolean);
-          if (file && existing.data) existing.versions = [{fileName:existing.fileName, size:existing.size, data:existing.data, pages:existing.pages, replaced:new Date().toISOString()}, ...(existing.versions || [])].slice(0, 3);
+            existing.cat !== d.cat && 'Mainīta kategorija', existing.aud !== d.aud && 'Mainīti adresāti', (existing.lang || '') !== d.lang && 'Mainīta valoda', (existing.survey || '') !== d.survey && 'Mainīts apsekojums',
+            (existing.namejs || '') !== d.namejs && 'Mainīta saite uz NAMEJS'].filter(Boolean);
+          // iepriekšējā versija: pārlūkā saglabāts fails (data) vai bibliotēkas oriģinālais PDF (file – mapē pielikumi/)
+          if (file && (existing.data || existing.lib)) existing.versions = [{fileName:existing.fileName, size:existing.size, data:existing.data || '', file:existing.data ? '' : existing.file, pages:existing.pages, replaced:new Date().toISOString()}, ...(existing.versions || [])].slice(0, 3);
           Object.assign(existing, d, {updated:new Date().toISOString(), updatedBy:CURRENT_USER});
+          if (isLib){ state.attLibEd = state.attLibEd || {}; const {id:_i, lib:_l, file:_f, thumb:_t, ...ov} = existing; state.attLibEd[existing.id] = ov; }
           edAdd('att', existing, 'edit', dd.length ? dd : ['Saglabāta bez izmaiņām']);
           state.templates.forEach(t => (t.files || []).forEach(f => { if (f.lib === existing.id){ f.name = existing.fileName; f.size = existing.size; } }));
         } else { const na = {id:'att-' + uid(), added:new Date().toISOString(), ...d, updatedBy:CURRENT_USER, author:CURRENT_USER}; state.attachments.push(na); edAdd('att', na, 'create', `Pievienots fails: ${na.fileName}`, true); }
@@ -9685,6 +9696,7 @@ function openAttForm(id){
   $$('[data-ver]', modal).forEach(b => b.addEventListener('click', () => {
     const v = existing.versions[+b.dataset.ver];
     if (v && v.data) window.open(URL.createObjectURL(dataUrlToBlob(v.data)), '_blank', 'noopener');
+    else if (v && v.file) window.open(ATT_DIR + v.file, '_blank', 'noopener'); // bibliotēkas oriģinālais PDF
   }));
   $('#af-file').addEventListener('change', e => {
     file = e.target.files[0] || null;
@@ -9692,7 +9704,7 @@ function openAttForm(id){
   });
 }
 async function deleteAtt(id){
-  const a = state.attachments.find(x => x.id === id);
+  const own = state.attachments.find(x => x.id === id), a = own || libAtts().find(x => x.id === id && x.lib); // Versija 246: arī bibliotēkas sagatavēm
   if (!a) return;
   const asMain = state.templates.filter(t => t.kind === 'pielikums' && t.main && t.main.lib === id);
   if (asMain.length){ toast(`Pielikumu nevar dzēst – tas ir galvenā vēstule veidnei “${asMain[0].name}”. Vispirms nomainiet to veidnē.`, true); return; }
@@ -9700,7 +9712,8 @@ async function deleteAtt(id){
   const ok = await confirmDialog({title:'Dzēst pielikumu?', okLabel:'Dzēst', danger:true,
     message:`Pielikums <b>${esc(a.name)}</b> tiks dzēsts no sagatavēm.${used.length ? ` Tas tiks noņemts arī no ${used.length} ${plural(used.length, 'veidnes', 'veidnēm')}.` : ''}`});
   if (!ok) return;
-  state.attachments = state.attachments.filter(x => x.id !== id);
+  if (own) state.attachments = state.attachments.filter(x => x.id !== id);
+  else { state.attLibDel = [...new Set([...(state.attLibDel || []), id])]; if (state.attLibEd) delete state.attLibEd[id]; }
   state.templates.forEach(t => { t.files = (t.files || []).filter(f => f.lib !== id); });
   save(); renderAttachments(); renderTemplates(); renderCounts(); toast('Pielikums dzēsts.');
 }
