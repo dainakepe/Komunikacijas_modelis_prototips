@@ -2130,6 +2130,11 @@ dialog.drawer.al-drawer{width:min(420px,100vw)}
 /* "Veikt atlasi" – neitrāla, maza sekundāra poga (nav aizpildīta akcenta krāsā) */
 .btn.sel-run-btn{flex:none;height:32px;padding:0 14px;font-size:13px;font-weight:600;background:#fff;border:1px solid #A9C9CF;color:#1F5E69}
 .btn.sel-run-btn:hover:not(:disabled){background:#EEF5F6;border-color:#A9C9CF}
+/* Versija 247: atlase vēl nav veikta / filtri mainīti – primārā poga (kā "Apstiprināt atlasi un turpināt →") */
+.btn.sel-run-btn.is-primary{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.btn.sel-run-btn.is-primary:hover:not(:disabled){background:var(--primary-hover);border-color:var(--primary-hover)}
+.sel-stale{font-size:var(--fs-xs);color:var(--text-muted)}
+.sel-stale[hidden]{display:none}
 .scope-res .sr-muted{color:var(--text-muted)}
 /* "Tālāk" bez veiktas atlases – neaktīva, bet ar padomu */
 .btn[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
@@ -4002,7 +4007,7 @@ th.has-exp{padding-right:32px !important}
           </div>
           <div class="scope-bar" id="c-sel-run">
             <div class="scope-res" id="c-scope-res" role="status" aria-live="polite"></div>
-            <div class="scope-bar-r"><span class="dvp-note" id="c-dvp"></span><button type="button" class="btn btn-secondary sel-run-btn" id="c-sel-btn" data-action="c-sel-run">Veikt atlasi</button></div>
+            <div class="scope-bar-r"><span class="dvp-note" id="c-dvp"></span><span class="sel-stale" id="c-sel-stale" role="status" hidden>Filtri mainīti – atjaunojiet atlasi</span><button type="button" class="btn btn-secondary sel-run-btn" id="c-sel-btn" data-action="c-sel-run">Veikt atlasi</button></div>
           </div>
           </div>
           <h3 class="sub-h scope-h" id="c-prio-h">Adrešu prioritāte<span class="tip" tabindex="0" role="note" aria-label="Katram respondentam vēstule tiek sūtīta uz pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, tiek mēģināta nākamā. 1. prioritāte – obligāta, 2. un 3. var būt tukšas." data-tip="Katram respondentam vēstule tiek sūtīta uz pirmo pieejamo adresi pēc prioritātes. Ja sūtīšana neizdodas, tiek mēģināta nākamā. 1. prioritāte – obligāta, 2. un 3. var būt tukšas.">i</span></h3>
@@ -4266,7 +4271,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 246</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 247</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -6233,6 +6238,7 @@ function nameSfxOf(d){
   return cleanNameSfx((m ? m[1] : n).replace(/[()]/g, ' ').trim()).replace(/^_+|_+$/g, '').replace(/_{2,}/g, '_');
 }
 function applySnapshot(d){
+  compose.selStale = false; // Versija 247: atzīme "Filtri mainīti" – tikai šīs sesijas izmaiņām
   Object.assign(compose, {
     print: d.print !== false, stepsOk: new Set(d.stepsOk || []), name: d.name || defaultSessionName(), nameSfx: nameSfxOf(d), nameAuto: true, desc: d.desc || '', createdAt: d.createdAt || d.savedAt || '', aud: campAud(d.aud),
     kind: SESS_KINDS[d.kind] ? d.kind : 'uzaicinajums', remind: d.remind === 'after' ? 'after' : 'before',
@@ -6311,7 +6317,7 @@ function renderDraftInfo(){
 }
 // Jauna kampaņa (pēc nosūtīšanas – saglabā apsekojuma datus un adrešu prioritāti)
 function newSession(full){
-  Object.assign(compose, {draftId:'k' + uid(), plannedId:null, nameAuto:true, nameSfx:'', createdAt:new Date().toISOString(), content:null, excluded:new Set(), nsIncl:[], open:new Set(), index:0, noneOpen:false});
+  Object.assign(compose, {selStale:false, draftId:'k' + uid(), plannedId:null, nameAuto:true, nameSfx:'', createdAt:new Date().toISOString(), content:null, excluded:new Set(), nsIncl:[], open:new Set(), index:0, noneOpen:false});
   // jaunai kampaņai – noklusējuma veids un atlase; pēc nosūtīšanas saglabājas adresāts, apsekojuma dati un adrešu prioritāte
   Object.assign(compose, {desc:'', kind:'uzaicinajums', remind:'before', sel:defaultSel(), search:'', repF:'', when:'now', sendTime:'09:00', apv:defaultApv(), review:null, tests:[], selRun:null, wl:wlNew(), custom:{}, step:1, stepsOk:new Set(), pvCh:'', tried:new Set(), varOvr:{}, addrFix:{}, addrUndo:{}, exc:{}, dupKeep:{}, shared:{}, miRej:{}, addrMi:{}, addrMeta:{}, addrReq:{}, riskOk:{}, riskSkip:{}, regSent:{}, acF:''});
   if (full) Object.assign(compose, {aud:'fiz', surveyIdx:0, prio:prioDefault('fiz'), prioManual:false, filt:{},
@@ -10501,11 +10507,13 @@ function renderScopeResult(){
   btn.disabled = busy || !selReady(); btn.textContent = busy ? 'Atlasa…' : 'Veikt atlasi'; btn.setAttribute('aria-busy', String(busy));
   btn.title = selReady() ? '' : fizMode() && compose.sel.reports[0] ? 'Izvēlieties gadu.' : 'Vispirms izvēlieties vismaz vienu apsekojumu.';
   // mainot jebkuru tvēruma nosacījumu pēc atlases – iepriekšējais rezultāts tiek dzēsts (atkal "Atlase vēl nav veikta.")
-  if (!busy && r && r !== 'legacy' && sigOf(r) !== scopeSig()) compose.selRun = null;
+  if (!busy && r && r !== 'legacy' && sigOf(r) !== scopeSig()){ compose.selRun = null; compose.selStale = true; } // Versija 247: atzīme "Filtri mainīti"
   // no adresēm atkarīgais skaitlis ("ar derīgu adresi") – pēc pašreizējās adrešu prioritātes
   const cur = selRunNow(), live = cur && !busy ? {...cur, valid:scopeResult().valid} : cur;
   box.innerHTML = busy ? '<span class="sr-muted">Atlasa…</span>' : !cur ? '<span class="sr-muted">Atlase vēl nav veikta.</span>' : esc(selText(live))
     + (compose.aud === 'jur' && live.n ? `<span class="sr-ns">Neiekļauti šifri: ${esc(nsSumTxt(nsOutResp().length))}</span>` : ''); // Versija 239
+  // Versija 247: atlase nav veikta vai filtri mainīti pēc atlases – "Veikt atlasi" ir primārā poga; atlase veikta un atbilst filtriem – sekundāra
+  btn.classList.toggle('is-primary', busy || !cur); $('#c-sel-stale').hidden = busy || !!cur || !compose.selStale;
   if (compose.step === 1 && $('#wiz-next')) renderStepNav(1);
 }
 function runSelection(){
@@ -10513,7 +10521,7 @@ function runSelection(){
   if (ui.selBusy || !selReady()) return;
   ui.selBusy = true; renderScopeResult();
   setTimeout(() => {
-    ui.selBusy = false; compose.selRun = makeSelRun();
+    ui.selBusy = false; compose.selRun = makeSelRun(); compose.selStale = false;
     alAddC('select', `${alCnt(selectedResp().length, 'respondents', 'respondenti')}, ${alCnt(recipients().length, 'vēstule', 'vēstules')}`); saveDraft();
     renderScopeResult(); renderComposeList(); renderComposePreview();
     const b = $('#c-sel-btn'); if (b && document.activeElement === document.body) b.focus();
