@@ -910,6 +910,9 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .dt-btn .icon,.dt-ic .icon{width:17px;height:17px}
 .dt-ic{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;display:flex}
 .dt-native{position:absolute;right:0;bottom:0;width:1px;height:1px;opacity:0;border:0;padding:0;pointer-events:none}
+/* Versija 248: datuma lauks formas laukā – ikona pie lauka, nevis lauka rindas galā */
+.field > .dt-field{align-self:flex-start}
+.fz-dd .dd-list .pf-all{border-bottom:1px solid var(--border-light);font-weight:600}
 @media (max-width:640px){
   .dt-field{flex:1}
   .dt-field input[type="text"],.dt-time input[type="text"]{width:100%}
@@ -4128,7 +4131,9 @@ th.has-exp{padding-right:32px !important}
                 <span class="err" id="c-apv-err" hidden></span>
                 <div class="apv-steps-acts"><button type="button" class="link-btn" data-action="apv-item-add">+ Pievienot grupu vai personu</button></div>
                 <div class="form-grid apv-f2">
-                  <div class="field"><label for="c-apv-due">Saskaņot līdz</label><input type="date" id="c-apv-due"></div>
+                  <div class="field"><label for="c-apv-due">Saskaņot līdz</label><div class="dt-field"><input type="text" id="c-apv-due" data-dtf inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" aria-describedby="c-apv-due-err">
+                    <button type="button" class="dt-btn" data-dt-cal="c-apv-due" aria-label="Izvēlēties saskaņošanas termiņu kalendārā" title="Kalendārs"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></button>
+                    <input type="date" id="c-apv-due-pick" class="dt-native" tabindex="-1" aria-hidden="true"></div><span class="err" id="c-apv-due-err" hidden></span></div>
                   <div class="field"><label for="c-apv-cmt">Komentārs saskaņotājiem <span class="muted">(neobligāts)</span></label><textarea id="c-apv-cmt" rows="2" maxlength="500"></textarea></div>
                 </div>
               </div>
@@ -4271,7 +4276,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 247</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 248</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -10127,7 +10132,7 @@ const hasScope = (sel = compose.sel) => fizMode() ? fzScoped(sel) : surveyMode()
 // Iedzīvotāju statistika: katram apsekojumam – periodu izvēle (vairākizvēle)
 const fizMode = (aud = compose.aud) => aud === 'fiz';
 // reizes / cikli (Respondentu pārvaldība): respondenta pazīme katram periodam
-const ROUNDS = {'a-dsa':{label:'Cikls', word:'reize', acc:'reizi', n:4}, 'a-cel':{label:'Cikls', word:'cikls', acc:'ciklu', n:2}};
+const ROUNDS = {'a-dsa':{label:'Cikls', word:'reize', acc:'reizi', n:4, all:'Visas reizes'}, 'a-cel':{label:'Cikls', word:'cikls', acc:'ciklu', n:2, all:'Visi cikli'}};
 const roundLabel = (id, n) => ROUNDS[id] ? `${n}. ${ROUNDS[id].word}` : '';
 // testa datos: reize / cikls katram pienākumam (respondents × periods), pēc kārtas grupā
 function assignRounds(s){
@@ -10551,9 +10556,12 @@ function renderFz(){
   if (!cOn) ui.cycOpen = false;
   dd.open = !!(cOn && ui.cycOpen);
   sum.setAttribute('aria-disabled', String(!cOn)); sum.tabIndex = cOn ? 0 : -1;
-  sum.innerHTML = !R ? '' : !fz.period ? '<span class="muted">Visi cikli</span>' : rs.length ? rs.map(n => `<span class="cyc-tag">${esc(roundLabel(id, n))}</span>`).join('') : '<span class="muted">Izvēlieties…</span>';
-  $('#c-fz-rounds').innerHTML = cOn ? Array.from({length:R.n}, (_, i) => i + 1).map(n => `<label><input type="checkbox" data-round="${n}" ${rs.includes(n) ? 'checked' : ''}>${esc(roundLabel(id, n))}</label>`).join('') : '';
-  $('#c-fz-rounds-hint').hidden = !cOn || rs.length > 0; if (R) $('#c-fz-rounds-hint').textContent = `Atzīmējiet vismaz vienu ${R.acc}.`;
+  // Versija 248: izvēlnes sākumā "Visi cikli" / "Visas reizes" (noklusējums); atsevišķie cikli – tikai, ja izvēlēti konkrēti
+  const allR = !fz.rounds || !fz.rounds.length;
+  sum.innerHTML = !R ? '' : !fz.period || allR ? `<span class="muted">${esc(R.all)}</span>` : rs.map(n => `<span class="cyc-tag">${esc(roundLabel(id, n))}</span>`).join('');
+  $('#c-fz-rounds').innerHTML = cOn ? `<label class="pf-all"><input type="checkbox" data-round="all" ${allR ? 'checked' : ''}>${esc(R.all)}</label>`
+    + Array.from({length:R.n}, (_, i) => i + 1).map(n => `<label><input type="checkbox" data-round="${n}" ${!allR && rs.includes(n) ? 'checked' : ''}>${esc(roundLabel(id, n))}</label>`).join('') : '';
+  $('#c-fz-rounds-hint').hidden = true;
 }
 // Atlases lauki
 function renderFilters(){
@@ -10852,6 +10860,27 @@ function renderFinalSummary(){
 // 1. solis: komunikācijas veids un nosūtīšanas laiks
 // Ieplānošana: datums DD.MM.GGGG un laiks HH:MM (24 h); nedrīkst būt pagātnē
 const dmy = iso => iso ? iso.split('-').reverse().join('.') : '';
+// ===== Versija 248: kopīgs datuma lauks – teksts DD.MM.GGGG (var ierakstīt ar roku) + kalendāra ikona ar paslēptu dt-native izvēlni =====
+// (tāds pats kā "Datums" un "Vēstules datums" Nosūtīšanas blokā); vērtība – parseDmy(lauks.value) → GGGG-MM-DD
+const DT_CAL_SVG = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>';
+const dtFieldHtml = (id, iso = '', o = {}) => `<div class="dt-field"><input type="text" id="${id}" data-dtf inputmode="numeric" maxlength="10" placeholder="DD.MM.GGGG" autocomplete="off" value="${esc(dmy(iso))}"${o.err ? ` aria-describedby="${o.err}"` : ''}>
+  <button type="button" class="dt-btn" data-dt-cal="${id}" aria-label="${esc(o.calLabel || 'Izvēlēties datumu kalendārā')}" title="Kalendārs">${DT_CAL_SVG}</button>
+  <input type="date" id="${id}-pick" class="dt-native" tabindex="-1" aria-hidden="true"${o.min ? ` min="${o.min}"` : ''}${o.max ? ` max="${o.max}"` : ''}></div>`;
+// lauka pārbaude: '' – tukšs, null – nederīgs (kļūda pie lauka), citādi GGGG-MM-DD
+function dtFieldVal(inp, errEl, o = {}){
+  const raw = inp.value.trim(), iso = raw ? parseDmy(raw) : '';
+  const msg = raw && !iso ? 'Nederīgs datums – ievadiet DD.MM.GGGG.' : iso && o.min && iso < o.min ? (o.minMsg || `Datums nevar būt agrāks par ${fmtDate(o.min)}`) : iso && o.max && iso > o.max ? (o.maxMsg || `Datums nevar būt vēlāks par ${fmtDate(o.max)}`) : '';
+  if (errEl){ errEl.textContent = msg; errEl.hidden = !msg; }
+  inp.setAttribute('aria-invalid', String(!!msg));
+  if (!msg && iso) inp.value = dmy(iso);
+  return msg ? null : iso;
+}
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-dt-cal]'); if (!b) return;
+  const inp = document.getElementById(b.dataset.dtCal), n = document.getElementById(b.dataset.dtCal + '-pick'); if (!inp || !n || inp.disabled) return;
+  n.value = parseDmy(inp.value) || ''; try { n.showPicker(); } catch (er) { inp.focus(); } });
+document.addEventListener('change', e => { const n = e.target; if (!n.classList || !n.classList.contains('dt-native') || !n.id.endsWith('-pick')) return;
+  const inp = document.getElementById(n.id.slice(0, -5)); if (!inp || !inp.hasAttribute('data-dtf') || !n.value) return;
+  inp.value = dmy(n.value); inp.dispatchEvent(new Event('change', {bubbles:true})); inp.focus(); });
 const hmNow = () => { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
 function parseDmy(v){
   v = String(v || '').trim();
@@ -11663,8 +11692,8 @@ function renderApproval(){
   $('#c-apv-steps').innerHTML = apvCampStepsHtml(a);
   const err = compose.tried.has(5) && a.required && !apvItems(a).length;
   $('#c-apv-err').hidden = !err; $('#c-apv-err').textContent = err ? 'Norādiet vismaz vienu saskaņotāju.' : '';
-  if (document.activeElement !== $('#c-apv-due')) $('#c-apv-due').value = a.due || '';
-  $('#c-apv-due').min = todayIso();
+  if (document.activeElement !== $('#c-apv-due') && $('#c-apv-due').getAttribute('aria-invalid') !== 'true') $('#c-apv-due').value = dmy(a.due || ''); // Versija 248: DD.MM.GGGG
+  $('#c-apv-due-pick').min = todayIso();
   if (document.activeElement !== $('#c-apv-cmt')) $('#c-apv-cmt').value = a.comment || '';
   // kartes: izslēgtajai kartei – pelēcīgs stāvoklis un paskaidrojums
   $('#s3-apv').classList.toggle('is-off', !a.required); $('#c-apv-off').hidden = !!a.required;
@@ -12433,10 +12462,10 @@ function openMarkPosted(ids){
   const xs = state.sent.filter(x => ids.includes(x.id) && x.status === 'drukai'); if (!xs.length){ toast('Atlasītajām vēstulēm šī darbība nav pieejama.', true); return; }
   const minD = xs.map(x => isoDate(new Date(x.print.handedAt))).sort().pop(), today = todayIso();
   const {el} = openModal({title:'Atzīmēt kā nosūtītu pa pastu', content:`<p style="margin-top:0">${xs.length} ${plural(xs.length, 'vēstule', 'vēstules')} (nodotas drukai) tiks atzīmētas kā nosūtītas pa pastu.</p>
-    <div class="field"><label for="mp-date">Nosūtīšanas datums</label><input type="date" id="mp-date" value="${today}" min="${minD}" max="${today}" aria-describedby="mp-err"><span class="err" id="mp-err" hidden></span></div>`, actions:[
+    <div class="field"><label for="mp-date">Nosūtīšanas datums</label>${dtFieldHtml('mp-date', today, {min:minD, max:today, err:'mp-err', calLabel:'Izvēlēties nosūtīšanas datumu kalendārā'})}<span class="err" id="mp-err" hidden></span></div>`, actions:[
     {label:'Atcelt'},
-    {label:`${ICON.check}Atzīmēt`, cls:'btn-primary', onClick:c => { const v = $('#mp-date', el).value, er = $('#mp-err', el);
-      if (!v || v > today || v < minD){ er.textContent = !v ? 'Norādiet datumu.' : v > today ? 'Datums nevar būt nākotnē.' : `Datums nevar būt agrāks par nodošanu drukai (${fmtDate(minD)}).`; er.hidden = false; return; }
+    {label:`${ICON.check}Atzīmēt`, cls:'btn-primary', onClick:c => { const inp = $('#mp-date', el), er = $('#mp-err', el), v = dtFieldVal(inp, er, {min:minD, max:today, minMsg:`Datums nevar būt agrāks par nodošanu drukai (${fmtDate(minD)}).`, maxMsg:'Datums nevar būt nākotnē.'}); // Versija 248
+      if (v === null){ inp.focus(); return; } if (!v){ er.textContent = 'Norādiet datumu.'; er.hidden = false; inp.setAttribute('aria-invalid', 'true'); inp.focus(); return; }
       markPostedOn(xs, v); c(); }}]});
 }
 function markPostedOn(xs, d){
@@ -16619,9 +16648,11 @@ $('#c-fz-cyc').addEventListener('keydown', e => { if (e.key === 'Escape' && e.cu
 $('#c-fz-rounds').addEventListener('change', e => {
   const c = e.target.closest('[data-round]'), R = ROUNDS[compose.sel.reports[0]];
   if (!c || !R) return;
-  const cur = fzRounds(), n = +c.dataset.round, next = c.checked ? [...new Set([...cur, n])].sort((a, b) => a - b) : cur.filter(x => x !== n);
-  compose.sel.fz.rounds = next.length === R.n ? null : next;
-  selChanged(); const el = $(`#c-fz-rounds [data-round="${n}"]`); if (el) el.focus();
+  // Versija 248: "Visi" – visi cikli (atsevišķie noņemti); atsevišķs cikls – "Visi" noņemts; ja neviena atsevišķa – atkal "Visi"
+  const k = c.dataset.round, own = compose.sel.fz.rounds || [];
+  if (k === 'all') compose.sel.fz.rounds = null;
+  else { const n = +k, next = c.checked ? [...new Set([...own, n])].sort((a, b) => a - b) : own.filter(x => x !== n); compose.sel.fz.rounds = next.length && next.length < R.n ? next : null; }
+  selChanged(); const el = $(`#c-fz-rounds [data-round="${k}"]`); if (el) el.focus();
 });
 
 $$('[data-f]').forEach(inp => inp.addEventListener('input', () => { compose.f[inp.dataset.f] = inp.value.trim(); renderComposePreview(); }));
@@ -17395,7 +17426,7 @@ $('#c-apv-steps').addEventListener('click', e => {
   const b = e.target.closest('[data-c-rm]'); if (!b) return;
   const a = apvEnsure(compose.apv), [i, j] = b.dataset.cRm.split('|').map(Number);
   a.steps[i].items.splice(j, 1); renderWizard(); saveDraft(); });
-$('#c-apv-due').addEventListener('change', e => { compose.apv.due = e.target.value; saveDraft(); });
+$('#c-apv-due').addEventListener('change', e => { const iso = dtFieldVal(e.target, $('#c-apv-due-err'), {min:todayIso(), minMsg:'Termiņš nevar būt pagātnē.'}); if (iso === null) return; compose.apv.due = iso; saveDraft(); });
 $('#c-apv-cmt').addEventListener('input', e => { compose.apv.comment = e.target.value; saveDraft(); });
 $('#c-pvch').addEventListener('click', e => {
   const b = e.target.closest('[data-pvch]');
