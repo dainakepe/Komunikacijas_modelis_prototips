@@ -4293,7 +4293,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 251</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 252</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7837,11 +7837,11 @@ function openButtonDialog(data, onDone){
   $$('input[type=text]', submodal).forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('.modal-foot .btn-primary', submodal).click(); } }));
   preview();
 }
-function confirmDialog({title, message, okLabel = 'Apstiprināt', danger = false, html = '', focusCancel = false}){
+function confirmDialog({title, message, okLabel = 'Apstiprināt', cancelLabel = 'Atcelt', danger = false, html = '', focusCancel = false}){
   return new Promise(resolve => {
     let result = false;
     openModal({title, content:html || `<p>${message}</p>`, actions:[
-      {label:'Atcelt', cls:'btn-secondary'},
+      {label:cancelLabel, cls:'btn-secondary'},
       {label:okLabel, cls: danger ? 'btn-danger' : 'btn-primary', onClick: c => { result = true; c(); }},
     ]});
     modal.addEventListener('close', () => resolve(result), {once:true});
@@ -11204,7 +11204,7 @@ function renderComposeList(){
     const why = !c.value ? '' : c.status === 'error' ? 'Nederīga' : c.status === 'pot' && (c.mi || !rk) ? 'Potenciāli kļūdaina' : stTip; // MI ieteikums – padomā un pogās ✨ ✓ ✕
     // Versija 249: "Labot" – problēmas adresēm un adresēm ar labojumu / ziņojumu administratoram (forma ar esošo vērtību)
     if (c.value && !rk && !ui.view && !apvLocked() && (['error', 'pot'].includes(c.status) || labState(r, k) || c.status === 'edit'))
-      acts.push(`<button type="button" class="link-btn ac-lnk ac-labot" data-ac-edit="${key}" data-ac-labot="${key}" aria-expanded="${edOpen}" aria-label="${esc(nm)}: labot adresi">Labot</button>`);
+      acts.push(`<button type="button" class="link-btn ac-lnk ac-labot" data-ac-edit="${key}" data-ac-labot="${key}" aria-expanded="${edOpen}" aria-label="${esc(nm)}: ${edOpen ? 'aizvērt labošanas formu' : 'labot adresi'}">${edOpen ? 'Aizvērt' : 'Labot'}</button>`); // Versija 252: pārslēgs
     return `<td class="c-addr${edOpen ? ' is-ed' : ''}" title="${edOpen ? '' : esc(tip)}"><div class="cell1">${main}${why ? `<small class="ac-why q-${st.cls}">${esc(why)}</small>` : ''}${acts.join('')}</div>${edOpen ? `<!--ac-ed-->${acEditor(r, k, c)}` : ''}</td>`;
   };
   // Versija 177: rindai vajag uzmanību – pot. kļūdaina adrese bez lēmuma, neapstiprināts MI ieteikums, koplietojama adrese bez lēmuma
@@ -17159,7 +17159,7 @@ $('#c-list').addEventListener('click', e => {
   if (rku){ const key = rku.dataset.rkUndo; delete (compose.riskOk || {})[key]; delete (compose.riskSkip || {})[key]; acChanged(); toast('Izvēle atsaukta – adrese atkal atzīmēta kā riskanta.'); const el = $(`#c-list [data-ac-risk="${key}"]`); if (el) el.focus(); return; }
   const ed = e.target.closest('[data-ac-edit]'), sv = e.target.closest('[data-ac-save]'), un = e.target.closest('[data-ac-undo]'), rd = e.target.closest('[data-ac-redo]'), rs = e.target.closest('[data-ac-reset]');
   if (ed){ const nk = ed.dataset.acEdit;
-    if (ui.acEdit === nk){ const i = $(`[data-ac-in="${nk}"]`); if (i) i.focus(); return; }
+    if (ui.acEdit === nk){ acEdClose(); return; } // Versija 252: "Aizvērt" / atkārtots klikšķis uz adreses – sakļauj formu
     // Versija 249: vienlaikus atvērta tikai viena forma; ja atvērtajā ir nesaglabātas izmaiņas – jautā
     const cur = ui.acEdit && $(`#c-list [data-ac-ed="${ui.acEdit}"]`), inp = cur && $('[data-ac-in]', cur), scope = cur && $('input[type="radio"]:checked', cur);
     const dirty = !!cur && ((inp && inp.value.trim() !== (inp.dataset.init || '').trim()) || (scope && scope.value !== 'camp'));
@@ -17167,7 +17167,7 @@ $('#c-list').addEventListener('click', e => {
     if (dirty){ confirmDialog({title:'Nesaglabāts labojums', okLabel:'Atmest un atvērt', message:'Atvērtajā adreses labošanas formā ir nesaglabātas izmaiņas. Atmest tās un labot citu adresi?'}).then(ok => { if (ok) go(); }); return; }
     go(); return; }
   if (sv){ acSave(sv.dataset.acSave); return; }
-  if (e.target.closest('[data-ac-cancel]')){ const k = ui.acEdit || e.target.closest('[data-ac-cancel]').dataset.acCancel; ui.acEdit = ''; renderComposeList(); const el = $(`#c-list [data-ac-edit="${k}"], #c-list [data-ac-in="${k}"]`); if (el) el.focus(); return; }
+  if (e.target.closest('[data-ac-cancel]')){ const k = ui.acEdit || e.target.closest('[data-ac-cancel]').dataset.acCancel; ui.acEdit = ''; renderComposeList(); const el = $(`#c-list [data-ac-labot="${k}"], #c-list [data-ac-edit="${k}"], #c-list [data-ac-in="${k}"]`); if (el) el.focus(); return; }
   { const rq = e.target.closest('[data-ac-req]'); if (rq){ openAddrReq([rq.dataset.acReq]); return; } }
   if (un){ acUndo(un.dataset.acUndo); return; }
   if (rd){ acRedo(rd.dataset.acRedo); return; }
@@ -17184,10 +17184,20 @@ $('#c-list').addEventListener('click', e => {
   if (sh){ openSharedModal(sh.dataset.shared, sh); return; }
   if (rs) acReset(rs.dataset.acReset);
 });
+// Versija 252: atvērtās adreses labošanas formas sakļaušana ("Aizvērt", atkārtots klikšķis, Esc); nesaglabātas izmaiņas – jautā; fokuss – uz "Labot"
+const acEdDirty = () => { const cur = ui.acEdit && $(`#c-list [data-ac-ed="${ui.acEdit}"]`), inp = cur && $('[data-ac-in]', cur), sc = cur && $('input[type="radio"]:checked', cur);
+  return !!cur && ((inp && inp.value.trim() !== (inp.dataset.init || '').trim()) || (sc && sc.value !== 'camp')); };
+function acEdClose(){
+  const k = ui.acEdit; if (!k) return;
+  const done = () => { ui.acEdit = ''; renderComposeList(); const el = $(`#c-list [data-ac-labot="${k}"]`) || $(`#c-list [data-ac-edit="${k}"]`); if (el) el.focus(); };
+  if (!acEdDirty()){ done(); return; }
+  confirmDialog({title:'Atmest izmaiņas?', okLabel:'Atmest', cancelLabel:'Turpināt labot', message:'Adreses labošanas formā ir nesaglabātas izmaiņas.'})
+    .then(ok => { if (ok) done(); else { const i = $(`#c-list [data-ac-in="${k}"]`); if (i) i.focus(); } });
+}
 $('#c-list').addEventListener('keydown', e => {
-  if (e.target.id !== 'ac-in') return;
-  if (e.key === 'Enter'){ e.preventDefault(); acSave(e.target.closest('[data-ac-ed]').dataset.acEd); }
-  if (e.key === 'Escape'){ e.preventDefault(); const k = ui.acEdit; ui.acEdit = ''; renderComposeList(); const el = $(`#c-list [data-ac-edit="${k}"]`); if (el) el.focus(); }
+  const ed = e.target.closest && e.target.closest('[data-ac-ed]'); if (!ed) return;
+  if (e.key === 'Enter' && e.target.matches('[data-ac-in]')){ e.preventDefault(); acSave(ed.dataset.acEd); }
+  if (e.key === 'Escape'){ e.preventDefault(); e.stopPropagation(); acEdClose(); }
 });
 // 1.2 Kontaktinformācija: filtri un eksports; 1.1 Mērķa grupa: izņēmumi
 
