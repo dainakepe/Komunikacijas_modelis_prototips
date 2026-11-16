@@ -4293,7 +4293,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 250</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 251</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -14851,7 +14851,9 @@ const serVis = (id, series) => { const h = serHidden(id), v = series.filter(([k]
 function legendTgHtml(id, series){
   const h = serHidden(id), on = series.filter(([k]) => !h.includes(k)), allOff = !on.length;
   return `<div class="viz-legend lg-tg-row" role="group" aria-label="Rādītāji grafikā (ieslēgt / izslēgt)">${series.map(([k, l, v]) => { const isOn = allOff || !h.includes(k), last = isOn && (allOff ? series.length === 1 : on.length === 1);
-    return `<button type="button" class="lg-tg${isOn ? ' is-on' : ''}" data-lg="${id}" data-lg-k="${k}" aria-pressed="${isOn}"${last ? ' aria-disabled="true" data-ctip="Jābūt redzamam vismaz vienam rādītājam"' : ` title="${isOn ? 'Paslēpt' : 'Rādīt'} grafikā: ${esc(l)}"`} style="--lg:var(--${v})"><span class="lg-box" aria-hidden="true">${isOn ? '✓' : ''}</span>${esc(l)}</button>`; }).join('')}</div>`;
+    const def = (typeof RATE_DEF !== 'undefined' && RATE_DEF[k]) || '', lock = 'Jābūt redzamam vismaz vienam rādītājam.'; // Versija 251: definīcija – gaišajā padomā
+    const ct = def ? (last ? `${def} (${lock})` : def) : last ? lock : '';
+    return `<button type="button" class="lg-tg${isOn ? ' is-on' : ''}" data-lg="${id}" data-lg-k="${k}" aria-pressed="${isOn}"${last ? ' aria-disabled="true"' : ''}${ct ? ` data-ctip="${esc(ct)}"` : ''}${!def && !last ? ` title="${isOn ? 'Paslēpt' : 'Rādīt'} grafikā: ${esc(l)}"` : ''}${def ? ` aria-description="${esc(def)}"` : ''} style="--lg:var(--${v})"><span class="lg-box" aria-hidden="true">${isOn ? '✓' : ''}</span>${esc(l)}</button>`; }).join('')}</div>`;
 }
 // Mani filtri: normalizēti izslēgtie rādītāji ({} – visi redzami)
 function serCanon(ser){ const out = {}, D = serDefs(); Object.entries(ser || {}).forEach(([id, ks]) => { const all = (D[id] || []).map(([k]) => k), h = [...new Set((ks || []).filter(k => all.includes(k)))].sort(); if (h.length && h.length < all.length) out[id] = h; }); return out; }
@@ -14859,7 +14861,7 @@ const serSumTxt = ser => Object.entries(serCanon(ser)).map(([id, ks]) => ks.map(
 document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-lg]'); if (!b) return;
   if (b.getAttribute('aria-disabled') === 'true'){ toast('Jābūt redzamam vismaz vienam rādītājam.'); return; }
   const id = b.dataset.lg, k = b.dataset.lgK, h = new Set(serHidden(id)); h.has(k) ? h.delete(k) : h.add(k);
-  ui.rep.ser = {...(ui.rep.ser || {}), [id]:[...h]}; renderReports();
+  ui.rep.ser = {...(ui.rep.ser || {}), [id]:[...h]}; hideCTip(); renderReports();
   const n = $(`#rep-body [data-lg="${id}"][data-lg-k="${k}"]`); if (n) n.focus(); });
 const legendHtml = series => `<div class="viz-legend">${series.map(([, l, v]) => `<span><i style="background:var(--${v})"></i>${esc(l)}</span>`).join('')}</div>`;
 // Horizontāli sakrauti stabiņi (kategorija × statuss)
@@ -15532,7 +15534,12 @@ function repKpis(xs){
   return {...r, delivP:r.delivP ?? 0, openP:r.openP ?? 0, subP:r.subP ?? 0, nF:fs.length, ies, iesP:pct(ies, fs.length), todo:xs.filter(isTodo).length};
 }
 const RATE_SER = [['delivP', 'Piegādes īpatsvars', 's1'], ['openP', 'Atvēršanas īpatsvars (e-pasts, aptuveni)', 's3'], ['subP', 'Iesniegšanas īpatsvars', 's4']];
-const RATE_TIP = 'Piegādes īpatsvars = elektroniski piegādātās / (piegādātās + nepiegādātās) vēstules (vēstules, kuru piegāde vēl procesā, un drukātās vēstules respondentiem bez elektroniskās adreses neieskaita; nepiegādātas – arī tās, kas gaida manuālu pārbaudi vai administratora risinājumu, un tās, kas pēc neveiksmes nosūtītas pa pastu – sākotnējais rezultāts). Atvēršanas īpatsvars (e-pasts, aptuveni) = atvērtie e-pasti / piegādātie e-pasti (arī tie, kas vēl gaida 72 h NDR logā; eAdreses un drukātās vēstules neieskaita; atvēršana – pēc izsekošanas attēla). Iesniegšanas īpatsvars = vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (informatīvās vēstules bez anketām neieskaita).';
+// Versija 251: rādītāju definīcijas – viena konstante (grafika leģendas padoms, KPI kartīšu (i), grafika (i))
+const RATE_DEF = {
+  delivP:'Piegādātās ziņas / nosūtītās ziņas (visi kanāli). Ziņas, kuru piegāde vēl notiek, netiek ieskaitītas.',
+  openP:'Atvērtie e-pasti / piegādātie e-pasti. Aptuveni – atvēršanu nosaka pēc attēlu ielādes, daļa pastkastu to bloķē. eAdreses un drukātās vēstules netiek skaitītas.',
+  subP:'Iesniegtās veidlapas / piegādātās vēstules ar anketām (uzaicinājumi un atgādinājumi). Skaita veidlapas, kas iesniegtas pēc vēstules saņemšanas.'};
+const RATE_TIP = RATE_SER.map(([k, l]) => `${l}: ${RATE_DEF[k]}`).join('\n\n');
 // Versija 250: tikai redzamie rādītāji (padomā)
 const rateTxtK = (r, keys) => rateTxt(r).split(' · ').filter((t, i) => keys.includes(RATE_SER[i][0])).join(' · ');
 const rateTxt = r => `Piegāde ${r.delivP ?? '—'}${r.delivP != null ? '%' : ''} (${fmtCount(r.deliv)} no ${fmtCount(r.base)}) · Atvēršana ${r.openP ?? '—'}${r.openP != null ? '%' : ''} (${fmtCount(r.open)} no ${fmtCount(r.em)}) · Iesniegšana ${r.subP ?? '—'}${r.subP != null ? '%' : ''} (${fmtCount(r.sub)} no ${fmtCount(r.delivF)})`;
@@ -15588,9 +15595,9 @@ function summaryView(xs){
   const arr = '<span class="rk-arr" aria-hidden="true">→</span>';
   const flow = `<div class="rk-flow">
       ${card({n:k.sent, l:'Nosūtītas', sub:`${new Set(xs.filter(isSent).map(x => x.batch)).size} ${plural(new Set(xs.filter(isSent).map(x => x.batch)).size, 'kampaņa', 'kampaņas')}`, d:hasPrev ? repDelta(relCnt(k.sent, kp.sent), 0, '%', 0) : '', drill:{}, title:'Visas nosūtītās vēstules – atvērt sūtījumos'})}${arr}
-      ${card({n:k.base ? `${k.delivP}%` : '—', l:'Piegādes īpatsvars', sub:`${fmtCount(k.deliv)} no ${fmtCount(k.base)} piegādātas · ${fmtCount(k.base - k.deliv)} nepiegādātas`, d:hasPrev ? repDelta(k.delivP, kp.delivP, ' p. p.', 1) : '', drill:{g:'ok'}, title:'Elektroniski piegādātās / (piegādātās + nepiegādātās) vēstules (procesā esošās un drukātās vēstules respondentiem bez elektroniskās adreses neieskaita). Nepiegādāto skaits – tas pats, kas “Ziņas pa kanāliem” un “Nepiegādes iemesli”. Atvērt piegādātās sūtījumos.'})}${arr}
-      ${card({n:k.em ? `${k.openP}%` : '—', l:'Atvēršanas īpatsvars (e-pasts, aptuveni)', sub:k.em ? `${fmtCount(k.open)} no ${fmtCount(k.em)} piegādātiem e-pastiem` : 'nav piegādātu e-pastu', d:hasPrev && k.em && kp.em ? repDelta(k.openP, kp.openP, ' p. p.', 1) : '', drill:{f:{mr:'open'}}, title:'Atvērtie e-pasti / piegādātie e-pasti (arī tie, kas vēl gaida 72 h NDR logā; eAdreses un drukātās vēstules neieskaita; aptuveni – izsekošanas attēls). Atvērt sūtījumos.'})}${arr}
-      ${card({n:k.delivF ? `${k.subP}%` : '—', l:'Iesniegšanas īpatsvars', sub:k.delivF ? `${fmtCount(k.sub)} no ${fmtCount(k.delivF)} piegādātām vēstulēm ar anketām` : 'nav piegādātu vēstuļu ar anketām', d:hasPrev && k.delivF && kp.delivF ? repDelta(k.subP, kp.subP, ' p. p.', 1) : '', drill:{f:{fa:'ies'}}, title:'Vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām – atvērt sūtījumos'})}
+      ${card({n:k.base ? `${k.delivP}%` : '—', l:'Piegādes īpatsvars', sub:`${fmtCount(k.deliv)} no ${fmtCount(k.base)} piegādātas · ${fmtCount(k.base - k.deliv)} nepiegādātas`, d:hasPrev ? repDelta(k.delivP, kp.delivP, ' p. p.', 1) : '', drill:{g:'ok'}, tip:RATE_DEF.delivP, title:'Atvērt piegādātās sūtījumos'})}${arr}
+      ${card({n:k.em ? `${k.openP}%` : '—', l:'Atvēršanas īpatsvars (e-pasts, aptuveni)', sub:k.em ? `${fmtCount(k.open)} no ${fmtCount(k.em)} piegādātiem e-pastiem` : 'nav piegādātu e-pastu', d:hasPrev && k.em && kp.em ? repDelta(k.openP, kp.openP, ' p. p.', 1) : '', drill:{f:{mr:'open'}}, tip:RATE_DEF.openP, title:'Atvērt atvērtās vēstules sūtījumos'})}${arr}
+      ${card({n:k.delivF ? `${k.subP}%` : '—', l:'Iesniegšanas īpatsvars', sub:k.delivF ? `${fmtCount(k.sub)} no ${fmtCount(k.delivF)} piegādātām vēstulēm ar anketām` : 'nav piegādātu vēstuļu ar anketām', d:hasPrev && k.delivF && kp.delivF ? repDelta(k.subP, kp.subP, ' p. p.', 1) : '', drill:{f:{fa:'ies'}}, tip:RATE_DEF.subP, title:'Atvērt sūtījumos ar filtru “Anketa iesniegta”'})}
       <span class="rk-sep" aria-hidden="true"></span>
       ${card({n:k.todo, l:'Jārisina', sub:'nepiegādātas, aizturētas, manuāli, jādrukā', d:hasPrev ? repDelta(k.todo, kp.todo, '', -1) : '', drill:{g:'todo'}, cls:k.todo ? 'is-todo' : '', title:'Vēstules, kas prasa rīcību – atvērt sūtījumos ar “Jārisina”'})}</div>`;
   // Versija 222: laika griezums pēc perioda (dienas / nedēļas / mēneši), pārslēgs virsraksta rindā
@@ -16334,10 +16341,10 @@ $('#cf-toggle').addEventListener('click', () => { const o = !$('#camp-filters').
 $('#camp-sub').addEventListener('click', e => {
   const b = e.target.closest('[data-csub]'); if (!b) return; ui.campSub = b.dataset.csub; ui.campLimit = CAMP_PAGE; renderCampaigns(); $(`#camp-sub [data-csub="${ui.campSub}"]`).focus(); });
 // padoms sarakstā (nosaukums – saglabāšanas / izveides informācija; rezultāts – pilnais teksts)
-document.addEventListener('mouseover', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip], .rk-grain [data-ctip]'); if (el) showCTip(el); });
-document.addEventListener('mouseout', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip], .rk-grain [data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
-document.addEventListener('focusin', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip], .rk-grain [data-ctip]'); if (el) showCTip(el); });
-document.addEventListener('focusout', e => { if (e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip], .rk-grain [data-ctip]')) hideCTip(); });
+document.addEventListener('mouseover', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip], .rk-grain [data-ctip], .lg-tg[data-ctip]'); if (el) showCTip(el); });
+document.addEventListener('mouseout', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip], .rk-grain [data-ctip], .lg-tg[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
+document.addEventListener('focusin', e => { const el = e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip], .rk-grain [data-ctip], .lg-tg[data-ctip]'); if (el) showCTip(el); });
+document.addEventListener('focusout', e => { if (e.target.closest && e.target.closest('.ea-later[data-ctip], .ro-input[data-ctip], .te-doc-checks [data-ctip], .rk-grain [data-ctip], .lg-tg[data-ctip]')) hideCTip(); });
 function hideCTip(){ const t = $('#c-tipbox'); if (t) t.hidden = true; }
 function showCTip(el){
   let t = $('#c-tipbox'); if (!t){ t = document.createElement('div'); t.id = 'c-tipbox'; t.className = 'c-tipbox'; t.setAttribute('role', 'tooltip'); document.body.appendChild(t); }
@@ -16581,6 +16588,7 @@ $('#tab-atskaites').addEventListener('click', e => {
   const md = e.target.closest('[data-rk-mode]');
   if (md){ ui.rep.chart = md.dataset.rkMode; renderReports(); const nb = $(`[data-rk-mode="${ui.rep.chart}"]`); if (nb) nb.focus(); return; }
   const dr = e.target.closest('#rep-body [data-drill], #rep-ai [data-drill]');
+  if (dr && e.target.closest('.tip')) return; // Versija 251: (i) KPI kartītē – tikai padoms, kartīte netiek atvērta
   if (dr){ e.preventDefault(); $('#viz-tip').hidden = true; repDrill(JSON.parse(dr.dataset.drill)); }
 });
 $('#tab-atskaites').addEventListener('keydown', e => {
