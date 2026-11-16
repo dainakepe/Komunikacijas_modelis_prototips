@@ -2579,6 +2579,14 @@ button.ac-fixed{border:0;background:none;padding:0;font:inherit;cursor:pointer}
 .r-det dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 12px;margin:0;font-size:var(--fs-sm)}
 .r-det dt{color:var(--text-muted)} .r-det dd{margin:0;min-width:0}
 .r-det dd small{display:block}
+/* Versija 249: adrešu labošanas forma – zem adreses rindas pa visu saraksta platumu; pogas un "Nezinu pareizo…" vienā rindā */
+.r-det dd.r-det-ed{grid-column:1 / -1;margin:2px 0 8px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-subtle, #F7FAFB)}
+.r-det{grid-template-columns:minmax(220px,1fr) minmax(330px,1.7fr)}
+.r-det .r-det-ed .ac-ed-acts{flex-wrap:nowrap;white-space:nowrap;gap:6px}
+.r-det .r-det-ed .ac-ed-acts .ac-req-lnk{font-size:var(--fs-xs);white-space:nowrap}
+@media (max-width:900px){.r-det{grid-template-columns:minmax(0,1fr)}.r-det .r-det-ed .ac-ed-acts{flex-wrap:wrap}}
+.r-det .c-addr.is-ed > .cell1 .ac-val{box-shadow:inset 3px 0 0 var(--primary)}
+.r-det .ac-labot{font-size:var(--fs-sm);font-weight:600;margin-left:2px}
 .r-det .ac-add{margin-top:8px}
 .ctx-bar{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:6px 16px;padding:8px 10px;margin:-4px 0 10px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius)}
 .ctx-tags{display:flex;flex-wrap:wrap;gap:5px;flex:1 1 320px;min-width:0}
@@ -4276,7 +4284,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 248</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 249</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11002,7 +11010,7 @@ function acEditor(r, k, c){
   const key = c.key, mi = c.status === 'pot' && c.mi ? c.mi : '', old = c.status === 'edit' ? c.value : (c.raw || '').trim() || c.value || '';
   const v = mi || (c.status === 'edit' || c.status === 'error' ? c.value : c.raw.trim() || c.value), bad = ['error', 'pot'].includes(c.status), nm = `acs-${key}`;
   return `<div class="ac-ed ac-ed2" data-ac-ed="${key}">
-    <div class="ac-ed-row"><input type="text" data-ac-in="${key}" value="${esc(v)}" aria-label="${esc(addrShort(k))}: ${esc(r.name)} – jaunā vērtība" placeholder="${k === 'eadrese' ? '_DEFAULT@…' : 'vards@uznemums.lv'}">${mi ? `<span class="ac-ed-mi" title="MI ieteikums" aria-label="MI ieteikums">${AC_FLAG_IC.mi}</span>` : ''}${bad && old ? `<s class="ac-old mono" title="Pašreizējā vērtība">${esc(old)}</s>` : ''}</div>
+    <div class="ac-ed-row"><input type="text" data-ac-in="${key}" data-init="${esc(v)}" value="${esc(v)}" aria-label="${esc(addrShort(k))}: ${esc(r.name)} – jaunā vērtība" placeholder="${k === 'eadrese' ? '_DEFAULT@…' : 'vards@uznemums.lv'}">${mi ? `<span class="ac-ed-mi" title="MI ieteikums" aria-label="MI ieteikums">${AC_FLAG_IC.mi}</span>` : ''}${bad && old ? `<s class="ac-old mono" title="Pašreizējā vērtība">${esc(old)}</s>` : ''}</div>
     <small class="ac-msg" data-ac-err="${key}" role="alert" hidden></small>
     <div class="ac-scope" role="radiogroup" aria-label="Saglabāt"><span class="ac-scope-l">Saglabāt:</span><label><input type="radio" name="${esc(nm)}" value="camp" checked> Tikai šai kampaņai</label><label><input type="radio" name="${esc(nm)}" value="src"> Arī pirmavotā (Respondentu pārvaldība)</label></div>
     <div class="ac-ed-acts"><button type="button" class="btn btn-primary btn-sm" data-ac-save="${key}">Saglabāt labojumu</button><button type="button" class="btn btn-ghost btn-sm" data-ac-cancel="${key}">Atcelt</button>${bad ? `<span class="muted">vai</span><button type="button" class="link-btn ac-req-lnk" data-ac-req="${key}">Nezinu pareizo – ziņot administratoram</button>` : ''}</div></div>`;
@@ -11059,7 +11067,8 @@ function respDetails(r, addrCell){
   const vals = k => { const d = ATTR_BY_KEY[k], v = d && a[k] ? d.values[a[k]] : null; return v ? v.short || v.label : a[k] || ''; };
   return `<div class="r-det">
     <section><h4>Respondents</h4><dl>${row('Nosaukums', r.name)}${row('Kontaktpersona', r.contact)}${row('NMK', r.nmk)}${row('NMK/PS', r.nmkps)}${row('UUK', r.uuk)}${row('Veids', vals('veids'))}${''}${row('Dalības veids', vals('dalibas_veids'))}${row('Atbildīgais operators', op && op.name)}${respNsCodes(r).map(k => row('Statusa šifrs', nsLabel(k))).join('')}</dl></section>
-    <section><h4>Elektroniskās adreses</h4><dl>${ADDR_KEYS.filter(k => !(k === 'eadrese' && eaLaterR(r)) && (k !== 'email3' || e3.status !== 'empty' || ui.acEdit === e3.key)).map(k => `<dt>${esc(addrShort(k))}</dt><dd>${cell(k)}</dd>`).join('')}</dl>
+    <section class="r-det-addr"><h4>Elektroniskās adreses</h4><dl>${ADDR_KEYS.filter(k => !(k === 'eadrese' && eaLaterR(r)) && (k !== 'email3' || e3.status !== 'empty' || ui.acEdit === e3.key)).map(k => { const [top, ed] = cell(k).split('<!--ac-ed-->');
+      return `<dt>${esc(addrShort(k))}</dt><dd>${top}</dd>${ed ? `<dd class="r-det-ed">${ed}</dd>` : ''}`; }).join('')}</dl>
       ${e3.status === 'empty' && ui.acEdit !== e3.key ? `<button type="button" class="btn btn-secondary btn-sm ac-add" data-ac-edit="${r.id}|email3">${ICON.plus}Pievienot e-pastu</button>` : ''}</section>
   </div>`;
 }
@@ -11131,7 +11140,9 @@ function renderComposeList(){
     if (k === 'eadrese' && eaLaterR(r))
       return `<td class="c-addr c-ea-later"><div class="cell1">${eaLaterHtml(false)}</div></td>`;
     const c = addrCheck(r, k), key = c.key;
-    if (full && (ui.acEdit === key || (['error', 'pot'].includes(c.status) && !c.risk && !labState(r, k) && !ui.view && !apvLocked()))) return `<td class="c-addr">${acEditor(r, k, c)}</td>`;
+    // Versija 249: izvērstajā rindā visas adreses pēc noklusējuma sakļautas; forma – tikai vienai (ui.acEdit), tieši zem tās rindas
+    const edOpen = full && ui.acEdit === key && !ui.view && !apvLocked();
+    if (edOpen && !c.value) return `<td class="c-addr">${acEditor(r, k, c)}</td>`; // jauna adrese ("Pievienot e-pastu")
     const prim = c.usable && primOf(r) === k, st = addrDotState(c, prim), show = (full || showAddr()) && !!c.value;
     const lbl = c.status === 'dup' ? 'Dublikāts' : st.fix ? 'Derīga (labota)' : AC_SHORT[st.cls];
     const stTip = st.cls === 'pot' ? `Potenciāli kļūdaina – ${st.tip.replace(/^Jāpārskata: |^Jāpārskata$/, '') || 'jāpārskata'}` : st.tip;
@@ -11179,8 +11190,12 @@ function renderComposeList(){
     if (c.dupKept) acts.push(link('data-ac-dupredo', 'Noņemt', `Dublikāts (= ${c.dupKept}) – noņemt`));
     if (sa && sm.has(sa)){ const d = sharedDec(sa, r.id), n = sm.get(sa).length;
       acts.push(`<button type="button" class="ac-tag t-shared${d ? ' is-dec' : ''}" data-shared="${esc(sa)}" aria-haspopup="dialog" title="Koplietojama adrese – izmanto ${n} respondenti${SHARED_TAG[d] ? ` · ${esc(SHARED_TAG[d])}` : ''} – izvērtēt" aria-label="${esc(nm)}: koplietojama adrese (${n}) – izvērtēt">${ICON.users}${n}</button>`); }
-    const why = c.status === 'pot' && c.mi ? `MI ieteikums: ${c.mi}` : c.value ? stTip : '';
-    return `<td class="c-addr" title="${esc(tip)}"><div class="cell1">${main}${why ? `<small class="ac-why q-${st.cls}">${esc(why)}</small>` : ''}${acts.join('')}</div></td>`;
+    // Versija 249: problēmas adresēm – īss statuss ("Nederīga" / "Potenciāli kļūdaina"), iemesls – rindas padomā
+    const why = !c.value ? '' : c.status === 'error' ? 'Nederīga' : c.status === 'pot' && (c.mi || !rk) ? 'Potenciāli kļūdaina' : stTip; // MI ieteikums – padomā un pogās ✨ ✓ ✕
+    // Versija 249: "Labot" – problēmas adresēm un adresēm ar labojumu / ziņojumu administratoram (forma ar esošo vērtību)
+    if (c.value && !rk && !ui.view && !apvLocked() && (['error', 'pot'].includes(c.status) || labState(r, k) || c.status === 'edit'))
+      acts.push(`<button type="button" class="link-btn ac-lnk ac-labot" data-ac-edit="${key}" data-ac-labot="${key}" aria-expanded="${edOpen}" aria-label="${esc(nm)}: labot adresi">Labot</button>`);
+    return `<td class="c-addr${edOpen ? ' is-ed' : ''}" title="${edOpen ? '' : esc(tip)}"><div class="cell1">${main}${why ? `<small class="ac-why q-${st.cls}">${esc(why)}</small>` : ''}${acts.join('')}</div>${edOpen ? `<!--ac-ed-->${acEditor(r, k, c)}` : ''}</td>`;
   };
   // Versija 177: rindai vajag uzmanību – pot. kļūdaina adrese bez lēmuma, neapstiprināts MI ieteikums, koplietojama adrese bez lēmuma
   // vai nav nevienas derīgas elektroniskās adreses (tiks drukāts / netiks nosūtīts); tikai nederīgas adreses blakus derīgai – neizceļ
@@ -16898,6 +16913,7 @@ function openAddrReq(keys){
       const cmt = $('#ar-cmt').value.trim(), at = new Date().toISOString();
       compose.addrReq = compose.addrReq || {};
       xs.forEach(o => { compose.addrReq[o.key] = {at, by:CURRENT_USER, comment:cmt, value:o.c.value || '', st:o.c.status}; }); clarEvent('zinot_administratoram');
+      if (xs.some(o => o.key === ui.acEdit)) ui.acEdit = ''; // Versija 249: ziņots – labošanas forma sakļaujas
       alAddC('addrReq', one ? `${xs[0].r.name}, ${addrShort(xs[0].k)}: ${xs[0].c.value || '—'}${cmt ? ` – “${cmt}”` : ''}` : `${alCnt(xs.length, 'adrese', 'adreses')}${cmt ? ` – “${cmt}”` : ''}`);
       c(); acChanged(); saveDraft();
       toast(`Administratoram ziņots par ${one ? 'adresi' : `${xs.length} adresēm`}.`);
@@ -17096,7 +17112,14 @@ $('#c-list').addEventListener('click', e => {
   const rku = e.target.closest('[data-rk-undo]');
   if (rku){ const key = rku.dataset.rkUndo; delete (compose.riskOk || {})[key]; delete (compose.riskSkip || {})[key]; acChanged(); toast('Izvēle atsaukta – adrese atkal atzīmēta kā riskanta.'); const el = $(`#c-list [data-ac-risk="${key}"]`); if (el) el.focus(); return; }
   const ed = e.target.closest('[data-ac-edit]'), sv = e.target.closest('[data-ac-save]'), un = e.target.closest('[data-ac-undo]'), rd = e.target.closest('[data-ac-redo]'), rs = e.target.closest('[data-ac-reset]');
-  if (ed){ ui.acEdit = ed.dataset.acEdit; renderComposeList(); const i = $(`[data-ac-in="${ui.acEdit}"]`); if (i){ i.focus(); i.select(); } return; }
+  if (ed){ const nk = ed.dataset.acEdit;
+    if (ui.acEdit === nk){ const i = $(`[data-ac-in="${nk}"]`); if (i) i.focus(); return; }
+    // Versija 249: vienlaikus atvērta tikai viena forma; ja atvērtajā ir nesaglabātas izmaiņas – jautā
+    const cur = ui.acEdit && $(`#c-list [data-ac-ed="${ui.acEdit}"]`), inp = cur && $('[data-ac-in]', cur), scope = cur && $('input[type="radio"]:checked', cur);
+    const dirty = !!cur && ((inp && inp.value.trim() !== (inp.dataset.init || '').trim()) || (scope && scope.value !== 'camp'));
+    const go = () => { ui.acEdit = nk; renderComposeList(); const i = $(`[data-ac-in="${nk}"]`); if (i){ i.focus(); i.select(); } };
+    if (dirty){ confirmDialog({title:'Nesaglabāts labojums', okLabel:'Atmest un atvērt', message:'Atvērtajā adreses labošanas formā ir nesaglabātas izmaiņas. Atmest tās un labot citu adresi?'}).then(ok => { if (ok) go(); }); return; }
+    go(); return; }
   if (sv){ acSave(sv.dataset.acSave); return; }
   if (e.target.closest('[data-ac-cancel]')){ const k = ui.acEdit || e.target.closest('[data-ac-cancel]').dataset.acCancel; ui.acEdit = ''; renderComposeList(); const el = $(`#c-list [data-ac-edit="${k}"], #c-list [data-ac-in="${k}"]`); if (el) el.focus(); return; }
   { const rq = e.target.closest('[data-ac-req]'); if (rq){ openAddrReq([rq.dataset.acReq]); return; } }
