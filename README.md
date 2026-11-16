@@ -49,6 +49,48 @@ Ekrāni ir tīri: pastāvīgi redzamu paskaidrojošo tekstu un informatīvo pazi
 - **Kļūdas** (obligātie lauki un pārbaudes) tiek rādītas tikai pēc mēģinājuma pāriet uz nākamo soli ("Tālāk", pāreja uz vēlāku soli progresa joslā), saglabāt melnrakstu vai nosūtīt: īss sarkans teksts pie konkrētā lauka (piem., "Norādiet periodu vai apsekojumu.", "Nosūtīšanas datums nedrīkst būt pagātnē."). Progresa joslā "!" parādās tikai soļiem, kuros ir bijis šāds mēģinājums. Poga "Nosūtīt" vairs nav bloķēta: ja ir kļūdas, kampaņa netiek nosūtīta, un kopsavilkumā tiek parādīts kļūdu saraksts.
 - Ilustrācijas rāmī sākumlapā teikums zem virsraksta paliek, jo tas ir daļa no ilustrācijas.
 
+## Vairākizvēles ar "Visi …" (Versija 253)
+
+Visām vairākizvēles izvēlnēm, kurās ir ieraksts "Visi …" / "Visas …", ir viena kopīga loģika (`MSA` kodā; "Mani filtri" logu sarakstiem – tā pati loģika ar `msaDomInit` / `msaDomVals`):
+1. **"Visi" atzīmēts** – atzīmēti visi atsevišķie ieraksti (ķeksīši redzami visiem).
+2. **Noņemot ķeksīti vienam ierakstam**, tas tiek izslēgts, pārējie paliek atzīmēti, un "Visi" kļūst **daļēji atzīmēts** (svītriņa rūtiņā).
+3. **Atzīmējot atpakaļ visus ierakstus**, "Visi" atkal ir pilnībā atzīmēts.
+4. **Klikšķis uz "Visi"**, kad tas ir atzīmēts vai daļēji atzīmēts, noņem visus ķeksīšus; kad tas nav atzīmēts, atzīmē visus.
+5. **Nav atzīmēts neviens:**
+   - kampaņas tvērumā (apsekojumi, cikli, periodi) pie lauka parādās pelēks paziņojums "Izvēlieties vismaz vienu …" (apsekojumu / reizi / ciklu / pusgadu / ceturksni / mēnesi / nedēļu), un poga **"Veikt atlasi" ir neaktīva**;
+   - filtros tas nozīmē "bez filtra" (tāpat kā "Visi").
+6. **Meklēšana.** Ja sarakstā ir meklēšanas lauks un tajā ir teksts, "Visi" attiecas tikai uz atrastajiem ierakstiem, un tā teksts ir **"Visi atrastie (N)"**.
+7. **Kopsavilkums aizvērtā izvēlnē:**
+   - visi atzīmēti – "Visi apsekojumi" / "Visas reizes" / "Visi mēneši" u. tml.;
+   - daļa – izvēlēto birkas (līdz 3, ja tās nav vairāk par pusi), citādi "N no M …", piem., "12 no 13 apsekojumiem", "3 no 4 reizēm", "11 no 12 mēnešiem".
+
+   Atlase un filtrēšana izmanto faktiski atzīmētos ierakstus.
+8. **Noklusējums** jaunai kampaņai un filtriem ir "Visi" (visi atzīmēti). Jaunā kampaņā uzņēmumu statistikā pēc noklusējuma ir izvēlēti visi apsekojumi.
+
+**Kur izmantota:**
+- **Kampaņa, 1. solis "Pamatdati" → "Kampaņas tvērums":**
+  - "Pēc apsekojuma" → "Apsekojumi / pārskati" ("Visi apsekojumi", ar meklēšanu – "Visi atrastie (N)") – uzņēmumu statistika;
+  - "Pēc perioda" → katras periodiskuma rindas izvēlne: "Visi pusgadi", "Visi ceturkšņi", "Visi mēneši", "Visas nedēļas" – uzņēmumu statistika;
+  - "Cikls" → "Visas reizes" (1-DSA) / "Visi cikli" (1-C) – iedzīvotāju statistika.
+- **Kampaņas → "Filtri":**
+  - "Kampaņas statuss" ("Visi statusi");
+  - "Sūtīšanas statuss" ("Visi statusi");
+  - "Kampaņas veids" ("Visi veidi");
+  - "Apsekojums" ("Visi apsekojumi", ar meklēšanu).
+
+  Ieraksts "Visi …" pievienots saraksta sākumā; tas aizstāj saiti "Notīrīt izvēli".
+- **Sūtījumi → statusu grupas izvēlne** (▾ pie grupas pogas): "Visi grupas statusi". Kamēr grupa nav izvēlēta (filtra nav), ķeksīšu tajā nav. Izvēloties statusus citā grupā, iepriekšējās grupas izvēle atiestatās.
+- **"Mani filtri" logi:**
+  - Kampaņas, Sūtījumi un Atskaites: saraksts "Apsekojumi / pārskati" ("Visi apsekojumi", ar meklēšanu). Mainot statistikas jomu, ja bija atzīmēti visi, atzīmēti paliek visi jaunās jomas apsekojumi.
+  - Atskaites: saraksts "Kampaņa" ("Visas kampaņas", ar meklēšanu).
+
+  Saglabājot filtru, visi vai neviens atzīmēts nozīmē "bez filtra".
+
+**Kur netiek izmantota** (nav vairākizvēles ar "Visi …"):
+- **Vienas izvēles saraksti:** "Visi gadi", "Visi periodi", "Visas kampaņas" / "Visi apsekojumi" Sūtījumu un Atskaišu filtru rindā, "Visi kanāli", "Visi veidi", "Visi veidotāji", "Visas jomas" u. c.
+- **"Mani filtri" logos – izvēles pogas** (statusi, veidi, jomas, kanāli): tajās "Visi" ieraksta nav, un neviena izvēle nozīmē "bez filtra".
+- **Veidņu statusa filtrs** ar "Atlasīt visus".
+
 ## Moduļa cilnes
 
 Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
