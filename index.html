@@ -1610,6 +1610,13 @@ table.cl-table td.c-name .camp-name{max-width:100%}
 .cms-o span{overflow:hidden;text-overflow:ellipsis}
 .cms-o b{color:var(--primary-dark)} .cms-o small{color:var(--text-muted);font-size:var(--fs-xs);font-weight:400}
 .cms-clr{align-self:flex-start;margin:4px 8px 2px;font-size:var(--fs-xs)}
+/* Versija 253: kopīgā "Visi …" vairākizvēle – "Visi" rinda, daļēji atzīmēts (svītriņa), pelēks paziņojums, ja nav atzīmēts neviens */
+.cms-o.cms-all{font-weight:600;border-bottom:1px solid var(--border-light);border-radius:0;margin-bottom:2px}
+.sf-rep.sf-rep-all{font-weight:600;border-bottom:1px solid var(--border-light)}
+.ms-opt.ms-all.is-mixed .ms-chk::after{content:'';width:8px;height:0;border:0;border-top:2px solid var(--surface);transform:none}
+.msa-none{display:block;margin-top:4px;font-size:var(--fs-xs);color:var(--text-muted)}
+.pf-row .msa-none{grid-column:1/-1;margin:-2px 0 2px 40px}
+.pf-tag.pf-tag-n{padding:0 6px}
 .cf-aud .cf-ms{width:230px}
 /* Versija 166: "Filtri" panelī visiem laukiem vienāds augstums (37 px), fonts un stils */
 #cf-adv .dd > summary{box-sizing:border-box;height:37px;padding:0 30px 0 10px;line-height:35px;font-size:14px;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -3987,6 +3994,7 @@ th.has-exp{padding-right:32px !important}
                   <div class="ms-list" id="c-rep-list" role="listbox" aria-multiselectable="true" aria-label="Apsekojumi un pārskati" hidden></div>
                 </div>
                 <div class="ms-tags" id="c-rep-tags"></div>
+                <span class="msa-none" id="c-rep-none" role="status" hidden></span>
               </div>
                             </div>
               <!-- Versija 239: neiesniegšanas šifru izslēgšana (uzņēmumu statistika) -->
@@ -4293,7 +4301,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 252</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 253</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4571,6 +4579,44 @@ const REP_JOMA = {'a-dsa':'iedz', 'a-cel':'iedz', 'a-mba':'iedz'};
 // apsekojuma joma (id vai objekts); jaunam / nezināmam – pēc adresāta
 const repJoma = r => { const id = typeof r === 'string' ? r : (r || {}).id, o = typeof r === 'string' ? repById(r) : r; return jomaKey((o && o.joma) || REP_JOMA[id] || (o && o.aud === 'fiz' ? 'iedz' : 'uzn')); };
 const repInJomas = (id, js) => !js || !js.length || js.includes(repJoma(id));
+// ===== Versija 253: kopīgā "Visi …" vairākizvēles loģika (MSA) – visām izvēlnēm ar ierakstu "Visi …" / "Visas …" =====
+// vērtība v: null – visi (noklusējums); [] – neviens; [k…] – atzīmētie. items – visi pieejamie ieraksti; vis – redzamie (meklēšanas rezultāts)
+const MSA = {
+  on:(v, k) => v == null || v.includes(k),
+  state(v, items){ if (v == null) return 'all'; const n = items.filter(k => v.includes(k)).length; return n && n === items.length ? 'all' : n ? 'part' : 'none'; },
+  // visi pieejamie atzīmēti → null ("Visi"); citādi – atzīmētie pieejamo secībā (+ agrāk izvēlētie, kas sarakstā vairs nav)
+  norm(v, items){ if (v == null) return null; const u = new Set(v), inI = items.filter(k => u.has(k)); return items.length && inI.length === items.length ? null : [...inI, ...[...u].filter(k => !items.includes(k))]; },
+  toggle(v, items, k){ const cur = v == null ? [...items] : [...v], i = cur.indexOf(k); if (i < 0) cur.push(k); else cur.splice(i, 1); return MSA.norm(cur, items); },
+  // "Visi" (meklējot – "Visi atrastie"): atzīmēts vai daļēji atzīmēts – noņem visus (redzamos); neatzīmēts – atzīmē visus (redzamos)
+  toggleAll(v, items, vis = items){ const cur = v == null ? [...items] : [...v]; return MSA.norm(MSA.state(v, vis) === 'none' ? [...cur, ...vis] : cur.filter(k => !vis.includes(k)), items); },
+  allLabel:(all, q, n) => q ? `Visi atrastie (${n})` : all,
+  // kopsavilkumā birkas – līdz 3 izvēlētajiem un ne vairāk kā puse no visiem; citādi "N no M …"
+  tagsOk:(n, m) => n <= 3 && n * 2 <= m,
+  sum(v, items, {all = '', lab = k => k, unit = ''} = {}){
+    const st = MSA.state(v, items); if (st !== 'part') return {st, text:st === 'all' ? all : '', tags:[]};
+    const sel = items.filter(k => v.includes(k)), n = sel.length, m = items.length;
+    return MSA.tagsOk(n, m) ? {st, tags:sel, text:sel.map(lab).join(', ')} : {st, tags:[], text:`${n} no ${m}${unit ? ' ' + unit : ''}`}; },
+  // "Visi" rūtiņa: atzīmēta / daļēji atzīmēta (svītriņa – indeterminate uzstāda novērotājs zemāk) / neatzīmēta
+  box:(st, attrs = '') => `<input type="checkbox" ${attrs}${st === 'all' ? ' checked' : ''}${st === 'part' ? ' data-mixed' : ''}>`,
+};
+// rūtiņas ar data-mixed – daļēji atzīmētas (svītriņa) uzreiz pēc katras pārzīmēšanas
+new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType !== 1) return; (n.matches('input[data-mixed]') ? [n] : n.querySelectorAll('input[data-mixed]')).forEach(i => { i.indeterminate = true; }); })))
+  .observe(document.documentElement, {childList:true, subtree:true});
+// "Mani filtri" logu saraksti (Apsekojumi / pārskati, Kampaņa): "Visi …" rinda saraksta sākumā; meklējot – "Visi atrastie (N)"
+// tvērumā – ieraksti, kas nav izslēgti ar statistikas jomu; visi tvēruma ieraksti atzīmēti vai neviens – bez filtra ([])
+const msaDomItems = (box, key) => $$(`.sf-rep:not(.sf-rep-all) input[data-sfm="${key}"]`, box).filter(i => !i.closest('.sf-rep').classList.contains('is-off-joma'));
+function msaDomVals(el, key){ const box = $(`[data-sfl="${key}"]`, el); if (!box) return []; const sc = msaDomItems(box, key), on = sc.filter(i => i.checked); return on.length === sc.length ? [] : on.map(i => i.value); }
+function msaDomInit(box, key, allL){
+  const ab = $('[data-msa-all]', box), al = $('[data-msa-all-l]', box), q = $(`[data-sfl-q="${key}"]`, box); if (!ab) return;
+  const vis = () => msaDomItems(box, key).filter(i => !i.closest('.sf-rep').hidden);
+  const sync = () => { const vs = vis(), n = vs.filter(i => i.checked).length, st = n && n === vs.length ? 'all' : n ? 'part' : 'none';
+    ab.checked = st === 'all'; ab.indeterminate = st === 'part'; al.textContent = MSA.allLabel(allL, q && q.value.trim(), vs.length); ab.closest('.sf-rep').hidden = !vs.length;
+    const sc = msaDomItems(box, key); box._msaAll = sc.length > 0 && sc.every(i => i.checked); };
+  ab.addEventListener('change', e => { e.stopPropagation(); const vs = vis(), on = vs.some(i => i.checked); vs.forEach(i => { i.checked = !on; }); sync(); box.dispatchEvent(new Event('change', {bubbles:true})); });
+  box.addEventListener('change', e => { if (e.target !== ab) sync(); });
+  if (q) q.addEventListener('input', () => setTimeout(sync, 0));
+  box._msaSync = sync; sync();
+}
 // agrāk saglabātie filtri ar jomu "Iedzīvotāju / Uzņēmumu statistika" – atbilstošās tematiskās jomas
 const JOMA_OLD = {fiz:['iedz'], jur:['uzn']};
 const jomasOfF = f => { const a = (f || {}).aud; return [...new Set([...((f || {}).jomas || []), ...(JOMA_OLD[a] || (a ? [a] : []))].map(jomaKey))].filter(k => STAT_JOMAS[k]).sort(); };
@@ -4579,24 +4625,28 @@ const jomasLabel = js => [...new Set(js.map(jomaKey))].map(k => STAT_JOMAS[k] ||
 function sfJomaRepRows(row, w, reps){
   const js = w.jomas || [], rs = w.reps || [];
   const chips = `<div class="sf-chips" role="group" aria-label="Statistikas joma">${Object.entries(STAT_JOMAS).map(([k, l]) => `<label class="sf-chip"><input type="checkbox" data-sfm="jomas" value="${k}"${js.includes(k) ? ' checked' : ''}><span>${esc(l)}</span></label>`).join('')}</div>`;
-  const list = `<div class="sf-reps" data-sfl="reps"><input type="search" data-sfl-q="reps" placeholder="Meklēt apsekojumu (indekss vai nosaukums)…" aria-label="Meklēt apsekojumu"><div class="sf-rep-list" role="group" aria-label="Apsekojumi / pārskati">${reps.map(([v, b, t]) => `<label class="sf-rep" data-q="${esc(norm(b + ' ' + t))}" data-joma="${repJoma(v)}"><input type="checkbox" data-sfm="reps" value="${esc(v)}"${rs.includes(String(v)) ? ' checked' : ''}><span><b>${esc(b)}</b> ${esc(t)}</span></label>`).join('')}<div class="sf-rep-none" hidden>Nav atrasts</div></div><div class="sf-rep-sel" data-sfl-sel="reps" aria-live="polite"></div></div>`;
+  const list = `<div class="sf-reps" data-sfl="reps"><input type="search" data-sfl-q="reps" placeholder="Meklēt apsekojumu (indekss vai nosaukums)…" aria-label="Meklēt apsekojumu"><div class="sf-rep-list" role="group" aria-label="Apsekojumi / pārskati"><label class="sf-rep sf-rep-all"><input type="checkbox" data-msa-all><span data-msa-all-l>Visi apsekojumi</span></label>${reps.map(([v, b, t]) => `<label class="sf-rep" data-q="${esc(norm(b + ' ' + t))}" data-joma="${repJoma(v)}"><input type="checkbox" data-sfm="reps" value="${esc(v)}"${!rs.length || rs.includes(String(v)) ? ' checked' : ''}><span><b>${esc(b)}</b> ${esc(t)}</span></label>`).join('')}<div class="sf-rep-none" hidden>Nav atrasts</div></div><div class="sf-rep-sel" data-sfl-sel="reps" aria-live="polite"></div></div>`;
   return row('Statistikas joma', chips) + row('Apsekojumi / pārskati', list);
 }
+// izvēles kopsavilkums zem saraksta: visi / neviens – bez teksta (bez filtra); daļa – kodi (līdz 3) vai "N no M"
+function msaDomSel(box, key){ const sc = msaDomItems(box, key), on = sc.filter(i => i.checked), t = $(`[data-sfl-sel="${key}"]`, box); if (!t) return;
+  const cs = on.map(i => i.closest('.sf-rep').querySelector('b').textContent);
+  t.textContent = !on.length || on.length === sc.length ? '' : `Izvēlēti: ${MSA.tagsOk(on.length, sc.length) ? cs.join(', ') : `${on.length} no ${sc.length}`}`; }
 // redzami tikai izvēlēto jomu apsekojumi; mainot jomu, neatbilstošie izvēlētie apsekojumi tiek noņemti
 function sfJomaRepInit(el, upd){
   const box = $('[data-sfl="reps"]', el); if (!box) return;
   const jsel = () => $$('[data-sfm="jomas"]:checked', el).map(i => i.value);
   const vis = () => { const q = norm($('[data-sfl-q="reps"]', box).value), js = jsel(); let n = 0;
-    $$('.sf-rep', box).forEach(l => { const okJ = !js.length || js.includes(l.dataset.joma), on = okJ && (!q || l.dataset.q.includes(q)); l.hidden = !on; l.classList.toggle('is-off-joma', !okJ); n += on; });
-    $('.sf-rep-none', box).hidden = !!n; };
-  const sel = () => { const v = $$('[data-sfm="reps"]:checked', box).map(i => i.closest('.sf-rep').querySelector('b').textContent);
-    $('[data-sfl-sel="reps"]', box).textContent = v.length ? `Izvēlēti: ${v.length > 3 ? `${v.slice(0, 3).join(', ')} +${v.length - 3}` : v.join(', ')}` : ''; };
+    $$('.sf-rep:not(.sf-rep-all)', box).forEach(l => { const okJ = !js.length || js.includes(l.dataset.joma), on = okJ && (!q || l.dataset.q.includes(q)); l.hidden = !on; l.classList.toggle('is-off-joma', !okJ); n += on; });
+    $('.sf-rep-none', box).hidden = !!n; if (box._msaSync) box._msaSync(); };
+  const sel = () => msaDomSel(box, 'reps');
   $('[data-sfl-q="reps"]', box).addEventListener('input', vis);
   box.addEventListener('change', sel);
-  $$('[data-sfm="jomas"]', el).forEach(i => i.addEventListener('change', () => { const js = jsel();
+  // Versija 253: "Visi apsekojumi" – mainot jomu, ja bija atzīmēti visi, atzīmēti paliek visi jaunās jomas apsekojumi
+  $$('[data-sfm="jomas"]', el).forEach(i => i.addEventListener('change', () => { const js = jsel(), wasAll = !!box._msaAll;
     $$('[data-sfm="reps"]:checked', box).forEach(c => { if (js.length && !js.includes(c.closest('.sf-rep').dataset.joma)) c.checked = false; });
-    vis(); sel(); if (upd) upd(); }));
-  vis(); sel();
+    vis(); if (wasAll) msaDomItems(box, 'reps').forEach(c => { c.checked = true; }); if (box._msaSync) box._msaSync(); sel(); if (upd) upd(); }));
+  vis(); msaDomInit(box, 'reps', 'Visi apsekojumi'); sel();
 }
 // Dzēstie agrākie testa apsekojumi / pārskati – pārsaistīti uz esošajiem (melnrakstos, ieplānotajās kampaņās, saglabātajos filtros)
 // Versija 233: dzēstie izdomātie pārskati → paliekošie ar tādu pašu periodiskumu (gads → p-x03 / p-x04 / p-x05; pusgads → p-x13 / p-x14; ceturksnis → p-x09 / p-x10;
@@ -6180,10 +6230,15 @@ const defaultPf = () => Object.fromEntries(PF_KEYS.map(k => [k, 'all']));
 // kartītē redzamās rindas (uzņēmumu statistika): nosaukums un "visi" izvēlnē
 const PF_ROWS = ['gads', 'pusg', 'cet', 'men', 'ned'];
 const PF_ROWS_L = {gads:['Gada pārskati', ''], pusg:['Pusgada pārskati', 'Visi pusgadi'], cet:['Ceturkšņa pārskati', 'Visi ceturkšņi'], men:['Mēneša pārskati', 'Visi mēneši'], ned:['Nedēļas pārskati', 'Visas nedēļas']};
+// Versija 253: kopsavilkumam "N no M …" un paziņojumam "Izvēlieties vismaz vienu …"
+const PF_DAT = {pusg:'pusgadiem', cet:'ceturkšņiem', men:'mēnešiem', ned:'nedēļām', int:'viļņiem'}, PF_ACC = {pusg:'pusgadu', cet:'ceturksni', men:'mēnesi', ned:'nedēļu', int:'vilni'};
+// rindas vērtība ↔ MSA: 'all' – visi; '-' – neviens (rinda ieslēgta, bet nav atzīmēts neviens periods); '3,9' – atzīmētie
+const pfMsa = v => !v || v === 'all' ? null : v === '-' ? [] : pfVals(v);
+const pfFromMsa = m => m == null ? 'all' : m.length ? [...m].sort((a, b) => a - b).join(',') : '-';
 // atlases opcija "Apvienot respondentus ar vienādiem NMK" – tikai uzņēmumu statistikai
 // "Apvienot pēc NMK" (vēstules parametrs): tikai uzņēmumu statistikā (NMK var atkārtoties arī viena apsekojuma ietvaros – vairākas vienības, periodi)
 const selOpt = k => compose.aud === 'jur' && !!compose.sel[k];
-const defaultSel = () => ({year:perDefYear(), pf:defaultPf(), reports:[], fz:defaultFz(), allReports:false, operator:'', resp:defaultResp(), nsEx:[...NS_DEFAULT], mergeNmk:false, sendDate:todayIso(), days:5, lateDays:''});
+const defaultSel = () => ({year:perDefYear(), pf:defaultPf(), reports:[], fz:defaultFz(), allReports:true, operator:'', resp:defaultResp(), nsEx:[...NS_DEFAULT], mergeNmk:false, sendDate:todayIso(), days:5, lateDays:''});
 // testa vēsturei: periodiskumi, kas iekļauti (pārējie – "Neiekļaut")
 const pfOnly = map => Object.fromEntries(PF_KEYS.map(k => [k, map[k] || 'none']));
 // agrākiem melnrakstiem un ieplānotajām kampaņām: viens periodiskums (freq) -> saraksts (freqs);
@@ -10149,7 +10204,7 @@ const hasScope = (sel = compose.sel) => fizMode() ? fzScoped(sel) : surveyMode()
 // Iedzīvotāju statistika: katram apsekojumam – periodu izvēle (vairākizvēle)
 const fizMode = (aud = compose.aud) => aud === 'fiz';
 // reizes / cikli (Respondentu pārvaldība): respondenta pazīme katram periodam
-const ROUNDS = {'a-dsa':{label:'Cikls', word:'reize', acc:'reizi', n:4, all:'Visas reizes'}, 'a-cel':{label:'Cikls', word:'cikls', acc:'ciklu', n:2, all:'Visi cikli'}};
+const ROUNDS = {'a-dsa':{label:'Cikls', word:'reize', acc:'reizi', dat:'reizēm', n:4, all:'Visas reizes'}, 'a-cel':{label:'Cikls', word:'cikls', acc:'ciklu', dat:'cikliem', n:2, all:'Visi cikli'}};
 const roundLabel = (id, n) => ROUNDS[id] ? `${n}. ${ROUNDS[id].word}` : '';
 // testa datos: reize / cikls katram pienākumam (respondents × periods), pēc kārtas grupā
 function assignRounds(s){
@@ -10171,7 +10226,7 @@ function repPeriodList(p){
 function pfMatch(sel, freq, k){
   // gads – vienmēr kā skaitlis; rinda ieslēgta un "Visi …" (arī tukša izvēle) – jebkurš šī gada periods; konkrēti periodi – tikai tie
   const v = pfOf(sel)[freq], ns = pfVals(v);
-  if (v === 'none' || periodYear(k) !== +sel.year) return false;
+  if (v === 'none' || v === '-' || periodYear(k) !== +sel.year) return false;
   return !ns.length || ns.includes(+String(k).split('-')[1]);
 }
 // efektīvā perioda izvēle: ja visas periodiskumu rindas (ar pārskatiem) izslēgtas – atlasīti visi izvēlētā gada pārskati
@@ -10205,7 +10260,7 @@ function baseDuties(){
   if (fizMode()){
     // "Visi periodi" (periods nav precizēts) – visi izvēlētā gada periodi un visi cikli
     // Versija 250: cikli attiecas arī uz "Visi periodi" (visu gada periodu izvēlētie cikli)
-    const id = sel.reports[0], per = sel.fz.period, rs = sel.fz.rounds && sel.fz.rounds.length ? fzRounds(sel) : null;
+    const id = sel.reports[0], per = sel.fz.period, rs = Array.isArray(sel.fz.rounds) && ROUNDS[id] ? sel.fz.rounds : null; // Versija 253: [] – neviens
     if (!fzScoped(sel)) return [];
     return (state.duties || []).filter(d => d.reportId === id && (per ? d.period === per : periodYear(d.period) === +sel.fz.year) && (!rs || rs.includes(d.round)));
   }
@@ -10214,7 +10269,7 @@ function baseDuties(){
     return (state.duties || []).filter(d => ids.has(d.reportId));
   }
   if (!hasScope(sel)) return [];
-  const reps = new Map(audReports().filter(p => pfOf(sel)[p.freq] !== 'none' && (sel.allReports || !sel.reports.length || sel.reports.includes(p.id))).map(p => [p.id, p]));
+  const reps = new Map(audReports().filter(p => pfOf(sel)[p.freq] !== 'none' && (sel.allReports || sel.reports.includes(p.id))).map(p => [p.id, p])); // Versija 253: [] – neviens
   return (state.duties || []).filter(d => reps.has(d.reportId) && pfMatch(sel, reps.get(d.reportId).freq, d.period));
 }
 // pārskati, uz kuriem attiecas atlase (vēstulē – {apsekojums})
@@ -10303,15 +10358,20 @@ const repInline = () => false;
 // periodiskums sarakstā – īsi
 const FREQ_SHORT = {gads:'Gads', pusg:'Pusg.', cet:'Cet.', men:'Mēn.', ned:'Ned.', int:'Int.'};
 const repTip = p => `${repTitle(p)}\nPeriodiskums: ${FREQS[p.freq]}\nTermiņš: ${ruleLabel(p.rule)}`;
+// Versija 253: apsekojumu vairākizvēle ar kopīgo "Visi …" loģiku: null – visi ("Visi apsekojumi"); [] – neviens; [id…] – atzīmētie
+const repMsa = (sel = compose.sel) => sel.allReports ? null : sel.reports;
+const repMsaSet = v => { const s = compose.sel; if (v == null){ s.allReports = true; s.reports = []; } else { s.allReports = false; s.reports = v; } };
+const repAvail = () => { const inPer = periodReportIds(); return audReports().filter(p => inPer.has(p.id)); };
+const repQ = () => norm(($('#c-rep-search') || {value:''}).value.trim());
+const repFound = () => { const q = repQ(); return repAvail().filter(p => !q || norm(`${p.code} ${p.name}`).includes(q)); };
 function renderRepList(){
   // apsekojumi atkarīgi no perioda izvēles (periodiskuma); meklēšana pēc koda un nosaukuma daļas; izvēlētie – saraksta augšā
-  const sel = compose.sel, q = norm($('#c-rep-search').value.trim()), inPer = periodReportIds(), on = id => sel.reports.includes(id);
-  const reps = audReports().filter(p => (inPer.has(p.id) || (surveyMode() && on(p.id))) && (!q || norm(`${p.code} ${p.name}`).includes(q)))
-    .map((p, i) => ({p, i})).sort((a, b) => (on(b.p.id) - on(a.p.id)) || a.i - b.i).map(x => x.p);
+  const sel = compose.sel, q = repQ(), v = repMsa(), on = id => MSA.on(v, id);
+  const reps = repFound().map((p, i) => ({p, i})).sort((a, b) => (on(b.p.id) - on(a.p.id)) || a.i - b.i).map(x => x.p), aSt = MSA.state(v, reps.map(p => p.id));
   const groups = [['fiz', AUDS.fiz.field], ['jur', AUDS.jur.field]].filter(([a]) => reps.some(p => p.aud === a));
   const opt = p => `<div class="ms-opt" role="option" id="c-rep-opt-${p.id}" data-rep-opt="${p.id}" aria-selected="${on(p.id)}" title="${esc(repTip(p))}"><span class="ms-chk" aria-hidden="true"></span>
       <span class="ms-txt"><b>${esc(p.code)}</b> ${esc(p.name)}</span><span class="ms-freq">${esc(FREQ_SHORT[p.freq] || FREQS[p.freq])}</span></div>`;
-  $('#c-rep-list').innerHTML = (!fizMode() && (!q || norm('visi apsekojumi').includes(q)) && (surveyMode() || reps.length) ? `<div class="ms-opt ms-all" role="option" id="c-rep-opt-all" data-rep-opt="*" aria-selected="${!!sel.allReports}"><span class="ms-chk" aria-hidden="true"></span><span class="ms-txt"><b>Visi apsekojumi</b></span></div>` : '')
+  $('#c-rep-list').innerHTML = (!fizMode() && reps.length ? `<div class="ms-opt ms-all${aSt === 'part' ? ' is-mixed' : ''}" role="option" id="c-rep-opt-all" data-rep-opt="*" aria-selected="${aSt !== 'none'}" aria-checked="${aSt === 'all' ? 'true' : aSt === 'part' ? 'mixed' : 'false'}"><span class="ms-chk" aria-hidden="true"></span><span class="ms-txt"><b>${esc(MSA.allLabel('Visi apsekojumi', q, reps.length))}</b></span></div>` : '')
     + (reps.length ? groups.map(([a, l]) => `${groups.length > 1 ? `<div class="chk-group" role="presentation">${l}</div>` : ''}${reps.filter(p => p.aud === a).map(opt).join('')}`).join('')
     : `<div class="ms-empty">${q || surveyMode() ? 'Nekas nav atrasts' : repYearIds().size ? 'Izvēlētajos periodos nav pārskatu.' : 'Šajā gadā nav pārskatu.'}</div>`);
   msActive(null);
@@ -10376,7 +10436,7 @@ const repTagTip = ids => { const cs = ids.map(id => (repById(id) || {}).code || 
 function renderRepPop(){
   const sel = compose.sel, ids = sel.allReports ? [] : sel.reports;
   let pop = $('#rep-pop');
-  if (!ui.repPop || ids.length <= 3 || !$('#c-rep-tags .ms-tag-open')){ ui.repPop = false; if (pop) pop.hidden = true; return; }
+  if (!ui.repPop || !ids.length || !$('#c-rep-tags .ms-tag-open')){ ui.repPop = false; if (pop) pop.hidden = true; return; }
   if (!pop){ pop = document.createElement('div'); pop.id = 'rep-pop'; pop.className = 'rep-pop'; pop.setAttribute('role', 'dialog'); document.body.appendChild(pop);
     pop.addEventListener('click', e => {
       const rm = e.target.closest('[data-rp-rm]');
@@ -10450,11 +10510,15 @@ function renderScope(){
     if (!has) right = '<span class="pf-na">nav pārskatu</span>';
     else if (k === 'gads') right = `<span class="pf-yr">${y}</span>`;
     else {
-      const all = PF_ROWS_L[k][1], opts = perOpts(k, y).map(([n, l]) => [n, l.replace(/\s*\(.*\)$/, '')]).reverse();
-      right = `<details class="dd pf-dd${on ? '' : ' is-disabled'}" ${on && ui.pfOpen === k ? 'open' : ''}><summary aria-label="${esc(PF_ROWS_L[k][0])}: ${esc(ns.length ? ns.map(n => pfCode(k, y, n)).join(', ') : all)}">${ns.length
-        ? ns.sort((a, b) => b - a).map(n => `<span class="pf-tag">${pfCode(k, y, n)}<button type="button" data-pfrm="${n}" aria-label="Noņemt ${pfCode(k, y, n)}" tabindex="-1">×</button></span>`).join('') : `<span class="pf-ph">${esc(all)}</span>`}</summary>
-        <div class="dd-list" role="group" aria-label="${esc(PF_ROWS_L[k][0])}"><label class="pf-all"><input type="checkbox" data-pfn="all" ${ns.length ? '' : 'checked'}>${esc(all)}</label>
-        ${opts.map(([n, l]) => `<label><input type="checkbox" data-pfn="${n}" ${ns.includes(n) ? 'checked' : ''}><b>${pfCode(k, y, n)}</b><small>${esc(l)}</small></label>`).join('')}</div></details>`;
+      // Versija 253: kopīgā "Visi …" loģika – "Visi" atzīmē visus periodus; daļa – birkas vai "N no M"; neviens – paziņojums, atlase neaktīva
+      const all = PF_ROWS_L[k][1], opts = perOpts(k, y).map(([n, l]) => [n, l.replace(/\s*\(.*\)$/, '')]).reverse(), mv = pfMsa(v), ps = MSA.sum(mv, opts.map(([n]) => n).reverse(), {all, lab:n => pfCode(k, y, n), unit:PF_DAT[k]});
+      const sumTxt = ps.st === 'all' ? all : ps.st === 'none' ? 'Nav izvēlēts' : ps.text;
+      right = `<details class="dd pf-dd${on ? '' : ' is-disabled'}" ${on && ui.pfOpen === k ? 'open' : ''}><summary aria-label="${esc(PF_ROWS_L[k][0])}: ${esc(sumTxt)}">${ps.tags.length
+        ? ps.tags.slice().sort((a, b) => b - a).map(n => `<span class="pf-tag">${pfCode(k, y, n)}<button type="button" data-pfrm="${n}" aria-label="Noņemt ${pfCode(k, y, n)}" tabindex="-1">×</button></span>`).join('')
+        : ps.st === 'part' ? `<span class="pf-tag pf-tag-n">${esc(ps.text)}</span>` : `<span class="pf-ph">${esc(sumTxt)}</span>`}</summary>
+        <div class="dd-list" role="group" aria-label="${esc(PF_ROWS_L[k][0])}"><label class="pf-all">${MSA.box(ps.st, 'data-pfn="all"')}${esc(all)}</label>
+        ${opts.map(([n, l]) => `<label><input type="checkbox" data-pfn="${n}" ${MSA.on(mv, n) ? 'checked' : ''}><b>${pfCode(k, y, n)}</b><small>${esc(l)}</small></label>`).join('')}</div></details>`
+        + (on && ps.st === 'none' ? `<span class="msa-none" role="status">Izvēlieties vismaz vienu ${PF_ACC[k]}</span>` : '');
     }
     return `<div class="pf-row${on ? '' : ' is-off'}${has ? '' : ' is-na'}" data-pfrow="${k}">${sw}<span class="pf-name">${esc(PF_ROWS_L[k][0])}</span>${right}</div>`;
   }).join('');
@@ -10464,11 +10528,13 @@ function renderScope(){
   none.hidden = !off; none.innerHTML = off ? `${ICON.warn}<span>Nav izvēlēts periods – atlasīti visi gada pārskati</span>` : '';
   // b) Pēc apsekojuma
   // apsekojums, kas neatbilst izvēlētajam periodiskumam, netiek atlasīts – birka atzīmēta ar ⚠
-  const nRep = sel.reports.length, repTag = id => { const p = repById(id), off = !periodReportIds().has(p.id), t = off ? `${repTitle(p)} – neatbilst izvēlētajam periodam, netiks atlasīts` : repTip(p);
+  const nRep = sel.reports.length, nAv = repAvail().length, repTag = id => { const p = repById(id), off = !periodReportIds().has(p.id), t = off ? `${repTitle(p)} – neatbilst izvēlētajam periodam, netiks atlasīts` : repTip(p);
     return `<span class="ms-tag${off ? ' is-off' : ''}"><span title="${esc(t)}">${off ? ICON.warn : ''}${esc(p.code)}</span><button type="button" data-rep-rm="${p.id}" aria-label="Noņemt: ${esc(repTitle(p))}">×</button></span>`; };
-  $('#c-rep-tags').innerHTML = sel.allReports ? `<span class="ms-tag"><span>Visi apsekojumi</span><button type="button" data-rep-rm="*" aria-label="Noņemt: Visi apsekojumi">×</button></span>`
-    : nRep > 3 ? `<span class="ms-tag ms-tag-n"><button type="button" class="ms-tag-open" data-rep-open aria-haspopup="dialog" aria-expanded="${!!ui.repPop}" aria-controls="rep-pop" title="${esc(repTagTip(sel.reports))}" aria-label="${nRep} ${plural(nRep, 'izvēlēts apsekojums', 'izvēlēti apsekojumi')} – rādīt sarakstu">${repCount(nRep)}${ICON.chev}</button><button type="button" data-rep-rm="**" aria-label="Noņemt visus ${nRep} izvēlētos apsekojumus">×</button></span>`
+  // Versija 253: visi – "Visi apsekojumi"; daļa – birkas (līdz 3, ne vairāk kā puse) vai "N no M apsekojumiem ▾"; neviens – paziņojums
+  $('#c-rep-tags').innerHTML = sel.allReports ? `<span class="ms-tag"><span>Visi apsekojumi</span><button type="button" data-rep-rm="*0" aria-label="Noņemt: Visi apsekojumi">×</button></span>`
+    : nRep && !MSA.tagsOk(nRep, nAv) ? `<span class="ms-tag ms-tag-n"><button type="button" class="ms-tag-open" data-rep-open aria-haspopup="dialog" aria-expanded="${!!ui.repPop}" aria-controls="rep-pop" title="${esc(repTagTip(sel.reports))}" aria-label="${nRep} ${plural(nRep, 'izvēlēts apsekojums', 'izvēlēti apsekojumi')} – rādīt sarakstu">${nRep <= nAv ? `${nRep} no ${nAv} apsekojumiem` : repCount(nRep)}${ICON.chev}</button><button type="button" data-rep-rm="**" aria-label="Noņemt visus ${nRep} izvēlētos apsekojumus">×</button></span>`
     : sel.reports.map(repTag).join('');
+  { const rn = $('#c-rep-none'), none = !fizMode() && !sel.allReports && !nRep; if (rn){ rn.hidden = !none; rn.textContent = none ? 'Izvēlieties vismaz vienu apsekojumu' : ''; } }
   renderRepPop();
   $('#c-rep-list').classList.toggle('is-inline', repInline());
   if (repInline()){ $('#c-rep-list').hidden = false; $('#c-rep-search').setAttribute('aria-expanded', 'true'); }
@@ -10514,7 +10580,15 @@ function scopeSig(){
 // agrāk saglabāto atlašu atslēgā bija arī adrešu prioritāte – salīdzinot to neņem vērā
 const sigOf = r => String(r.sig || '').replace(/"prio":\[[^\]]*\],?/, '');
 // atlasi var veikt, kad izvēlēts vismaz viens apsekojums (iedzīvotāju statistikā – apsekojums un gads; periods nav obligāts)
-const selReady = (sel = compose.sel) => compose.aud === 'jur' ? sel.allReports || sel.reports.length > 0 : fzScoped(sel);
+const selReady = (sel = compose.sel) => (compose.aud === 'jur' ? sel.allReports || sel.reports.length > 0 : fzScoped(sel)) && !scopeNone(sel);
+// Versija 253: tvēruma vairākizvēlē (apsekojumi, cikli, periodi) nav atzīmēts neviens – paziņojums pie lauka, "Veikt atlasi" neaktīva
+function scopeNone(sel = compose.sel){
+  if (fizMode()){ const R = ROUNDS[sel.reports[0]]; return R && sel.fz && Array.isArray(sel.fz.rounds) && !sel.fz.rounds.length ? `Izvēlieties vismaz vienu ${R.acc}` : ''; }
+  if (surveyMode()) return '';
+  const has = pfYearFreqs(sel.year), k = PF_ROWS.find(x => has.has(x) && sel.pf[x] === '-');
+  if (k) return `Izvēlieties vismaz vienu ${PF_ACC[k]}`;
+  return !sel.allReports && !sel.reports.length ? 'Izvēlieties vismaz vienu apsekojumu' : '';
+}
 // agrāk saglabātie melnraksti (pirms pogas "Veikt atlasi"), kas jau bija tālāk par 1. soli ('legacy') – atlase uzskatāma par veiktu;
 // rezultāts tiek nofiksēts, pirmo reizi atverot 1. soli (pēc tvēruma lauku normalizēšanas)
 const selRunNow = () => compose.selRun || null;
@@ -10528,7 +10602,7 @@ function renderScopeResult(){
   if (compose.selRun === 'legacy') compose.selRun = makeSelRun();
   const box = $('#c-scope-res'), btn = $('#c-sel-btn'), r = selRunNow(), busy = !!ui.selBusy;
   btn.disabled = busy || !selReady(); btn.textContent = busy ? 'Atlasa…' : 'Veikt atlasi'; btn.setAttribute('aria-busy', String(busy));
-  btn.title = selReady() ? '' : fizMode() && compose.sel.reports[0] ? 'Izvēlieties gadu.' : 'Vispirms izvēlieties vismaz vienu apsekojumu.';
+  btn.title = selReady() ? '' : scopeNone() ? scopeNone() + '.' : fizMode() && compose.sel.reports[0] ? 'Izvēlieties gadu.' : 'Vispirms izvēlieties vismaz vienu apsekojumu.';
   // mainot jebkuru tvēruma nosacījumu pēc atlases – iepriekšējais rezultāts tiek dzēsts (atkal "Atlase vēl nav veikta.")
   if (!busy && r && r !== 'legacy' && sigOf(r) !== scopeSig()){ compose.selRun = null; compose.selStale = true; } // Versija 247: atzīme "Filtri mainīti"
   // no adresēm atkarīgais skaitlis ("ar derīgu adresi") – pēc pašreizējās adrešu prioritātes
@@ -10574,12 +10648,13 @@ function renderFz(){
   if (!cOn) ui.cycOpen = false;
   dd.open = !!(cOn && ui.cycOpen);
   sum.setAttribute('aria-disabled', String(!cOn)); sum.tabIndex = cOn ? 0 : -1;
-  // Versija 248: izvēlnes sākumā "Visi cikli" / "Visas reizes" (noklusējums); atsevišķie cikli – tikai, ja izvēlēti konkrēti
-  const allR = !fz.rounds || !fz.rounds.length;
-  sum.innerHTML = !R ? '' : allR ? `<span class="muted">${esc(R.all)}</span>` : rs.map(n => `<span class="cyc-tag">${esc(roundLabel(id, n))}</span>`).join('');
-  $('#c-fz-rounds').innerHTML = cOn ? `<label class="pf-all"><input type="checkbox" data-round="all" ${allR ? 'checked' : ''}>${esc(R.all)}</label>`
-    + Array.from({length:R.n}, (_, i) => i + 1).map(n => `<label><input type="checkbox" data-round="${n}" ${!allR && rs.includes(n) ? 'checked' : ''}>${esc(roundLabel(id, n))}</label>`).join('') : '';
-  $('#c-fz-rounds-hint').hidden = true;
+  // Versija 253: kopīgā "Visi …" loģika – "Visi cikli" / "Visas reizes" atzīmē visus; daļa – "Visi" daļēji atzīmēts; neviens – paziņojums
+  const rItems = R ? Array.from({length:R.n}, (_, i) => i + 1) : [], rv = fz.rounds, rS = MSA.sum(rv, rItems, {all:R ? R.all : '', lab:n => roundLabel(id, n), unit:R ? R.dat : ''});
+  sum.innerHTML = !R ? '' : rS.st === 'all' ? `<span class="muted">${esc(R.all)}</span>` : rS.st === 'none' ? '<span class="muted">Nav izvēlēts</span>'
+    : rS.tags.length ? rS.tags.map(n => `<span class="cyc-tag">${esc(roundLabel(id, n))}</span>`).join('') : `<span class="cyc-tag">${esc(rS.text)}</span>`;
+  $('#c-fz-rounds').innerHTML = cOn ? `<label class="pf-all">${MSA.box(rS.st, 'data-round="all"')}${esc(R.all)}</label>`
+    + rItems.map(n => `<label><input type="checkbox" data-round="${n}" ${MSA.on(rv, n) ? 'checked' : ''}>${esc(roundLabel(id, n))}</label>`).join('') : '';
+  const rh = $('#c-fz-rounds-hint'), rNone = cOn && rS.st === 'none'; rh.classList.add('msa-none'); rh.hidden = !rNone; rh.textContent = rNone ? `Izvēlieties vismaz vienu ${R.acc}` : '';
 }
 // Atlases lauki
 function renderFilters(){
@@ -13208,7 +13283,7 @@ sfRegister('camp', {
       sfJomaRepInit(el, upd);
       perInit('sfd', () => w.per, v => { Object.assign(w.per, v); perRender('sfd'); upd(); }); perRender('sfd'); },
     read:(el, w) => { const ms = k => $$(`[data-sfm="${k}"]:checked`, el).map(i => i.value);
-      return {q:$('#sfd-q', el).value.trim(), sub:w.sub || 'all', st:w.st || '', prep:'', send:'', kind:'', kinds:ms('kinds'), preps:ms('preps'), sends:ms('sends'), reps:ms('reps'), aud:'', jomas:ms('jomas'), act:!!w.act, creator:$('#sfd-creator', el).value,
+      return {q:$('#sfd-q', el).value.trim(), sub:w.sub || 'all', st:w.st || '', prep:'', send:'', kind:'', kinds:ms('kinds'), preps:ms('preps'), sends:ms('sends'), reps:msaDomVals(el, 'reps'), aud:'', jomas:ms('jomas'), act:!!w.act, creator:$('#sfd-creator', el).value,
         quick:w.per.quick || '', from:w.per.quick && w.per.quick !== 'custom' ? '' : w.per.from || '', to:w.per.quick && w.per.quick !== 'custom' ? '' : w.per.to || '', sort:clone(w.sort || {k:'', dir:0})}; },
     any:f => !!((f.reps || []).length || (f.jomas || []).length || f.act || f.q || f.kinds.length || f.preps.length || f.sends.length || f.aud || f.creator || f.quick || f.from || f.to || (f.sub && f.sub !== 'all') || f.st || (f.sort && f.sort.k)),
   },
@@ -13454,24 +13529,29 @@ function campRepsOf(x){
 }
 // "Filtri" panelis – vairākizvēles izkrītošie saraksti: Kampaņas statuss, Sūtīšanas statuss, Kampaņas veids, Apsekojums
 const CMS = {
-  kinds:{all:'Kampaņas veids: visi', many:n => `Kampaņas veids: ${n}`, pre:'Kampaņas veids: ', opts:() => Object.entries(SESS_KINDS).map(([k, v]) => [k, v.label])},
-  preps:{all:'Kampaņas statuss: visi', many:n => `Kampaņas statuss: ${n}`, pre:'Kampaņas statuss: ', opts:() => Object.entries(PREP_ST).map(([k, v]) => [k, v.label])},
-  sends:{all:'Sūtīšanas statuss: visi', many:n => `Sūtīšanas statuss: ${n}`, pre:'Sūtīšanas statuss: ', opts:() => Object.entries(SEND_ST).map(([k, v]) => [k, v.label])},
-  reps:{all:'Visi apsekojumi', pre:'Apsekojums: ', search:true, short:id => (repById(id) || {}).code || id, many:(n, sel) => `Apsekojums: ${(repById(sel[0]) || {}).code || sel[0]} +${n - 1}`,
+  kinds:{all:'Kampaņas veids: visi', allL:'Visi veidi', unit:'veidiem', many:n => `Kampaņas veids: ${n}`, pre:'Kampaņas veids: ', opts:() => Object.entries(SESS_KINDS).map(([k, v]) => [k, v.label])},
+  preps:{all:'Kampaņas statuss: visi', allL:'Visi statusi', unit:'statusiem', many:n => `Kampaņas statuss: ${n}`, pre:'Kampaņas statuss: ', opts:() => Object.entries(PREP_ST).map(([k, v]) => [k, v.label])},
+  sends:{all:'Sūtīšanas statuss: visi', allL:'Visi statusi', unit:'statusiem', many:n => `Sūtīšanas statuss: ${n}`, pre:'Sūtīšanas statuss: ', opts:() => Object.entries(SEND_ST).map(([k, v]) => [k, v.label])},
+  reps:{all:'Visi apsekojumi', allL:'Visi apsekojumi', unit:'apsekojumiem', pre:'Apsekojums: ', search:true, short:id => (repById(id) || {}).code || id, many:(n, sel) => `Apsekojums: ${(repById(sel[0]) || {}).code || sel[0]} +${n - 1}`,
     opts:() => (state.reports || []).filter(r => !ui.camp.aud || repJoma(r) === ui.camp.aud).map(r => [r.id, r.code, r.name])},
 };
+// filtra vērtība → MSA: [] – visi (bez filtra), ja vien lietotājs nav noņēmis visus ķeksīšus (tad – neviens, bet filtrs joprojām netiek piemērots)
+const cmsMsa = k => { const cur = ui.camp[k] || []; return cur.length ? cur : (ui.cmsNone || {})[k] === cur ? [] : null; };
 function renderCampMs(){
   const c = ui.camp;
   Object.entries(CMS).forEach(([k, d]) => {
     const sum = $(`#cf-ms-${k}-sum`), list = $(`#cf-ms-${k}-list`); if (!sum || !list) return;
-    const sel = c[k] || [], all = d.opts(), lab = id => { const o = all.find(([v]) => v === id); return d.short ? d.short(id) : o ? o[1] : id; };
-    sum.textContent = !sel.length ? d.all : sel.length === 1 ? d.pre + lab(sel[0]) : d.many(sel.length, sel);
-    sum.classList.toggle('is-on', !!sel.length);
-    sum.title = sel.length ? d.pre + sel.map(id => { const o = all.find(([v]) => v === id); return o ? o.slice(1).join(' ') : id; }).join(', ') : '';
+    // Versija 253: kopīgā "Visi …" loģika – saraksta sākumā "Visi …" (meklējot – "Visi atrastie (N)"); neviens atzīmēts – bez filtra
+    const sel = c[k] || [], all = d.opts(), items = all.map(([v]) => v), mv = cmsMsa(k), lab = id => { const o = all.find(([v]) => v === id); return d.short ? d.short(id) : o ? o[1] : id; };
+    const ps = MSA.sum(mv, items, {all:d.all, lab, unit:d.unit});
+    sum.textContent = ps.st === 'part' ? d.pre + ps.text : d.all;
+    sum.classList.toggle('is-on', ps.st === 'part');
+    sum.title = ps.st === 'part' ? d.pre + sel.map(id => { const o = all.find(([v]) => v === id); return o ? o.slice(1).join(' ') : id; }).join(', ') : '';
     const qi = d.search && $(`#cf-ms-${k}-q`), qq = qi ? norm(qi.value) : '';
-    const rows = all.filter(o => !qq || norm(o.slice(1).join(' ')).includes(qq));
-    list.innerHTML = rows.map(([v, l, n]) => `<label class="cms-o${sel.includes(v) ? ' is-on' : ''}"><input type="checkbox" data-cms-v="${esc(v)}"${sel.includes(v) ? ' checked' : ''}><span>${n ? `<b>${esc(l)}</b> <small>${esc(n)}</small>` : esc(l)}</span></label>`).join('')
-      + (!rows.length ? '<div class="cf-none">Nav atrasts</div>' : '') + (sel.length ? `<button type="button" class="link-btn cms-clr" data-cms-clr>Notīrīt izvēli</button>` : '');
+    const rows = all.filter(o => !qq || norm(o.slice(1).join(' ')).includes(qq)), vSt = MSA.state(mv, rows.map(([v]) => v));
+    list.innerHTML = (rows.length ? `<label class="cms-o cms-all${vSt !== 'none' ? ' is-on' : ''}">${MSA.box(vSt, 'data-cms-all')}<span>${esc(MSA.allLabel(d.allL, qq, rows.length))}</span></label>` : '')
+      + rows.map(([v, l, n]) => `<label class="cms-o${MSA.on(mv, v) ? ' is-on' : ''}"><input type="checkbox" data-cms-v="${esc(v)}"${MSA.on(mv, v) ? ' checked' : ''}><span>${n ? `<b>${esc(l)}</b> <small>${esc(n)}</small>` : esc(l)}</span></label>`).join('')
+      + (!rows.length ? '<div class="cf-none">Nav atrasts</div>' : '');
   });
   const as = $('#cf-aud-sum'), al = $('#cf-aud-list');
   if (as && al){ as.textContent = c.aud && STAT_JOMAS[c.aud] ? `Statistikas joma: ${STAT_JOMAS[c.aud]}` : 'Statistikas joma: visas'; as.title = as.textContent; as.classList.toggle('is-on', !!c.aud);
@@ -14198,10 +14278,11 @@ function histGroupsHtml(sel, c){
 function renderHgMenu(sel, c){
   const m = $('#hg-menu'), g = HIST_GROUPS.find(x => x.k === ui.hgMenu && x.menu);
   if (!g){ m.hidden = true; m.innerHTML = ''; return; }
-  const on = sel.length && histGroupOf(sel[0]) === g, whole = on && sel.length === g.sts.length;
+  // Versija 253: kopīgā "Visi …" loģika – "Visi grupas statusi" atzīmē visus grupas statusus; daļa – svītriņa; neviens – bez filtra
+  const on = sel.length && histGroupOf(sel[0]) === g, v = on ? sel.filter(k => g.sts.includes(k)) : [], st = MSA.state(v, g.sts);
   m.setAttribute('aria-label', `${g.label}: statusi`);
-  m.innerHTML = `<label class="hg-all"><input type="checkbox" data-hg-all="${g.k}" ${whole ? 'checked' : ''}>Visi grupas statusi</label><hr>`
-    + g.sts.map(k => `<label class="${c(k) ? '' : 'is-zero'}"><input type="checkbox" data-hg-st="${k}" ${on && !whole && sel.includes(k) ? 'checked' : ''}>${msgBadge(k)}<span class="hg-c">${c(k)}</span></label>`).join('');
+  m.innerHTML = `<label class="hg-all">${MSA.box(st, `data-hg-all="${g.k}"`)}Visi grupas statusi</label><hr>`
+    + g.sts.map(k => `<label class="${c(k) ? '' : 'is-zero'}"><input type="checkbox" data-hg-st="${k}" ${MSA.on(v, k) ? 'checked' : ''}>${msgBadge(k)}<span class="hg-c">${c(k)}</span></label>`).join('');
   m.hidden = false;
   const cb = $(`#hist-sub [data-hg-menu="${g.k}"]`), row = m.parentElement;
   if (cb){ const sp = cb.closest('.hg-split').getBoundingClientRect(), rr = row.getBoundingClientRect();
@@ -14783,7 +14864,7 @@ sfRegister('jrn', {
       sfJomaRepInit(el, upd);
       perInit('sfj', () => w.per, v => { Object.assign(w.per, v); perRender('sfj'); upd(); }, {opts:JRN_SF_QUICK, range:histRange}); perRender('sfj'); },
     read:(el, w) => { const ms = k => $$(`[data-sfm="${k}"]:checked`, el).map(i => i.value);
-      return jrnFCanon({q:$('#sfj-q', el).value, reps:ms('reps'), kinds:ms('kinds'), sends:ms('sends'), sender:$('#sfj-sender', el).value, jomas:ms('jomas'), quick:w.per.quick || '', from:w.per.from || '', to:w.per.to || ''}); },
+      return jrnFCanon({q:$('#sfj-q', el).value, reps:msaDomVals(el, 'reps'), kinds:ms('kinds'), sends:ms('sends'), sender:$('#sfj-sender', el).value, jomas:ms('jomas'), quick:w.per.quick || '', from:w.per.from || '', to:w.per.to || ''}); },
     any:f => !!(f.q || f.reps.length || f.kinds.length || f.sends.length || f.sender || f.jomas.length || f.quick || f.from || f.to),
   },
   // testa dati: divi piemēri
@@ -14815,9 +14896,9 @@ sfRegister('rep', {
     norm:f => { const c = repFCanon(f); return {...c, per:{quick:c.quick, from:c.from, to:c.to}, cmp:{quick:c.cq, from:c.cf, to:c.ct}}; },
     html:w => { const row = (l, html, id) => `<div class="sf-ed-row"><${id ? `label for="${id}"` : 'span class="sf-ed-l"'}>${l}</${id ? 'label' : 'span'}><div>${html}</div></div>`;
       const chips = (key, entries, sel) => `<div class="sf-chips" role="group" aria-label="${key}">${entries.map(([k, l]) => `<label class="sf-chip"><input type="checkbox" data-sfm="${key}" value="${esc(k)}"${sel.includes(k) ? ' checked' : ''}><span>${esc(l)}</span></label>`).join('')}</div>`;
-      const plist = (key, ph, items, sel) => `<div class="sf-reps" data-sfl="${key}"><input type="search" data-sfl-q="${key}" placeholder="${esc(ph)}" aria-label="${esc(ph)}"><div class="sf-rep-list" role="group">${items.map(([v, b, t]) => `<label class="sf-rep" data-q="${esc(norm(b + ' ' + t))}"><input type="checkbox" data-sfm="${key}" value="${esc(v)}"${sel.includes(String(v)) ? ' checked' : ''}><span><b>${esc(b)}</b> ${esc(t)}</span></label>`).join('')}<div class="sf-rep-none" hidden>Nav atrasts</div></div><div class="sf-rep-sel" data-sfl-sel="${key}" aria-live="polite"></div></div>`;
+      const plist = (key, ph, items, sel, allL) => `<div class="sf-reps" data-sfl="${key}" data-msa-l="${esc(allL)}"><input type="search" data-sfl-q="${key}" placeholder="${esc(ph)}" aria-label="${esc(ph)}"><div class="sf-rep-list" role="group"><label class="sf-rep sf-rep-all"><input type="checkbox" data-msa-all><span data-msa-all-l>${esc(allL)}</span></label>${items.map(([v, b, t]) => `<label class="sf-rep" data-q="${esc(norm(b + ' ' + t))}"><input type="checkbox" data-sfm="${key}" value="${esc(v)}"${!sel.length || sel.includes(String(v)) ? ' checked' : ''}><span><b>${esc(b)}</b> ${esc(t)}</span></label>`).join('')}<div class="sf-rep-none" hidden>Nav atrasts</div></div><div class="sf-rep-sel" data-sfl-sel="${key}" aria-live="polite"></div></div>`;
       const camps = histCampList(state.sent).map(c => [String(c.b), c.name, c.desc || '']), reps = histRepList(state.sent).map(r => [r.id, r.code, r.name]);
-      return row('Kampaņa', plist('camps', 'Meklēt kampaņu…', camps, w.camps))
+      return row('Kampaņa', plist('camps', 'Meklēt kampaņu…', camps, w.camps, 'Visas kampaņas'))
         + sfJomaRepRows(row, w, reps)
         + row('Kampaņas veids', chips('kinds', Object.entries(SESS_KINDS).map(([k, v]) => [k, v.label]), w.kinds))
         + row('Periods', `<div data-per="sfr"></div>`)
@@ -14826,13 +14907,13 @@ sfRegister('rep', {
         + row('Rādītāji grafikā', chips('serRate', RATE_SER.map(([k, l]) => [k, l]), RATE_SER.map(([k]) => k).filter(k => !((w.ser || {}).rate || []).includes(k)))); },
     init:(el, w, upd) => { $$('[data-per]', el).forEach(h => { h.outerHTML = perHtml(h.dataset.per, h.dataset.perLabel); });
       sfJomaRepInit(el, upd);
-      $$('[data-sfl]:not([data-sfl="reps"])', el).forEach(box => { const k = box.dataset.sfl, sel = () => { const v = $$('[data-sfm]:checked', box).map(i => i.closest('.sf-rep').querySelector('b').textContent); $(`[data-sfl-sel="${k}"]`, box).textContent = v.length ? `Izvēlēti: ${v.length > 3 ? `${v.slice(0, 3).join(', ')} +${v.length - 3}` : v.join(', ')}` : ''; };
-        $(`[data-sfl-q="${k}"]`, box).addEventListener('input', e => { const q = norm(e.target.value); let n = 0; $$('.sf-rep', box).forEach(l => { const on = !q || l.dataset.q.includes(q); l.hidden = !on; n += on; }); $('.sf-rep-none', box).hidden = !!n; });
-        box.addEventListener('change', sel); sel(); });
+      $$('[data-sfl]:not([data-sfl="reps"])', el).forEach(box => { const k = box.dataset.sfl, sel = () => msaDomSel(box, k);
+        $(`[data-sfl-q="${k}"]`, box).addEventListener('input', e => { const q = norm(e.target.value); let n = 0; $$('.sf-rep:not(.sf-rep-all)', box).forEach(l => { const on = !q || l.dataset.q.includes(q); l.hidden = !on; n += on; }); $('.sf-rep-none', box).hidden = !!n; });
+        msaDomInit(box, k, box.dataset.msaL || 'Visi'); box.addEventListener('change', sel); sel(); });
       perInit('sfr', () => w.per, v => { Object.assign(w.per, v); perRender('sfr'); upd(); }, {opts:REP_QUICK, range:quickRange}); perRender('sfr');
       perInit('sfrc', () => w.cmp, v => { Object.assign(w.cmp, v); perRender('sfrc'); upd(); }, {opts:REP_CMP_OPTS, range:() => ({from:'', to:''}), none:'—', full:true, years:cmpYears, applyLbl:'Piemērot'}); perRender('sfrc'); },
     read:(el, w) => { const ms = k => $$(`[data-sfm="${k}"]:checked`, el).map(i => i.value);
-      return repFCanon({camps:ms('camps'), reps:ms('reps'), kinds:ms('kinds'), chs:ms('chs'), jomas:ms('jomas'), quick:w.per.quick || '', from:w.per.from || '', to:w.per.to || '',
+      return repFCanon({camps:msaDomVals(el, 'camps'), reps:msaDomVals(el, 'reps'), kinds:ms('kinds'), chs:ms('chs'), jomas:ms('jomas'), quick:w.per.quick || '', from:w.per.from || '', to:w.per.to || '',
         cq:w.cmp.quick || '', cf:w.cmp.from || '', ct:w.cmp.to || '', ser:{...(w.ser || {}), rate:RATE_SER.map(([k]) => k).filter(k => !ms('serRate').includes(k))}}); },
     any:f => !!(f.camps.length || f.reps.length || f.kinds.length || f.chs.length || f.jomas.length || f.quick || f.from || f.to || f.cq || Object.keys(f.ser || {}).length),
   },
@@ -16301,9 +16382,14 @@ $$('.cf-ms[data-cms]').forEach(dd => {
   const k = dd.dataset.cms;
   dd.addEventListener('toggle', () => { if (!dd.open) return; $$('.cf-ms[open]').forEach(o => { if (o !== dd) o.open = false; });
     const qi = $(`#cf-ms-${k}-q`); if (qi){ qi.value = ''; renderCampMs(); setTimeout(() => qi.focus(), 0); } });
-  dd.addEventListener('change', e => { const i = e.target.closest('[data-cms-v]'); if (!i) return; const v = i.dataset.cmsV, cur = ui.camp[k];
-    ui.camp[k] = i.checked ? [...new Set([...cur, v])] : cur.filter(x => x !== v); ui.campLimit = CAMP_PAGE; renderCampaigns();
-    const n = $(`#cf-ms-${k}-list [data-cms-v="${CSS.escape(v)}"]`); if (n) n.focus(); });
+  // Versija 253: kopīgā "Visi …" loģika (MSA); visi vai neviens – bez filtra ([])
+  dd.addEventListener('change', e => { const a = e.target.closest('[data-cms-all]'), i = e.target.closest('[data-cms-v]'); if (!a && !i) return;
+    const d = CMS[k], opts = d.opts(), items = opts.map(([x]) => x), qi = d.search && $(`#cf-ms-${k}-q`), qq = qi ? norm(qi.value) : '';
+    const vis = opts.filter(o => !qq || norm(o.slice(1).join(' ')).includes(qq)).map(([x]) => x), mv = cmsMsa(k);
+    const nv = a ? MSA.toggleAll(mv, items, vis) : MSA.toggle(mv, items, i.dataset.cmsV);
+    ui.camp[k] = nv && nv.length ? nv : []; ui.cmsNone = {...(ui.cmsNone || {}), [k]:nv && !nv.length ? ui.camp[k] : null};
+    ui.campLimit = CAMP_PAGE; renderCampaigns();
+    const n = $(`#cf-ms-${k}-list ${a ? '[data-cms-all]' : `[data-cms-v="${CSS.escape(i.dataset.cmsV)}"]`}`); if (n) n.focus(); });
   dd.addEventListener('click', e => { if (!e.target.closest('[data-cms-clr]')) return; ui.camp[k] = []; ui.campLimit = CAMP_PAGE; renderCampaigns(); $(`#cf-ms-${k}-sum`).focus(); });
   dd.addEventListener('keydown', e => { if (e.key === 'Escape' && dd.open){ e.preventDefault(); dd.open = false; $(`#cf-ms-${k}-sum`).focus(); } });
 });
@@ -16381,10 +16467,8 @@ $('#hist-sub').addEventListener('click', e => {
 // izvēlne: "Visi grupas statusi" vai atsevišķi statusi (tikai vienas grupas; citas grupas izvēle atiestatās)
 $('#hg-menu').addEventListener('change', e => {
   const g = HIST_GROUPS.find(x => x.k === ui.hgMenu); if (!g) return;
-  const cur = histStSel(ui.hist).filter(k => g.sts.includes(k)), whole = cur.length === g.sts.length;
-  let v;
-  if (e.target.dataset.hgAll != null) v = e.target.checked ? [...g.sts] : [];
-  else { const k = e.target.dataset.hgSt, base = whole ? [] : cur; v = e.target.checked ? [...base, k] : base.filter(x => x !== k); }
+  const cur = histStSel(ui.hist).filter(k => g.sts.includes(k));
+  const nv = e.target.dataset.hgAll != null ? MSA.toggleAll(cur, g.sts) : MSA.toggle(cur, g.sts, e.target.dataset.hgSt), v = nv == null ? g.sts : nv;
   const keep = e.target.dataset.hgAll != null ? '[data-hg-all]' : `[data-hg-st="${e.target.dataset.hgSt}"]`;
   setHistSts(g.sts.filter(k => v.includes(k))); const el = $('#hg-menu ' + keep); if (el) el.focus();
 });
@@ -16666,7 +16750,8 @@ $('#c-aud').addEventListener('change', e => {
   let cleared = false;
   const keep = sel.reports.filter(id => valid.has(id));
   if (keep.length !== sel.reports.length){ sel.reports = keep; cleared = true; }
-  if (fizMode() && sel.allReports){ sel.allReports = false; cleared = true; }
+  if (fizMode() && sel.allReports) sel.allReports = false; // Versija 253: "Visi apsekojumi" ir noklusējums – tā noņemšana nav tvēruma notīrīšana
+  if (compose.aud === 'jur' && !sel.allReports && !sel.reports.length) sel.allReports = true;
   // iedzīvotāju statistikā – viens apsekojums ar periodu; citās jomās perioda / reizes izvēles nav
   if (fizMode() && sel.reports.length > 1){ sel.reports = sel.reports.slice(0, 1); cleared = true; }
   if (!fizMode() && (sel.fz.period || sel.fz.year || sel.fz.rounds)){ sel.fz = defaultFz(); cleared = true; }
@@ -16709,10 +16794,9 @@ $('#c-fz-cyc').addEventListener('keydown', e => { if (e.key === 'Escape' && e.cu
 $('#c-fz-rounds').addEventListener('change', e => {
   const c = e.target.closest('[data-round]'), R = ROUNDS[compose.sel.reports[0]];
   if (!c || !R) return;
-  // Versija 248: "Visi" – visi cikli (atsevišķie noņemti); atsevišķs cikls – "Visi" noņemts; ja neviena atsevišķa – atkal "Visi"
-  const k = c.dataset.round, own = compose.sel.fz.rounds || [];
-  if (k === 'all') compose.sel.fz.rounds = null;
-  else { const n = +k, next = c.checked ? [...new Set([...own, n])].sort((a, b) => a - b) : own.filter(x => x !== n); compose.sel.fz.rounds = next.length && next.length < R.n ? next : null; }
+  // Versija 253: kopīgā "Visi …" loģika (MSA): null – visi; [] – neviens; [n…] – atzīmētie
+  const k = c.dataset.round, items = Array.from({length:R.n}, (_, i) => i + 1), v = compose.sel.fz.rounds;
+  compose.sel.fz.rounds = k === 'all' ? MSA.toggleAll(v, items) : MSA.toggle(v, items, +k);
   selChanged(); const el = $(`#c-fz-rounds [data-round="${k}"]`); if (el) el.focus();
 });
 
@@ -17323,13 +17407,13 @@ $('#c-pf').addEventListener('change', e => {
   const k = row.dataset.pfrow, cur = compose.sel.pf[k];
   if (e.target.dataset.pft){ if (!e.target.checked) ui.pfOpen = ''; return pfSet(k, e.target.checked ? 'all' : 'none'); }
   const n = e.target.dataset.pfn; if (!n) return;
-  if (n === 'all') return pfSet(k, 'all');
-  const vs = new Set(pfVals(cur)); e.target.checked ? vs.add(+n) : vs.delete(+n);
-  pfSet(k, vs.size ? [...vs].sort((a, b) => a - b).join(',') : 'all');
+  // Versija 253: kopīgā "Visi …" loģika (MSA)
+  const items = perOpts(k, +compose.sel.year).map(([x]) => x), mv = pfMsa(cur);
+  pfSet(k, pfFromMsa(n === 'all' ? MSA.toggleAll(mv, items) : MSA.toggle(mv, items, +n)));
 });
 $('#c-pf').addEventListener('click', e => {
   const rm = e.target.closest('[data-pfrm]');
-  if (rm){ e.preventDefault(); e.stopPropagation(); const k = rm.closest('[data-pfrow]').dataset.pfrow, vs = pfVals(compose.sel.pf[k]).filter(n => n !== +rm.dataset.pfrm); pfSet(k, vs.length ? vs.join(',') : 'all'); return; }
+  if (rm){ e.preventDefault(); e.stopPropagation(); const k = rm.closest('[data-pfrow]').dataset.pfrow, items = perOpts(k, +compose.sel.year).map(([x]) => x); pfSet(k, pfFromMsa(MSA.toggle(pfMsa(compose.sel.pf[k]), items, +rm.dataset.pfrm))); return; }
   const sum = e.target.closest('.pf-dd > summary');
   if (sum && sum.parentElement.classList.contains('is-disabled')) e.preventDefault();
 });
@@ -17337,12 +17421,12 @@ $('#c-pf').addEventListener('toggle', e => { const d = e.target; if (d.classList
 document.addEventListener('click', e => { const d = $('#c-pf .pf-dd[open]'); if (d && !d.contains(e.target)){ d.open = false; ui.pfOpen = ''; } });
 $('#c-pf').addEventListener('keydown', e => { const d = e.target.closest('.pf-dd'); if (e.key === 'Escape' && d && d.open){ e.preventDefault(); e.stopPropagation(); d.open = false; ui.pfOpen = ''; $('summary', d).focus(); } });
 $('#cr-more').addEventListener('click', () => { ui.respMore = !ui.respMore; renderScope(); $('#cr-more').focus(); if (ui.respMore) $('#cr-nmkps').focus(); });
+// Versija 253: kopīgā "Visi …" loģika – "Visi apsekojumi" (meklējot – "Visi atrastie (N)") atzīmē / noņem visus (atrastos); '**' – noņem visus
 const repToggle = id => {
-  const s = compose.sel;
-  // "Visi apsekojumi" un konkrēti apsekojumi viens otru izslēdz
-  if (id === '*'){ s.allReports = !s.allReports; if (s.allReports) s.reports = []; }
-  else if (id === '**') s.reports = [];
-  else { s.reports = s.reports.includes(id) ? s.reports.filter(x => x !== id) : [...s.reports, id]; if (s.reports.length) s.allReports = false; }
+  const items = repAvail().map(p => p.id), v = repMsa();
+  if (id === '*') repMsaSet(MSA.toggleAll(v, items, repFound().map(p => p.id)));
+  else if (id === '**') repMsaSet([]);
+  else repMsaSet(MSA.toggle(v, items, id));
   selChanged();
 };
 let msIdx = -1;
@@ -17380,6 +17464,7 @@ $('#c-rep-tags').addEventListener('click', e => {
   const b = e.target.closest('[data-rep-rm]');
   if (!b) return;
   if (b.dataset.repRm === '**'){ repRemoveAll(); return; }
+  if (b.dataset.repRm === '*0'){ repMsaSet([]); selChanged(); $('#c-rep-search').focus({preventScroll:true}); return; }
   repToggle(b.dataset.repRm);
   $('#c-rep-search').focus({preventScroll:true});
 });
