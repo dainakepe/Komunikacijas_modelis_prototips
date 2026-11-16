@@ -1387,6 +1387,15 @@ th[aria-sort="ascending"] .sort-btn .ar,th[aria-sort="descending"] .sort-btn .ar
 /* Versija 240: "Reakcija un iesniegšana" – viena rinda: Piltuve | Iesniegšana pa apsekojumiem | (Atvēršana pa kampaņu veidiem / Vidējais laiks);
    rindas augstumu nosaka augstākā kolonna, 3. kolonnas kartītes dala to uz pusēm (flex:1); šai rindai nav minimālā kartītes augstuma */
 .rk-cards.rx-row > .card{min-height:0}
+/* Versija 250: klikšķināma leģenda – rūtiņa sērijas krāsā (ieslēgts – aizpildīts ar ķeksīti; izslēgts – tukšs ar krāsainu rāmi, teksts pelēks) */
+.lg-tg-row{gap:6px 14px}
+.lg-tg{appearance:none;border:0;background:none;font:inherit;font-size:inherit;color:var(--text-secondary);display:inline-flex;align-items:center;gap:6px;padding:2px 4px;margin:-2px -4px;border-radius:var(--radius-xs);cursor:pointer}
+.lg-tg:hover{background:var(--primary-50)}
+.lg-tg:focus-visible{outline:3px solid var(--focus-ring);outline-offset:1px}
+.lg-tg .lg-box{width:14px;height:14px;border-radius:3px;border:2px solid var(--lg);background:transparent;display:grid;place-items:center;font-size:10px;line-height:1;font-weight:700;color:#fff;flex:none;box-sizing:border-box}
+.lg-tg.is-on .lg-box{background:var(--lg)}
+.lg-tg:not(.is-on){color:var(--text-muted)}
+.lg-tg[aria-disabled="true"]{cursor:not-allowed}
 /* Versija 245: "Patērētais laiks" – soļu josla, mēnešu stabiņi */
 .tp-kpis{margin-bottom:12px}
 .tp-steps{margin-bottom:16px;padding:12px 16px}
@@ -4284,7 +4293,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 249</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 250</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -10195,7 +10204,8 @@ function baseDuties(){
   // iedzīvotāju statistika: apsekojums + periods + atzīmētās reizes / cikli
   if (fizMode()){
     // "Visi periodi" (periods nav precizēts) – visi izvēlētā gada periodi un visi cikli
-    const id = sel.reports[0], per = sel.fz.period, rs = per ? fzRounds(sel) : null;
+    // Versija 250: cikli attiecas arī uz "Visi periodi" (visu gada periodu izvēlētie cikli)
+    const id = sel.reports[0], per = sel.fz.period, rs = sel.fz.rounds && sel.fz.rounds.length ? fzRounds(sel) : null;
     if (!fzScoped(sel)) return [];
     return (state.duties || []).filter(d => d.reportId === id && (per ? d.period === per : periodYear(d.period) === +sel.fz.year) && (!rs || rs.includes(d.round)));
   }
@@ -10559,14 +10569,14 @@ function renderFz(){
   ['#c-fz-year', '#c-fz-per'].forEach(x => { $(x).disabled = !p; });
   // Cikls: izkrītošā vairākizvēle (apsekojumiem bez reizēm / cikliem – tukša un neaktīva)
   // cikls – neaktīvs, kamēr periods nav precizēts ("Visi periodi" – "Visi cikli")
-  const R = ROUNDS[id], rs = fzRounds(sel) || [], dd = $('#c-fz-cyc'), sum = $('#c-fz-cyc-sum'), cOn = !!R && !!fz.period;
+  const R = ROUNDS[id], rs = fzRounds(sel) || [], dd = $('#c-fz-cyc'), sum = $('#c-fz-cyc-sum'), cOn = !!R; // Versija 250: aktīvs arī bez perioda
   dd.classList.toggle('is-disabled', !cOn);
   if (!cOn) ui.cycOpen = false;
   dd.open = !!(cOn && ui.cycOpen);
   sum.setAttribute('aria-disabled', String(!cOn)); sum.tabIndex = cOn ? 0 : -1;
   // Versija 248: izvēlnes sākumā "Visi cikli" / "Visas reizes" (noklusējums); atsevišķie cikli – tikai, ja izvēlēti konkrēti
   const allR = !fz.rounds || !fz.rounds.length;
-  sum.innerHTML = !R ? '' : !fz.period || allR ? `<span class="muted">${esc(R.all)}</span>` : rs.map(n => `<span class="cyc-tag">${esc(roundLabel(id, n))}</span>`).join('');
+  sum.innerHTML = !R ? '' : allR ? `<span class="muted">${esc(R.all)}</span>` : rs.map(n => `<span class="cyc-tag">${esc(roundLabel(id, n))}</span>`).join('');
   $('#c-fz-rounds').innerHTML = cOn ? `<label class="pf-all"><input type="checkbox" data-round="all" ${allR ? 'checked' : ''}>${esc(R.all)}</label>`
     + Array.from({length:R.n}, (_, i) => i + 1).map(n => `<label><input type="checkbox" data-round="${n}" ${!allR && rs.includes(n) ? 'checked' : ''}>${esc(roundLabel(id, n))}</label>`).join('') : '';
   $('#c-fz-rounds-hint').hidden = true;
@@ -10949,7 +10959,7 @@ function scopeCtxTags(){
     if (v === 'all') add('', PF_LABELS[k]); else add(PF_LABELS[k], pfSpan(k, +sel.year, v)); });
   if (sel.reports.length) sel.reports.forEach(id => { const p = repById(id), per = fizMode() && sel.fz.period ? sel.fz.period : ''; if (p) add('Apsekojums', p.code + (per ? ` · ${periodCode(per)}` : ''), '', repTitle(p) + (per ? ` – ${periodLabel(per)}` : '')); });
   if (fizMode() && sel.reports[0] && !sel.fz.period && sel.fz.year) add('Periods', `${sel.fz.year} – visi periodi`);
-  if (fizMode() && ROUNDS[sel.reports[0]]){ const R = ROUNDS[sel.reports[0]], rs = sel.fz.period ? fzRounds(sel) : null; add(R.label, !rs || rs.length === R.n ? 'visas' : rs.map(n => `${n}.`).join(', ')); }
+  if (fizMode() && ROUNDS[sel.reports[0]]){ const R = ROUNDS[sel.reports[0]], rs = fzRounds(sel); add(R.label, !rs || rs.length === R.n ? 'visas' : rs.map(n => `${n}.`).join(', ')); }
   else add('', 'Visi apsekojumi');
   if (sel.operator){ const o = OPERATORS.find(x => x.id === sel.operator); add('Operators', o ? o.name : sel.operator); }
   [['name', 'Nosaukums'], ['nmkps', 'NMK/PS'], ['uuk', 'UUK'], ['email', 'E-pasts'], ['eaddr', 'eAdrese']].forEach(([k, l]) => { if (String(f[k] || '').trim()) add(l, f[k].trim()); });
@@ -10980,7 +10990,7 @@ function renderScopeCtx(){
   if (fizMode()){
     const p = repById(sel.reports[0]), per = sel.fz.period, R = ROUNDS[sel.reports[0]], rn = fzRounds(sel);
     rows.push(kvRow('Apsekojumi', p ? `<span title="${esc(repTitle(p))}">${esc(p.code)}</span>` : '<span class="muted">—</span>'));
-    rows.push(kvRow('Periodi', per ? `<span title="${esc(periodLabel(per))}">${esc(periodCode(per))}</span>${R && rn.length && rn.length < R.n ? ` <span class="muted">(${esc(`${rn.map(n => `${n}.`).join(', ')} ${R.word}`)})</span>` : ''}` : sel.fz.year ? `Visi periodi (${esc(sel.fz.year)})` : '<span class="muted">—</span>'));
+    rows.push(kvRow('Periodi', per ? `<span title="${esc(periodLabel(per))}">${esc(periodCode(per))}</span>${R && rn.length && rn.length < R.n ? ` <span class="muted">(${esc(`${rn.map(n => `${n}.`).join(', ')} ${R.word}`)})</span>` : ''}` : sel.fz.year ? `Visi periodi (${esc(sel.fz.year)})${R && rn.length && rn.length < R.n ? ` <span class="muted">(${esc(`${rn.map(n => `${n}.`).join(', ')} ${R.word}`)})</span>` : ''}` : '<span class="muted">—</span>'));
   } else {
     // pārskati un periodi no atlasītajiem pienākumiem
     const reps = [...new Set(ds.map(d => d.reportId))].map(repById).filter(Boolean).sort((a, b) => a.code.localeCompare(b.code, 'lv'));
@@ -14593,7 +14603,7 @@ function quickRange(q){
 function repFCanon(f){
   f = f || {}; if (f.cq === 'year'){ f = {...f}; cmpYearFix(f); } const so = a => [...new Set((a || []).map(String))].sort(), q = f.quick || '';
   return {camps:so(f.camps), reps:so((f.reps || []).map(mapReportId)), kinds:so(f.kinds), chs:so(f.chs), jomas:jomasOfF(f), quick:q, from:q && q !== 'custom' ? '' : f.from || '', to:q && q !== 'custom' ? '' : f.to || '',
-    cq:f.cq || '', cf:f.cq === 'custom' ? f.cf || '' : '', ct:f.cq === 'custom' ? f.ct || '' : ''};
+    cq:f.cq || '', cf:f.cq === 'custom' ? f.cf || '' : '', ct:f.cq === 'custom' ? f.ct || '' : '', ser:serCanon(f.ser)}; // Versija 250: izslēgtie rādītāji
 }
 // aktīvā saglabātā filtra nosacījumi (ar perioda datumiem) vai null
 function repSf(){ const c = typeof sfCur === 'function' && SF_CFG.rep ? sfCur('rep') : null; if (!c) return null; const f = repFCanon(c.f); return {...f, ...(f.quick && f.quick !== 'custom' ? quickRange(f.quick) : {}), name:c.name}; }
@@ -14785,11 +14795,11 @@ sfRegister('rep', {
   sec:'Atskaites', noneLabel:'Rādīt atskaites bez filtra',
   canon:repFCanon,
   empty:() => repFCanon({}),
-  get:() => repFCanon({}),
+  get:() => repFCanon({ser:ui.rep.ser}), // Versija 250: grafikā izslēgtie rādītāji – arī saglabājamā filtrā
   apply:() => {},
   render:() => renderReports(),
   // Versija 231: izvēloties filtru ar saglabātu salīdzinājumu – tas tiek piemērots filtru rindā "Salīdzināt ar:"
-  onPick:x => { const f = repFCanon(x.f); if (f.cq) Object.assign(ui.rep, {cq:f.cq, cf:f.cf, ct:f.ct}); },
+  onPick:x => { const f = repFCanon(x.f); if (f.cq) Object.assign(ui.rep, {cq:f.cq, cf:f.cf, ct:f.ct}); if (Object.keys(f.ser).length) ui.rep.ser = JSON.parse(JSON.stringify(f.ser)); },
   // izvēloties filtru – atveras arī norādītā apakšcilne
   // Versija 215: filtra izvēle atvērto apakšcilni nemaina – filtrs tiek piemērots atvērtajai apakšcilnei
   // agrāk saglabātie filtri – bez apakšcilnes (f.sub); piemēra filtrs "1-C Ceļotāji – reakcija" → "1-C Ceļotāji"
@@ -14800,7 +14810,7 @@ sfRegister('rep', {
       f.kinds.length ? `Veids: ${f.kinds.map(k => (SESS_KINDS[k] || {}).label || k).join(', ')}` : '',
       f.quick || f.from || f.to ? `Periods: ${perLabel(REP_QUICK, f)}` : '',
       f.cq ? `Salīdzināt ar: ${cmpLabel({quick:f.cq, from:f.cf, to:f.ct})}` : '',
-      f.chs.length ? `Kanāls: ${f.chs.map(k => REP_CH_L[k] || k).join(', ')}` : '', f.jomas.length ? `Joma: ${jomasLabel(f.jomas)}` : ''].filter(Boolean).join(' · ') || 'Bez filtriem'; },
+      f.chs.length ? `Kanāls: ${f.chs.map(k => REP_CH_L[k] || k).join(', ')}` : '', f.jomas.length ? `Joma: ${jomasLabel(f.jomas)}` : '', Object.keys(f.ser).length ? `Paslēpti grafikā: ${serSumTxt(f.ser)}` : ''].filter(Boolean).join(' · ') || 'Bez filtriem'; },
   editor:{
     norm:f => { const c = repFCanon(f); return {...c, per:{quick:c.quick, from:c.from, to:c.to}, cmp:{quick:c.cq, from:c.cf, to:c.ct}}; },
     html:w => { const row = (l, html, id) => `<div class="sf-ed-row"><${id ? `label for="${id}"` : 'span class="sf-ed-l"'}>${l}</${id ? 'label' : 'span'}><div>${html}</div></div>`;
@@ -14812,7 +14822,8 @@ sfRegister('rep', {
         + row('Kampaņas veids', chips('kinds', Object.entries(SESS_KINDS).map(([k, v]) => [k, v.label]), w.kinds))
         + row('Periods', `<div data-per="sfr"></div>`)
         + row('Salīdzināt ar', `<div data-per="sfrc" data-per-label="Salīdzināt ar:"></div>`)
-        + row('Kanāls', chips('chs', Object.entries(REP_CH_L), w.chs)); },
+        + row('Kanāls', chips('chs', Object.entries(REP_CH_L), w.chs))
+        + row('Rādītāji grafikā', chips('serRate', RATE_SER.map(([k, l]) => [k, l]), RATE_SER.map(([k]) => k).filter(k => !((w.ser || {}).rate || []).includes(k)))); },
     init:(el, w, upd) => { $$('[data-per]', el).forEach(h => { h.outerHTML = perHtml(h.dataset.per, h.dataset.perLabel); });
       sfJomaRepInit(el, upd);
       $$('[data-sfl]:not([data-sfl="reps"])', el).forEach(box => { const k = box.dataset.sfl, sel = () => { const v = $$('[data-sfm]:checked', box).map(i => i.closest('.sf-rep').querySelector('b').textContent); $(`[data-sfl-sel="${k}"]`, box).textContent = v.length ? `Izvēlēti: ${v.length > 3 ? `${v.slice(0, 3).join(', ')} +${v.length - 3}` : v.join(', ')}` : ''; };
@@ -14822,14 +14833,34 @@ sfRegister('rep', {
       perInit('sfrc', () => w.cmp, v => { Object.assign(w.cmp, v); perRender('sfrc'); upd(); }, {opts:REP_CMP_OPTS, range:() => ({from:'', to:''}), none:'—', full:true, years:cmpYears, applyLbl:'Piemērot'}); perRender('sfrc'); },
     read:(el, w) => { const ms = k => $$(`[data-sfm="${k}"]:checked`, el).map(i => i.value);
       return repFCanon({camps:ms('camps'), reps:ms('reps'), kinds:ms('kinds'), chs:ms('chs'), jomas:ms('jomas'), quick:w.per.quick || '', from:w.per.from || '', to:w.per.to || '',
-        cq:w.cmp.quick || '', cf:w.cmp.from || '', ct:w.cmp.to || ''}); },
-    any:f => !!(f.camps.length || f.reps.length || f.kinds.length || f.chs.length || f.jomas.length || f.quick || f.from || f.to || f.cq),
+        cq:w.cmp.quick || '', cf:w.cmp.from || '', ct:w.cmp.to || '', ser:{...(w.ser || {}), rate:RATE_SER.map(([k]) => k).filter(k => !ms('serRate').includes(k))}}); },
+    any:f => !!(f.camps.length || f.reps.length || f.kinds.length || f.chs.length || f.jomas.length || f.quick || f.from || f.to || f.cq || Object.keys(f.ser || {}).length),
   },
   // testa dati: divi piemēri
   seed:() => [{id:'sfr-seed-1', name:'Uzņēmumu uzaicinājumi – 12 mēn.', def:false, f:{kinds:['uzaicinajums'], jomas:['uzn'], quick:'12m'}},
     {id:'sfr-seed-2', name:'1-C Ceļotāji', def:false, f:{reps:['a-cel']}}],
 });
 const pct = (a, b) => b ? Math.round(a / b * 100) : 0;
+// ===== Versija 250: klikšķināma leģenda – rādītāju (sēriju) ieslēgšana / izslēgšana grafikā =====
+// ui.rep.ser = {grafiks: [izslēgto sēriju atslēgas]} – saglabājas sesijas laikā (griezums, filtri) un "Mani filtri"; pēdējo izslēgt nevar
+const SER_DN = [['sent', 'Nosūtītas', 's1'], ['deliv', 'Piegādātas', 's2']];
+const SER_NDR = [['auto', 'Atrisinātas automātiski', 's3'], ['man', 'Manuāli', 's2'], ['h', 'Patērētās stundas (labā ass)', 's1']];
+const serDefs = () => ({rate:RATE_SER, dn:SER_DN, ndr:SER_NDR});
+const serHidden = id => ((ui.rep && ui.rep.ser) || {})[id] || [];
+const serVis = (id, series) => { const h = serHidden(id), v = series.filter(([k]) => !h.includes(k)); return v.length ? v : series; };
+function legendTgHtml(id, series){
+  const h = serHidden(id), on = series.filter(([k]) => !h.includes(k)), allOff = !on.length;
+  return `<div class="viz-legend lg-tg-row" role="group" aria-label="Rādītāji grafikā (ieslēgt / izslēgt)">${series.map(([k, l, v]) => { const isOn = allOff || !h.includes(k), last = isOn && (allOff ? series.length === 1 : on.length === 1);
+    return `<button type="button" class="lg-tg${isOn ? ' is-on' : ''}" data-lg="${id}" data-lg-k="${k}" aria-pressed="${isOn}"${last ? ' aria-disabled="true" data-ctip="Jābūt redzamam vismaz vienam rādītājam"' : ` title="${isOn ? 'Paslēpt' : 'Rādīt'} grafikā: ${esc(l)}"`} style="--lg:var(--${v})"><span class="lg-box" aria-hidden="true">${isOn ? '✓' : ''}</span>${esc(l)}</button>`; }).join('')}</div>`;
+}
+// Mani filtri: normalizēti izslēgtie rādītāji ({} – visi redzami)
+function serCanon(ser){ const out = {}, D = serDefs(); Object.entries(ser || {}).forEach(([id, ks]) => { const all = (D[id] || []).map(([k]) => k), h = [...new Set((ks || []).filter(k => all.includes(k)))].sort(); if (h.length && h.length < all.length) out[id] = h; }); return out; }
+const serSumTxt = ser => Object.entries(serCanon(ser)).map(([id, ks]) => ks.map(k => ((serDefs()[id] || []).find(([x]) => x === k) || [, k])[1]).join(', ')).join('; ');
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('[data-lg]'); if (!b) return;
+  if (b.getAttribute('aria-disabled') === 'true'){ toast('Jābūt redzamam vismaz vienam rādītājam.'); return; }
+  const id = b.dataset.lg, k = b.dataset.lgK, h = new Set(serHidden(id)); h.has(k) ? h.delete(k) : h.add(k);
+  ui.rep.ser = {...(ui.rep.ser || {}), [id]:[...h]}; renderReports();
+  const n = $(`#rep-body [data-lg="${id}"][data-lg-k="${k}"]`); if (n) n.focus(); });
 const legendHtml = series => `<div class="viz-legend">${series.map(([, l, v]) => `<span><i style="background:var(--${v})"></i>${esc(l)}</span>`).join('')}</div>`;
 // Horizontāli sakrauti stabiņi (kategorija × statuss)
 function stackBars(groups, series){
@@ -15150,7 +15181,10 @@ function ndrView(xs){
     <p class="hint">Aktīvais apstrādes laiks tiek uzskaitīts automātiski (vēstules detaļas vai respondenta kartīte sūtījumos ar statusu grupā “Jārisina”), un tas netiek rādīts darbiniekam. Rādīts kopsavilkums, nevis atsevišķu darbinieku rezultāti.</p>`, sheets};
 }
 // sakrautie stabiņi (automātiski / manuāli) + līnija (stundas, labā ass); nepabeigtais periods – raustīta līnija
-function ndrChart(bk){
+function ndrChart(bk0){
+  // Versija 250: izslēgtās sērijas – netiek zīmētas (stabiņi sakrājas no redzamajām)
+  const SK = serVis('ndr', SER_NDR).map(([k]) => k), sA = SK.includes('auto'), sM = SK.includes('man'), sH = SK.includes('h');
+  const bk = bk0.map(b => ({...b, auto:sA ? b.auto : 0, man:sM ? b.man : 0}));
   const W = Math.max(300, Math.round((($('#rep-body') || {}).clientWidth || 720) - 40)), H = 262, L = 38, R = 52, T = 14, Bm = 44, iw = W - L - R, ih = H - T - Bm;
   const mx = Math.max(1, ...bk.map(b => b.auto + b.man)), step = mx <= 5 ? 1 : mx <= 20 ? 5 : mx <= 50 ? 10 : mx <= 200 ? 25 : 100, top = Math.ceil(mx / step) * step;
   const hm = Math.max(0.1, ...bk.map(b => b.h)), hTop = hm <= 1 ? 1 : Math.ceil(hm);
@@ -15159,18 +15193,18 @@ function ndrChart(bk){
   const every = Math.ceil(bk.length / Math.max(2, Math.floor(iw / 58))), last = bk.length - 1, part = bk[last].partial;
   const pt = i => `${x(i).toFixed(1)},${yh(bk[i].h).toFixed(1)}`;
   const solid = part ? bk.slice(0, -1) : bk;
-  const line = (solid.length > 1 ? `<path d="M${solid.map((b, i) => pt(i)).join(' L')}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round"/>` : '')
+  const line = !sH ? '' : (solid.length > 1 ? `<path d="M${solid.map((b, i) => pt(i)).join(' L')}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-linejoin="round"/>` : '')
     + (part && bk.length > 1 ? `<path d="M${pt(last - 1)} L${pt(last)}" fill="none" stroke="var(--s1)" stroke-width="2" stroke-dasharray="5 4"/>` : '')
     + bk.map((b, i) => `<circle cx="${x(i)}" cy="${yh(b.h)}" r="3" fill="var(--s1)"/>`).join('');
-  return legendHtml([[, 'Atrisinātas automātiski', 's3'], [, 'Manuāli', 's2'], [, 'Patērētās stundas (labā ass)', 's1']]) + `<svg class="line-chart ndr-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Nepiegādes (automātiski / manuāli) un patērētās stundas">
+  return legendTgHtml('ndr', SER_NDR) + `<svg class="line-chart ndr-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Nepiegādes (automātiski / manuāli) un patērētās stundas">
     ${ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${v ? 'var(--grid)' : 'var(--axis)'}" stroke-width="1"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`).join('')}
-    ${[0, .5, 1].map(f => `<text x="${W - R + 6}" y="${yh(hTop * f) + 4}" text-anchor="start">${fmtN1(hTop * f)} h</text>`).join('')}
+    ${sH ? [0, .5, 1].map(f => `<text x="${W - R + 6}" y="${yh(hTop * f) + 4}" text-anchor="start">${fmtN1(hTop * f)} h</text>`).join('') : ''}
     ${bk.map((b, i) => `<rect x="${x(i) - cw / 2}" y="${y(b.auto)}" width="${cw}" height="${Math.max(0, T + ih - y(b.auto))}" fill="var(--s3)"${b.partial ? ' opacity=".6"' : ''}/>
       <rect x="${x(i) - cw / 2}" y="${y(b.auto + b.man)}" width="${cw}" height="${Math.max(0, y(b.auto) - y(b.auto + b.man))}" fill="var(--s2)"${b.partial ? ' opacity=".6"' : ''}/>`).join('')}
     ${line}
     ${bk.map((b, i) => (last - i) % every === 0 ? `<text x="${x(i)}" y="${H - 24}" text-anchor="middle">${esc(b.short)}</text>` : '').join('')}
     ${part ? `<text class="lbl-part" x="${x(last)}" y="${H - 8}" text-anchor="middle">līdz ${esc(bk[last].end)}</text>` : ''}
-    ${bk.map((b, i) => `<g class="xh"><rect x="${x(i) - bw / 2}" y="${T}" width="${bw}" height="${ih}" tabindex="0" data-tip="${esc(`${b.label}|Automātiski ${b.auto} · Manuāli ${b.man} · ${fmtN1(b.h)} h`)}"/></g>`).join('')}
+    ${bk.map((b, i) => `<g class="xh"><rect x="${x(i) - bw / 2}" y="${T}" width="${bw}" height="${ih}" tabindex="0" data-tip="${esc(`${b.label}|${[sA ? `Automātiski ${b.auto}` : '', sM ? `Manuāli ${b.man}` : '', sH ? `${fmtN1(b.h)} h` : ''].filter(Boolean).join(' · ')}`)}"/></g>`).join('')}
   </svg>`;
 }
 // MI kopsavilkums (maks. 3 punkti)
@@ -15448,7 +15482,7 @@ function cmpBuckets(bs, g){
 }
 function lineChart(bs, mode, cbs = null){
   const W = Math.max(300, Math.round((($('#rep-body') || {}).clientWidth || 720) - 40)), H = 262, L = 38, R = W < 480 ? 70 : 96, T = 14, B = 44, iw = W - L - R, ih = H - T - B;
-  const pm = mode === 'p', ser = pm ? [['rate', 'Piegādes %', 's2']] : [['sent', 'Nosūtītas', 's1'], ['deliv', 'Piegādātas', 's2']];
+  const pm = mode === 'p', ser = pm ? [['rate', 'Piegādes %', 's2']] : serVis('dn', SER_DN); // Versija 250: redzamās sērijas
   const val = (b, k) => !b.sent ? null : k === 'rate' ? (b.base ? pct(b.deliv, b.base) : null) : b[k];
   const every = Math.ceil(bs.length / Math.max(2, Math.floor(iw / 58)));
   const mx = pm ? 100 : Math.max(1, ...bs.map(b => b.sent), ...(cbs || []).map(b => b.sent)), step = pm ? 25 : mx <= 5 ? 1 : mx <= 20 ? 5 : mx <= 50 ? 10 : 25, top = pm ? 100 : Math.ceil(mx / step) * step;
@@ -15472,9 +15506,9 @@ function lineChart(bs, mode, cbs = null){
     for (let i = 0; i < cn; i++){ const vv = cbs[i].sent >= CMP_MIN ? val(cbs[i], k) : null; if (vv == null){ if (cur.length) out.push(cur); cur = []; } else cur.push([x(i), y(Math.min(vv, top))]); } if (cur.length) out.push(cur);
     return out.map(sg => sg.length > 1 ? `<path class="ln ln-cmp" d="${sg.map(([a, b2], j) => `${j ? 'L' : 'M'}${a.toFixed(1)},${b2.toFixed(1)}`).join(' ')}" fill="none" stroke="var(--${v})" stroke-width="1.6" stroke-dasharray="3 3" opacity=".45"/>`
       : `<circle class="pt-cmp" cx="${sg[0][0]}" cy="${sg[0][1]}" r="2.5" fill="var(--${v})" opacity=".45"/>`).join(''); }).join('') : '';
-  const tipOne = b => !b.sent ? 'nav sūtījumu' : pm ? `Piegādes % ${b.base ? pct(b.deliv, b.base) + '%' : '—'} (${b.deliv} no ${b.base})` : `Nosūtītas ${b.sent} · Piegādātas ${b.deliv}`;
+  const tipOne = b => !b.sent ? 'nav sūtījumu' : pm ? `Piegādes % ${b.base ? pct(b.deliv, b.base) + '%' : '—'} (${b.deliv} no ${b.base})` : ser.map(([k, l]) => `${l} ${b[k]}`).join(' · ');
   const tipOf = (b, i) => `${b.label}|${!b.sent ? 'Nav sūtījumu' : tipOne(b)}${i < cn ? ` · ${RC.short}: ${tipOne(cbs[i])}` : ''}`;
-  return (pm ? '' : legendHtml(ser)) + `<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${pm ? 'Piegādes īpatsvars pa mēnešiem' : 'Nosūtītās un piegādātās ziņas pa mēnešiem'}">
+  return (pm ? '' : legendTgHtml('dn', SER_DN)) + `<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${pm ? 'Piegādes īpatsvars pa mēnešiem' : 'Nosūtītās un piegādātās ziņas pa mēnešiem'}">
     ${ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${v ? 'var(--grid)' : 'var(--axis)'}" stroke-width="1"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}${pm ? '%' : ''}</text>`).join('')}
     ${bs.map((b, i) => ((last - i) % every === 0) ? `<text x="${x(i)}" y="${H - 24}" text-anchor="middle">${esc(b.short)}</text>` : '').join('')}
     ${part ? `<text class="lbl-part" x="${x(last)}" y="${H - 8}" text-anchor="middle">līdz ${esc(bs[last].end)}</text>` : ''}
@@ -15499,10 +15533,13 @@ function repKpis(xs){
 }
 const RATE_SER = [['delivP', 'Piegādes īpatsvars', 's1'], ['openP', 'Atvēršanas īpatsvars (e-pasts, aptuveni)', 's3'], ['subP', 'Iesniegšanas īpatsvars', 's4']];
 const RATE_TIP = 'Piegādes īpatsvars = elektroniski piegādātās / (piegādātās + nepiegādātās) vēstules (vēstules, kuru piegāde vēl procesā, un drukātās vēstules respondentiem bez elektroniskās adreses neieskaita; nepiegādātas – arī tās, kas gaida manuālu pārbaudi vai administratora risinājumu, un tās, kas pēc neveiksmes nosūtītas pa pastu – sākotnējais rezultāts). Atvēršanas īpatsvars (e-pasts, aptuveni) = atvērtie e-pasti / piegādātie e-pasti (arī tie, kas vēl gaida 72 h NDR logā; eAdreses un drukātās vēstules neieskaita; atvēršana – pēc izsekošanas attēla). Iesniegšanas īpatsvars = vēstules, pēc kurām iesniegta anketa / piegādātās vēstules ar anketām (informatīvās vēstules bez anketām neieskaita).';
+// Versija 250: tikai redzamie rādītāji (padomā)
+const rateTxtK = (r, keys) => rateTxt(r).split(' · ').filter((t, i) => keys.includes(RATE_SER[i][0])).join(' · ');
 const rateTxt = r => `Piegāde ${r.delivP ?? '—'}${r.delivP != null ? '%' : ''} (${fmtCount(r.deliv)} no ${fmtCount(r.base)}) · Atvēršana ${r.openP ?? '—'}${r.openP != null ? '%' : ''} (${fmtCount(r.open)} no ${fmtCount(r.em)}) · Iesniegšana ${r.subP ?? '—'}${r.subP != null ? '%' : ''} (${fmtCount(r.sub)} no ${fmtCount(r.delivF)})`;
 // Līniju grafiks "Rādītāji pa mēnešiem" (Y ass 0–100 %): trīs īpatsvari; līniju galā – pēdējā pilnā mēneša vērtība; nepabeigtais mēnesis – raustīta līnija;
 // mēneši bez sūtījumiem (vai bez saucēja) – pārtraukums līnijā; mēnesis – klikšķināms (atver sūtījumus ar mēneša periodu)
 function rateChart(bs, g = 'm', cbs = null){
+  const SER = serVis('rate', RATE_SER), SK = SER.map(([k]) => k); // Versija 250: redzamie rādītāji
   const W = Math.max(300, Math.round((($('#rep-body') || {}).clientWidth || 720) - 40)), H = 262, L = 42, R = 56, T = 14, B = 44, iw = W - L - R, ih = H - T - B;
   const val = (b, k) => b.r[k];
   const every = Math.ceil(bs.length / Math.max(2, Math.floor(iw / 58)));
@@ -15510,23 +15547,23 @@ function rateChart(bs, g = 'm', cbs = null){
   const last = bs.length - 1, colW = bs.length > 1 ? iw / (bs.length - 1) : iw, part = bs.length && bs[last].partial;
   const segs = k => { const out = []; let cur = []; bs.forEach((b, i) => { if (val(b, k) == null){ if (cur.length) out.push(cur); cur = []; } else cur.push(i); }); if (cur.length) out.push(cur); return out; };
   const pathOf = (idx, k) => idx.map((i, j) => `${j ? 'L' : 'M'}${x(i).toFixed(1)},${y(val(bs[i], k)).toFixed(1)}`).join(' ');
-  const lines = RATE_SER.map(([k, , v]) => segs(k).map(sg => {
+  const lines = SER.map(([k, , v]) => segs(k).map(sg => {
     const dash = part && sg[sg.length - 1] === last && sg.length > 1, solid = dash ? sg.slice(0, -1) : sg;
-    return (solid.length > 1 ? `<path class="ln" d="${pathOf(solid, k)}" fill="none" stroke="var(--${v})" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : '')
-      + (dash ? `<path class="ln ln-part" d="${pathOf(sg.slice(-2), k)}" fill="none" stroke="var(--${v})" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>` : '')
+    return (solid.length > 1 ? `<path class="ln" data-ser="${k}" d="${pathOf(solid, k)}" fill="none" stroke="var(--${v})" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>` : '')
+      + (dash ? `<path class="ln ln-part" data-ser="${k}" d="${pathOf(sg.slice(-2), k)}" fill="none" stroke="var(--${v})" stroke-width="2" stroke-dasharray="5 4" stroke-linecap="round"/>` : '')
       + (sg.length === 1 ? `<circle class="pt-solo" cx="${x(sg[0])}" cy="${y(val(bs[sg[0]], k))}" r="3.5" ${part && sg[0] === last ? `fill="#fff" stroke="var(--${v})" stroke-width="2" stroke-dasharray="2 2"` : `fill="var(--${v})"`}/>` : ''); }).join('')).join('');
   // pēdējais pilnais mēnesis ar vērtību – punkts uz līnijas un vērtība labajā malā (etiķetes neuzklājas)
-  const fin = RATE_SER.map(([k, , v]) => { for (let i = last; i >= 0; i--) if (!bs[i].partial && val(bs[i], k) != null) return {k, v, i, val:val(bs[i], k)}; return null; }).filter(Boolean);
+  const fin = SER.map(([k, , v]) => { for (let i = last; i >= 0; i--) if (!bs[i].partial && val(bs[i], k) != null) return {k, v, i, val:val(bs[i], k)}; return null; }).filter(Boolean);
   const ly = fin.map(f => ({f, y:y(f.val)})).sort((a, b) => a.y - b.y); ly.forEach((o, j) => { if (j && o.y - ly[j - 1].y < 14) o.y = ly[j - 1].y + 14; });
   const ends = fin.map(f => `<circle cx="${x(f.i)}" cy="${y(f.val)}" r="4.5" fill="var(--${f.v})" stroke="#fff" stroke-width="2"/>`).join('')
     + ly.map(o => `<text class="lbl-end rate-end" x="${W - R + 8}" y="${o.y + 4}" style="fill:var(--${o.f.v})">${o.f.val}%</text>`).join('');
   // Versija 231: salīdzināmais periods – raustītas gaišākas līnijas (tie paši posmi pēc kārtas)
   const cn = cbs ? Math.min(cbs.length, bs.length) : 0;
-  const cLines = cn ? RATE_SER.map(([k, , v]) => { const out = []; let cur = [];
+  const cLines = cn ? SER.map(([k, , v]) => { const out = []; let cur = [];
     for (let i = 0; i < cn; i++){ const vv = cbs[i].sent >= CMP_MIN ? cbs[i].r[k] : null; if (vv == null){ if (cur.length) out.push(cur); cur = []; } else cur.push([x(i), y(vv)]); } if (cur.length) out.push(cur);
     return out.map(sg => sg.length > 1 ? `<path class="ln ln-cmp" d="${sg.map(([a, b2], j) => `${j ? 'L' : 'M'}${a.toFixed(1)},${b2.toFixed(1)}`).join(' ')}" fill="none" stroke="var(--${v})" stroke-width="1.6" stroke-dasharray="3 3" stroke-linecap="round" opacity=".45"/>`
       : `<circle class="pt-cmp" cx="${sg[0][0]}" cy="${sg[0][1]}" r="2.5" fill="var(--${v})" opacity=".45"/>`).join(''); }).join('') : '';
-  const tipOf = (b, i) => `${b.label}|${!b.sent ? 'Nav sūtījumu' : rateTxt(b.r)}${i < cn ? ` · ${RC.short}: ${cbs[i].sent ? rateTxt(cbs[i].r) : 'nav sūtījumu'}` : ''}`;
+  const tipOf = (b, i) => `${b.label}|${!b.sent ? 'Nav sūtījumu' : rateTxtK(b.r, SK)}${i < cn ? ` · ${RC.short}: ${cbs[i].sent ? rateTxtK(cbs[i].r, SK) : 'nav sūtījumu'}` : ''}`;
   return `<svg class="line-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Rādītāji ${GRAIN[g].pa}: piegādes, atvēršanas un iesniegšanas īpatsvars${cn ? `; raustītas līnijas – salīdzināmais periods ${esc(RC.label)}` : ''}">
     ${[0, 25, 50, 75, 100].map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="${v ? 'var(--grid)' : 'var(--axis)'}" stroke-width="1"/><text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}%</text>`).join('')}
     ${bs.map((b, i) => ((last - i) % every === 0) ? `<text x="${x(i)}" y="${H - 24}" text-anchor="middle">${esc(b.short)}</text>` : '').join('')}
@@ -15585,7 +15622,7 @@ function summaryView(xs){
       <td class="num">${r.sent}</td><td class="num">${r.deliv}</td><td class="num">${r.fail}</td><td class="num">${r.rate}%</td></tr>`).join('')}</tbody></table>${rows.length ? '' : `<div class="tc-empty">${tcEmptyBox('Atlasītajā periodā kampaņu nav')}</div>`}</div>`;
   return {html:`${flow}
     <div class="card viz-card" style="margin-bottom:16px"><div class="rk-chart-h"><h3>Rādītāji ${GL.pa}${tip(`${bs.length ? `Līniju galā – ${GL.last} vērtība. ${part ? `Raustītā līnija – ${GL.part} (dati līdz ${bs[bs.length - 1].end}). ` : ''}${GL.none} bez sūtījumiem vai bez attiecīgajām vēstulēm – pārtraukums līnijā (nevis 0 %). Uz ${GL.on} var uzklikšķināt – atver sūtījumus ar šo periodu.\n\n${grainTip}\n\n` : ''}${RATE_TIP}`)}</h3>${grainSegHtml(G)}</div>
-      ${bs.length ? legendHtml(RATE_SER) + cmpLeg + rateChart(bs, G.g, cbs) + oneNote : '<p class="hint">Nav datu.</p>'}
+      ${bs.length ? legendTgHtml('rate', RATE_SER) + cmpLeg + rateChart(bs, G.g, cbs) + oneNote : '<p class="hint">Nav datu.</p>'}
       <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml([GL.col, 'Nosūtītas', 'Ar zināmu rezultātu', 'Piegādātas', 'Piegādes %', 'Piegādātie e-pasti', 'Atvērti', 'Atvēršanas %', 'Piegādātas ar anketām', 'Ar iesniegtu anketu', 'Iesniegšanas %', ...RT_CMP], bs.map((b, i) => [b.label, b.r.sent, b.r.base, b.r.deliv, b.r.delivP != null ? `${b.r.delivP}%` : '—', b.r.em, b.r.open, b.r.openP != null ? `${b.r.openP}%` : '—', b.r.delivF, b.r.sub, b.r.subP != null ? `${b.r.subP}%` : '—', ...rtCmp(b, i, false)]))}</details></div>
     <div class="rk-cards">
       ${repChCardHtml(xs)}
@@ -16654,7 +16691,8 @@ $('#c-fz-year').addEventListener('change', e => {
   fz.year = y; fz.period = ''; fz.rounds = null; ui.cycOpen = false;
   selChanged(); $('#c-fz-year').focus();
 });
-$('#c-fz-per').addEventListener('change', e => { compose.sel.fz.period = e.target.value; compose.sel.fz.rounds = null; selChanged(); renderStepErrors(); $('#c-fz-per').focus(); });
+// Versija 250: mainot periodu, izvēlētie cikli saglabājas
+$('#c-fz-per').addEventListener('change', e => { compose.sel.fz.period = e.target.value; selChanged(); renderStepErrors(); $('#c-fz-per').focus(); });
 // Cikls: izvēlne paliek atvērta, atzīmējot vairākas vērtības; neaktīvu nevar atvērt
 $('#c-fz-cyc-sum').addEventListener('click', e => { if ($('#c-fz-cyc').classList.contains('is-disabled')) e.preventDefault(); });
 $('#c-fz-cyc').addEventListener('toggle', e => { if (!e.target.classList.contains('is-disabled')) ui.cycOpen = e.target.open; });
