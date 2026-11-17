@@ -954,6 +954,18 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .sum-dl .link-btn{font-size:var(--fs-xs);margin-left:6px}
 .custom-bar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 10px}
 .pill-custom{background:#FFF4E5;color:#8A4B00;border-color:var(--warning-border)}
+/* Versija 256: pielāgota vēstule – tikai vienam respondentam */
+.lc-note{display:flex;gap:8px;align-items:flex-start;background:#FFF8DB;border:1px solid #F1DC8C;color:#5C4A00;border-radius:var(--radius-sm);padding:9px 12px;margin:0 0 14px;font-size:var(--fs-sm)}
+.lc-note .icon{flex:none;width:16px;height:16px;margin-top:1px}
+.custom-bar .cb-sep{color:var(--text-muted)}
+.custom-bar .link-btn{font-size:var(--fs-sm)}
+.custom-bar .pill-custom.is-stale{background:#FDECEA;color:#8A1C14;border-color:#F3B8B2}
+.cust-list{list-style:none;margin:0;padding:0;max-height:52vh;overflow:auto}
+.cust-list li{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--border-light)}
+.cust-list li b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cust-list .cust-st{font-size:var(--fs-xs);color:#8A1C14}
+.rv-ck-act{display:block;margin:2px 0 4px 30px;font-size:var(--fs-xs)}
+.hist-cust{margin-left:6px;font-size:var(--fs-2xs);padding:0 6px;vertical-align:1px}
 /* Sūtījumi – vēstuļu tabula, laika līnija, NDR, manuāla pārbaude */
 .hl-table td{vertical-align:top}
 .hl-table tr.hist-row{cursor:pointer}
@@ -4328,7 +4340,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 255</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 256</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -11089,6 +11101,8 @@ function renderFinalSummary(){
     kvRow('Saturs', cc.t ? `<span class="kv-ct" title="${esc(`${cc.label}\n${cc.kind}\nTemats: ${cc.t.subject || '—'}`)}">${esc(cc.label)}</span>` : '<span class="muted">nav izvēlēts</span>') +
     kvRow('Nosūtīšana', isPlanned() ? esc(whenLabel()) : 'Nav ieplānota') +
     kvRow('Respondenti', `${kvNw(String(st.sel))} · ${kvNw(`${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}`)}`) +
+    // Versija 256: pielāgotās vēstules (klikšķis – respondentu saraksts)
+    ((n => kvRow('Pielāgotas vēstules', n ? `<button type="button" class="link-btn kv-cust" data-action="c-cust-list" title="Rādīt respondentus, kuriem vēstule pielāgota">${n}</button>` : '0'))(custList().length)) +
     kvRow('Kanāli', (ch.epasts || ch.eadrese || ch.pasts || !ch.later ? kvChannels(ch) : '') + (ch.later ? `${ch.epasts || ch.eadrese || ch.pasts ? ' · ' : ''}<span class="nw" data-ctip="${esc(EA_PEND_TIP)}" tabindex="0">${EA_PEND_TXT}: ${ch.later}</span>` : '')) +
     (compose.aud === 'jur' ? kvRow('Neiekļauti šifri', `<span title="${esc(nsExcl().map(nsLabel).join('\n') || 'Šifri netiek izslēgti')}">${esc(nsSumTxt(nsOutResp().length))}</span>`) : '') + // Versija 239
     (compose.aud === 'jur' ? kvRow('Apvienot pēc NMK', selOpt('mergeNmk') ? 'Jā' : 'Nē') : '');
@@ -11446,7 +11460,7 @@ function renderComposeList(){
         <td class="c-chk"><input type="checkbox" data-rid="${r.id}" ${out ? '' : 'checked'} ${exc ? 'disabled title="Izņēmums – atjaunot var logā “Izņēmumi”"' : nsOut(r) ? `title="${esc(nsOutTip(r))}"` : ''} aria-label="Iekļaut: ${esc(r.name)}"></td>
         ${(() => { const g = nmkGroup(r), pk = first && first.type, mtxt = g.length > 1 ? `Apvienota vēstule: ${g.length} vienības (NMK ${r.nmk}) – ${g.slice(1).map(x => x.name).join(', ')}` : '', ptxt = pk && !cols.includes(pk) ? `Primārā adrese – ${addrShort(pk)}: ${first.address}` : '';
           const tip = [r.name, nsOut(r) ? nsOutTip(r) : '', exc ? `Izņēmums: ${exc}` : '', probs.join('; '), printOn() && noSend(r) ? `Tiks drukāts – pasta adrese: ${postAddrOf(r)}` : '', compose.custom[r.id] ? 'Pielāgota vēstule' : '', mtxt, ptxt ? `${ptxt} (pirmā pieejamā pēc adrešu prioritātes)` : ''].filter(Boolean).join('\n');
-          return `<td class="c-name"><div class="cell1">${exc ? `<span class="exc-tag">Izņēmums</span>` : ''}<button type="button" class="camp-name" data-action="resp-card" data-id="${esc(r.id)}" data-actip="${esc(tip)}">${esc(r.name)}</button>${compose.custom[r.id] ? '<span class="pill pill-custom">Pielāgota vēstule</span>' : ''}</div></td>`; })()}
+          return `<td class="c-name"><div class="cell1">${exc ? `<span class="exc-tag">Izņēmums</span>` : ''}<button type="button" class="camp-name" data-action="resp-card" data-id="${esc(r.id)}" data-actip="${esc(tip)}">${esc(r.name)}</button>${compose.custom[r.id] ? `<span class="pill pill-custom" title="${esc(CUST_TIP)}" aria-label="Pielāgota vēstule. ${esc(CUST_TIP)}">Pielāgota vēstule</span>` : ''}</div></td>`; })()}
         ${cols.map(k => addrCell(r, k)).join('')}${showO ? otherCell(r) : ''}
         <td class="c-tg"><button type="button" class="icon-btn row-tg" data-action="c-row-toggle" data-id="${r.id}" aria-expanded="${op}" aria-label="Pilna informācija: ${esc(r.name)}">${ICON.chev}</button></td></tr>
         ${op ? `<tr class="sel-duties"><td colspan="${ncol}">${respDetails(r, addrCell)}<table><thead><tr><th>Apsekojums</th><th>Periods</th><th>Termiņš</th><th>Statuss</th></tr></thead><tbody>${ds.map(d => {
@@ -11586,10 +11600,12 @@ function renderComposePreview(){
       // pārslēgs "E-pasts / eAdrese" – ziņas variants pārbaudei
       const ch = compose.pvCh || ADDR_TYPES[fin.type].ch;
       const toAddr = eaL && ch === 'eadrese' ? 'Sūtīšanas brīdī' : ch === ADDR_TYPES[fin.type].ch ? fin.address : ch === 'eadrese' ? (r.eaddress || '—') : (r.email || r.email2 || r.email3 || '—');
-      let html = (inlineDoc && !apvLocked() ? `<div class="custom-bar">${compose.custom[r.id] ? `<span class="pill pill-custom">${ICON.edit}Pielāgota vēstule</span>
-          <button type="button" class="btn btn-ghost btn-sm" data-action="c-customize" data-id="${r.id}">Labot pielāgojumu</button>
-          <button type="button" class="btn btn-ghost btn-sm" data-action="c-uncustom" data-id="${r.id}">Atjaunot sākotnējo</button>`
-        : `<button type="button" class="btn btn-secondary btn-sm" data-action="c-customize" data-id="${r.id}">${ICON.edit}Pielāgot šo vēstuli</button>`}</div>` : (compose.custom[r.id] ? '<div class="custom-bar"><span class="pill pill-custom">Pielāgota vēstule</span></div>' : '')) +
+      // Versija 256: skaidrs, ka pielāgojums attiecas tikai uz šo respondentu
+      const stale = custIsStale(r.id), cTag = `<span class="pill pill-custom${stale ? ' is-stale' : ''}" data-ctip="${esc(stale ? 'Pielāgota šim respondentam pirms kampaņas satura maiņas – neietver jaunākās satura izmaiņas.' : CUST_TIP)}" tabindex="0">${ICON.edit}Pielāgota šim respondentam${stale ? ' · bez jaunākajām izmaiņām' : ''}</span>`;
+      let html = (inlineDoc && !apvLocked() ? `<div class="custom-bar">${compose.custom[r.id] ? `${cTag}
+          <button type="button" class="link-btn" data-action="c-customize" data-id="${r.id}">Rediģēt</button><span class="cb-sep" aria-hidden="true">·</span>
+          <button type="button" class="link-btn" data-action="c-uncustom" data-id="${r.id}">Atjaunot kampaņas saturu</button>`
+        : `<button type="button" class="btn btn-secondary btn-sm" data-action="c-customize" data-id="${r.id}" data-ctip="${esc(`Izveidot atsevišķu vēstules versiju tikai respondentam “${r.name}”. Kampaņas saturs un pārējās vēstules netiek mainītas.`)}">${ICON.edit}Pielāgot vēstuli šim respondentam</button>`}</div>` : (compose.custom[r.id] ? `<div class="custom-bar">${cTag}</div>` : '')) +
         (c => verNote(c, ch) + mailView({...chVis(c), toName:r.name, toAddr, channel:ch, chLabel:eaPend(r) && !compose.pvCh ? 'Sūtīšanas brīdī' : '', subjectHtml:c.subjectHtml,
         bodyHtml:c.bodyHtml, bodyTextHtml:c.bodyTextHtml, footerHtml:msg.footer, atts, main:msg.main, files:msg.files, variant:msg.variant,
         org:msg.org, lang:msg.lang, wantLang:msg.wantLang, fallback:msg.fallback,
@@ -11604,6 +11620,38 @@ function renderComposePreview(){
   }
   renderTestInfo();
   renderWizard();
+}
+// ===== Versija 256: pielāgota vēstule attiecas tikai uz vienu respondentu =====
+// custom[rid] = {subject, body, files, base} – base: kampaņas satura atslēga saglabāšanas brīdī (mainot saturu 3. solī, pielāgojums netiek pārrakstīts – tikai brīdinājums)
+const custBase = () => { const t = currentTemplate(); return t ? JSON.stringify([t.subject || '', t.body || '', (t.files || []).map(f => f.lib || f.name), (t.ea || {}).subject || '', (t.ea || {}).body || '']) : ''; };
+const custList = () => recipients().filter(r => compose.custom[r.id]);
+const custIsStale = id => { const c = compose.custom[id]; return !!(c && c.base && c.base !== custBase()); };
+const custStale = () => custList().filter(r => custIsStale(r.id));
+const CUST_TIP = 'Šim respondentam vēstule pielāgota 4. solī “Pārbaude”: izmaiņas attiecas tikai uz šī respondenta vēstuli, nevis uz visu kampaņu.';
+async function uncustom(ids, ask = true){
+  ids = ids.filter(id => compose.custom[id]); if (!ids.length) return;
+  const one = ids.length === 1 ? state.respondents.find(r => r.id === ids[0]) : null;
+  if (ask && !(await confirmDialog({title:'Atjaunot kampaņas saturu?', okLabel:'Atjaunot', message:one ? `Respondenta <b>${esc(one.name)}</b> vēstules pielāgojums tiks noņemts – tiks sūtīts kampaņas kopējais saturs.` : `${ids.length} ${plural(ids.length, 'pielāgotās vēstules pielāgojums tiks noņemts', 'pielāgoto vēstuļu pielāgojumi tiks noņemti')} – tiks sūtīts kampaņas kopējais saturs.`}))) return;
+  ids.forEach(id => { delete compose.custom[id]; });
+  renderComposeList(); renderComposePreview(); saveDraft();
+  toast(one ? `Respondenta ${one.name} vēstule atjaunota atbilstoši kampaņas saturam.` : `${ids.length} ${plural(ids.length, 'vēstule atjaunota', 'vēstules atjaunotas')} atbilstoši kampaņas saturam.`);
+}
+// pielāgoto vēstuļu saraksts (kopsavilkums / brīdinājums): Skatīt · Rediģēt · Atjaunot
+function openCustomList(onlyStale){
+  const L = onlyStale ? custStale() : custList();
+  if (!L.length){ toast('Pielāgotu vēstuļu nav.'); return; }
+  const lk = apvLocked();
+  openModal({title:onlyStale ? 'Pielāgotās vēstules bez jaunākajām satura izmaiņām' : 'Pielāgotās vēstules', content:`<p class="hint">${onlyStale ? 'Šīs vēstules pielāgotas pirms kampaņas satura maiņas 3. solī – tās neietver jaunākās izmaiņas.' : 'Katra vēstule pielāgota tikai vienam respondentam; pārējās vēstules sūta ar kampaņas saturu.'}</p>
+    <ul class="cust-list">${L.map(r => `<li><b title="${esc(r.name)}">${esc(r.name)}</b>${custIsStale(r.id) ? '<span class="cust-st">bez jaunākajām satura izmaiņām</span>' : ''}
+      <button type="button" class="link-btn" data-cl-view="${esc(r.id)}">Skatīt</button>${lk ? '' : `<button type="button" class="link-btn" data-cl-edit="${esc(r.id)}">Rediģēt</button><button type="button" class="link-btn" data-cl-rm="${esc(r.id)}">Atjaunot</button>`}</li>`).join('')}</ul>`,
+    actions:[...(lk ? [] : [{label:onlyStale ? `Atjaunot visas (${L.length})` : 'Atjaunot visas', cls:'btn-ghost', onClick:c => { modal.addEventListener('close', () => uncustom(L.map(r => r.id)), {once:true}); c(); }}]), {label:'Aizvērt', cls:'btn-primary'}]});
+  const h = e => {
+    const v = e.target.closest('[data-cl-view]'), ed = e.target.closest('[data-cl-edit]'), rm = e.target.closest('[data-cl-rm]');
+    if (v){ modal.close(); ui.pvF = null; const i = pvFindAdd(v.dataset.clView, pvRecs()); if (i >= 0) compose.index = i; renderComposePreview(); const pv = $('#c-preview'); if (pv) pv.scrollIntoView({block:'start', behavior:'smooth'}); }
+    else if (ed){ modal.close(); openLetterCustomizer(ed.dataset.clEdit); }
+    else if (rm){ const id = rm.dataset.clRm; modal.addEventListener('close', () => uncustom([id]), {once:true}); modal.close(); }
+  };
+  modal.addEventListener('click', h); modal.addEventListener('close', () => modal.removeEventListener('click', h), {once:true});
 }
 // Individuāli pielāgota vēstule (F5): teksts un pielikumi konkrētam adresātam
 function letterTpl(t, r){
@@ -11623,19 +11671,20 @@ function openLetterCustomizer(rid){
       <button type="button" class="icon-btn" data-lc-rm="${i}" aria-label="Noņemt ${esc(f.name)}">${ICON.x}</button></div>`).join('') : '<p class="hint">Papildu pielikumu nav.</p>';
     $$('[data-lc-rm]', modal).forEach(b => b.onclick = () => { files.splice(+b.dataset.lcRm, 1); renderFiles(); });
   };
-  openModal({title:`Pielāgot vēstuli: ${r.name}`, wide:true, info:'Izmaiņas attiecas tikai uz šī respondenta vēstuli šajā kampaņā – veidne un pārējās vēstules netiek mainītas. Lauki, piem., {vārds}, tiek aizpildīti automātiski.', content:`
+  openModal({title:`Pielāgota vēstule – ${r.name}`, wide:true, info:'Veidne un pārējās vēstules netiek mainītas. Lauki, piem., {vārds}, tiek aizpildīti automātiski.', content:`
+    <div class="lc-note" role="note">${ICON.info}<span>Izmaiņas attiecas tikai uz šī respondenta vēstuli, nevis uz visu kampaņu.</span></div>
     <div class="field"><label for="lc-subject">Ziņojuma temats</label><input type="text" id="lc-subject" maxlength="200" value="${esc(cur ? cur.subject : v.subject)}"></div>
     <div class="field"><span class="label">Teksts</span><div id="lc-body"></div></div>
     <div class="field"><span class="label">Papildu pielikumi</span><div class="file-list" id="lc-files"></div>
       <button type="button" class="btn btn-secondary btn-sm" id="lc-add">${ICON.plus}Pievienot pielikumu</button></div>`,
     actions:[{label:'Atcelt', cls:'btn-secondary'},
-      ...(cur ? [{label:'Atjaunot sākotnējo', cls:'btn-ghost', onClick: close => { delete compose.custom[rid]; close(); renderComposeList(); renderComposePreview(); toast('Vēstule atjaunota atbilstoši kampaņas saturam.'); }}] : []),
-      {label:'Saglabāt pielāgojumu', cls:'btn-primary', onClick: close => {
+      ...(cur ? [{label:'Atjaunot kampaņas saturu', cls:'btn-ghost', onClick: close => { modal.addEventListener('close', () => uncustom([rid]), {once:true}); close(); }}] : []),
+      {label:'Saglabāt šim respondentam', cls:'btn-primary', onClick: close => {
         const subject = $('#lc-subject').value.trim(), body = ed.getHTML();
         if (!subject || !htmlToText(body)){ toast('Tematam un tekstam jābūt aizpildītiem.', true); return; }
-        compose.custom[rid] = {subject, body, files};
-        close(); renderComposeList(); renderComposePreview();
-        toast(`Vēstule respondentam ${r.name} pielāgota.`);
+        compose.custom[rid] = {subject, body, files, base:custBase()};
+        close(); renderComposeList(); renderComposePreview(); saveDraft();
+        toast(`Vēstule pielāgota tikai respondentam ${r.name}.`);
       }}]});
   ed = createEditor($('#lc-body'), cur ? cur.body : v.body, {media:true, covers:() => coverSamples(t.aud)}); ed.linkInput($('#lc-subject'));
   renderFiles();
@@ -11677,6 +11726,11 @@ function autoChecks(){
     detail:aIds.length ? 'nav vēstules pielikuma' : missLib ? `${missLib} ${plural(missLib, 'pielikums nav atrasts', 'pielikumi nav atrasti')}` : nAtt ? `${nAtt} ${plural(nAtt, 'pielikums', 'pielikumi')} katrā vēstulē` : 'nav pielikumu', step:3});
   // adreses – pārbaudītas solī "Respondenti" (pēc apstiprināšanas brīdinājumu nav)
   out.push({key:'addr', label:'Adreses', ok:true, n:'', detail:'pārbaudītas', step:2});
+  // Versija 256: pielāgotās vēstules – pēc kampaņas satura maiņas 3. solī tās netiek pārrakstītas (brīdinājums)
+  { const cl = custList(), stl = custStale();
+    if (cl.length) out.push({key:'custom', label:'Pielāgotās vēstules', ok:!stl.length, n:stl.length || cl.length, ids:stl.map(r => r.id),
+      detail:stl.length ? `${stl.length} ${plural(stl.length, 'pielāgotā vēstule neietver', 'pielāgotās vēstules neietver')} jaunākās satura izmaiņas` : `${cl.length} ${plural(cl.length, 'vēstule pielāgota', 'vēstules pielāgotas')} atsevišķiem respondentiem`,
+      act:stl.length ? `<button type="button" class="link-btn rv-ck-act" data-action="c-cust-list" data-id="stale">Apskatīt</button><button type="button" class="link-btn rv-ck-act" data-action="c-uncustom-stale">Atjaunot kampaņas saturu (${stl.length})</button>` : '', step:4}); }
   return out;
 }
 // pārbaudes atslēga: kampaņas dati, kas ietekmē vēstules (bez saskaņošanas, nosūtīšanas laika un soļa); mainot tos, pārbaude jāiziet vēlreiz
@@ -11743,7 +11797,7 @@ function renderChecks(){
     const filt = !c.ok && (c.ids || []).length > 0, go = !c.ok && !filt && !lk;
     const inner = `<span class="ck-ic" aria-hidden="true">${c.ok ? '✓' : '⚠'}</span><span class="rv-ck-t">${esc(c.label)}<small>${esc(c.detail)}</small>${filt ? `<small class="rv-ck-go">${fk === c.key ? 'Rādīt visas vēstules' : 'Rādīt problemātiskās vēstules'}</small>` : go ? '<small class="rv-ck-go">Labot</small>' : ''}</span>${c.key === 'content' && c.ok ? '' : `<b class="rv-n">${c.n}</b>`}`;
     return `<li>${filt ? `<button type="button" class="rv-ck is-warn" data-pvf="${c.key}" aria-pressed="${fk === c.key}">${inner}</button>`
-      : go ? `<button type="button" class="rv-ck is-warn" data-action="wiz-go" data-id="${c.step}">${inner}</button>` : `<div class="rv-ck ${c.ok ? 'is-ok' : 'is-warn'}">${inner}</div>`}</li>`;
+      : go ? `<button type="button" class="rv-ck is-warn" data-action="wiz-go" data-id="${c.step}">${inner}</button>` : `<div class="rv-ck ${c.ok ? 'is-ok' : 'is-warn'}">${inner}</div>`}${c.act && !lk ? c.act : ''}</li>`;
   }).join('');
   // testa vēstule (kreisajā kolonnā zem pārbaudēm)
   $('#c-test-card').hidden = lk;
@@ -14556,7 +14610,7 @@ function renderSent(){
       <tbody>${sorted.slice(0, ui.histLimit).map(x => { const k = histFinal(x), f = HIST_FINAL[k];
         return `<tr class="hist-row${ui.newIds.has(x.id) ? ' is-new' : ''}${TODO_ST.includes(k) ? ' needs-act' : ''}" data-hrow="${x.id}" tabindex="0" aria-haspopup="dialog">
           <td class="c-sel"><input type="checkbox" data-hsel="${esc(x.id)}" aria-label="Atlasīt: ${esc(x.recipient)}"${ui.hsel.has(x.id) ? ' checked' : ''}></td>
-          <td class="c-name"><button type="button" class="camp-name" data-hopen="${esc(x.id)}" data-ctip="${esc(x.recipient + (respNmkRaw(x.respondentId) ? '\nNMK ' + respNmkRaw(x.respondentId) : ''))}">${esc(x.recipient)}</button></td>
+          <td class="c-name"><button type="button" class="camp-name" data-hopen="${esc(x.id)}" data-ctip="${esc(x.recipient + (respNmkRaw(x.respondentId) ? '\nNMK ' + respNmkRaw(x.respondentId) : ''))}">${esc(x.recipient)}</button>${x.customized ? `<span class="pill pill-custom hist-cust" data-ctip="Pielāgota vēstule – šim respondentam kampaņā sūtīta atsevišķi pielāgota vēstule (pārējiem – kampaņas saturs)." tabindex="0">Pielāgota vēstule</span>` : ''}</td>
           ${va ? (cn => `<td class="c-name"><button type="button" class="camp-name" data-action="jrn-camp-open" data-id="${esc(x.batch)}" data-ctip="${esc(cn)}\nAtvērt kampaņas sūtījumus">${esc(cn)}</button></td>`)(x.sessionName || `Kampaņa Nr. ${x.batch}`) : ''}
           <td class="c-st">${letterStHtml(x)}</td>
           <td>${esc(x.channel === 'eadrese' ? 'eAdrese' : CHANNELS[x.channel] || '')}</td>
@@ -16338,7 +16392,9 @@ const actions = {
   'wiz-next': () => { if (ui.view){ setStep(compose.step + 1); return; } if (compose.step === 1 && !selCanGo()) return; if (compose.step === 4) return reviewContinue(); if (compose.step === 5) return finalSubmit(); markTried(compose.step); if (fzBlocks() || acBlocks(compose.step + 1)) return; if (compose.step === 2) clarEvent('apstiprinat_atlasi'); compose.stepsOk.add(compose.step); setStep(compose.step + 1); },
   'wiz-save': () => { markTried(compose.step); const pl = !!compose.plannedId; flushDraft(true); renderWizard(); toast(pl ? `Ieplānotās kampaņas “${compose.name}” izmaiņas saglabātas.` : `Melnraksts “${compose.name}” saglabāts.`); },
   'c-customize': id => openLetterCustomizer(id),
-  'c-uncustom': id => { delete compose.custom[id]; renderComposeList(); renderComposePreview(); toast('Vēstule atjaunota atbilstoši kampaņas saturam.'); },
+  'c-uncustom': id => uncustom([id]), // Versija 256: ar apstiprinājumu
+  'c-cust-list': id => openCustomList(id === 'stale'),
+  'c-uncustom-stale': () => uncustom(custStale().map(r => r.id)),
   'audit-open': id => openAudit(id === 'compose' ? (ui.view ? ui.view.key : alKeyC()) : id),
   'c-design': () => openSessionEditor(null, ''),
   'c-edit-content': () => { const t = currentTemplate(); if (t) openSessionEditor(clone(compose.content.source === 'tpl' ? t : compose.content.tpl), compose.content.templateId || ''); },
@@ -16581,6 +16637,11 @@ $('#camp-sub').addEventListener('mouseover', e => { const el = e.target.closest(
 $('#camp-sub').addEventListener('mouseout', e => { const el = e.target.closest('[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
 $('#wiz-steps').addEventListener('mouseout', e => { const el = e.target.closest('[data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
 $('#camp-tbody').addEventListener('focusin', e => { const el = e.target.closest('[data-ctip]'); if (el) showCTip(el); });
+// Versija 256: priekšskatījumā (4. solis) – padomi pogai "Pielāgot vēstuli šim respondentam" un birkai "Pielāgota šim respondentam"
+$('#c-preview').addEventListener('mouseover', e => { const el = e.target.closest('.custom-bar [data-ctip]'); if (el) showCTip(el); });
+$('#c-preview').addEventListener('mouseout', e => { const el = e.target.closest('.custom-bar [data-ctip]'); if (el && !el.contains(e.relatedTarget)) hideCTip(); });
+$('#c-preview').addEventListener('focusin', e => { const el = e.target.closest('.custom-bar [data-ctip]'); if (el) showCTip(el); else hideCTip(); });
+$('#c-preview').addEventListener('focusout', () => hideCTip());
 $('#camp-tbody').addEventListener('focusout', () => hideCTip());
 $('#camp-scroll').addEventListener('scroll', () => hideCTip());
 $('#hist-sub').addEventListener('scroll', () => histSubFit(), {passive:true});
