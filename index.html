@@ -1658,9 +1658,29 @@ table.cl-table td.c-name .camp-name{max-width:100%}
 .camp-row.is-hi > td{background:#FFF4D6}
 .jrn-plan{color:var(--text-muted);font-style:italic;white-space:nowrap}
 /* Versija 258: Piegāde – respondentu datu labojumu KPI un "Labojumu veidi" */
-.rk-corr{display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,2fr);gap:14px;align-items:stretch}
-.rk-corr .rk-kpi{min-height:150px}
-@media (max-width:760px){ .rk-corr{grid-template-columns:minmax(0,1fr)} }
+/* Versija 260: "Respondentu datu labojumi" – viena kartīte: kreisā daļa (gredzens + KPI) ~30 %, labā (sakrautā josla + saraksts) ~70 % */
+.rk-corrc{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,7fr);padding:0;margin-bottom:16px;align-items:start}
+.rk-corrc > .cc-l,.rk-corrc > .cc-r{padding:14px 18px;min-width:0}
+.rk-corrc > .cc-r{border-left:1px solid var(--border-light)}
+.cc-kpi{display:flex;align-items:center;gap:14px;margin:8px -6px 0;padding:6px;border-radius:var(--radius-sm,6px);cursor:pointer;outline:none}
+.cc-kpi:hover,.cc-kpi:focus-visible{background:var(--primary-50)}
+.cc-kpi:focus-visible{box-shadow:0 0 0 3px var(--focus-ring)}
+.cc-ring{flex:none;width:72px;height:72px}
+.cc-ring .trk{stroke:var(--border-light)}
+.cc-txt{display:flex;flex-direction:column;min-width:0}
+.cc-n{font-size:var(--fs-display);font-weight:700;line-height:1.1;color:var(--text);font-variant-numeric:tabular-nums}
+.cc-d{font-size:var(--fs-xs);margin-top:2px;white-space:nowrap}
+.cc-d.cmpd-neu{color:var(--text-muted)}
+.cc-sub{font-size:var(--fs-xs);color:var(--text-muted);margin-top:3px}
+.cc-go{font-size:var(--fs-xs);color:#6B7C84;margin-top:4px}
+.cc-kpi:hover .cc-go,.cc-kpi:focus-visible .cc-go{color:var(--primary-dark);text-decoration:underline;text-underline-offset:2px}
+.cc-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--border-light);margin:10px 6px 8px;gap:2px}
+.cc-bar span{display:block;height:100%;min-width:3px;outline:none}
+.cc-bar span:hover,.cc-bar span:focus-visible{filter:brightness(.88)}
+.cc-list li{grid-template-columns:10px minmax(0,1fr) auto 3.6em auto;cursor:default}
+.cc-list .cmpd{min-width:4.6em;text-align:right}
+.cc-dot{width:9px;height:9px;border-radius:50%;align-self:center}
+@media (max-width:760px){ .rk-corrc{grid-template-columns:minmax(0,1fr)} .rk-corrc > .cc-r{border-left:0;border-top:1px solid var(--border-light)} }
 .jrn-grp > td{background:var(--surface-2, #F5F7F8);font-size:var(--fs-xs);font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.03em;padding:6px 12px}
 .jrn-pl-info{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:12px 16px;margin-bottom:12px}
 .jrn-pl-info .muted{color:var(--text-muted)}
@@ -4344,7 +4364,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 259</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 260</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -15365,20 +15385,38 @@ function deliveryView(xs){
   // grafiks "Nosūtītās un piegādātās ziņas pa mēnešiem" (pārvietots no "Pārskata"; skaits / %)
   const bs = monthBuckets(xs), mode = ui.rep.chart === 'p' ? 'p' : 'n', part = bs.length && bs[bs.length - 1].partial;
   const cbs = cmpBuckets(bs, 'm'), mp = b => b && b.base ? pct(b.deliv, b.base) : null;
-  const s0 = `<div class="card viz-card" style="margin-bottom:16px"><div class="rk-chart-h"><h3>${mode === 'p' ? 'Piegādes īpatsvars pa mēnešiem' : 'Nosūtītās un piegādātās ziņas pa mēnešiem'}${tip('Piegādātas – e-adresē “Saņēmēja pieņemts”, e-pastā – 72 h laikā nav saņemts NDR. Uz mēneša var uzklikšķināt – atver sūtījumus ar šo periodu.')}</h3>
+  const s0 = `<div class="card viz-card" style="margin-bottom:16px"><div class="rk-chart-h"><h3>${mode === 'p' ? 'Piegādes īpatsvars pa mēnešiem' : 'Nosūtītās un piegādātās ziņas pa mēnešiem'}${tip(`Piegādātas – e-adresē “Saņēmēja pieņemts”, e-pastā – 72 h laikā nav saņemts NDR.${part ? ` Raustītā līnija – nepabeigts periods (dati līdz ${bs[bs.length - 1].end}).` : ''}${bs.some(b => !b.sent) ? ' Mēneši bez sūtījumiem – pārtraukums līnijā.' : ''} Uz mēneša var uzklikšķināt – atver sūtījumus ar šo periodu.`)}</h3>
       <span class="seg" role="group" aria-label="Rādīt grafikā"><button type="button" data-rk-mode="n" aria-pressed="${mode === 'n'}">Skaits</button><button type="button" data-rk-mode="p" aria-pressed="${mode === 'p'}">%</button></span></div>
       ${bs.length ? (cbs ? `<p class="rk-note rk-cmp-leg"><svg width="26" height="8" aria-hidden="true"><line x1="0" y1="4" x2="26" y2="4" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="3 3" opacity=".7"/></svg>Raustītās gaišākās līnijas – salīdzināmais periods (${esc(wholeYear(RC.from, RC.to) ? `${RC.from.slice(0, 4)}. gads` : RC.label)})</p>` : '') + lineChart(bs, mode, cbs) : '<p class="hint">Nav datu.</p>'}
-      ${bs.length ? `<p class="rk-note">${part ? `Raustītā līnija – nepabeigts periods (dati līdz ${esc(bs[bs.length - 1].end)}). ` : ''}${bs.some(b => !b.sent) ? 'Mēneši bez sūtījumiem – pārtraukums līnijā. ' : ''}Uz mēneša var uzklikšķināt.</p>` : ''}
       <details class="viz-table"><summary>Rādīt datu tabulu</summary>${tableHtml(['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %', ...(cbs ? ['Salīdzinājums – mēnesis', 'Salīdzinājums – nosūtītas', 'Salīdzinājums – piegādes %', 'Starpība, p. p.'] : [])], bs.map((b, i) => [b.label, b.sent, b.deliv, b.base ? `${pct(b.deliv, b.base)}%` : '—', ...(cbs ? (c => c ? [c.label, c.sent, mp(c) == null ? '—' : `${mp(c)}%`, cmpDiffTxt(mp(b), mp(c))] : ['', '', '', ''])(cbs[i]) : [])]))}</details></div>`;
-  // Versija 258: Respondentu datu labojumu īpatsvars (KPI) + "Labojumu veidi" – cilnes augšā
-  const cs = corrStats(xs), ccs = RC ? corrStats(RC.xs) : null;
-  const sC = `<div class="rk-corr">
-      ${repKpiCard({n:cs.p != null ? `${cs.p}%` : '—', l:'Respondentu datu labojumu īpatsvars', sub:`${fmtCount(cs.corr)} no ${fmtCount(cs.resp)} ${plural(cs.resp, 'respondenta', 'respondentiem')}`,
-        tip:`${CORR_DEF}\n\nSadalījums (labotās adreses): ${corrBreak(cs)}`, d:ccs && ccs.p != null && cs.p != null ? repDelta(cs.p, ccs.p, ' p. p.', -1) : '', drill:{f:{corr:'1'}}, title:'Atvērt sūtījumos vēstules ar labotām adresēm'})}
-      ${miniCard('Labojumu veidi', 'Kampaņās labotās kontaktadreses pēc veida. Procenti – no visām labotajām adresēm.', cntListHtml(cs.rows.filter(r => r.v), cs.n, ['labota adrese', 'labotas adreses'], {cmp:ccs ? {rows:ccs.rows, n:ccs.n} : null, good:0}), null, null)}</div>`;
-  return {html:sec('Respondentu datu labojumi', sC) + sec('Piegādes rezultāti', s0 + s1) + sec('Nepiegādātās ziņas', s2) + sec('Atkārtotā nosūtīšana', s3),
+  // Versija 258: Respondentu datu labojumu īpatsvars + "Labojumu veidi"; Versija 260: viena kartīte uzreiz zem grafika
+  const sC = corrCardHtml(corrStats(xs), RC ? corrStats(RC.xs) : null);
+  return {html:sec('Piegādes rezultāti', s0) + sec('Respondentu datu labojumi', sC) + sec('Piegāde pa kampaņām un kanāliem', s1) + sec('Nepiegādātās ziņas', s2) + sec('Atkārtotā nosūtīšana', s3),
     sheets:[{name:'Pa mēnešiem', rows:[['Mēnesis', 'Nosūtītas', 'Piegādātas', 'Piegādes %', ...(cbs ? ['Salīdzinājums – mēnesis', 'Salīdzinājums – nosūtītas', 'Salīdzinājums – piegādes %', 'Starpība, p. p.'] : [])], ...bs.map((b, i) => [b.label, b.sent, b.deliv, b.base ? pct(b.deliv, b.base) : '', ...(cbs ? (c => c ? [c.label, c.sent, mp(c) ?? '', cmpDiffNum(mp(b), mp(c))] : ['', '', '', ''])(cbs[i]) : [])])]},
       {name:'Pa kanāliem', rows:[['Kanāls', 'Vēstules', 'Piegādātas', 'Procesā', 'Nepiegādātas', 'Piegādes %', ...(cx ? ['Salīdzinājums – piegādes %', 'Starpība, p. p.'] : [])], ...byCh.map((r, i) => [...r.slice(0, 5), parseInt(r[5]), ...(cx ? [chCmp(CHS3[i]) ?? '', cmpDiffNum(r[1] ? parseInt(r[5]) : null, chCmp(CHS3[i]))] : [])])]}, {name:'Piegādes rezultāti', rows:[pHead, ...pRows]}, {name:'Nepiegādes paziņojumi', rows:[nHead, ...csvRows(nRows)]}, {name:'Atkārtotā nosūtīšana', rows:[aHead, ...csvRows(aRows)]}]};
+}
+// Versija 260: "Respondentu datu labojumi" – viena kartīte. Kreisā daļa: plāns gredzens (aizpildījums pēc %), lielais skaitlis,
+// "N no N respondentiem", "Atvērt →" (Sūtījumi ar filtru "Ar labotām adresēm"); labā daļa: sakrauta josla pa labojumu veidiem + saraksts
+// (punkta krāsa = segmenta krāsa), apakšā "Kopā: N labotas adreses". Salīdzinājums – tikai ar "Salīdzināt ar:" (samazinājums – zaļš).
+const CORR_COL = {camp:'#3F8F96', src:'#5BAA84', req:'#E0A040', fixed:'#5B8DD6'};
+function corrCardHtml(cs, ccs){
+  const p = cs.p, R = 33, C = 2 * Math.PI * R, fill = p == null ? 0 : Math.max(0, Math.min(100, p)) / 100 * C;
+  const ring = `<svg class="cc-ring" viewBox="0 0 72 72" aria-hidden="true"><circle class="trk" cx="36" cy="36" r="${R}" fill="none" stroke-width="6"/>${fill ? `<circle cx="36" cy="36" r="${R}" fill="none" stroke="${CORR_COL.camp}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${fill.toFixed(2)} ${C.toFixed(2)}" transform="rotate(-90 36 36)"/>` : ''}</svg>`;
+  let dl = '';
+  if (RC && ccs && ccs.p != null && p != null){ const d = Math.round((p - ccs.p) * 10) / 10, cls = !d ? 'neu' : d < 0 ? 'good' : 'bad';
+    dl = `<span class="cc-d cmpd-${cls}" title="${esc(`Salīdzinājumā ar ${RC.label}: ${ccs.p}% (${fmtCount(ccs.corr)} no ${fmtCount(ccs.resp)})`)}">${d ? `${d > 0 ? '▲' : '▼'}${cmpNum(Math.abs(d))} p.p.` : 'Bez izmaiņām'} ${esc(RC.short)}</span>`; }
+  const sub = `${fmtCount(cs.corr)} no ${fmtCount(cs.resp)} ${plural(cs.resp, 'respondenta', 'respondentiem')}`;
+  const left = `<div class="cc-l"><h3>Respondentu datu labojumu īpatsvars${tip(`${CORR_DEF}\n\nSadalījums (labotās adreses): ${corrBreak(cs)}`)}</h3>
+    <div class="cc-kpi"${drillAttr({f:{corr:'1'}})} title="Atvērt sūtījumos vēstules ar labotām adresēm" aria-label="${esc(`Respondentu datu labojumu īpatsvars ${p != null ? p + '%' : 'nav datu'}, ${sub}. Atvērt sūtījumos`)}">${ring}
+      <div class="cc-txt"><span class="cc-n">${p != null ? `${p}%` : '—'}</span>${dl}<span class="cc-sub">${esc(sub)}</span><span class="cc-go" aria-hidden="true">Atvērt →</span></div></div></div>`;
+  const n = cs.n, rows = cs.rows, w = ['labota adrese', 'labotas adreses'];
+  const bar = n ? `<div class="cc-bar" role="img" aria-label="${esc(rows.filter(r => r.v).map(r => `${r.label} ${pct(r.v, n)}%`).join(', '))}">${rows.filter(r => r.v).map(r =>
+    `<span tabindex="0" style="flex:${r.v} 1 0;background:${CORR_COL[r.k]}" data-tip="${esc(`${pct(r.v, n)}% · ${fmtCount(r.v)} ${plural(r.v, w[0], w[1])}|${r.label}`)}"></span>`).join('')}</div>` : '';
+  const o = {cmp:ccs ? {rows:ccs.rows, n:ccs.n} : null, good:0};
+  const list = n ? `<ul class="rk-rlist rk-nolink cc-list">${rows.map(r => `<li aria-label="${esc(`${r.label}: ${pct(r.v, n)}% (${r.v})`)}"><span class="cc-dot" style="background:${CORR_COL[r.k]}" aria-hidden="true"></span><span class="rl-l">${esc(r.label)}</span><b>${pct(r.v, n)}%</b><span class="rl-n">(${fmtCount(r.v)})</span>${cntCmp(r, n, o) || '<span></span>'}</li>`).join('')}</ul>
+    <p class="rk-rlist-tot">Kopā: ${fmtCount(n)} ${plural(n, w[0], w[1])}${cntTotCmp(o, w)}</p>` : '<p class="hint">Atlasītajā periodā labotu adrešu nav.</p>';
+  const right = `<div class="cc-r"><h3>Labojumu veidi${tip('Kampaņās labotās kontaktadreses pēc veida. Procenti – no visām labotajām adresēm.')}</h3>${bar}${list}</div>`;
+  return `<div class="card rk-corrc">${left}${right}</div>`;
 }
 // NDR iemesli ar noteikuma atslēgu (klikšķim)
 // Versija 218: "Nepiegādes iemesli" – saprotami nosaukumi; katra ziņa ieskaitīta vienreiz (pēdējais nepiegādes paziņojums);

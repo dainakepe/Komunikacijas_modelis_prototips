@@ -1261,8 +1261,17 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 260 – Piegāde: "Respondentu datu labojumi" – viena kartīte zem grafika.**
+  - **Novietojums:** sadaļa "Respondentu datu labojumi" ir uzreiz zem grafika "Nosūtītās un piegādātās ziņas pa …" (sadaļā "Piegādes rezultāti"), pirms tabulas pa kampaņām un kanāliem (tagad sadaļa "Piegāde pa kampaņām un kanāliem"), "Nepiegādātās ziņas" un "Atkārtotā nosūtīšana".
+  - **Viena kartīte visā platumā**, divas daļas (~30 % / ~70 %), starp tām plāna vertikāla līnija; augstums – pēc satura. Šaurā ekrānā (≤ 760 px) daļas ir viena zem otras (līnija – horizontāla).
+    - **Kreisā daļa:** virsraksts "Respondentu datu labojumu īpatsvars" ar (i) (definīcija un sadalījums pa veidiem); plāns gredzens (72 px, 6 px līnija, aizpildījums teal pēc %), blakus lielais skaitlis (piem., "19%"), zem tā pelēkā tekstā "10 no 52 respondentiem" un "Atvērt →" (Sūtījumi ar filtru "Ar labotām adresēm"; klikšķināma visa gredzena un skaitļa zona).
+    - **Labā daļa:** "Labojumu veidi" (i); augšā plāna (8 px, noapaļota) sakrauta josla ar 4 segmentiem pēc labojumu veidu proporcijām (padoms uz segmenta – nosaukums, %, skaits); zem tās saraksts – krāsains punkts · nosaukums · % (treknrakstā) · (skaits) pelēkā; apakšā "Kopā: N labotas adreses".
+    - **Krāsas** (punkts = segments): Laboti tikai kampaņai – teal #3F8F96; Atjaunoti pirmavotā – zaļa #5BAA84; Ziņoti administratoram – oranža #E0A040; Izlaboti pirmavotā – zila #5B8DD6.
+  - **Salīdzinājums** (tikai ar "Salīdzināt ar:"): zem lielā skaitļa "▼5 p.p. pret 2025" (samazinājums – zaļš, pieaugums – sarkans); saraksta rindās – atšķirības p.p.; "Kopā" rindā – salīdzināmā perioda skaits.
+  - **Grafiks "Nosūtītās un piegādātās ziņas pa …":** paskaidrojošais teksts zem grafika ("Raustītā līnija – nepabeigts periods …", "Mēneši bez sūtījumiem – pārtraukums līnijā", "Uz mēneša var uzklikšķināt") pārvietots uz (i) padomu pie grafika virsraksta, kā citiem grafikiem.
+
 - **Versija 258 – Piegāde: "Respondentu datu labojumu īpatsvars"; apakšcilne "Patērētais laiks (KPI)" noņemta.**
-  - **KPI kartīte** – Piegādes cilnes augšā, sadaļā "Respondentu datu labojumi" (tā pati KPI kartīšu komponente kā Pārskatā):
+  - **KPI kartīte** – Piegādes cilnes augšā, sadaļā "Respondentu datu labojumi" (tā pati KPI kartīšu komponente kā Pārskatā; Versijā 260 – apvienota ar "Labojumu veidi" vienā kartītē zem grafika, sk. augstāk):
     - **lielais skaitlis:** % = unikālie respondenti, kuriem kampaņā (2. solī) labota vismaz viena kontaktadrese / unikālie respondenti periodā nosūtītajās kampaņās (ar tiem pašiem filtriem);
     - zem tā: "{N} no {N} respondentiem";
     - (i) padomā – definīcija un sadalījums: "Laboti tikai kampaņai N · Atjaunoti pirmavotā N · Ziņoti administratoram N · Izlaboti pirmavotā N";
