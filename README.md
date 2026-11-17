@@ -49,9 +49,68 @@ Ekrāni ir tīri: pastāvīgi redzamu paskaidrojošo tekstu un informatīvo pazi
 - **Kļūdas** (obligātie lauki un pārbaudes) tiek rādītas tikai pēc mēģinājuma pāriet uz nākamo soli ("Tālāk", pāreja uz vēlāku soli progresa joslā), saglabāt melnrakstu vai nosūtīt: īss sarkans teksts pie konkrētā lauka (piem., "Norādiet periodu vai apsekojumu.", "Nosūtīšanas datums nedrīkst būt pagātnē."). Progresa joslā "!" parādās tikai soļiem, kuros ir bijis šāds mēģinājums. Poga "Nosūtīt" vairs nav bloķēta: ja ir kļūdas, kampaņa netiek nosūtīta, un kopsavilkumā tiek parādīts kļūdu saraksts.
 - Ilustrācijas rāmī sākumlapā teikums zem virsraksta paliek, jo tas ir daļa no ilustrācijas.
 
+## Nolaižamās izvēlnes – kopīga komponente (Versija 255)
+
+Visas nolaižamās izvēlnes prototipā (visi `<select>`, izņemot vēstuļu redaktora rīkjoslu) izmanto vienu kopīgu komponenti `DDX` pēc izvēlnes "Cikls" parauga. Lauks paliek tādā pašā platumā un augstumā kā iepriekš, un tam ir vienāda bultiņa. Atverot lauku, zem tā parādās viens kopīgs saraksts (sistēmas saraksts netiek rādīts).
+- **Vairākizvēle ar "Visi …"** (`data-ddx="multi"`):
+  - saraksts ar rūtiņām, augšā ieraksts "Visi …" ar atdalītājlīniju;
+  - "atlasīt visus" loģika ir tāda pati kā Versijā 253 (sk. zemāk);
+  - vērtība: `ddVals(lauks)` – `null` (visi), `[]` (neviens) vai atzīmēto saraksts;
+  - aizvērtā laukā kopsavilkums: "Visi …", līdz 2 nosaukumiem (piem., "Kampaņas statuss: Melnraksts, Gatava") vai "N no M" (piem., "12 no 13 apsekojumiem", "Kampaņas statuss: 3 no 4");
+  - ja nav atzīmēts neviens: kampaņas tvērumā "Nav izvēlēts" + "Izvēlieties vismaz vienu …" un neaktīva poga "Veikt atlasi"; filtros – bez filtra.
+- **Vienas vērtības izvēle:** tas pats saraksta izskats bez "Visi" un rūtiņām, izvēlētajai vērtībai – ķeksītis. Tā darbojas, piemēram:
+  - "Vākšanas gads *";
+  - veidņu un sagatavju formās – kategorija, adresāts, veids, valoda;
+  - adrešu prioritāte, saskaņotāji, paraugi.
+
+  Tāds pats saraksta izskats (ķeksītis pie izvēlētās vērtības, tā pati bultiņa) ir arī "Periods" un "Salīdzināt ar" izvēlnēm.
+- **Tastatūra:**
+  - Atstarpe / Enter / ↓ atver sarakstu;
+  - ↑ ↓ / Home / End – pārvietošanās;
+  - Atstarpe – atzīmēt;
+  - Enter – izvēlēties;
+  - Esc – aizvērt (fokuss atgriežas laukā);
+  - Tab – aizvērt.
+- **Meklēšana:** sarakstos ar vairāk nekā 8 ierakstiem augšā ir meklēšanas lauks; burti, ko raksta sarakstā, nonāk tajā. Meklēšana paslēpj tikai neatbilstošos ierakstus; "Visi" kļūst par "Visi atrastie (N)".
+- **Apsekojumu saraksti** (kampaņas tvērumā un filtros): visi apsekojumi vienmēr ir sarakstā savās vietās, kārtoti pēc koda. Noņemot ķeksīti, apsekojums nepazūd un nepārvietojas. Agrākās birkas ar "×" un uznirstošais saraksts ir noņemti – kopsavilkums ir pašā laukā.
+
+**Pārveidotās vairākizvēles:**
+- **Kampaņas tvērums, iedzīvotāju statistika:** "Apsekojums" (Visi apsekojumi), "Gads" (Visi gadi), "Periods" (Visi periodi), "Cikls" (Visi cikli / Visas reizes). Atkarības:
+  - vairāki apsekojumi – "Cikls" rāda katra apsekojuma ciklus / reizes grupās (piem., "1-DSA: 1.–4. reize", "1-C: 1., 2. cikls");
+  - vairāki gadi – periodu sarakstā ir visu izvēlēto gadu periodi;
+  - kampaņas nosaukumā viens gads / periods – tā kods; vairāki vai visi – "VISI";
+  - atlase: izvēlētie apsekojumi × gadi × periodi × cikli (katram apsekojumam savi).
+- **Kampaņas tvērums, uzņēmumu statistika:**
+  - periodu izvēlnes (Visi mēneši / ceturkšņi / pusgadi / nedēļas);
+  - "Apsekojumi / pārskati" (Visi apsekojumi);
+  - "Pēc respondenta" → "Atbildīgais operators" (Visi operatori).
+- **Kampaņas, 2. solis:** respondentu saraksta filtrs "Apsekojums".
+- **Kampaņu filtri:** kampaņas statuss, sūtīšanas statuss, kampaņas veids, kampaņas veidotājs, statistikas joma (tagad vairākizvēle), apsekojums.
+- **Sūtījumi:**
+  - kampaņa, apsekojums, kampaņas veids, sūtīšanas statuss;
+  - panelī "Filtri" – kanāls, kampaņas veids, e-pasta reakcija, anketas aktivitāte.
+- **Atskaites:**
+  - kampaņa, apsekojums, kampaņas veids;
+  - panelī "Filtri" – kanāls un statistikas joma.
+
+  Ja izvēlēta tieši viena kampaņa, tiek rādīts vienas kampaņas skats.
+- **Veidnes:**
+  - kategorija;
+  - statuss (noklusējums – visi, izņemot arhivētās);
+  - vēstules saturs, vērtējums, saistītais apsekojums.
+- **Sagataves:** adresāts, kategorija, veids.
+- **Veidnes izvēles logs:** adresāts, kategorija, apsekojums, autors.
+- **Pielikumu bibliotēka:** adresāti, kategorija.
+- **Darbību vēsture:** kampaņa.
+- **"Mani filtri" logi:** visi kritēriji ir kopīgās vairākizvēles (agrāk – rūtiņu pogas un saraksti):
+  - kampaņas statuss, sūtīšanas statuss, kampaņas veids, statistikas joma, apsekojumi / pārskati, kampaņa, kanāls, rādītāji grafikā, veidotājs, nosūtītājs;
+  - mainot statistikas jomu, apsekojumu sarakstā paliek tikai tās apsekojumi.
+
+**Saglabātās vērtības:** agrāk saglabātie filtri ar vienu vērtību (virkne) un agrākie melnraksti (viens gads / periods, cikli kā skaitļi) tiek nolasīti un pārveidoti automātiski.
+
 ## Vairākizvēles ar "Visi …" (Versija 253)
 
-Visām vairākizvēles izvēlnēm, kurās ir ieraksts "Visi …" / "Visas …", ir viena kopīga loģika (`MSA` kodā; "Mani filtri" logu sarakstiem – tā pati loģika ar `msaDomInit` / `msaDomVals`):
+Visām vairākizvēles izvēlnēm, kurās ir ieraksts "Visi …" / "Visas …", ir viena kopīga loģika (`MSA` kodā; Versijā 255 – kopīgajā nolaižamajā izvēlnē `DDX`, sk. iepriekš):
 1. **"Visi" atzīmēts** – atzīmēti visi atsevišķie ieraksti (ķeksīši redzami visiem).
 2. **Noņemot ķeksīti vienam ierakstam**, tas tiek izslēgts, pārējie paliek atzīmēti, un "Visi" kļūst **daļēji atzīmēts** (svītriņa rūtiņā).
 3. **Atzīmējot atpakaļ visus ierakstus**, "Visi" atkal ir pilnībā atzīmēts.
