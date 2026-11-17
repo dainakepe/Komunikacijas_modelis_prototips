@@ -165,7 +165,7 @@ Komunikācijas modulim ir četras cilnes (atbilstoši specifikācijai):
   - Kampaņas: Visas · Melnraksti · Ieplānotās · Izpildē · Pabeigtās. Atverot cilni, vienmēr aktīva ir "Visas";
   - Veidnes: adresāta filtru pogas (Visas · Fiziskām personām · Juridiskām personām · Cita komunikācija) tādā pašā stilā kā kampaņu statusa pogas. "Sagataves" ir poga augšējā labajā stūrī starp "Nemainīgā informācija" un "+ Jauna veidne", un tā atver atsevišķu skatu ar grupu pogām "E-pasta satura sagataves" · "Pielikumu sagataves";
   - Sūtījumi: Visas · Piegāde procesā · Gaida atkārtojumu · Pārsūtīts uz nākamo adresi · Piegādāts · Nepiegādāts · Aizturēts · Manuālai izskatīšanai;
-  - Atskaites: Pārskats · Piegāde · Reakcija un iesniegšana · Patērētais laiks (KPI).
+  - Atskaites: Pārskats · Piegāde · Reakcija un iesniegšana (Versija 258: "Patērētais laiks (KPI)" noņemts).
 
 Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA moduļiem. Tie ir redzami kampaņas solī "Respondenti" un respondenta kartītē. Vecās saites turpina darboties: `#sagatavot` atver kampaņas redaktoru, `#nosutitas` atver cilni "Sūtījumi", bet `#respondenti` atver cilni "Kampaņas".
 
@@ -255,7 +255,7 @@ Atsevišķas cilnes "Respondenti" nav, jo respondentu dati nāk no citiem DELTA 
     - **"Mani filtri":** logā kritēriji "Kampaņas statuss", "Sūtīšanas statuss", "Kampaņas veids", "Kampaņas izveidotājs" (rinda "Ātrais filtrs / Tikai jārīkojas" noņemta); esošie saglabātie filtri turpina darboties (vērtība "Atgriezta labošanai" → "Jālabo", agrākās sadaļas → sūtīšanas statuss, "Jārīkojas" – rindā "Saglabāts arī");
     - klikšķis uz statusa – kā līdz šim: "Kampaņas statuss" → kampaņas solis, kur jārīkojas; "Sūtīšanas statuss" → Sūtījumi (ar neatrisinātām problēmām – grupa "Jārisina").
   - **Rezultāts** – Versija 149: nosūtītām kampaņām **tikai krāsu josla** (bez skaitļiem blakus): piegādātas – gaiši zaļa (#6BBF8A), procesā – gaiši oranža, jārisina – oranža (#D9822B); skaitļi – padomā, uzbraucot (vai fokusējot) joslu: "Piegādātas 19 · Procesā 1 · Jārisina 2 (kopā 22)" ("Jārisina" – tās pašas vēstules kā Sūtījumu grupā "Jārisina"); melnrakstiem un ieplānotajām – josla netiek rādīta (tukšs);
-  - Versija 160: kolonna **"Darba laiks"** noņemta – laika rādītāji ir tikai Atskaitēs (apakšcilne "Patērētais laiks (KPI)").
+  - Versija 160: kolonna **"Darba laiks"** noņemta – laika rādītāji bija tikai Atskaitēs (apakšcilne "Patērētais laiks (KPI)" – noņemta Versijā 258).
 - **Viena nepārtraukta tabula** bez grupām: visas kampaņas (melnraksti, ieplānotās, nosūtītās) sakārtotas no jaunākās uz vecāko pēc pēdējo izmaiņu laika (melnrakstam – saglabāšana, ieplānotajai – izveide, nosūtītajai – nosūtīšana).
 - **Kārtošana pēc kolonnām:** katrai kolonnai (Kampaņa, Veids, Respondenti, Nosūtīšana, Statuss, Rezultāts) galvenē ir ikona ↕. Klikšķis uz galvenes: 1. – augoši (↑), 2. – dilstoši (↓), 3. – atpakaļ noklusējuma secībā (jaunākās augšā). Aktīvās kolonnas bultiņa ir primārajā krāsā, pārējās – pelēkas; uzbraucot ar peli, galvene tiek viegli izcelta un kursors kļūst par roku.
   - Kampaņa – alfabētiski (latviešu valodas secībā: A, Ā, B, C, Č…); Veids un Statuss – alfabētiski pēc redzamā teksta; Respondenti – pēc skaita; Nosūtīšana – pēc datuma (nosūtīšanas vai plānotā), melnraksti bez datuma ("Tūlīt pēc apstiprināšanas") vienmēr beigās; Rezultāts – pēc piegādes procenta (piegādātās / respondenti), kampaņas bez rezultāta ("—") vienmēr beigās;
@@ -1101,7 +1101,7 @@ Sūtījumu 2. līmenī visa detalizētā informācija par vienu vēstuli ir **vi
   - Aizturēts: **"Atzīmēt kā atrisinātu"**;
   - ieraksts vecāks par 2 gadiem: **"Dzēst ierakstu"** (ar apstiprinājumu; pēc dzēšanas logs aizveras).
   - Pēc darbības logs paliek atvērts un tiek atjaunots (statuss, laika līnija, josla); procesā esošo statusu izmaiņas logā parādās automātiski.
-- Nepiegādātas vēstules apstrādes laiks (Atskaites → "Patērētais laiks") tiek uzskaitīts, kamēr atvērts "Jārisina" vēstules logs (agrāk – izvērsta rinda vai respondenta kartīte).
+- Nepiegādātas vēstules apstrādes laiks (līdz Versijai 258 – Atskaites → "Patērētais laiks"; dati tiek uzskaitīti joprojām) tiek uzskaitīts, kamēr atvērts "Jārisina" vēstules logs (agrāk – izvērsta rinda vai respondenta kartīte).
 - Respondenta kartīte (sānu panelis) paliek kampaņas redaktorā (solis "Respondenti"); Sūtījumos tā vairs netiek atvērta.
 
 Sūtījumos (specifikācija F16, F17) ir visas nosūtītās un nosūtīšanas procesā esošās vēstules.
@@ -1254,6 +1254,24 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 
 ## Atskaites
 
+- **Versija 258 – Piegāde: "Respondentu datu labojumu īpatsvars"; apakšcilne "Patērētais laiks (KPI)" noņemta.**
+  - **KPI kartīte** – Piegādes cilnes augšā, sadaļā "Respondentu datu labojumi" (tā pati KPI kartīšu komponente kā Pārskatā):
+    - **lielais skaitlis:** % = unikālie respondenti, kuriem kampaņā (2. solī) labota vismaz viena kontaktadrese / unikālie respondenti periodā nosūtītajās kampaņās (ar tiem pašiem filtriem);
+    - zem tā: "{N} no {N} respondentiem";
+    - (i) padomā – definīcija un sadalījums: "Laboti tikai kampaņai N · Atjaunoti pirmavotā N · Ziņoti administratoram N · Izlaboti pirmavotā N";
+    - salīdzinājums – tikai ar "Salīdzināt ar:"; samazinājums ir zaļš (mazāk labojumu = labāka datu kvalitāte);
+    - **"Atvērt →"** atver Sūtījumus ar filtru **"Ar labotām adresēm"** (birka filtru joslā).
+  - **"Labojumu veidi"** – mazā saraksta kartīte blakus KPI (stils kā "Nepiegādes iemesli", bez eksporta ikonas): Laboti tikai kampaņai · Atjaunoti pirmavotā · Ziņoti administratoram · Izlaboti pirmavotā – % · (skaits); apakšā "Kopā: N labotas adreses". Skaitļi sakrīt ar KPI padoma sadalījumu.
+  - **Grafiks "Rādītāji pa …"** (Pārskats) – papildu sērija "Respondentu datu labojumu īpatsvars", pēc noklusējuma izslēgta (ieslēdz leģendā; padomā – definīcija). Tā pati sērija "Mani filtri" logā rindā "Rādītāji grafikā".
+  - **Dati:** nosūtot kampaņu, katrai vēstulei saglabā respondenta labotās adreses un labojuma veidu – labots tikai kampaņai, atjaunots pirmavotā ("Arī pirmavotā"), ziņots administratoram (pieteikums vēl gaida), izlabots pirmavotā (administrators atrisinājis pieteikumu).
+  - **Testa dati:** nosūtītajām kampaņām – labojumi aptuveni 5–12 % respondentu mēnesī, ar visiem četriem veidiem. Labojumi ir tikai daļai respondentu (ar neprecīziem kontaktiem) un vienam respondentam mēnesī – vienā kampaņā. 2026. gadā labojumu ir mazāk nekā 2025. gadā (gada rādītājs ~19 % pret ~24 %).
+  - **Noņemta apakšcilne "Patērētais laiks (KPI)":**
+    - Atskaitēs paliek trīs apakšcilnes: Pārskats · Piegāde · Reakcija un iesniegšana;
+    - noņemts cilnes saturs (daļas "Kampaņas", "Veidnes", "Nepiegāžu apstrāde": KPI kartītes, grafiki, soļu josla, mazās kartītes, tabulas, MI teksti) un tās eksports;
+    - ja saglabātajā stāvoklī atvērta bija šī apakšcilne, atveras "Pārskats";
+    - darba laika uzskaite kampaņās, veidnēs, sagatavēs un nepiegāžu apstrādē turpinās (dati netiek mainīti).
+  - Labots: Atskaišu filtru rindā lauki "Kampaņa" un "Apsekojums" vairs nepārklājas (lauks – etiķetes platumā).
+
 - **Versija 251 – rādītāju skaidrojumi:** grafikā "Rādītāji pa …", uzbraucot ar peli vai fokusējot leģendas ierakstu, parādās gaišais padoms ar definīciju (leģendas klikšķis – ieslēgt / izslēgt – kā līdz šim; salīdzinājumam nekas netiek pievienots):
   - **Piegādes īpatsvars:** "Piegādātās ziņas / nosūtītās ziņas (visi kanāli). Ziņas, kuru piegāde vēl notiek, netiek ieskaitītas."
   - **Atvēršanas īpatsvars (e-pasts, aptuveni):** "Atvērtie e-pasti / piegādātie e-pasti. Aptuveni – atvēršanu nosaka pēc attēlu ielādes, daļa pastkastu to bloķē. eAdreses un drukātās vēstules netiek skaitītas."
@@ -1392,7 +1410,7 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
   - Pārlūka "atpakaļ" (`?v=…` navigācija) arī atgriež atskaitē tādā pašā stāvoklī. Mērķa skatā pielietotie filtri (periods, kanāls, "Jārisina", "Atskaišu filtrs: …") – kā līdz šim.
 
 - **Versija 215 – apakšcilnes atdalītas no "Mani filtri":**
-  - apakšcilņu josla (Pārskats · Piegāde · Reakcija un iesniegšana · Patērētais laiks (KPI)) – **zem** filtru rīkjoslas (un zem "Mani filtri" kopsavilkuma rindas / aktīvo filtru joslas), tieši virs atskaites satura: 1) filtri → 2) atskaites veids → 3) saturs; atstarpe starp filtriem un cilnēm ~12 px, cilņu izskats nav mainīts;
+  - apakšcilņu josla (Pārskats · Piegāde · Reakcija un iesniegšana) – **zem** filtru rīkjoslas (un zem "Mani filtri" kopsavilkuma rindas / aktīvo filtru joslas), tieši virs atskaites satura: 1) filtri → 2) atskaites veids → 3) saturs; atstarpe starp filtriem un cilnēm ~12 px, cilņu izskats nav mainīts;
   - "Mani filtri" vairs neglabā apakšcilni: logā "Jauns filtrs" / "Labot filtru" lauks "Atvērt šo apakšcilni" noņemts; filtra izvēle atvērto apakšcilni nemaina – filtrs tiek piemērots atvērtajai apakšcilnei un paliek spēkā, pārslēdzot citas; kopsavilkumā un "Pārvaldīt filtrus" "Apakšcilne: …" netiek rādīta;
   - atverot sadaļu Atskaites (arī ar noklusējuma filtru), atvērta apakšcilne "Pārskats";
   - agrāk saglabātajiem filtriem apakšcilne noņemta; piemēra filtrs "1-C Ceļotāji – reakcija" pārdēvēts par "1-C Ceļotāji".
@@ -1400,7 +1418,7 @@ Statusi ir vienoti visā prototipā (sūtījumi, kampaņu saraksts, atskaites, r
 - **Versija 214 – KPI kartītes:** saite **"Atvērt →"** – kartītes apakšējā labajā stūrī (mazs teal teksts, vienmēr redzama; uzbraucot – pasvītrojums), vairs nepārklāj virsrakstu; virsraksts aizņem visu kartītes platumu, garš virsraksts pārnesas jaunā rindā; visas kartītes vienā augstumā, saite visās vienā vietā.
 - **Versija 214 – "Mani filtri" kopsavilkuma rinda** (kopīgā komponente – Kampaņas, Sūtījumi, Atskaites): kad izvēlēts saglabātais filtrs, tieši zem filtru rīkjoslas – viena pelēka rinda "Filtrā: {kritērijs} – {vērtība} · …" un saite **"Labot"** (atver filtra labošanas logu), piem., "Filtrā: Kampaņas statuss – Melnraksts · Veidotājs – Testa Darbinieks  Labot". Tikai norādītie kritēriji ar saprotamiem nosaukumiem; ja vērtību vairāk par 2 – pirmās 2 un "+N" (pilns saraksts padomā); pārāk gara rinda saīsināta ar "…" (pilns teksts padomā). Filtru lauki netiek aizpildīti (filtrs tiek piemērots kā slānis, atzīmes "mainīts" nav); parastie filtri darbojas papildus, kopsavilkums tos nerāda. Noņemot filtru (× vai "Rādīt visas … (bez filtra)") – rinda pazūd; pēc "Labot" un saglabāšanas – uzreiz atjaunojas.
 
-Cilnē **Atskaites** (specifikācija F18) ir četras apakšcilnes: **Pārskats · Piegāde · Reakcija un iesniegšana · Patērētais laiks (KPI)**. Vecās apakšcilnes ir apvienotas: "Nosūtīšanas kopsavilkums" → Pārskats; "Piegādes rezultāti", "Neveiksmīgās ziņas", "Atkārtotā nosūtīšana" un "Citi pārskati" → Piegāde (parakstīšanas rezultāti noņemti Versijā 109); "Darba laika patēriņš" / "Darba laiks" → Patērētais laiks (KPI) (vecās saites / saglabātais stāvoklis pārvirzās uz jauno apakšcilni).
+Cilnē **Atskaites** (specifikācija F18) ir trīs apakšcilnes: **Pārskats · Piegāde · Reakcija un iesniegšana** (Versija 258: apakšcilne "Patērētais laiks (KPI)" noņemta; ja saglabātajā stāvoklī tā bija atvērta, atveras "Pārskats"). Vecās apakšcilnes ir apvienotas: "Nosūtīšanas kopsavilkums" → Pārskats; "Piegādes rezultāti", "Neveiksmīgās ziņas", "Atkārtotā nosūtīšana" un "Citi pārskati" → Piegāde (parakstīšanas rezultāti noņemti Versijā 109); "Darba laika patēriņš" / "Darba laiks" → Patērētais laiks (KPI) (vecās saites / saglabātais stāvoklis pārvirzās uz jauno apakšcilni).
 
 **KPI kartītes** (Versija 156; vienots stils visās apakšcilnēs): augšā rādītāja nosaukums (14 px, treknraksts, #1F5E69), zem tā liels skaitlis, zem skaitļa mazs pelēks papildteksts / salīdzinājums ar iepriekšējo periodu; klikšķināmajām kartītēm "Atvērt →" – augšējā labajā stūrī.
 
@@ -1423,7 +1441,7 @@ Cilnē **Atskaites** (specifikācija F18) ir četras apakšcilnes: **Pārskats �
 - poga **"Filtri"** ar aktīvo filtru skaitu – panelis: **Kanāls** (eAdrese / E-pasts) un **Statistikas joma** (Iedzīvotāju / Uzņēmumu statistika), "Notīrīt" / "Lietot";
 - pa labi **"Eksportēt ▾"** – CSV vai Excel (.xlsx);
 - zem rindas – noņemamas birkas paneļa filtriem (piem., "Kanāls: E-pasts ×") un "Notīrīt visus".
-- *Patērētais laiks (KPI)*: daļā "Nepiegāžu apstrāde" – visi filtri (kampaņa, apsekojums, kampaņas veids, periods, kanāls, statistikas joma; pēc vēstules nosūtīšanas datuma); daļā "Kampaņas" – kampaņa, apsekojums, kampaņas veids, statistikas joma un periods; daļā "Veidnes" – periods, veids (kategorija) un joma (adresāts), bet **Kampaņa** un **Apsekojums** ir neaktīvi (pelēki, padoms "Neattiecas uz veidnēm"); kanāla filtrs laikam neattiecas.
+- *(līdz Versijai 258)* *Patērētais laiks (KPI)*: daļā "Nepiegāžu apstrāde" – visi filtri (kampaņa, apsekojums, kampaņas veids, periods, kanāls, statistikas joma; pēc vēstules nosūtīšanas datuma); daļā "Kampaņas" – kampaņa, apsekojums, kampaņas veids, statistikas joma un periods; daļā "Veidnes" – periods, veids (kategorija) un joma (adresāts), bet **Kampaņa** un **Apsekojums** ir neaktīvi (pelēki, padoms "Neattiecas uz veidnēm"); kanāla filtrs laikam neattiecas.
 
 **Kopīgais visām apakšcilnēm:**
 - **MI kopsavilkums** (birka "MI ģenerēts · simulācija") – ne vairāk kā 3 punkti; kur iespējams, ar saiti **"→ Atvērt"**, kas atver Sūtījumus ar attiecīgajiem filtriem (piem., "17 ziņas prasa manuālu pārbaudi vai risinājumu. → Atvērt" – grupa Jārisina; biežākais NDR/DIV iemesls → Vēsture ar šo iemeslu).
@@ -1461,7 +1479,7 @@ Cilnē **Atskaites** (specifikācija F18) ir četras apakšcilnes: **Pārskats �
 - apakšā pelēkā tekstā: "Iesniegšanu ieskaita tikai pēc vēstules nosūtīšanas. E-pasta atvēršana ir aptuvena (izsekošanas attēls).";
 - ja apakšcilnes neietilpst vienā rindā, pogā redzams īsais nosaukums "Reakcija" (pilns – padomā).
 
-**Patērētais laiks (KPI)** (agrāk "Darba laiks"; KPI: laika patēriņš darbībām; sk. "Darba laika uzskaite"). Augšā (zem filtru rindas) segmentēts pārslēgs **"Kampaņas | Veidnes | Nepiegāžu apstrāde"** (noklusējums "Kampaņas"; trešā daļa – Versija 127); katrai daļai savas KPI kartītes, MI kopsavilkums un eksports:
+**Patērētais laiks (KPI)** – *noņemts Versijā 258* (zemāk – vēsturisks apraksts; darba laika dati kampaņās, veidnēs un sagatavēs tiek uzskaitīti joprojām). Agrāk "Darba laiks"; KPI: laika patēriņš darbībām; sk. "Darba laika uzskaite". Augšā (zem filtru rindas) segmentēts pārslēgs **"Kampaņas | Veidnes | Nepiegāžu apstrāde"** (noklusējums "Kampaņas"; trešā daļa – Versija 127); katrai daļai savas KPI kartītes, MI kopsavilkums un eksports:
 - **Nepiegāžu apstrāde** (Versija 127) – cik darba laika patērē nepiegādāto vēstuļu apstrāde un jaunu kontaktu meklēšana un cik to ietaupa jaunais risinājums:
   - **nepiegāde** – vēstule ar neveiksmīgu piegādes mēģinājumu (NDR / DIV kļūda; prombūtnes atbilde un starpstatusi neskaitās), nederīga adrese izlaista pirms sūtīšanas vai pieņemts MI labojums; **atrisināta automātiski** – nonāca līdz piegādei vai procesam bez darbinieka (nākamā adrese, atkārtots mēģinājums, izlaista nederīgā adrese, MI labojums); **nonākusi pie darbinieka** – vēstule grupā "Jārisina" vai jau apstrādāta;
   - **laika uzskaite** (fonā, lietotājam neredzama – tāpat kā kampaņām): aktīvais laiks (pēc 3 min bez aktivitātes netiek skaitīts), kamēr Sūtījumos atvērts "Jārisina" vēstules detaļu logs (Versija 151; agrāk – izvērsta rinda vai respondenta kartīte). Gadījums **atrisināts**, kad: adrese izlabota un vēstule nosūtīta ("Ievadīt jaunu adresi un sūtīt"), atzīmēts **"Kontakts nav atrodams"** (jauna poga manuālās pārbaudes blokā), "Atzīmēt kā izskatītu", "Nodot kontaktu aktualizēšanai" vai sūtītāja puses kļūda atzīmēta kā atrisināta; ieraksts Darbību vēsturē "Apstrādāja nepiegādātu vēstuli · {respondents}: {darbība}". Atsevišķas darbības "respondents izņemts" vēstules apstrādē prototipā nav;
@@ -1498,7 +1516,7 @@ Prototips automātiski reģistrē darba laiku kampaņām, veidnēm un sagatavēm
 - Reģistrē arī: kas strādāja (lietotājs un viņa laiks), sesiju skaits, satura avots (gatava veidne / pielāgota veidne / jauns saturs).
 - **Kur redzams – tikai divās vietās:**
   - kampaņu sarakstā laika kolonnas vairs nav (Versija 160) – tikai Atskaitēs;
-  - **cilnē Atskaites** – apakšcilnē "Patērētais laiks (KPI)" (daļas "Kampaņas" un "Veidnes").
+  - **cilnē Atskaites** – apakšcilnē "Patērētais laiks (KPI)" (daļas "Kampaņas" un "Veidnes") – līdz Versijai 258; tagad laika dati Atskaitēs netiek rādīti (uzskaite turpinās).
 - **Kur netiek rādīts:** kampaņas veidošanas soļos (Pamatdati, Respondenti, Saturs, Pārbaude, Nosūtīšana), saskaņotāja skatā, nosūtītas / pabeigtas kampaņas skatā, ieplānotās kampaņas logā, veidnes redaktorā un sagatavju redaktoros laika rādītāju nav; uzskaite turpinās fonā un saglabājas kampaņas / veidnes datos.
 - **Testa dati:** esošajām kampaņām un veidnēm pievienoti reālistiski laiki – kampaņa no gatavas veidnes 5–15 min, ar pielāgotu veidni 10–30 min, ar jaunu saturu 20–60 min (satura avots testa datos dažādots), daļai kampaņu – gaidīšana saskaņošanā 2–30 st.; veidne 10–40 min, 1–3 sesijas; e-pasta satura šabloni 5–25 min un pielikumu sagataves 4–20 min (1–2 sesijas); melnrakstiem 3–18 min.
 
