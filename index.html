@@ -4187,7 +4187,7 @@ th.has-exp{padding-right:32px !important}
           <div class="step-title"><span class="step-num">5</span><h2>Nosūtīšana</h2></div>
           <div class="send3" id="c-send3">
             <section class="s3-card" id="s3-apv" aria-labelledby="s3-apv-h">
-              <h3 class="s3-h" id="s3-apv-h">1. Saskaņošana <span class="tip" tabindex="0" role="note" aria-label="Ja jāsaskaņo, kampaņa tiek nodota saskaņotājam (statuss “Gaida saskaņojumu”). Saskaņotājs redz pārbaudes skatu tikai lasīšanai un kampaņu saskaņo vai atgriež labošanai. Pēc saskaņojuma – ieplānošana vai nosūtīšana." data-tip="Ja jāsaskaņo, kampaņa tiek nodota saskaņotājam (statuss “Gaida saskaņojumu”). Saskaņotājs redz pārbaudes skatu tikai lasīšanai un kampaņu saskaņo vai atgriež labošanai. Pēc saskaņojuma – ieplānošana vai nosūtīšana.">i</span></h3>
+              <h3 class="s3-h" id="s3-apv-h">1. Saskaņošana <span class="tip" tabindex="0" role="note" aria-label="Ja jāsaskaņo, kampaņa tiek nodota saskaņotājam (statuss “Gaida saskaņojumu”). Saskaņotājs redz pārbaudes skatu tikai lasīšanai un kampaņu saskaņo vai atgriež labošanai. Pēc saskaņojuma – ieplānota vai tūlītēja nosūtīšana." data-tip="Ja jāsaskaņo, kampaņa tiek nodota saskaņotājam (statuss “Gaida saskaņojumu”). Saskaņotājs redz pārbaudes skatu tikai lasīšanai un kampaņu saskaņo vai atgriež labošanai. Pēc saskaņojuma – ieplānota vai tūlītēja nosūtīšana.">i</span></h3>
               <div class="apv-ro" id="c-apv-ro" hidden></div>
               <div class="seg" id="c-apv" role="group" aria-label="Saskaņošana">
             <button type="button" data-apv="0">Nav jāsaskaņo</button><button type="button" data-apv="1">Jāsaskaņo</button></div>
@@ -4340,7 +4340,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 256</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 257</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -6618,7 +6618,7 @@ const AL_T = {
   print:{l:'Nodeva drukai', c:'nos', i:'send'},
   apvFwd:{l:'Pārsūtīja saskaņošanu', c:'saskan', i:'handoff'}, apvRemind:{l:'Nosūtīja atgādinājumu saskaņotājiem', c:'saskan', i:'bell'}, apvSubst:{l:'Nodots aizvietotājam', c:'saskan', i:'users'},
  
-  plan:{l:'Ieplānoja nosūtīšanu', c:'nos', i:'calendar'}, unplan:{l:'Atcēla ieplānošanu', c:'nos', i:'calX', k:'warn'}, send:{l:'Nosūtīja', c:'nos', i:'send', k:'pri'},
+  plan:{l:'Ieplānoja nosūtīšanu', c:'nos', i:'calendar'}, unplan:{l:'Atcēla ieplānoto nosūtīšanu', c:'nos', i:'calX', k:'warn'}, send:{l:'Nosūtīja', c:'nos', i:'send', k:'pri'},
   remind:{l:'Izveidoja atgādinājumu no šīs kampaņas', c:'nos', i:'bell'},
   fixHand:{l:'Nodeva labošanai', c:'atlase', i:'handoff'},
   addrUndo:{l:'Atsauca adreses labojumu', c:'atlase', i:'undo', k:'warn'}, addrRedo:{l:'Atjaunoja automātisko adreses labojumu', c:'atlase', i:'check'},
@@ -6732,7 +6732,7 @@ function alGenDraft(x, r){
   });
   return out;
 }
-// ieplānotas kampaņas žurnāls: sagatavošana un ieplānošana
+// ieplānotas kampaņas žurnāls: sagatavošana un ieplānota nosūtīšana
 function alGenPlanned(x, r){
   const pl = x.pl, sn = pl.snap || {}, u = pl.createdBy || CURRENT_USER, now = Date.now();
   let start = Date.parse(pl.createdAt || ''); if (!(start < now)) start = now - 2 * 3600e3;
@@ -11109,7 +11109,7 @@ function renderFinalSummary(){
   $('#c-final-foot').innerHTML = kvFoot(st.noAddr);
 }
 // 1. solis: komunikācijas veids un nosūtīšanas laiks
-// Ieplānošana: datums DD.MM.GGGG un laiks HH:MM (24 h); nedrīkst būt pagātnē
+// Ieplānota nosūtīšana: datums DD.MM.GGGG un laiks HH:MM (24 h); nedrīkst būt pagātnē
 const dmy = iso => iso ? iso.split('-').reverse().join('.') : '';
 // ===== Versija 248: kopīgs datuma lauks – teksts DD.MM.GGGG (var ierakstīt ar roku) + kalendāra ikona ar paslēptu dt-native izvēlni =====
 // (tāds pats kā "Datums" un "Vēstules datums" Nosūtīšanas blokā); vērtība – parseDmy(lauks.value) → GGGG-MM-DD
@@ -12000,7 +12000,7 @@ function renderApproval(){
   renderSendCheck();
 }
 // noslēdzošā poga: nodot saskaņošanai / ieplānot / nosūtīt
-// nepublicēti apsekojumi: pirms sūtīšanas / ieplānošanas / nodošanas – apstiprinājuma logs ("Atcelt" – paliek solī; "Turpināt" – esošā plūsma)
+// nepublicēti apsekojumi: pirms nosūtīšanas / ieplānotas nosūtīšanas / nodošanas – apstiprinājuma logs ("Atcelt" – paliek solī; "Turpināt" – esošā plūsma)
 async function pubGate(){
   const xs = campPubIssues(); if (!xs.length) return true;
   const ok = await confirmDialog({title:'Apsekojums nav publicēts', okLabel:'Turpināt', focusCancel:true,
@@ -12025,7 +12025,7 @@ async function finalSubmit(){
   const who = one ? `saskaņotājam <b>${esc(one.name)}</b> (${esc(one.role)})` : `saskaņotājiem: ${esc(itemsText(its))}`;
   if (!(await confirmDialog({title:'Nodot saskaņošanai?', okLabel:'Nodot saskaņošanai',
     message:`Kampaņa <b>${esc(compose.name)}</b> (${esc(SESS_LABELS[sessKindKey()])}, ${recs.length} ${plural(recs.length, 'vēstule', 'vēstules')}) tiks nodota ${who}.
-      <br>Pēc saskaņojuma: ${isPlanned() ? `ieplānošana (${esc(whenLabel())})` : 'nosūtīšana'}.${a0.due ? `<br>Saskaņot līdz: ${esc(fmtDate(a0.due))}.` : ''}${compose.apv.comment ? `<br>Komentārs: “${esc(compose.apv.comment)}”` : ''}`}))) return;
+      <br>Pēc saskaņojuma: ${isPlanned() ? `ieplānota nosūtīšana (${esc(whenLabel())})` : 'nosūtīšana'}.${a0.due ? `<br>Saskaņot līdz: ${esc(fmtDate(a0.due))}.` : ''}${compose.apv.comment ? `<br>Komentārs: “${esc(compose.apv.comment)}”` : ''}`}))) return;
   compose.nameAuto = false;
   planDetach();
   const now = new Date().toISOString(), name = compose.name;

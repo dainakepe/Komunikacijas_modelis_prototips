@@ -624,7 +624,7 @@ Jaunu kampaņu sagatavo piecos soļos: **Pamatdati → Respondenti → Saturs �
    - **kampaņas nosaukums – automātiskā daļa + papildinājums** (Versija 182): laukā redzams, ka nosaukuma sākums ir sistēmas ģenerēts un lietotājs var pievienot tikai beigas:
      - **lauku grupa ar kopīgu apmali** un plānu atdalītājlīniju: kreisajā pusē automātiskā daļa `{indekss}_{gads}_{periods}_{veids}[nr]_{GGGG-MM-DD}_` – pelēks fons un pelēks teksts, nav rediģējama, bet atlasāma (to var iezīmēt un kopēt); labajā pusē teksta lauks ar pelēku paraugu **"papildinājums (neobligāti)"**. Kamēr apsekojums nav izvēlēts, kreisajā pusē – pelēks slīpraksta paraugs "indekss_gads_periods_veids_datums_";
      - uzbraucot uz automātiskās daļas (vai fokusējot to ar tastatūru) – gaišs padoms **"Ģenerēts automātiski: indekss · gads · periods · veids · datums. Mainās, ja maināt šos datus."**; (i) pie lauka nosaukuma un paskaidrojošā teksta zem lauka nav; saites "Atjaunot automātisko nosaukumu" vairs nav;
-     - automātiskā daļa atjaunojas uzreiz, mainot apsekojumu, gadu, periodu, veidu vai nosūtīšanas datumu (**datums – nosūtīšanas datums**: ieplānotai – plānotais datums, "Tūlīt" – šodiena; agrāk – izveides datums); papildinājums saglabājas. Pēc nodošanas saskaņošanai, ieplānošanas vai nosūtīšanas automātiskā daļa vairs nemainās. Melnrakstu nosaukumi kampaņu sarakstā tiek atjaunoti, ielādējot lapu (piem., "Tūlīt" melnrakstam – šodienas datums);
+     - automātiskā daļa atjaunojas uzreiz, mainot apsekojumu, gadu, periodu, veidu vai nosūtīšanas datumu (**datums – nosūtīšanas datums**: ieplānotai – plānotais datums, "Tūlīt" – šodiena; agrāk – izveides datums); papildinājums saglabājas. Pēc nodošanas saskaņošanai, ieplānotas nosūtīšanas vai nosūtīšanas automātiskā daļa vairs nemainās. Melnrakstu nosaukumi kampaņu sarakstā tiek atjaunoti, ielādējot lapu (piem., "Tūlīt" melnrakstam – šodienas datums);
      - **pilnais nosaukums = automātiskā daļa + papildinājums**, piem., "1-C_2026_M09_UZ_2026-11-03_atkartots"; ja papildinājums tukšs – beigās nav "_" ("1-C_2026_M09_UZ_2026-11-03"). Pilnais nosaukums redzams kampaņas galvenē, kampaņu sarakstā, Sūtījumos un Atskaitēs;
      - papildinājumā atļauti burti (arī ā, č, ņ u. c.), cipari, "-" un "_"; atstarpes kļūst par "_", citas zīmes netiek ievadītas; līdz 40 zīmēm; "_" sākumā un beigās tiek noņemts, atstājot lauku;
      - kārtas numurs (UZ2, UZ3…) – pēc koda bez datuma un papildinājuma;
@@ -832,10 +832,10 @@ Jaunu kampaņu sagatavo piecos soļos: **Pamatdati → Respondenti → Saturs �
   - **Kampaņas satura maiņa 3. solī:** pielāgotās vēstules netiek pārrakstītas.
     - Pārbaudēs parādās brīdinājums **"N pielāgotās vēstules neietver jaunākās satura izmaiņas"**: klikšķis rāda šīs vēstules priekšskatījumā, "Apskatīt" – sarakstu, "Atjaunot kampaņas saturu (N)" – noņem šos pielāgojumus.
     - Šo vēstuļu birka priekšskatījumā: "Pielāgota šim respondentam · bez jaunākajām izmaiņām".
-- **Versija 254 – kampaņas ieplānošana un redzamība sarakstos.**
+- **Versija 254 – ieplānotā nosūtīšana un kampaņu redzamība sarakstos.**
   - **Kļūda: aizvērta kampaņa nebija redzama sarakstā.** Cēloņi:
-    1. Pēc ieplānošanas, nosūtīšanas vai nodošanas saskaņošanai jaunā (tukšā) kampaņa saglabājās kā melnraksts "Kampaņa Nr. N" un aizņēma vietu saraksta augšā. Iemesls: statistikas joma, kas pārņemta no iepriekšējās kampaņas, tika uzskatīta par izmaiņu, un arī "Visi apsekojumi" (noklusējums kopš Versijas 253).
-    2. Ieplānotā kampaņa tika kārtota pēc **izveides** laika, nevis pēdējām izmaiņām. Vecāka kampaņa pēc ieplānošanas nonāca saraksta lejasdaļā, ārpus pirmajām 20 rindām.
+    1. Pēc ieplānotas nosūtīšanas, nosūtīšanas vai nodošanas saskaņošanai jaunā (tukšā) kampaņa saglabājās kā melnraksts "Kampaņa Nr. N" un aizņēma vietu saraksta augšā. Iemesls: statistikas joma, kas pārņemta no iepriekšējās kampaņas, tika uzskatīta par izmaiņu, un arī "Visi apsekojumi" (noklusējums kopš Versijas 253).
+    2. Ieplānotā kampaņa tika kārtota pēc **izveides** laika, nevis pēdējām izmaiņām. Vecāka kampaņa, kurai tikko ieplānota nosūtīšana, nonāca saraksta lejasdaļā, ārpus pirmajām 20 rindām.
     3. Testa datos dažu melnrakstu saglabāšanas laiks varēja būt vēlāk šodien (nākotnē), tāpēc tie bija virs aizvērtās kampaņas.
     4. Ja saraksts bija kārtots pēc kolonnas vai filtrēts, aizvērtā kampaņa varēja nebūt redzama.
 
@@ -992,16 +992,16 @@ Katrai kampaņai ir darbību sūtījumi. Tas ir tikai papildinājums: esošie sk
   - Saturs: Izveidoja kampaņu (arī "Kopija no kampaņas …" / "Atgādinājums no kampaņas …") · Mainīja pamatdatus ("Veids: Uzaicinājums → Atgādinājums", "Nosaukums: “…” → “…”") · Izvēlējās veidni · Mainīja saturu · Saglabāja melnrakstu · Nosūtīja testa vēstuli ("uz j.berzins@csp.example · e-pasta versija");
   - Atlase: Mainīja tvērumu · Veica atlasi ("9 respondenti, 8 vēstules") · Mainīja respondentu sarakstu ("Izņemti 2");
   - Saskaņošana: Nodeva saskaņošanai ("Saskaņotājs: …" vai "Saskaņotāji: Metodoloģijas daļa · pietiek ar vienu, Liene Kļaviņa") · Saskaņoja (lietotājs – saskaņotājs; detaļa "Komunikācijas daļa") · Atgrieza labošanai (ar komentāru) · Pārsūtīja saskaņošanu ("Komunikācijas daļa → Māris Ozols") · Nosūtīja atgādinājumu saskaņotājiem · Nodots aizvietotājam (Sistēma: "Jānis Ozols (prombūtne pēc HORIZON datiem) · Liene Kļaviņa");
-  - Nosūtīšana: Ieplānoja nosūtīšanu ("15.10. 09:00") · Atcēla ieplānošanu · Nosūtīja ("22 vēstules") · Izveidoja atgādinājumu no šīs kampaņas.
+  - Nosūtīšana: Ieplānoja nosūtīšanu ("15.10. 09:00") · Atcēla ieplānoto nosūtīšanu · Nosūtīja ("22 vēstules") · Izveidoja atgādinājumu no šīs kampaņas.
   - Automātiskās darbības (nosūtīšana pēc saskaņojuma, ieplānotā nosūtīšana) – lietotājs "Sistēma".
 - **Reāllaika ieraksti:** prototipā veiktās darbības tiek pievienotas sūtījumiem uzreiz:
   - saglabāšana – melnraksts tiek saglabāts automātiski; ja mainīti pamatdati, tvērums, respondentu saraksts vai saturs, ieraksts nosauc konkrēto izmaiņu, citādi – "Saglabāja melnrakstu" (secīgi līdzīgi labojumi viena lietotāja 30 min laikā tiek apvienoti);
-  - atlase, testa vēstule, nodošana saskaņošanai, saskaņošana / atgriešana, ieplānošana un tās atcelšana, nosūtīšana, kopēšana un atgādinājuma izveide.
+  - atlase, testa vēstule, nodošana saskaņošanai, saskaņošana / atgriešana, ieplānota nosūtīšana un tās atcelšana, nosūtīšana, kopēšana un atgādinājuma izveide.
   - Kad melnraksts tiek ieplānots vai nosūtīts, tā sūtījumi pāriet uz ieplānoto / nosūtīto kampaņu (ceļš saglabājas pilns).
 - **Testa dati:** katrai esošajai kampaņai sūtījumi tiek izveidots pirmajā atvēršanas reizē (deterministiski pēc kampaņas; tiek saglabāts pārlūkā), un tas atbilst statusam:
   - melnrakstam – tikai izveide un labojumi (ja kampaņa nodota saskaņošanai vai atgriezta – arī šīs darbības);
-  - ieplānotai – sagatavošana un ieplānošana;
-  - nosūtītai – pilns ceļš līdz nosūtīšanai: izveide, pamatdati, tvērums, atlase, veidne, saglabāšanas, testa vēstule; daļai – saskaņošana (dažas atgrieztas labošanai ar komentāru), ieplānošana vai atcelta ieplānošana;
+  - ieplānotai – sagatavošana un ieplānota nosūtīšana;
+  - nosūtītai – pilns ceļš līdz nosūtīšanai: izveide, pamatdati, tvērums, atlase, veidne, saglabāšanas, testa vēstule; daļai – saskaņošana (dažas atgrieztas labošanai ar komentāru), ieplānota nosūtīšana vai tās atcelšana;
   - lietotāji – tikai izdomāti (kampaņu veidotāji, saskaņotāji un "Sistēma").
 
 ## Sūtījumi
