@@ -800,6 +800,10 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .rv-test-l{font-weight:600;font-size:var(--fs-sm)}
 .rv-test input{width:100%;box-sizing:border-box;padding:6px 8px;font-size:var(--fs-sm)}
 .rv-test .btn{width:100%;justify-content:center}
+.pdf-host .doc{box-shadow:none;max-width:none;width:210mm;min-height:0;aspect-ratio:auto;margin:0;box-sizing:border-box} /* Versija 263: testa vēstules PDF – augstums pēc satura (bez tukšas pēdējās lapas) */
+.pdf-host .doc-bar{background:linear-gradient(90deg,var(--doc-bar-1) 0%,var(--doc-bar-1) 4%,var(--doc-bar-2) 4%,var(--doc-bar-2) 8%,var(--doc-bar-3) 8%,var(--doc-bar-3) 12%,var(--doc-bar-4) 12%,var(--doc-bar-4) 16%,var(--doc-bar-1) 16%,var(--doc-bar-1) 20%,var(--doc-bar-2) 20%,var(--doc-bar-2) 24%,var(--doc-bar-3) 24%,var(--doc-bar-3) 28%,var(--doc-bar-4) 28%,var(--doc-bar-4) 32%,var(--doc-bar-1) 32%,var(--doc-bar-1) 36%,var(--doc-bar-2) 36%,var(--doc-bar-2) 40%,var(--doc-bar-3) 40%,var(--doc-bar-3) 44%,var(--doc-bar-4) 44%,var(--doc-bar-4) 48%,var(--doc-bar-1) 48%,var(--doc-bar-1) 52%,var(--doc-bar-2) 52%,var(--doc-bar-2) 56%,var(--doc-bar-3) 56%,var(--doc-bar-3) 60%,var(--doc-bar-4) 60%,var(--doc-bar-4) 64%,var(--doc-bar-1) 64%,var(--doc-bar-1) 68%,var(--doc-bar-2) 68%,var(--doc-bar-2) 72%,var(--doc-bar-3) 72%,var(--doc-bar-3) 76%,var(--doc-bar-4) 76%,var(--doc-bar-4) 80%,var(--doc-bar-1) 80%,var(--doc-bar-1) 84%,var(--doc-bar-2) 84%,var(--doc-bar-2) 88%,var(--doc-bar-3) 88%,var(--doc-bar-3) 92%,var(--doc-bar-4) 92%,var(--doc-bar-4) 96%,var(--doc-bar-1) 96%,var(--doc-bar-1) 100%)} /* html2canvas neatbalsta repeating-linear-gradient */
+.pdf-ph-t{font-size:20px;font-weight:700;margin-top:24px}
+.pdf-ph p{font-size:14px;margin-top:12px;color:#5F6F75}
 .rv-test-hint{color:var(--text-muted);font-size:12px;margin-top:-2px}
 .rv-test-hint[hidden]{display:none}
 .rv-test-done{color:var(--success);font-size:12px;font-weight:600}
@@ -4367,7 +4371,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 262</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 263</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -7579,11 +7583,12 @@ const PAGES_BASE = 'https://dainakepe.github.io/Komunikacijas_modelis_prototips/
 const absUrls = h => String(h || '').replace(/(src=["']|url\((?:&quot;|["'])?)(?!data:|https?:|mailto:|#|\/\/)\.?\/?([^"')&]+)/g, (m, a, p) => a + PAGES_BASE + p);
 // personalizētās vēstules HTML e-pastam – tā pati versija kā priekšskatījumā (ch: 'epasts' – formatēta ar logo un baneri; 'eadrese' – vienkāršs teksts);
 // iekļautie (inline) stili, dzeltena testa josla augšā, pielikumu nosaukumi beigās
-function testMailHtml(r, ch = 'epasts'){
+function testMailHtml(r, ch = 'epasts', attNames = null){
   const t = currentTemplate(); if (!t || !r) return null;
   const msg = buildMessage(letterTpl(t, r), r, false), c = chMsg(msg, ch), ea = ch === 'eadrese';
   const P = cssVar('--primary') || '#009999', PD = cssVar('--primary-dark') || '#006B6B';
-  const names = [...msg.attachments.map(a => a.name), ...(msg.main ? [msg.main.name] : []), ...(msg.files || []).map(f => f.name || f.fileName || '').filter(Boolean)];
+  // Versija 263: "Pielikumi: …" – faktiski pievienotie PDF faili (attNames); bez tiem – vēstules pielikumu nosaukumi
+  const names = attNames || [...msg.attachments.map(a => a.name), ...(msg.main ? [msg.main.name] : []), ...(msg.files || []).map(f => f.name || f.fileName || '').filter(Boolean)];
   const F = "font-family:Arial,Helvetica,sans-serif";
   const subject = htmlToText(String(c.subjectHtml || '')).trim() || '(bez temata)';
   const head = ea
@@ -7597,18 +7602,87 @@ function testMailHtml(r, ch = 'epasts'){
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #D9E1E4;border-collapse:collapse;${F};font-size:15px;line-height:1.65;color:#1F2A2E">
 ${head}
 <tr><td style="padding:12px 22px 18px;word-break:break-word">${body}</td></tr>
-${names.length ? `<tr><td style="padding:0 22px 16px;font-size:13px;color:#5F6F75">${names.map(n => `📎 Pielikums: ${esc(n)} (prototipā netiek pievienots)`).join('<br>')}</td></tr>` : ''}
+${names.length ? `<tr><td style="padding:0 22px 16px;font-size:13px;color:#5F6F75">📎 Pielikumi: ${names.map(n => esc(n)).join(', ')}</td></tr>` : ''}
 ${ea ? '' : `<tr><td style="background:#F4F7F8;border-top:1px solid #E6ECEE;padding:10px 22px;font-size:12.5px;color:#5F6F75">${absUrls(msg.footer || '')}</td></tr>`}
 </table></td></tr></table></body></html>`;
   return {subject, html};
 }
 // POST uz Apps Script (text/plain – bez CORS preflight); atbilde – JSON {ok, error}; tīkla kļūdai – {net:true}
-async function mailTestPost(to, mail){
+async function mailTestPost(to, mail, attachments = []){
   let resp;
-  try { resp = await fetch(MAIL_TEST.url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({code:MAIL_TEST.code, to, subject:mail.subject, html:mail.html})}); }
+  const payload = {code:MAIL_TEST.code, to, subject:mail.subject, html:mail.html, ...(attachments.length ? {attachments} : {})};
+  try { resp = await fetch(MAIL_TEST.url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(payload)}); }
   catch (e) { return {ok:false, net:true, error:'Neizdevās sazināties ar sūtīšanas servisu.'}; }
   try { const j = await resp.json(); return {ok:!!(j && j.ok), error:String((j && j.error) || '')}; }
   catch (e) { return {ok:false, error:`Sūtīšanas serviss atbildēja neparedzētā formātā (HTTP ${resp.status}).`}; }
+}
+// ===== Versija 263: testa vēstules PDF pielikumi (tikai testēšanai) =====
+// attachments: [{name, type:'application/pdf', data:<base64 bez "data:" prefiksa>}] – līdz 5 failiem, kopā līdz ~10 MB.
+// Personalizētā vēstule – PDF pārlūkā (html2pdf.js no cdnjs, fiksēta versija; ielādē tikai pirmajā sūtīšanā) no tās pašas drukas versijas,
+// ko rāda priekšskatījuma "Atvērt" (A4, ģerbonis, teksts, paraksts, QR kods, ūdenszīme "PARAUGS"); bibliotēkas / augšupielādētie PDF – oriģinālais fails;
+// pielikums bez faila (izdomāts testa materiāls) – vienas lapas PDF "Prototipa pielikuma paraugs"
+const H2P_URL = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+const MAIL_ATT_MAX = 5, MAIL_ATT_BYTES = 10 * 1024 * 1024;
+let h2pLoad = null;
+const loadH2p = () => window.html2pdf ? Promise.resolve(window.html2pdf) : (h2pLoad = h2pLoad || new Promise((ok, no) => {
+  const sc = document.createElement('script'); sc.src = H2P_URL; sc.async = true; sc.crossOrigin = 'anonymous'; sc.referrerPolicy = 'no-referrer';
+  sc.onload = () => window.html2pdf ? ok(window.html2pdf) : (h2pLoad = null, no(new Error('PDF bibliotēka nav pieejama')));
+  sc.onerror = () => { h2pLoad = null; sc.remove(); no(new Error('Neizdevās ielādēt PDF bibliotēku')); };
+  document.head.append(sc); }));
+const abToB64 = ab => { const u = new Uint8Array(ab); let str = ''; for (let i = 0; i < u.length; i += 0x8000) str += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(str); };
+const isPdfBytes = ab => { const u = new Uint8Array(ab, 0, Math.min(5, ab.byteLength)); return String.fromCharCode(...u) === '%PDF-'; };
+const pdfName = n => { const v = String(n || 'pielikums').trim() || 'pielikums'; return /\.pdf$/i.test(v) ? v : v.replace(/\.[a-z0-9]{1,5}$/i, '') + '.pdf'; };
+// HTML (A4 lapa .doc) → PDF (ArrayBuffer). Lapas izkārtojums: īsa vēstule – josla lapas apakšā; nedaudz garāka par A4 (līdz 15 %) –
+// samazināta, lai ietilptu vienā lapā; gara – vairākas lapas (rindkopas, tabulas rindas, virsraksti un QR kods netiek pārdalīti)
+async function htmlToPdf(html){
+  const h2p = await loadH2p();
+  const P = 297 * 96 / 25.4; // A4 augstums px (210 mm platumā)
+  const meas = document.createElement('div'); meas.className = 'pdf-host'; meas.style.cssText = 'position:fixed;left:-12000px;top:0;width:210mm;visibility:hidden'; meas.innerHTML = html;
+  document.body.append(meas);
+  const md = meas.querySelector('.doc'), H = md ? md.scrollHeight : 0; meas.remove();
+  const host = document.createElement('div'); host.className = 'pdf-host'; host.innerHTML = html;
+  const d = host.querySelector('.doc');
+  if (d && H <= P) d.style.minHeight = `${P - 2}px`;
+  else if (d && H <= P * 1.15){ d.style.transform = `scale(${((P - 2) / H).toFixed(4)})`; d.style.transformOrigin = 'top center'; host.style.height = `${P - 2}px`; host.style.overflow = 'hidden'; }
+  return h2p().set({margin:0, image:{type:'jpeg', quality:0.94}, html2canvas:{scale:2, useCORS:true, backgroundColor:'#ffffff', logging:false, scrollX:0, scrollY:0}, // scroll 0 – lapas ritinājums nenobīda saturu
+    jsPDF:{unit:'mm', format:'a4', orientation:'portrait'}, pagebreak:{mode:['css', 'legacy'], avoid:['p', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', '.doc-banner', '.doc-qr', '.doc-title', '.doc-sign', 'img']}}).from(host).outputPdf('arraybuffer');
+}
+// gatavais fails no mapes pielikumi/ (GitHub Pages; lokāli atvērtam prototipam – absolūtā GitHub Pages saite)
+async function fetchPdf(path){
+  const url = /^https?:$/.test(location.protocol) ? path : PAGES_BASE + path;
+  const resp = await fetch(url, {cache:'force-cache'});
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const ab = await resp.arrayBuffer(); if (!isPdfBytes(ab)) throw new Error('nav PDF');
+  return ab;
+}
+async function placeholderPdf(name){
+  try { return await htmlToPdf(`<div class="doc pdf-ph"><div class="pdf-ph-t">${esc(name)}</div><p>Prototipa pielikuma paraugs</p></div>`); }
+  catch (e) { const m = miniPdf(name, ['Prototipa pielikuma paraugs']); return Uint8Array.from(atob(m.data.split(',')[1]), c => c.charCodeAt(0)).buffer; }
+}
+// visi vēstules pielikumi: {atts:[{name, type, data}], failed:[nosaukumi]}
+async function testMailAtts(r){
+  const t = currentTemplate(); if (!t || !r) return {atts:[], failed:[]};
+  const msg = buildMessage(letterTpl(t, r), r, true); // drukas versija (print) – bez mainīgo iezīmēšanas, ar ūdenszīmi "PARAUGS"
+  const items = [...msg.attachments.map(a => ({name:a.name, html:a.print || a.html})),
+    ...(msg.main ? [{name:msg.main.name, lib:msg.main.lib}] : []), ...(msg.files || []).map(f => ({name:f.name || f.fileName, lib:f.lib}))];
+  const atts = [], failed = []; let total = 0;
+  for (const it of items){
+    const name = pdfName(it.name);
+    if (atts.length >= MAIL_ATT_MAX){ failed.push(name); continue; }
+    try {
+      let ab;
+      if (it.html) ab = await htmlToPdf(it.html);
+      else {
+        const a = it.lib ? attById(it.lib) : null;
+        if (a && a.lib && a.file) ab = await fetchPdf(attHref(a));
+        else if (a && /^data:application\/pdf/i.test(a.data || '')) ab = Uint8Array.from(atob(a.data.split(',')[1]), c => c.charCodeAt(0)).buffer;
+        else ab = await placeholderPdf(it.name || name);
+      }
+      if (total + ab.byteLength > MAIL_ATT_BYTES){ failed.push(name); continue; }
+      total += ab.byteLength; atts.push({name, type:'application/pdf', data:abToB64(ab)});
+    } catch (e) { failed.push(name); }
+  }
+  return {atts, failed};
 }
 function openDocModal(doc, opener){ openAttViewer({kind:'gen', name:doc.name, html:doc.html, print:doc.print, tag:doc.tag || ''}, opener); }
 // Drukāšana (pārlūkā var izvēlēties "Saglabāt kā PDF")
@@ -11952,11 +12026,18 @@ async function testSend(){
   if (bad){ inp.focus(); return; }
   const ch = compose.pvCh || ADDR_TYPES[finalAttempt(preAttempts(r)).type].ch, verL = ch === 'eadrese' ? 'eAdreses' : 'e-pasta';
   const real = MAIL_TEST_ON();
+  let ax = {atts:[], failed:[]};
   if (real){
-    const mail = testMailHtml(r, ch); if (!mail) return;
-    const lbl = btn.innerHTML; ui.testBusy = true; btn.disabled = true; btn.textContent = 'Sūta…'; inp.disabled = true;
-    let res;
-    try { res = await mailTestPost(to, mail); } finally { ui.testBusy = false; btn.innerHTML = lbl; btn.disabled = false; inp.disabled = false; }
+    const lbl = btn.innerHTML; ui.testBusy = true; btn.disabled = true; inp.disabled = true;
+    let res, mail;
+    try {
+      // Versija 263: PDF pielikumi – vispirms sagatavo, tad sūta; neizdevušies netiek pievienoti (vēstule tiek nosūtīta bez tiem)
+      btn.textContent = 'Sagatavo pielikumus…';
+      try { ax = await testMailAtts(r); } catch (e) { ax = {atts:[], failed:['pielikumi']}; }
+      mail = testMailHtml(r, ch, ax.atts.map(a => a.name)); if (!mail) return;
+      btn.textContent = 'Sūta…';
+      res = await mailTestPost(to, mail, ax.atts);
+    } finally { ui.testBusy = false; btn.innerHTML = lbl; btn.disabled = false; inp.disabled = false; }
     if (!res.ok){
       const msg = res.error || 'Testa vēstuli neizdevās nosūtīt.';
       err.textContent = msg; err.hidden = false; inp.setAttribute('aria-invalid', 'true');
@@ -11965,9 +12046,10 @@ async function testSend(){
     }
   }
   compose.tests = [{at:new Date().toISOString(), to, ch, resp:r.name, ...(real ? {real:true} : {})}, ...(compose.tests || [])].slice(0, 10);
-  alAddC('test', `uz ${to} · ${verL} versija, respondents ${r.name}${real ? ' · reāla e-pasta vēstule (Google Apps Script)' : ''}`);
+  const nA = ax.atts.length, failTxt = ax.failed.length ? ` Pielikumu neizdevās pievienot: ${ax.failed.join(', ')}.` : '';
+  alAddC('test', `uz ${to} · ${verL} versija, respondents ${r.name}${real ? ` · reāla e-pasta vēstule (Google Apps Script)${nA ? `, ${nA} PDF ${plural(nA, 'pielikums', 'pielikumi')}` : ''}` : ''}`);
   saveDraft(); renderChecks();
-  toast(`Testa vēstule (${verL} versija, respondents ${r.name}) nosūtīta uz ${to}${real ? '' : ' – simulācija'}.`);
+  toast(`Testa vēstule (${verL} versija, respondents ${r.name}) nosūtīta uz ${to}${real ? '' : ' – simulācija'}.${failTxt}`, !!failTxt);
 }
 // "Turpināt": ja ir brīdinājumi – apstiprinājums; pārbaudes rezultāts tiek saglabāts
 async function reviewContinue(){
