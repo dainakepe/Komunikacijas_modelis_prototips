@@ -1575,6 +1575,24 @@ Versija 218: **viena kopīga eksporta komponente visām tabulām** – Kampaņas
 - faila nosaukums "{sadaļa}_{GGGG-MM-DD}.xlsx/.csv" (piem., `kampanas_2026-11-06.xlsx`, `sutijumi_visi_…`, `atskaite_kopsavilkums_kampanas_…`); CSV – UTF-8 ar BOM un semikolu (latviešu burti pareizi atveras Excel); .xlsx – prototipā iekļautais veidotājs (bez servera un ārējām bibliotēkām);
 - esošie eksporti pārvietoti uz to pašu ikonu (izvēlnē – papildu iespējas): Sūtījumos **"Izvēlēties laukus…"** (logs "Eksportēt sūtījumus" kā līdz šim; rīkjoslas poga noņemta), Atskaitēs **"Visa atskaite – Excel (.xlsx)" / "Visa atskaite – CSV"** (rīkjoslas "Eksportēt ▾" noņemts), Respondentiem **"Kontakti (importa veidnes formātā)"** (saite kreisajā panelī noņemta).
 
+## Testa vēstules (Google Apps Script)
+
+**Versija 261 – īslaicīga reāla testa vēstules nosūtīšana (tikai testēšanai – pēc testa izņemt).**
+
+- **Kur:** kampaņas 4. solī "Pārbaude", vēstules priekšskatījumā blakus pogai "Pielāgot vēstuli šim respondentam" – sekundāra poga **"Nosūtīt testa vēstuli uz e-pastu"** (aploksnes ikona). Ja vēstule jau pielāgota, poga ir blakus "Rediģēt · Atjaunot kampaņas saturu" un sūta pielāgoto versiju.
+- **Logs:** obligāts lauks "E-pasta adrese" un teksts "Tiks nosūtīta {respondenta nosaukums} personalizētā vēstule (testa režīmā). Var sūtīt tikai uz atļautām adresēm." Pogas "Atcelt" / "Nosūtīt". Tukšai vai nederīgai adresei – kļūda pie lauka (pieprasījums netiek sūtīts).
+- **Sūtīšana:** `fetch(MAIL_TEST.url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({code, to, subject, html})})` – `text/plain`, lai nav CORS preflight. Gaidāmā atbilde – JSON `{ok, error}`.
+  - `subject` – vēstules temats (skripts pats pievieno "[PROTOTIPS – testa vēstule]");
+  - `html` – pilns personalizētās vēstules HTML (e-pasta versija; ja tās nav – eAdreses teksts) ar iekļautiem (inline) stiliem: augšā dzeltena josla "Šī ir prototipa testa vēstule. Visi dati ir izdomāti.", galva ar CSP logo (teksta bloks) un organizācijas nosaukumu, baneris, vēstules teksts, beigās "Pielikums: {faila nosaukums} (prototipā netiek pievienots)" un kājene. Relatīvās attēlu saites tiek aizstātas ar absolūtām GitHub Pages saitēm (`https://dainakepe.github.io/Komunikacijas_modelis_prototips/...`); augšupielādētie attēli (data:) paliek iekļauti, un daļa e-pasta programmu tos var nerādīt. Banera krāsu pāreja dažās programmās tiek aizstāta ar vienkrāsainu fonu.
+- **Stāvokļi:** sūtīšanas laikā poga "Sūta…" (neaktīva). Pēc veiksmīgas sūtīšanas logs aizveras, paziņojums "Testa vēstule nosūtīta uz {adrese}", un kampaņas **Darbību vēsturē** – "Nosūtīja testa vēstuli uz {adrese} · {respondents} · reāla e-pasta vēstule (Google Apps Script)". Ja atbildē `ok:false` – kļūdas teksts no `error` (logs paliek atvērts); ja atbilde nav JSON – "Sūtīšanas serviss atbildēja neparedzētā formātā (HTTP …)"; tīkla kļūdai – "Neizdevās sazināties ar sūtīšanas servisu."
+- **Ieslēgt:** `index.html` skripta sākumā konstante (ar komentāru "Tikai testēšanai – pēc testa izņemt"):
+  ```js
+  const MAIL_TEST = { url: "https://script.google.com/macros/s/…/exec", code: "prototips" };
+  ```
+  `url` – publicētā Google Apps Script tīmekļa lietotnes adrese (izvietota "Ikviens" piekļuvei); `code` – kods, ko skripts pārbauda. Atļauto adresātu sarakstu un temata prefiksu nosaka pats skripts.
+- **Izslēgt:** iestatīt `url: ""` (poga un logs netiek rādīti) vai izņemt konstanti kopā ar bloku "Versija 261: reāla testa vēstule caur Google Apps Script" (funkcijas `testMailHtml`, `openTestMail`, `sendTestMail`), pogu priekšskatījumā un darbību `c-testmail`.
+- **Piezīme:** prototips ir publisks (GitHub Pages), tāpēc `url` un `code` ir redzami lapas kodā – aizsardzība ir skripta atļauto adresātu saraksts. Vēstulēs ir tikai izdomāti testa dati.
+
 ## Lietojamības testi: Clarity
 
 Versija 212: prototipā ir **Microsoft Clarity** (projekts `z8spe1tlla`) lietojamības testiem – tikai kopējā statistika, testētāji netiek identificēti (prototipā nav lietotāju datu, testa dati ir izdomāti). Kods ievietots `<head>` sadaļā bez izmaiņām.
