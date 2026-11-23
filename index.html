@@ -800,6 +800,8 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .rv-test-l{font-weight:600;font-size:var(--fs-sm)}
 .rv-test input{width:100%;box-sizing:border-box;padding:6px 8px;font-size:var(--fs-sm)}
 .rv-test .btn{width:100%;justify-content:center}
+.rv-test-hint{color:var(--text-muted);font-size:12px;margin-top:-2px}
+.rv-test-hint[hidden]{display:none}
 .rv-test-done{color:var(--success);font-size:12px;font-weight:600}
 .rv-test-done:empty{display:none}
 .rv-test .err{margin:0}
@@ -4180,6 +4182,7 @@ th.has-exp{padding-right:32px !important}
                   <label class="rv-test-l" for="c-test-to">E-pasta adrese</label>
                   <input type="email" id="c-test-to" autocomplete="email" aria-describedby="c-test-err">
                   <span class="err" id="c-test-err" role="alert" hidden></span>
+                  <small class="rv-test-hint" id="c-test-hint" hidden>Var sūtīt tikai uz atļautām adresēm.</small>
                   <button type="button" class="btn btn-secondary btn-sm" data-action="c-test-send" id="c-test-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>Nosūtīt testa vēstuli</button>
                   <small class="rv-test-done" id="c-test-done" aria-live="polite"></small>
                 </div>
@@ -4364,7 +4367,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 261</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 262</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -4380,8 +4383,8 @@ th.has-exp{padding-right:32px !important}
 
 <script>
 'use strict';
-// Tikai testēšanai – pēc testa izņemt. Reāla testa vēstule caur Google Apps Script (4. solis "Pārbaude");
-// ja url nav aizpildīts, poga "Nosūtīt testa vēstuli uz e-pastu" netiek rādīta
+// Tikai testēšanai – pēc testa izņemt. Reāla testa vēstule caur Google Apps Script (4. solis "Pārbaude", bloks "Testa vēstule");
+// ja url ir tukšs – bloks "Testa vēstule" strādā kā līdz šim (simulācija)
 const MAIL_TEST = { url: "https://script.google.com/macros/s/AKfycbwM7UZPxzZ1Sxsbfzv5ckCRdF8ZfIeJavq6ieR9GUxjr3MI6hQwFNuE7qKuovrJgrW5/exec", code: "prototips" };
 
 /* =====================================================================
@@ -7568,62 +7571,44 @@ function mailView({toName, toAddr, channel, subjectHtml, bodyHtml, bodyTextHtml,
          <div class="mail-body mail-plain">${bodyTextHtml}</div>${attHtml}`}
   </article>`;
 }
-// ===== Versija 261: reāla testa vēstule caur Google Apps Script (tikai testēšanai – pēc testa izņemt; sk. MAIL_TEST) =====
+// ===== Versija 261/262: reāla testa vēstule caur Google Apps Script (tikai testēšanai – pēc testa izņemt; sk. MAIL_TEST) =====
+// Sūtīšana – tikai 4. soļa blokā "Testa vēstule" (testSend); ja MAIL_TEST.url ir tukšs – simulācija kā līdz šim
 const MAIL_TEST_ON = () => !!(typeof MAIL_TEST === 'object' && MAIL_TEST && MAIL_TEST.url);
 const PAGES_BASE = 'https://dainakepe.github.io/Komunikacijas_modelis_prototips/';
 // relatīvās attēlu saites (src="…", url(…)) → absolūtas GitHub Pages saites (data:, http(s):, mailto: – nemainītas)
 const absUrls = h => String(h || '').replace(/(src=["']|url\((?:&quot;|["'])?)(?!data:|https?:|mailto:|#|\/\/)\.?\/?([^"')&]+)/g, (m, a, p) => a + PAGES_BASE + p);
-// personalizētās vēstules HTML e-pastam: iekļautie (inline) stili, dzeltena testa josla augšā, pielikumu nosaukumi beigās
-function testMailHtml(r){
+// personalizētās vēstules HTML e-pastam – tā pati versija kā priekšskatījumā (ch: 'epasts' – formatēta ar logo un baneri; 'eadrese' – vienkāršs teksts);
+// iekļautie (inline) stili, dzeltena testa josla augšā, pielikumu nosaukumi beigās
+function testMailHtml(r, ch = 'epasts'){
   const t = currentTemplate(); if (!t || !r) return null;
-  const msg = buildMessage(letterTpl(t, r), r, false), c = chMsg(msg, 'epasts');
+  const msg = buildMessage(letterTpl(t, r), r, false), c = chMsg(msg, ch), ea = ch === 'eadrese';
   const P = cssVar('--primary') || '#009999', PD = cssVar('--primary-dark') || '#006B6B';
   const names = [...msg.attachments.map(a => a.name), ...(msg.main ? [msg.main.name] : []), ...(msg.files || []).map(f => f.name || f.fileName || '').filter(Boolean)];
   const F = "font-family:Arial,Helvetica,sans-serif";
-  const html = `<!doctype html><html lang="lv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(c.subjectHtml)}</title></head>
+  const subject = htmlToText(String(c.subjectHtml || '')).trim() || '(bez temata)';
+  const head = ea
+    ? `<tr><td style="border-bottom:1px solid #E6ECEE;padding:10px 22px;font-size:12.5px;color:#5F6F75">eAdreses versija – vienkāršs teksts (logo, baneris un formatējums netiek attēloti)</td></tr>`
+    : `<tr><td style="border-top:4px solid ${P};border-bottom:1px solid #E6ECEE;padding:12px 22px;font-size:14px;font-weight:600;color:${PD}"><span style="display:inline-block;width:30px;height:30px;line-height:30px;text-align:center;border-radius:4px;background:${P};color:#ffffff;font-size:10.5px;font-weight:800;vertical-align:middle;margin-right:10px">CSP</span>${esc(msg.org || '')}</td></tr>`;
+  const body = ea ? `<div style="white-space:pre-wrap;font-size:14.5px">${esc(c.bodyTextHtml || '')}</div>` : absUrls(resolveImages(c.bodyHtml || ''));
+  const html = `<!doctype html><html lang="lv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(subject)}</title></head>
 <body style="margin:0;padding:0;background:#E9EEF0;${F}">
 <div style="background:#FFE680;border-bottom:1px solid #E0C040;color:#4A3B00;padding:10px 16px;text-align:center;font-size:14px;font-weight:700;${F}">Šī ir prototipa testa vēstule. Visi dati ir izdomāti.</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#E9EEF0"><tr><td align="center" style="padding:16px 12px">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #D9E1E4;border-collapse:collapse;${F};font-size:15px;line-height:1.65;color:#1F2A2E">
-<tr><td style="border-top:4px solid ${P};border-bottom:1px solid #E6ECEE;padding:12px 22px;font-size:14px;font-weight:600;color:${PD}"><span style="display:inline-block;width:30px;height:30px;line-height:30px;text-align:center;border-radius:4px;background:${P};color:#ffffff;font-size:10.5px;font-weight:800;vertical-align:middle;margin-right:10px">CSP</span>${esc(msg.org || '')}</td></tr>
-<tr><td style="padding:12px 22px 18px;word-break:break-word">${absUrls(resolveImages(c.bodyHtml || ''))}</td></tr>
+${head}
+<tr><td style="padding:12px 22px 18px;word-break:break-word">${body}</td></tr>
 ${names.length ? `<tr><td style="padding:0 22px 16px;font-size:13px;color:#5F6F75">${names.map(n => `📎 Pielikums: ${esc(n)} (prototipā netiek pievienots)`).join('<br>')}</td></tr>` : ''}
-<tr><td style="background:#F4F7F8;border-top:1px solid #E6ECEE;padding:10px 22px;font-size:12.5px;color:#5F6F75">${absUrls(msg.footer || '')}</td></tr>
+${ea ? '' : `<tr><td style="background:#F4F7F8;border-top:1px solid #E6ECEE;padding:10px 22px;font-size:12.5px;color:#5F6F75">${absUrls(msg.footer || '')}</td></tr>`}
 </table></td></tr></table></body></html>`;
-  return {subject:htmlToText(String(c.subjectHtml || '')).trim() || '(bez temata)', html};
+  return {subject, html};
 }
-const MAIL_RE = /^[^\s@<>()",;]+@[^\s@<>()",;]+\.[^\s@<>()",;]{2,}$/;
-function openTestMail(id){
-  if (!MAIL_TEST_ON()) return;
-  const r = state.respondents.find(x => x.id === id); if (!r) return;
-  const last = ui.testMailTo || '';
-  const m = openModal({title:'Nosūtīt testa vēstuli uz e-pastu', content:`
-    <div class="field"><label for="tm-to">E-pasta adrese <span class="req">*</span></label>
-      <input type="email" id="tm-to" value="${esc(last)}" autocomplete="email" spellcheck="false" aria-describedby="tm-hint tm-err" required>
-      <span class="err" id="tm-err" hidden></span></div>
-    <p class="hint" id="tm-hint">Tiks nosūtīta <b>${esc(r.name)}</b> personalizētā vēstule (testa režīmā). Var sūtīt tikai uz atļautām adresēm.</p>`,
-    actions:[{label:'Atcelt'}, {label:'Nosūtīt', cls:'btn-primary', onClick:close => sendTestMail(r, close)}]});
-  $('#tm-to', m.el).addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('.modal-foot .btn-primary', m.el).click(); } });
-  $('#tm-to', m.el).addEventListener('input', () => { const er = $('#tm-err', m.el); er.hidden = true; $('#tm-to', m.el).removeAttribute('aria-invalid'); });
-}
-async function sendTestMail(r, close){
-  const inp = $('#tm-to'), er = $('#tm-err'), btn = $('#modal .modal-foot .btn-primary') || $('.modal-foot .btn-primary'), to = inp.value.trim();
-  const bad = msg => { er.textContent = msg; er.hidden = false; inp.setAttribute('aria-invalid', 'true'); inp.focus(); };
-  if (!to) return bad('Ievadiet e-pasta adresi.');
-  if (!MAIL_RE.test(to)) return bad('Nederīga e-pasta adrese.');
-  const mail = testMailHtml(r); if (!mail) return bad('Nav izvēlēts vēstules saturs.');
-  ui.testMailTo = to;
-  const lbl = btn.textContent; btn.disabled = true; btn.textContent = 'Sūta…'; inp.disabled = true;
-  let res = null, netErr = false;
-  try {
-    const resp = await fetch(MAIL_TEST.url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({code:MAIL_TEST.code, to, subject:mail.subject, html:mail.html})});
-    try { res = await resp.json(); } catch (e) { res = {ok:false, error:`Sūtīšanas serviss atbildēja neparedzētā formātā (HTTP ${resp.status}).`}; }
-  } catch (e) { netErr = true; }
-  btn.disabled = false; btn.textContent = lbl; inp.disabled = false;
-  if (netErr){ toast('Neizdevās sazināties ar sūtīšanas servisu.', true); return bad('Neizdevās sazināties ar sūtīšanas servisu.'); }
-  if (!res || !res.ok){ const msg = String((res && res.error) || 'Testa vēstuli neizdevās nosūtīt.'); toast(msg, true); return bad(msg); }
-  alAddC('test', `uz ${to} · ${r.name} · reāla e-pasta vēstule (Google Apps Script)`); save();
-  close(); toast(`Testa vēstule nosūtīta uz ${to}`);
+// POST uz Apps Script (text/plain – bez CORS preflight); atbilde – JSON {ok, error}; tīkla kļūdai – {net:true}
+async function mailTestPost(to, mail){
+  let resp;
+  try { resp = await fetch(MAIL_TEST.url, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({code:MAIL_TEST.code, to, subject:mail.subject, html:mail.html})}); }
+  catch (e) { return {ok:false, net:true, error:'Neizdevās sazināties ar sūtīšanas servisu.'}; }
+  try { const j = await resp.json(); return {ok:!!(j && j.ok), error:String((j && j.error) || '')}; }
+  catch (e) { return {ok:false, error:`Sūtīšanas serviss atbildēja neparedzētā formātā (HTTP ${resp.status}).`}; }
 }
 function openDocModal(doc, opener){ openAttViewer({kind:'gen', name:doc.name, html:doc.html, print:doc.print, tag:doc.tag || ''}, opener); }
 // Drukāšana (pārlūkā var izvēlēties "Saglabāt kā PDF")
@@ -11748,7 +11733,7 @@ function renderComposePreview(){
       let html = (inlineDoc && !apvLocked() ? `<div class="custom-bar">${compose.custom[r.id] ? `${cTag}
           <button type="button" class="link-btn" data-action="c-customize" data-id="${r.id}">Rediģēt</button><span class="cb-sep" aria-hidden="true">·</span>
           <button type="button" class="link-btn" data-action="c-uncustom" data-id="${r.id}">Atjaunot kampaņas saturu</button>`
-        : `<button type="button" class="btn btn-secondary btn-sm" data-action="c-customize" data-id="${r.id}" data-ctip="${esc(`Izveidot atsevišķu vēstules versiju tikai respondentam “${r.name}”. Kampaņas saturs un pārējās vēstules netiek mainītas.`)}">${ICON.edit}Pielāgot vēstuli šim respondentam</button>`}${MAIL_TEST_ON() ? `<button type="button" class="btn btn-secondary btn-sm" data-action="c-testmail" data-id="${r.id}" data-ctip="${esc(`Nosūtīt respondenta “${r.name}” personalizēto vēstuli uz norādītu e-pastu (tikai testēšanai).`)}">${ICON.mail}Nosūtīt testa vēstuli uz e-pastu</button>` : ''}</div>` : (compose.custom[r.id] ? `<div class="custom-bar">${cTag}</div>` : '')) +
+        : `<button type="button" class="btn btn-secondary btn-sm" data-action="c-customize" data-id="${r.id}" data-ctip="${esc(`Izveidot atsevišķu vēstules versiju tikai respondentam “${r.name}”. Kampaņas saturs un pārējās vēstules netiek mainītas.`)}">${ICON.edit}Pielāgot vēstuli šim respondentam</button>`}</div>` : (compose.custom[r.id] ? `<div class="custom-bar">${cTag}</div>` : '')) +
         (c => verNote(c, ch) + mailView({...chVis(c), toName:r.name, toAddr, channel:ch, chLabel:eaPend(r) && !compose.pvCh ? 'Sūtīšanas brīdī' : '', subjectHtml:c.subjectHtml,
         bodyHtml:c.bodyHtml, bodyTextHtml:c.bodyTextHtml, footerHtml:msg.footer, atts, main:msg.main, files:msg.files, variant:msg.variant,
         org:msg.org, lang:msg.lang, wantLang:msg.wantLang, fallback:msg.fallback,
@@ -11946,7 +11931,8 @@ function renderChecks(){
   $('#c-test-card').hidden = lk;
   const inp = $('#c-test-to');
   if (ui.testFor !== compose.draftId){ ui.testFor = compose.draftId; inp.value = last ? last.to : TEST_ADDR; $('#c-test-err').hidden = true; inp.removeAttribute('aria-invalid'); }
-  $('#c-test-btn').disabled = !(currentTemplate() && recipients().length);
+  if (!ui.testBusy) $('#c-test-btn').disabled = !(currentTemplate() && recipients().length);
+  $('#c-test-hint').hidden = !MAIL_TEST_ON(); // Versija 262: reāla sūtīšana – tikai uz skriptā atļautām adresēm
   renderTestInfo();
 }
 // testa vēstules kartē: pēdējās nosūtīšanas apstiprinājums
@@ -11955,18 +11941,33 @@ function renderTestInfo(){
   $('#c-test-done').textContent = last ? `✓ Nosūtīts ${fmtShortIso(last.at)}` : '';
   $('#c-test-done').title = last ? `Uz ${last.to} · respondents ${last.resp || '—'}` : '';
 }
-// testa vēstule sev (simulācija): priekšskatījumā atvērtais paraugs uz lietotāja adresi
-function testSend(){
+// testa vēstule sev: priekšskatījumā atvērtais paraugs (tā pati versija – e-pasts vai eAdrese) uz norādīto adresi.
+// Versija 262: ja MAIL_TEST.url ir aizpildīts – reāla sūtīšana caur Google Apps Script; citādi – simulācija (kā līdz šim)
+async function testSend(){
+  if (ui.testBusy) return;
   const cur = pvCurrent(), r = cur && cur.r; if (!r || !currentTemplate()) return;
-  const inp = $('#c-test-to'), err = $('#c-test-err'), to = inp.value.trim();
+  const inp = $('#c-test-to'), err = $('#c-test-err'), btn = $('#c-test-btn'), to = inp.value.trim();
   const bad = !to ? 'Norādiet e-pasta adresi.' : !EMAIL_RE.test(to) ? 'Nederīga e-pasta adrese.' : '';
   err.hidden = !bad; err.textContent = bad; inp.setAttribute('aria-invalid', String(!!bad));
   if (bad){ inp.focus(); return; }
-  const ch = compose.pvCh || ADDR_TYPES[finalAttempt(preAttempts(r)).type].ch;
-  compose.tests = [{at:new Date().toISOString(), to, ch, resp:r.name}, ...(compose.tests || [])].slice(0, 10);
-  alAddC('test', `uz ${to} · ${ch === 'eadrese' ? 'eAdreses' : 'e-pasta'} versija, respondents ${r.name}`);
+  const ch = compose.pvCh || ADDR_TYPES[finalAttempt(preAttempts(r)).type].ch, verL = ch === 'eadrese' ? 'eAdreses' : 'e-pasta';
+  const real = MAIL_TEST_ON();
+  if (real){
+    const mail = testMailHtml(r, ch); if (!mail) return;
+    const lbl = btn.innerHTML; ui.testBusy = true; btn.disabled = true; btn.textContent = 'Sūta…'; inp.disabled = true;
+    let res;
+    try { res = await mailTestPost(to, mail); } finally { ui.testBusy = false; btn.innerHTML = lbl; btn.disabled = false; inp.disabled = false; }
+    if (!res.ok){
+      const msg = res.error || 'Testa vēstuli neizdevās nosūtīt.';
+      err.textContent = msg; err.hidden = false; inp.setAttribute('aria-invalid', 'true');
+      $('#c-test-done').textContent = ''; $('#c-test-done').title = ''; // "✓ Nosūtīts" – tikai pēc veiksmīgas sūtīšanas
+      toast(msg, true); return;
+    }
+  }
+  compose.tests = [{at:new Date().toISOString(), to, ch, resp:r.name, ...(real ? {real:true} : {})}, ...(compose.tests || [])].slice(0, 10);
+  alAddC('test', `uz ${to} · ${verL} versija, respondents ${r.name}${real ? ' · reāla e-pasta vēstule (Google Apps Script)' : ''}`);
   saveDraft(); renderChecks();
-  toast(`Testa vēstule (${ch === 'eadrese' ? 'eAdreses' : 'e-pasta'} versija, respondents ${r.name}) nosūtīta uz ${to} – simulācija.`);
+  toast(`Testa vēstule (${verL} versija, respondents ${r.name}) nosūtīta uz ${to}${real ? '' : ' – simulācija'}.`);
 }
 // "Turpināt": ja ir brīdinājumi – apstiprinājums; pārbaudes rezultāts tiek saglabāts
 async function reviewContinue(){
@@ -16239,7 +16240,6 @@ const actions = {
   'wiz-next': () => { if (ui.view){ setStep(compose.step + 1); return; } if (compose.step === 1 && !selCanGo()) return; if (compose.step === 4) return reviewContinue(); if (compose.step === 5) return finalSubmit(); markTried(compose.step); if (fzBlocks() || acBlocks(compose.step + 1)) return; if (compose.step === 2) clarEvent('apstiprinat_atlasi'); compose.stepsOk.add(compose.step); setStep(compose.step + 1); },
   'wiz-save': () => { markTried(compose.step); const pl = !!compose.plannedId; flushDraft(true); renderWizard(); toast(pl ? `Ieplānotās kampaņas “${compose.name}” izmaiņas saglabātas.` : `Melnraksts “${compose.name}” saglabāts.`); },
   'c-customize': id => openLetterCustomizer(id),
-  'c-testmail': id => openTestMail(id), // Versija 261: tikai testēšanai
   'c-uncustom': id => uncustom([id]), // Versija 256: ar apstiprinājumu
   'c-cust-list': id => openCustomList(id === 'stale'),
   'c-uncustom-stale': () => uncustom(custStale().map(r => r.id)),
