@@ -800,7 +800,8 @@ button.rv-ck:hover,button.rv-ck:focus-visible,button.rv-ck[aria-pressed="true"]{
 .rv-test-l{font-weight:600;font-size:var(--fs-sm)}
 .rv-test input{width:100%;box-sizing:border-box;padding:6px 8px;font-size:var(--fs-sm)}
 .rv-test .btn{width:100%;justify-content:center}
-.pdf-host .doc{box-shadow:none;max-width:none;width:210mm;min-height:0;aspect-ratio:auto;margin:0;box-sizing:border-box} /* Versija 263: testa vēstules PDF – augstums pēc satura (bez tukšas pēdējās lapas) */
+.pdf-host .doc{box-shadow:none} .pdf-host .pg-break{break-before:page;page-break-before:always}
+.pdf-host .doc.doc-pg{height:1118px !important} /* nedaudz īsāka par PDF lapu (1122,5 px) – lapas pārnesums bez tukšas lapas; saturs nemainās (samazinās tikai apakšējā atkāpe) */ /* Versija 264: PDF – tās pašas lapas kā priekšskatījumā */
 .pdf-host .doc-bar{background:linear-gradient(90deg,var(--doc-bar-1) 0%,var(--doc-bar-1) 4%,var(--doc-bar-2) 4%,var(--doc-bar-2) 8%,var(--doc-bar-3) 8%,var(--doc-bar-3) 12%,var(--doc-bar-4) 12%,var(--doc-bar-4) 16%,var(--doc-bar-1) 16%,var(--doc-bar-1) 20%,var(--doc-bar-2) 20%,var(--doc-bar-2) 24%,var(--doc-bar-3) 24%,var(--doc-bar-3) 28%,var(--doc-bar-4) 28%,var(--doc-bar-4) 32%,var(--doc-bar-1) 32%,var(--doc-bar-1) 36%,var(--doc-bar-2) 36%,var(--doc-bar-2) 40%,var(--doc-bar-3) 40%,var(--doc-bar-3) 44%,var(--doc-bar-4) 44%,var(--doc-bar-4) 48%,var(--doc-bar-1) 48%,var(--doc-bar-1) 52%,var(--doc-bar-2) 52%,var(--doc-bar-2) 56%,var(--doc-bar-3) 56%,var(--doc-bar-3) 60%,var(--doc-bar-4) 60%,var(--doc-bar-4) 64%,var(--doc-bar-1) 64%,var(--doc-bar-1) 68%,var(--doc-bar-2) 68%,var(--doc-bar-2) 72%,var(--doc-bar-3) 72%,var(--doc-bar-3) 76%,var(--doc-bar-4) 76%,var(--doc-bar-4) 80%,var(--doc-bar-1) 80%,var(--doc-bar-1) 84%,var(--doc-bar-2) 84%,var(--doc-bar-2) 88%,var(--doc-bar-3) 88%,var(--doc-bar-3) 92%,var(--doc-bar-4) 92%,var(--doc-bar-4) 96%,var(--doc-bar-1) 96%,var(--doc-bar-1) 100%)} /* html2canvas neatbalsta repeating-linear-gradient */
 .pdf-ph-t{font-size:20px;font-weight:700;margin-top:24px}
 .pdf-ph p{font-size:14px;margin-top:12px;color:#5F6F75}
@@ -3083,6 +3084,18 @@ img.doc-crest{background:none}
 .doc .rich h2{color:var(--primary);font-size:15px}
 .doc .rich h3{color:var(--primary);font-size:13.5px}
 .doc .rich p{margin-bottom:.6em}
+/* Versija 264: A4 lapas (priekšskatījums = PDF = druka) */
+#doc-measure{position:fixed;left:-30000px;top:0;width:210mm;visibility:hidden;pointer-events:none;zoom:1}
+.doc.doc-pg{width:210mm !important;max-width:none !important;height:1122px !important;min-height:0 !important;aspect-ratio:auto !important;margin:0 !important;overflow:hidden;flex:none}
+.doc.doc-pg.doc-pg-tall{height:auto !important;min-height:1122px !important}
+.doc-pages{display:flex;flex-direction:column;align-items:center;gap:10px;width:max-content;max-width:none;margin:0 auto;padding:12px 12px 8px;background:#D9DFE2;border-radius:6px}
+.doc-pgw{display:flex;flex-direction:column;align-items:center;gap:4px}
+.doc-pgn{font-size:11px;color:#4F5F66;font-family:"Segoe UI",Arial,sans-serif}
+/* aizzīmes – teal punkti (vienādi priekšskatījumā un PDF; ::marker html2canvas neatbalsta) */
+.doc mark.v-ok,.doc mark.v-miss,.doc mark.v-unk{padding:0} /* iezīmēšana nemaina izmērus – lapu dalījums kā PDF */
+.doc .rich ul{list-style:none;padding-left:1.4em}
+.doc .rich ul > li{position:relative}
+.doc .rich ul > li::before{content:"";position:absolute;left:-.95em;top:.62em;width:.38em;height:.38em;border-radius:50%;background:var(--primary)}
 /* "Nemainīgā informācija" (tikai lasāma): katra daļa ar virsrakstu un priekšskatījumu */
 .fi-note{margin:0 0 14px;color:var(--text-muted);font-size:var(--fs-sm)}
 .fi-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
@@ -4371,7 +4384,7 @@ th.has-exp{padding-right:32px !important}
 
 <footer class="app-footer">
   <div class="container">
-    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 263</span></span>
+    <span>Prototips. Visi dati ir izdomāti un glabājas tikai šajā pārlūkā. <span class="muted ver-mark" title="Prototipa versija – ja pēc atjaunināšanas redzams vecāks numurs, pārlādējiet lapu (Ctrl+Shift+R)">Versija 264</span></span>
     <button class="btn btn-ghost btn-sm" data-action="reset">Atjaunot sākotnējos testa datus</button>
   </div>
 </footer>
@@ -5119,21 +5132,23 @@ function expandTables(html, ctx, mark){
   t.content.querySelectorAll('div.rtab').forEach(div => div.replaceWith(parseHtml(dutyTableHtml(div.dataset.cols, div.dataset.rows, ctx, mark)).content));
   return t.innerHTML;
 }
-function fillText(text, ctx){ if (ctx && ctx.__strip) text = stripOldVars(text, /<\/?(p|br|span)\b/i.test(text)); return String(text).replace(VAR_RE, (m, k) => (k in ctx && ctx[k]) ? ctx[k] : m); }
+// Versija 264: ja vērtība beidzas ar punktu (piem., datums "08.12.2026.") un tekstā aiz mainīgā ir punkts – tikai viens punkts
+const VAR_DOT_RE = /\{([^{}\s<>"]+)\}(\.)?/g;
+function fillText(text, ctx){ if (ctx && ctx.__strip) text = stripOldVars(text, /<\/?(p|br|span)\b/i.test(text)); return String(text).replace(VAR_DOT_RE, (m, k, dot) => (k in ctx && ctx[k]) ? ctx[k] + (dot && !String(ctx[k]).endsWith('.') ? dot : '') : m); }
 // Vienkāršs teksts -> HTML ar iezīmētiem laukiem
 function fillHtml(text, ctx){
   text = String(text);
   if (ctx && ctx.__strip) text = stripOldVars(text, false);
   let out = '', last = 0;
-  for (const m of text.matchAll(VAR_RE)){
+  for (const m of text.matchAll(VAR_DOT_RE)){
     out += esc(text.slice(last, m.index));
-    const k = m[1];
+    const k = m[1], dot = m[2] || '', tok = `{${k}}`;
     if (k in ctx){
       out += ctx[k]
-        ? `<mark class="v-ok" title="{${esc(k)}}">${esc(ctx[k])}</mark>`
-        : `<mark class="v-miss" title="Nav norādīta vērtība">{${esc(k)}}</mark>`;
+        ? `<mark class="v-ok" title="{${esc(k)}}">${esc(ctx[k])}</mark>${String(ctx[k]).endsWith('.') ? '' : dot}`
+        : `<mark class="v-miss" title="Nav norādīta vērtība">{${esc(k)}}</mark>${dot}`;
     } else {
-      out += `<mark class="v-unk" title="Nezināms lauks">${esc(m[0])}</mark>`;
+      out += `<mark class="v-unk" title="Nezināms lauks">${esc(tok)}</mark>${dot}`;
     }
     last = m.index + m[0].length;
   }
@@ -5154,8 +5169,18 @@ function fillRich(html, ctx, mark){
   while (w.nextNode()) nodes.push(w.currentNode);
   for (const n of nodes){
     if (!n.data.includes('{')) continue;
-    n.replaceWith(parseHtml(mark ? fillHtml(n.data, ctx) : esc(fillText(n.data, ctx))).content);
+    n.replaceWith(parseHtml(mark ? fillHtml(n.data, ctx) : fillHtml(n.data, ctx).replace(/<mark class="v-ok"[^>]*>/g, '<span data-vv="1">').replace(/<mark class="v-(miss|unk)"[^>]*>([\s\S]*?)<\/mark>/g, '$2').replace(/<\/mark>/g, '</span>')).content);
   }
+  // Versija 264: vērtība ar punktu beigās, aiz kuras citā teksta mezglā (piem., aiz </b>) ir punkts – tikai viens punkts
+  const tw = document.createTreeWalker(t.content, NodeFilter.SHOW_TEXT), txt = [];
+  while (tw.nextNode()) txt.push(tw.currentNode);
+  t.content.querySelectorAll('mark.v-ok, span[data-vv]').forEach(el => {
+    if (!el.textContent.endsWith('.')) return;
+    const i = txt.indexOf(el.lastChild), nx = i >= 0 ? txt.slice(i + 1).find(x => !el.contains(x)) : null;
+    if (nx && nx.data.startsWith('.')) nx.data = nx.data.slice(1);
+  });
+  t.content.querySelectorAll('span[data-vv]').forEach(el => el.replaceWith(document.createTextNode(el.textContent)));
+  t.content.normalize();
   return t.innerHTML;
 }
 // E-pasta HTML ar iekļautajiem (inline) stiliem – tā, kā to redzēs saņēmējs; poga atveras jaunā cilnē
@@ -7476,7 +7501,7 @@ function docHtml(t, ctx, mark, attrs, f = compose.f, L = state.layout, wm = fals
   // paraksts – iepriekš definēts; ūdenszīme "PARAUGS" – tikai priekšskatījumā / paraugos. "Jūsu pārskati" un lappušu numerācija (Versija 203) noņemti – agrāk saglabātie karogi tiek ignorēti
   const qrUrl = d.qr ? formLinkFor(ctx && ctx.__rid, t.survey || (ctx && ctx['apsekojums'])) : '';
   const qrBox = cls => d.qr ? `<div class="doc-qr ${cls}" data-qr-url="${esc(qrUrl)}">${qrSvg(qrUrl, 72)}<small>Noskenējiet, lai atvērtu anketu</small></div>` : '';
-  return `<div class="doc${wm ? ' doc-wm' : ''}">${wm ? '<div class="doc-wm-t" aria-hidden="true">PARAUGS</div>' : ''}
+  return `<div class="doc doc-flow${wm ? ' doc-wm' : ''}">${wm ? '<div class="doc-wm-t" aria-hidden="true">PARAUGS</div>' : ''}
     ${formHeadHtml(L)}
     <div class="doc-meta">${R('{datums} Nr. {dok_nr}')}</div>
     <div class="doc-to">${R('{adresāts}')}${ctx && ctx['vārds'] && ctx['vārds'] !== ctx['adresāts'] ? `<br><span>${R('{vārds}')}</span>` : ''}</div>
@@ -7489,6 +7514,104 @@ function docHtml(t, ctx, mark, attrs, f = compose.f, L = state.layout, wm = fals
     <div class="doc-bar"></div>
   </div>`;
 }
+// ===== Versija 264: A4 lapas – viena lapu dalīšana priekšskatījumam (Pārbaude → "Atvērt", veidnes redaktors, respondenta logs) un PDF / drukai =====
+// Lapa = .doc.doc-pg (210 mm × 1122 px; tie paši stili). Saturs netiek nogriezts: bloki, kas neietilpst, pāriet nākamajā lapā;
+// dalāmi tikai konteineri (.rich, saraksti, tabulas) – rindkopas, saraksta punkti, tabulas rindas, virsraksti, QR kods, paraksts netiek pārdalīti;
+// virsraksts netiek atstāts lapas apakšā bez sekojošā teksta; turpinātai tabulai – atkārtota galvene; ūdenszīme un kājenes josla – katrā lapā
+const DOC_PG_H = 1122;
+const DOC_ABS = '.doc-wm-t, .doc-bar';
+const DOC_SPLIT = '.rich, ul, ol, table, tbody';
+const docIsHead = el => el && el.nodeType === 1 && (/^H[1-6]$/.test(el.tagName) || el.classList.contains('doc-title'));
+function docMeasureHost(){
+  let h = document.getElementById('doc-measure');
+  if (!h){ h = document.createElement('div'); h.id = 'doc-measure'; h.setAttribute('aria-hidden', 'true'); document.body.append(h); }
+  return h;
+}
+// tabulas galvene: thead vai pirmā rinda tikai ar th
+const tblHeadRow = tb => { const r = tb.querySelector(':scope > tbody > tr, :scope > tr'); return r && !tb.querySelector(':scope > thead') && r.children.length && [...r.children].every(c => c.tagName === 'TH') ? r : null; };
+// src – .doc elements (vai tā klons); atgriež lapu elementus (atvienotus)
+function docPages(src){
+  const host = docMeasureHost(), pages = [], abs = [...src.children].filter(c => c.matches(DOC_ABS));
+  let page = null, limit = 0, stack = [], last = null;
+  const shallow = a => {
+    const c = a.cloneNode(false);
+    if (a.tagName === 'TABLE'){ const th = a.querySelector(':scope > thead'); if (th) c.append(th.cloneNode(true)); }
+    if (a.tagName === 'TBODY' && pages.length){ const hr = tblHeadRow(a.parentNode); if (hr){ const r = hr.cloneNode(true); r.dataset.rep = '1'; c.append(r); } }
+    return c;
+  };
+  const isEmpty = c => ![...c.childNodes].some(n => n.nodeType === 1 ? !(n.tagName === 'THEAD' || n.dataset.rep) : n.textContent.trim());
+  const newPage = anc => {
+    const old = stack;
+    page = src.cloneNode(false); page.classList.add('doc-pg'); page.classList.remove('doc-flow'); page.removeAttribute('id');
+    abs.forEach(a => page.append(a.cloneNode(true)));
+    host.append(page); pages.push(page);
+    limit = page.getBoundingClientRect().top + DOC_PG_H - parseFloat(getComputedStyle(page).paddingBottom);
+    stack = [page]; anc.forEach(a => { const c = shallow(a); stack[stack.length - 1].append(c); stack.push(c); });
+    // virsraksts nepaliek iepriekšējās lapas apakšā viens – pāriet kopā ar nākamo bloku
+    if (old.length && docIsHead(last) && last.isConnected && pages.length > 1){
+      const k = old.indexOf(last.parentNode), after = [...old[k].childNodes].slice([...old[k].childNodes].indexOf(last) + 1);
+      if (k >= 0 && after.every(n => n.nodeType !== 1 ? !n.textContent.trim() : n === old[k + 1])){
+        stack[k].insertBefore(last, stack[k + 1] || null);
+      }
+    }
+    for (let i = old.length - 1; i > 0; i--) if (old[i].isConnected && isEmpty(old[i])) old[i].remove();
+  };
+  const fits = el => el.getBoundingClientRect().bottom <= limit + 0.5;
+  const flow = (srcEl, anc) => {
+    for (const ch of [...srcEl.childNodes]){
+      if (ch.nodeType === 3){ if (ch.textContent.trim() || stack[stack.length - 1].childNodes.length) stack[stack.length - 1].append(ch.cloneNode()); continue; }
+      if (ch.nodeType !== 1 || (!anc.length && ch.matches(DOC_ABS)) || (ch.tagName === 'THEAD' && srcEl.tagName === 'TABLE' && stack[stack.length - 1].querySelector(':scope > thead'))) continue; // galvene – jau pievienota (shallow)
+      const c = ch.cloneNode(true); stack[stack.length - 1].append(c);
+      if (fits(c)){ last = c; continue; }
+      c.remove();
+      if (ch.matches(DOC_SPLIT) && ch.children.length > 1){
+        const sc = shallow(ch); stack[stack.length - 1].append(sc); stack.push(sc);
+        flow(ch, [...anc, ch]);
+        stack.pop(); continue;
+      }
+      // nedalāms bloks – nākamajā lapā (ja lapā jau ir saturs); ja neietilpst arī tukšā lapā – lapa paliek garāka (saturs netiek nogriezts)
+      const pageHasContent = [...page.children].some(n => !n.matches(DOC_ABS) && !isEmpty(n));
+      if (pageHasContent) newPage(anc);
+      const c2 = ch.cloneNode(true); stack[stack.length - 1].append(c2); last = c2;
+      if (!fits(c2)) page.classList.add('doc-pg-tall');
+    }
+  };
+  newPage([]);
+  flow(src, []);
+  pages.forEach(pg => pg.remove());
+  return pages;
+}
+// HTML ar .doc → lapu elementi
+const docPagesFrom = html => { const t = document.createElement('div'); t.innerHTML = html; const d = t.querySelector('.doc'); return d ? docPages(d) : []; };
+// priekšskatījums: lapas viena zem otras ar pelēku atstarpi un "Lapa 1 no N"; mērogs – pēc pieejamā platuma (lapas izkārtojums nemainās)
+function docPagesView(src){
+  const pages = docPages(src), n = pages.length, w = document.createElement('div');
+  w.className = 'doc-pages'; w.dataset.n = n;
+  pages.forEach((pg, i) => { const pw = document.createElement('div'); pw.className = 'doc-pgw'; pw.append(pg);
+    const lb = document.createElement('div'); lb.className = 'doc-pgn'; lb.textContent = `Lapa ${i + 1} no ${n}`; pw.append(lb); w.append(pw); });
+  return w;
+}
+const docFitRO = typeof ResizeObserver === 'function' ? new ResizeObserver(es => es.forEach(e => $$(':scope > .doc-pages', e.target).forEach(docFit))) : null;
+function docFit(w){
+  const p = w.parentElement; if (!p) return;
+  const cs = getComputedStyle(p), avail = p.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  if (avail <= 0) return;
+  w.style.zoom = ''; const full = w.offsetWidth;
+  const k = Math.min(1, avail / full); w.style.zoom = k < 0.999 ? k.toFixed(4) : '';
+}
+// lapās dalāms dokuments: personalizētā vēstule (doc-flow) – arī agrāk nosūtīto vēstuļu saglabātais HTML (ar kājenes joslu)
+const docIsFlow = d => !d.classList.contains('doc-pg') && (d.classList.contains('doc-flow') || !!d.querySelector(':scope > .doc-bar'));
+function docPaginateIn(root){
+  const els = (root.nodeType === 1 && root.matches('.doc') ? [root] : root.querySelectorAll ? [...root.querySelectorAll('.doc')] : []).filter(docIsFlow);
+  els.forEach(d => {
+    if (!d.isConnected || d.closest('#doc-measure, .pdf-host, .doc-pages')) return;
+    const w = docPagesView(d); d.replaceWith(w); docFit(w);
+    if (docFitRO && w.parentElement) docFitRO.observe(w.parentElement);
+  });
+}
+// visi priekšskatījumi – automātiski, kad .doc.doc-flow parādās lapā
+new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) docPaginateIn(n); })))
+  .observe(document.documentElement, {childList:true, subtree:true});
 // Sagatavo vienu ziņojumu adresātam. mark=true – priekšskatījumam ar iezīmētiem laukiem.
 // attrs – respondenta pazīmes (var aizstāt priekšskatījumā, lai apskatītu citu variantu)
 // Satura versijas: e-pasts (formatēts) un eAdrese (vienkāršs teksts); pielikumi un pielikuma dokuments – kopīgi
@@ -7632,20 +7755,13 @@ const loadH2p = () => window.html2pdf ? Promise.resolve(window.html2pdf) : (h2pL
 const abToB64 = ab => { const u = new Uint8Array(ab); let str = ''; for (let i = 0; i < u.length; i += 0x8000) str += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(str); };
 const isPdfBytes = ab => { const u = new Uint8Array(ab, 0, Math.min(5, ab.byteLength)); return String.fromCharCode(...u) === '%PDF-'; };
 const pdfName = n => { const v = String(n || 'pielikums').trim() || 'pielikums'; return /\.pdf$/i.test(v) ? v : v.replace(/\.[a-z0-9]{1,5}$/i, '') + '.pdf'; };
-// HTML (A4 lapa .doc) → PDF (ArrayBuffer). Lapas izkārtojums: īsa vēstule – josla lapas apakšā; nedaudz garāka par A4 (līdz 15 %) –
-// samazināta, lai ietilptu vienā lapā; gara – vairākas lapas (rindkopas, tabulas rindas, virsraksti un QR kods netiek pārdalīti)
+// HTML (.doc) → PDF (ArrayBuffer): tās pašas A4 lapas kā priekšskatījumā (docPages) – katra lapa savā PDF lapā
 async function htmlToPdf(html){
   const h2p = await loadH2p();
-  const P = 297 * 96 / 25.4; // A4 augstums px (210 mm platumā)
-  const meas = document.createElement('div'); meas.className = 'pdf-host'; meas.style.cssText = 'position:fixed;left:-12000px;top:0;width:210mm;visibility:hidden'; meas.innerHTML = html;
-  document.body.append(meas);
-  const md = meas.querySelector('.doc'), H = md ? md.scrollHeight : 0; meas.remove();
-  const host = document.createElement('div'); host.className = 'pdf-host'; host.innerHTML = html;
-  const d = host.querySelector('.doc');
-  if (d && H <= P) d.style.minHeight = `${P - 2}px`;
-  else if (d && H <= P * 1.15){ d.style.transform = `scale(${((P - 2) / H).toFixed(4)})`; d.style.transformOrigin = 'top center'; host.style.height = `${P - 2}px`; host.style.overflow = 'hidden'; }
+  const pages = docPagesFrom(html), host = document.createElement('div'); host.className = 'pdf-host';
+  pages.forEach((pg, i) => { if (i) pg.classList.add('pg-break'); host.append(pg); });
   return h2p().set({margin:0, image:{type:'jpeg', quality:0.94}, html2canvas:{scale:2, useCORS:true, backgroundColor:'#ffffff', logging:false, scrollX:0, scrollY:0}, // scroll 0 – lapas ritinājums nenobīda saturu
-    jsPDF:{unit:'mm', format:'a4', orientation:'portrait'}, pagebreak:{mode:['css', 'legacy'], avoid:['p', 'li', 'tr', 'h1', 'h2', 'h3', 'h4', '.doc-banner', '.doc-qr', '.doc-title', '.doc-sign', 'img']}}).from(host).outputPdf('arraybuffer');
+    jsPDF:{unit:'mm', format:'a4', orientation:'portrait'}, pagebreak:{mode:['css']}}).from(host).outputPdf('arraybuffer');
 }
 // gatavais fails no mapes pielikumi/ (GitHub Pages; lokāli atvērtam prototipam – absolūtā GitHub Pages saite)
 async function fetchPdf(path){
@@ -7688,6 +7804,8 @@ function openDocModal(doc, opener){ openAttViewer({kind:'gen', name:doc.name, ht
 // Drukāšana (pārlūkā var izvēlēties "Saglabāt kā PDF")
 function printDoc(html, name){
   const css = document.querySelector('style').textContent;
+  // Versija 264: personalizētā vēstule – tās pašas A4 lapas kā priekšskatījumā un PDF
+  if (/\bdoc-(flow|bar)\b/.test(html)){ const t = document.createElement('div'); t.innerHTML = html; [...t.querySelectorAll('.doc')].filter(docIsFlow).forEach(d => { const f = document.createDocumentFragment(); docPages(d).forEach(pg => f.append(pg)); d.replaceWith(f); }); html = t.innerHTML; }
   const f = document.createElement('iframe');
   f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
   document.body.append(f);
@@ -7695,7 +7813,8 @@ function printDoc(html, name){
   d.open();
   d.write(`<!doctype html><html lang="lv"><head><meta charset="utf-8"><title>${esc(name.replace(/\.pdf$/i, ''))}</title><style>${css}
     @page{size:A4;margin:0} body{background:#fff} *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    .doc{box-shadow:none;max-width:none;width:210mm;min-height:297mm;aspect-ratio:auto;margin:0}</style></head><body>${html}</body></html>`);
+    .doc{box-shadow:none;max-width:none;width:210mm;min-height:297mm;aspect-ratio:auto;margin:0}
+    .doc.doc-pg{min-height:0 !important;break-after:page;page-break-after:always} .doc.doc-pg:last-child{break-after:auto;page-break-after:auto}</style></head><body>${html}</body></html>`);
   d.close();
   setTimeout(() => { f.contentWindow.focus(); f.contentWindow.print(); setTimeout(() => f.remove(), 1000); }, 300);
 }
